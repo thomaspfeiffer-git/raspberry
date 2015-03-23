@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # coding=utf-8
 
+# Playground for Pi
+# Enable/Disable some ports with LEDs and a Buzzer
 
 import getpass
 import sys
