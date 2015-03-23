@@ -3,7 +3,7 @@
 
 # Playground for Pi
 # Enable/Disable some ports with LEDs and a Buzzer
-# Version 1.0
+# Version 0.1
 
 import getpass
 import sys
