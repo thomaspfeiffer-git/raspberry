@@ -1,5 +1,6 @@
 Some ideas to implement and play with:
 
+- switch all outputs to off when exit/cleanup/finally
 - engine: change speed using D/A converter; change direction
 - Lauflicht; LED-Ausgänge als Array "Pattern", zB
   [1,2,3,4,5,6]
