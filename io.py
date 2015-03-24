@@ -14,6 +14,7 @@ pin_led_red    = 12
 pin_led_green  = 16
 pin_led_blue   = 18
 pin_led_yellow = 22
+pin_led_white  = 11
 
 
 ################################################################################
@@ -26,6 +27,7 @@ def Help():
    print('  Grün   <ein|aus>')
    print('  Blau   <ein|aus>')
    print('  Gelb   <ein|aus>')
+   print('  Weiß   <ein|aus>')
    print('  Ende')
 
 
@@ -61,6 +63,7 @@ def Init():
    io.setup(pin_led_green,io.OUT)
    io.setup(pin_led_blue,io.OUT)
    io.setup(pin_led_yellow,io.OUT)
+   io.setup(pin_led_white,io.OUT)
    Log('Initializing done.')
 
 
@@ -123,6 +126,8 @@ def Main():
             Light(pin_led_blue,switch)
          elif (cmd[0] == 'gelb'):
             Light(pin_led_yellow,switch)
+         elif (cmd[0] == 'weiß'):
+            Light(pin_led_white,switch)
          else:
             Help()
       else:
