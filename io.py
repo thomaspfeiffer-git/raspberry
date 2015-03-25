@@ -10,11 +10,14 @@ import sys
 import RPi.GPIO as io
 
 pin_buzzer     =  7
+
 pin_led_red    = 12
 pin_led_green  = 16
 pin_led_blue   = 18
 pin_led_yellow = 22
 pin_led_white  = 11
+led_patterns   = [[pin_led_red, pin_led_green, pin_led_blue, pin_led_yellow, pin_led_white],
+                  [pin_led_white, pin_led_yellow, pin_led_blue, pin_led_green, pin_led_red]]
 
 
 ################################################################################
