@@ -25,12 +25,13 @@ led_patterns   = [[pin_led_red, pin_led_green, pin_led_blue, pin_led_yellow, pin
 def Help():
    print('Verfügbare Kommandos:')
    print('  Hilfe')
-   print('  Summer <ein|aus>')
-   print('  Rot    <ein|aus>')
-   print('  Grün   <ein|aus>')
-   print('  Blau   <ein|aus>')
-   print('  Gelb   <ein|aus>')
-   print('  Weiß   <ein|aus>')
+   print('  Summer     <ein|aus>')
+   print('  LED Rot    <ein|aus>')
+   print('  LED Grün   <ein|aus>')
+   print('  LED Blau   <ein|aus>')
+   print('  LED Gelb   <ein|aus>')
+   print('  LED Weiß   <ein|aus>')
+   print('  Muster     <ID> <ms>')
    print('  Ende')
 
 
@@ -73,7 +74,7 @@ def Init():
 ################################################################################
 # Buzzer #######################################################################
 def Buzzer(switch):
-   Log('Summer {}'.format(switch))
+   Log('Buzzer: {} {}'.format(pin_buzzer, switch))
    io.output(pin_buzzer,switch)
 
 
@@ -81,7 +82,8 @@ def Buzzer(switch):
 # Light ########################################################################
 def Light(led, switch):
    Log('LED: {} {}'.format(led, switch))
-   io.output(led,switch)
+#   io.output(led,switch)
+   Log('Light off for safity')
 
 
 ################################################################################
@@ -106,36 +108,51 @@ def Main():
 
       cmd = cmd.lower().split()
 
-      switch = ''
-      if (len(cmd) == 2):
-         switch = cmd[1]
-         if (switch != 'ein') and (switch != 'aus'):
-            Help()
-            continue
-
       if (cmd[0] == '?') or (cmd[0] == 'help') or (cmd[0] == 'hilfe'): 
          Help()
-      elif (cmd[0] == 'e') or (cmd[0] == 'end') or (cmd[0] == 'ende'):
+         continue
+      elif (cmd[0] == 'e') or (cmd[0] == 'q') or (cmd[0] == 'end') or (cmd[0] == 'ende'):
          break
-      elif (switch != ''):
-         switch = GetIOConst(switch)
-         if (cmd[0] == 'summer'):
-            Buzzer(switch)
-         elif (cmd[0] == 'rot'):
-            Light(pin_led_red,switch)
-         elif (cmd[0] == 'grün'):
-            Light(pin_led_green,switch)
-         elif (cmd[0] == 'blau'):
-            Light(pin_led_blue,switch)
-         elif (cmd[0] == 'gelb'):
-            Light(pin_led_yellow,switch)
-         elif (cmd[0] == 'weiß'):
-            Light(pin_led_white,switch)
+
+      actor = cmd[0]
+      if (actor == 'summer'):
+         if (len(cmd) == 2):
+            switch = cmd[1]
+            if (switch == 'ein') or (switch == 'aus'):
+               switch = GetIOConst(switch)
+               Buzzer(switch)
+            else:
+               Help()
          else:
             Help()
-      else:
-         Help()
+         continue
 
+      if (actor == 'led'):
+         if (len(cmd) == 3):
+            light  = cmd[1]
+            switch = cmd[2]
+            if (switch == 'ein') or (switch == 'aus'):
+               switch = GetIOConst(switch)
+
+               if (light == 'rot'):
+                  Light(pin_led_red,switch)
+               elif (light == 'grün'):
+                  Light(pin_led_green,switch)
+               elif (light == 'blau'):
+                  Light(pin_led_blue,switch)
+               elif (light == 'gelb'):
+                  Light(pin_led_yellow,switch)
+               elif (light == 'weiß'):
+                  Light(pin_led_white,switch)
+               else:
+                  Help()
+            else:
+               Help()
+         else:
+            Help()
+         continue
+
+      print("Unknown Command: {}".format(actor))
 
 
 
