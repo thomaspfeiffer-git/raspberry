@@ -83,7 +83,7 @@ def Buzzer(switch):
 def Light(led, switch):
    Log('LED: {} {}'.format(led, switch))
 #   io.output(led,switch)
-   Log('Light off for safity')
+   Log('Light off for safety')
 
 
 ################################################################################
@@ -152,7 +152,12 @@ def Main():
             Help()
          continue
 
-      print("Unknown Command: {}".format(actor))
+      if (actor == 'muster'):
+         print ("Muster")
+         continue
+
+
+      Help()
 
 
 
