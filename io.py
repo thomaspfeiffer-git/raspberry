@@ -19,8 +19,8 @@ pin_led_green  = 16
 pin_led_blue   = 18
 pin_led_yellow = 22
 pin_led_white  = 11
-led_patterns   = [[pin_led_red, pin_led_green, pin_led_blue, pin_led_yellow, pin_led_white],
-                  [pin_led_white, pin_led_yellow, pin_led_blue, pin_led_green, pin_led_red]]
+led_patterns   = [[pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white],
+                  [pin_led_white, pin_led_blue, pin_led_yellow, pin_led_red, pin_led_green]]
 
 pin_sensor     = 15
 pin_sensor_bcm = 22
@@ -39,7 +39,7 @@ def Help():
    print('  LED Blau   <ein|aus>')
    print('  LED Gelb   <ein|aus>')
    print('  LED Weiß   <ein|aus>')
-   print('  Muster     <ID> <ms>')
+   print('  Muster     <ID> <Verzögerung [ms]> <Wiederholungen>')
    print('  Sensor              ')
    print('  Ende')
 
@@ -99,6 +99,19 @@ def Light(led, switch):
 #   Log('Light off for safety')
 
 
+
+################################################################################
+# Pattern ######################################################################
+def Pattern(idx, delay, iterations):
+   Log('Pattern: {} {}'.format(idx, delay))
+   for i in range(iterations):
+      for led in led_patterns[idx]:
+         Light(led,io.HIGH)
+         sleep(delay)
+         Light(led,io.LOW)
+
+
+
 ################################################################################
 # GetIOConst ###################################################################
 def GetIOConst(switch):
@@ -121,14 +134,13 @@ def Main():
 
       cmd = cmd.lower().split()
 
-      if (cmd[0] == '?') or (cmd[0] == 'help') or (cmd[0] == 'hilfe'): 
+      if (cmd[0] in ['?', 'help', 'hilfe']):
          Help()
          continue
-      elif (cmd[0] == 'e') or (cmd[0] == 'q') or (cmd[0] == 'end') or (cmd[0] == 'ende'):
+      elif (cmd[0] in ['e', 'q', 'end', 'ende']):
          break
 
       actor = cmd[0]
-
 
 # Summer ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if (actor == 'summer'):
@@ -171,18 +183,30 @@ def Main():
 
 # Muster ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if (actor == 'muster'):
-         if (len(cmd) == 3):
-            led_pattern = cmd[1]
+         if (len(cmd) == 4):
+            led_pattern       = cmd[1]
             led_pattern_delay = cmd[2]
-            if not led_pattern.isnumeric() or not led_pattern_delay.isnumeric():
+            iterations        = cmd[3]
+            if not led_pattern.isdigit() or not led_pattern_delay.isdigit() or not iterations.isdigit():
                Help()
                continue
 
-            # Check auf gültigen Wertebereich für beide Variable
-
-            if (led_pattern_delay < 50) or (led_pattern_delay > 5000):
+            led_pattern = int(led_pattern)
+            led_pattern_delay = float(led_pattern_delay)
+            iterations  = int(iterations)
+            if (led_pattern < 1) or (led_pattern > len(led_patterns)):
                Help()
                continue
+
+            if (led_pattern_delay < 10) or (led_pattern_delay > 5000):
+               Help()
+               continue
+
+            if (iterations < 1) or (iterations > 1000):
+               Help()
+               continue
+
+            Pattern(led_pattern-1,led_pattern_delay/1000,iterations) 
 
          else:
             Help()
