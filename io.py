@@ -8,6 +8,7 @@
 import getpass
 import sys
 import RPi.GPIO as io
+import dhtreader
 
 pin_buzzer     =  7
 
@@ -18,6 +19,11 @@ pin_led_yellow = 22
 pin_led_white  = 11
 led_patterns   = [[pin_led_red, pin_led_green, pin_led_blue, pin_led_yellow, pin_led_white],
                   [pin_led_white, pin_led_yellow, pin_led_blue, pin_led_green, pin_led_red]]
+
+pin_sensor     = 15
+pin_sensor_bcm = 22
+
+
 
 
 ################################################################################
@@ -32,6 +38,7 @@ def Help():
    print('  LED Gelb   <ein|aus>')
    print('  LED Weiß   <ein|aus>')
    print('  Muster     <ID> <ms>')
+   print('  Sensor              ')
    print('  Ende')
 
 
@@ -82,8 +89,8 @@ def Buzzer(switch):
 # Light ########################################################################
 def Light(led, switch):
    Log('LED: {} {}'.format(led, switch))
-#   io.output(led,switch)
-   Log('Light off for safety')
+   io.output(led,switch)
+#   Log('Light off for safety')
 
 
 ################################################################################
@@ -153,8 +160,35 @@ def Main():
          continue
 
       if (actor == 'muster'):
-         print ("Muster")
+         if (len(cmd) == 3):
+            led_pattern = cmd[1]
+            led_pattern_delay = cmd[2]
+            if not led_pattern.isnumeric() or not led_pattern_delay.isnumeric():
+               Help()
+               continue
+
+            # Check auf gültigen Wertebereich für beide Variable
+
+            if (led_pattern_delay < 50) or (led_pattern_delay > 5000):
+               Help()
+               continue
+
+
+         else:
+            Help()
+
+
          continue
+
+      if (actor == 'sensor'):
+         type = 22
+         pin  = pin_sensor_bcm
+         dhtreader.init()
+         messwerte = dhtreader.read(type,pin)
+         print "Temp: %.2f" % messwerte[0]
+         print "Luftfeuchtigkeit: %.2f" % messwerte[1] 
+
+      continue
 
 
       Help()
