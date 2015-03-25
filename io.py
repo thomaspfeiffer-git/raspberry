@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # coding=utf-8
 
 # Playground for Pi
@@ -7,6 +7,8 @@
 
 import getpass
 import sys
+from time import sleep
+import traceback
 import RPi.GPIO as io
 import dhtreader
 
@@ -68,6 +70,7 @@ def Log(l):
 # Init #########################################################################
 def Init():
    Log('Initializing ...')
+
    io.setmode(io.BOARD)
    io.setup(pin_buzzer,io.OUT)
    io.setup(pin_led_red,io.OUT)
@@ -75,6 +78,9 @@ def Init():
    io.setup(pin_led_blue,io.OUT)
    io.setup(pin_led_yellow,io.OUT)
    io.setup(pin_led_white,io.OUT)
+
+   dhtreader.init()
+
    Log('Initializing done.')
 
 
@@ -107,7 +113,7 @@ def GetIOConst(switch):
 def Main():
    while 1:
       print('')
-      cmd = input("Was soll ich tun? ")
+      cmd = raw_input("Was soll ich tun? ")
 
       if (len(cmd) == 0):
          Help()
@@ -122,6 +128,9 @@ def Main():
          break
 
       actor = cmd[0]
+
+
+# Summer ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if (actor == 'summer'):
          if (len(cmd) == 2):
             switch = cmd[1]
@@ -134,6 +143,7 @@ def Main():
             Help()
          continue
 
+# LED +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if (actor == 'led'):
          if (len(cmd) == 3):
             light  = cmd[1]
@@ -159,6 +169,7 @@ def Main():
             Help()
          continue
 
+# Muster ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if (actor == 'muster'):
          if (len(cmd) == 3):
             led_pattern = cmd[1]
@@ -173,33 +184,34 @@ def Main():
                Help()
                continue
 
-
          else:
             Help()
-
-
          continue
 
+# Sensor ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if (actor == 'sensor'):
-         type = 22
-         pin  = pin_sensor_bcm
-         dhtreader.init()
-         messwerte = dhtreader.read(type,pin)
-         print "Temp: %.2f" % messwerte[0]
-         print "Luftfeuchtigkeit: %.2f" % messwerte[1] 
+         try:
+            t, h = dhtreader.read(22,pin_sensor_bcm)
+         except TypeError:
+            t = h = -99.99
 
-      continue
+         print("Temperatur: {:.2f} °C".format(t))
+         print("Luftfeuchtigkeit: {:.2f} %".format(h))
+         continue
 
 
       Help()
 
 
-
-
+################################################################################
 try:
    CheckUser()
    Init()
    Main()
+
+except:
+   print(traceback.print_exc())
+
 finally:
    Exit()
 
