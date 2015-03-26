@@ -105,6 +105,7 @@ def Light(led, switch):
 def Pattern(idx, delay, iterations):
    Log('Pattern: {} {}'.format(idx, delay))
    for i in range(iterations):
+      print("Durchgang: {}".format(i+1))
       for led in led_patterns[idx]:
          Light(led,io.HIGH)
          sleep(delay)
@@ -198,7 +199,7 @@ def Main():
                Help()
                continue
 
-            if (led_pattern_delay < 10) or (led_pattern_delay > 5000):
+            if (led_pattern_delay < 2) or (led_pattern_delay > 5000):
                Help()
                continue
 
