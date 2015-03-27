@@ -12,6 +12,8 @@ import traceback
 import RPi.GPIO as io
 import dhtreader
 
+
+# Actors ###################
 pin_buzzer     =  7
 
 pin_led_red    = 12
@@ -22,6 +24,10 @@ pin_led_white  = 11
 led_patterns   = [[pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white],
                   [pin_led_white, pin_led_blue, pin_led_yellow, pin_led_red, pin_led_green]]
 
+all_commands     = [pin_buzzer, pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white]
+
+
+# Sensors ##################
 pin_sensor     = 15
 pin_sensor_bcm = 22
 
@@ -39,6 +45,8 @@ def Help():
    print('  LED Blau   <ein|aus>')
    print('  LED Gelb   <ein|aus>')
    print('  LED Weiß   <ein|aus>')
+   print('  Alles      <ein|aus>')
+   print('                      ')
    print('  Muster     <ID> <Verzögerung [ms]> <Wiederholungen>')
    print('  Sensor              ')
    print('  Ende')
@@ -141,10 +149,10 @@ def Main():
       elif (cmd[0] in ['e', 'q', 'end', 'ende']):
          break
 
-      actor = cmd[0]
+      command = cmd[0]
 
 # Summer ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      if (actor == 'summer'):
+      if (command == 'summer'):
          if (len(cmd) == 2):
             switch = cmd[1]
             if (switch == 'ein') or (switch == 'aus'):
@@ -157,7 +165,7 @@ def Main():
          continue
 
 # LED +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      if (actor == 'led'):
+      if (command == 'led'):
          if (len(cmd) == 3):
             light  = cmd[1]
             switch = cmd[2]
@@ -183,7 +191,7 @@ def Main():
          continue
 
 # Muster ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      if (actor == 'muster'):
+      if (command == 'muster'):
          if (len(cmd) == 4):
             led_pattern       = cmd[1]
             led_pattern_delay = cmd[2]
@@ -199,7 +207,7 @@ def Main():
                Help()
                continue
 
-            if (led_pattern_delay < 2) or (led_pattern_delay > 5000):
+            if (led_pattern_delay < 2) or (led_pattern_delay > 60000):
                Help()
                continue
 
@@ -214,11 +222,17 @@ def Main():
          continue
 
 # Sensor ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      if (actor == 'sensor'):
-         try:
-            t, h = dhtreader.read(22,pin_sensor_bcm)
-         except TypeError:
-            t = h = -99.99
+      if (command == 'sensor'):
+         i = 1
+         while (i <= 5):
+            try:
+               print("Try #{}".format(i))
+               t, h = dhtreader.read(22,pin_sensor_bcm)
+            except TypeError:
+               t = h = -99.99
+               i = i+1
+               continue
+            break
 
          print("Temperatur: {:.2f} °C".format(t))
          print("Luftfeuchtigkeit: {:.2f} %".format(h))
