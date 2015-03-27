@@ -26,7 +26,7 @@ pin_led_big    = 21
 led_patterns   = [[pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white,pin_led_bright_yellow],
                   [pin_led_bright_yellow,pin_led_white, pin_led_blue, pin_led_yellow, pin_led_red, pin_led_green]]
 
-all_commands   = [pin_buzzer, \
+all_actors     = [pin_buzzer, \
                   pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white, pin_led_bright_yellow, \
                   pin_led_big]
 
@@ -127,6 +127,14 @@ def Pattern(idx, delay, iterations):
          sleep(delay)
          Light(led,io.LOW)
 
+
+################################################################################
+# AllActors ####################################################################
+def AllActors(switch):
+  Log('All actors: {}'.format(switch))
+  for a in all_actors:
+     io.output(a,switch)   # Better: Light() and Buzzer()
+     
 
 
 ################################################################################
@@ -235,7 +243,12 @@ def Main():
 
 # All actors ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if (command == 'alles'):
-         print("Alles")
+         switch = cmd[1]
+         if (switch == 'ein') or (switch == 'aus'):
+            switch = GetIOConst(switch)
+            AllActors(switch)
+         else:
+            Help()
          continue
 
 
