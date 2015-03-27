@@ -21,10 +21,14 @@ pin_led_green  = 16
 pin_led_blue   = 18
 pin_led_yellow = 22
 pin_led_white  = 11
-led_patterns   = [[pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white],
-                  [pin_led_white, pin_led_blue, pin_led_yellow, pin_led_red, pin_led_green]]
+pin_led_bright_yellow = 19
+pin_led_big    = 21
+led_patterns   = [[pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white,pin_led_bright_yellow],
+                  [pin_led_bright_yellow,pin_led_white, pin_led_blue, pin_led_yellow, pin_led_red, pin_led_green]]
 
-all_commands     = [pin_buzzer, pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white]
+all_commands   = [pin_buzzer, \
+                  pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white, pin_led_bright_yellow, \
+                  pin_led_big]
 
 
 # Sensors ##################
@@ -39,16 +43,18 @@ pin_sensor_bcm = 22
 def Help():
    print('Verfügbare Kommandos:')
    print('  Hilfe')
-   print('  Summer     <ein|aus>')
-   print('  LED Rot    <ein|aus>')
-   print('  LED Grün   <ein|aus>')
-   print('  LED Blau   <ein|aus>')
-   print('  LED Gelb   <ein|aus>')
-   print('  LED Weiß   <ein|aus>')
-   print('  Alles      <ein|aus>')
-   print('                      ')
-   print('  Muster     <ID> <Verzögerung [ms]> <Wiederholungen>')
-   print('  Sensor              ')
+   print('  Summer       <ein|aus>')
+   print('  LED Rot      <ein|aus>')
+   print('  LED Grün     <ein|aus>')
+   print('  LED Blau     <ein|aus>')
+   print('  LED Gelb     <ein|aus>')
+   print('  LED Weiß     <ein|aus>')
+   print('  LED Hellgelb <ein|aus>')
+   print('  LED groß     <ein|aus>')
+   print('  Alles        <ein|aus>')
+   print('                        ')
+   print('  Muster       <ID> <Verzögerung [ms]> <Wiederholungen>')
+   print('  Sensor                ')
    print('  Ende')
 
 
@@ -86,6 +92,8 @@ def Init():
    io.setup(pin_led_blue,io.OUT)
    io.setup(pin_led_yellow,io.OUT)
    io.setup(pin_led_white,io.OUT)
+   io.setup(pin_led_bright_yellow,io.OUT)
+   io.setup(pin_led_big,io.OUT)
 
    dhtreader.init()
 
@@ -182,6 +190,10 @@ def Main():
                   Light(pin_led_yellow,switch)
                elif (light == 'weiß'):
                   Light(pin_led_white,switch)
+               elif (light == 'hellgelb'):
+                  Light(pin_led_bright_yellow,switch)
+               elif (light == 'groß'):
+                  Light(pin_led_big,switch)
                else:
                   Help()
             else:
@@ -221,6 +233,13 @@ def Main():
             Help()
          continue
 
+# All actors ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      if (command == 'alles'):
+         print("Alles")
+         continue
+
+
+
 # Sensor ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if (command == 'sensor'):
          i = 1
@@ -230,7 +249,7 @@ def Main():
                t, h = dhtreader.read(22,pin_sensor_bcm)
             except TypeError:
                t = h = -99.99
-               i = i+1
+               i += 1
                continue
             break
 
