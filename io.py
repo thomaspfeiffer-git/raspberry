@@ -6,9 +6,11 @@
 # Version 0.1
 
 import getpass
-import sys
+import os
 from time import sleep
+import sys
 import traceback
+
 import RPi.GPIO as io
 import dhtreader
 
@@ -100,7 +102,15 @@ def Init():
    Log('Initializing done.')
 
 
+
+
 ################################################################################
+# GetCPUTemperature ############################################################
+def GetCPUTemperature():
+   res = os.popen('vcgencmd measure_temp').readline()
+   return(float(res.replace("temp=","").replace("'C\n","")))
+
+
 # Buzzer #######################################################################
 def Buzzer(switch):
    Log('Buzzer: {} {}'.format(pin_buzzer, switch))
@@ -133,7 +143,7 @@ def Pattern(idx, delay, iterations):
 def AllActors(switch):
   Log('All actors: {}'.format(switch))
   for a in all_actors:
-     io.output(a,switch)   # Better: Light() and Buzzer()
+     io.output(a,switch)   # TODO Better: Light() and Buzzer()
      
 
 
@@ -266,6 +276,8 @@ def Main():
                continue
             break
 
+         CPUTemp = GetCPUTemperature()
+         print("CPU Temperatur: {:.2f} °C".format(CPUTemp))
          print("Temperatur: {:.2f} °C".format(t))
          print("Luftfeuchtigkeit: {:.2f} %".format(h))
          continue
