@@ -25,6 +25,8 @@ pin_led_yellow = 22
 pin_led_white  = 11
 pin_led_bright_yellow = 19
 pin_led_big    = 21
+state_led_big  = io.LOW
+
 led_patterns   = [[pin_led_green, pin_led_red, pin_led_yellow, pin_led_blue, pin_led_white,pin_led_bright_yellow],
                   [pin_led_bright_yellow,pin_led_white, pin_led_blue, pin_led_yellow, pin_led_red, pin_led_green]]
 
@@ -37,6 +39,7 @@ all_actors     = [pin_buzzer, \
 pin_sensor     = 15
 pin_sensor_bcm = 22
 
+pin_reed       = 23
 
 
 
@@ -46,6 +49,7 @@ def Help():
    print('Verfügbare Kommandos:')
    print('  Hilfe')
    print('  Summer       <ein|aus>')
+   print('                        ')
    print('  LED Rot      <ein|aus>')
    print('  LED Grün     <ein|aus>')
    print('  LED Blau     <ein|aus>')
@@ -56,6 +60,7 @@ def Help():
    print('  Alles        <ein|aus>')
    print('                        ')
    print('  Muster       <ID> <Verzögerung [ms]> <Wiederholungen>')
+   print('                        ')
    print('  Sensor                ')
    print('  Ende')
 
@@ -83,6 +88,32 @@ def Log(l):
 
 
 ################################################################################
+# Light ########################################################################
+def Light(led, switch):
+   Log('LED: {} {}'.format(led, switch))
+   io.output(led,switch)
+#   Log('Light off for safety')
+
+
+################################################################################
+# ChangeState_LedGross #########################################################
+def ChangeState_LedGross():
+   global state_led_big
+   if (state_led_big == io.HIGH):
+      state_led_big = io.LOW
+   else:
+      state_led_big = io.HIGH
+   Light(pin_led_big,state_led_big)
+
+
+################################################################################
+# ReedToggle ###################################################################
+def ReedToggle(pin):
+   if (io.input(pin) == False):
+      ChangeState_LedGross()
+
+
+################################################################################
 # Init #########################################################################
 def Init():
    Log('Initializing ...')
@@ -97,10 +128,13 @@ def Init():
    io.setup(pin_led_bright_yellow,io.OUT)
    io.setup(pin_led_big,io.OUT)
 
+   io.setup(pin_reed,io.IN) 
+   io.add_event_detect(pin_reed,io.BOTH)
+   io.add_event_callback(pin_reed,ReedToggle)
+
    dhtreader.init()
 
    Log('Initializing done.')
-
 
 
 
@@ -115,14 +149,6 @@ def GetCPUTemperature():
 def Buzzer(switch):
    Log('Buzzer: {} {}'.format(pin_buzzer, switch))
    io.output(pin_buzzer,switch)
-
-
-################################################################################
-# Light ########################################################################
-def Light(led, switch):
-   Log('LED: {} {}'.format(led, switch))
-   io.output(led,switch)
-#   Log('Light off for safety')
 
 
 
@@ -159,6 +185,8 @@ def GetIOConst(switch):
 ################################################################################
 # Main #########################################################################
 def Main():
+   global state_led_big
+
    while 1:
       print('')
       cmd = raw_input("Was soll ich tun? ")
@@ -212,6 +240,7 @@ def Main():
                   Light(pin_led_bright_yellow,switch)
                elif (light == 'groß'):
                   Light(pin_led_big,switch)
+                  state_led_big = switch
                else:
                   Help()
             else:
@@ -226,7 +255,9 @@ def Main():
             led_pattern       = cmd[1]
             led_pattern_delay = cmd[2]
             iterations        = cmd[3]
-            if not led_pattern.isdigit() or not led_pattern_delay.isdigit() or not iterations.isdigit():
+            if not led_pattern.isdigit() \
+               or not led_pattern_delay.isdigit() \
+               or not iterations.isdigit():
                Help()
                continue
 
