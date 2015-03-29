@@ -166,9 +166,11 @@ def Pattern(idx, delay, iterations):
 ################################################################################
 # AllActors ####################################################################
 def AllActors(switch):
-  Log('All actors: {}'.format(switch))
-  for a in all_actors:
-     io.output(a,switch)   # TODO Better: Light() and Buzzer()
+   global state_led_big
+   Log('All actors: {}'.format(switch))
+   for a in all_actors:
+      io.output(a,switch)   # TODO Better: Light() and Buzzer()
+   state_led_big = switch
 
 
 ################################################################################
