@@ -11,6 +11,7 @@ from time import sleep
 import sys
 import traceback
 
+from Adafruit_BMP085 import BMP085
 import RPi.GPIO as io
 import dhtreader
 
@@ -40,6 +41,10 @@ pin_sensor     = 15
 pin_sensor_bcm = 22
 
 pin_reed       = 23
+
+
+# Variables for BMP085
+bmp = 0
 
 
 
@@ -116,6 +121,8 @@ def ReedToggle(pin):
 ################################################################################
 # Init #########################################################################
 def Init():
+   global bmp
+
    Log('Initializing ...')
 
    io.setmode(io.BOARD)
@@ -133,6 +140,8 @@ def Init():
    io.add_event_callback(pin_reed,ReedToggle)
 
    dhtreader.init()
+
+   bmp = BMP085(0x77)
 
    Log('Initializing done.')
 
@@ -305,10 +314,15 @@ def Main():
                continue
             break
 
+         t_bmp = bmp.readTemperature()
+         p_bmp = bmp.readPressure()
+
          CPUTemp = GetCPUTemperature()
          print("CPU Temperatur: {:.2f} °C".format(CPUTemp))
-         print("Temperatur: {:.2f} °C".format(t))
-         print("Luftfeuchtigkeit: {:.2f} %".format(h))
+         print("Temperatur DHT: {:.2f} °C".format(t))
+         print("Luftfeuchtigkeit DHT: {:.2f} %".format(h))
+         print("Temperatur BMP: {:.2f} °C".format(t_bmp))
+         print("Luftdruck BMP: {:.2f} hPa".format(p_bmp / 100.0))
          continue
 
 # Help ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
