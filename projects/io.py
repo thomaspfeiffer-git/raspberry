@@ -3,7 +3,7 @@
 
 # Playground for Pi
 # Enable/Disable some ports with LEDs and a Buzzer
-# Version 0.1
+# Version 1.0
 
 import getpass
 import os
@@ -195,6 +195,7 @@ def GetIOConst(switch):
 # Main #########################################################################
 def Main():
    global state_led_big
+   global bmp
 
    while 1:
       print('')
