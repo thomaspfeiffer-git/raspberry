@@ -20,8 +20,13 @@ pin_sensor_bcm = 22
 bmp = 0
 
 # Misc for rrdtool
-DATAFILE = "weather.rrd"
-ERROR    = -999.99
+DATAFILE       = "weather.rrd"
+ERROR          = -999.99
+DS_TEMPINDOOR  = "temp_indoor"   # Besser: Hash mit {DS:...; Name: "..."}
+DS_TEMPOUTDOOR = "temp_outdoor"
+DS_HUMIINDOOR  = "humi_indoor"
+DS_HUMIOUTDOOR = "humi_outdoor"
+DS_AIRPRESSURE = "air_pressure"
 
 
 
@@ -80,7 +85,7 @@ def Main():
 
 # rrdtool update speed.rrd N:$speed
 
-
+#   rrd_writestring = "N:{}".format(
 
 
    print("CPU Temperatur: {:.2f} °C".format(CPUTemp))
