@@ -2,6 +2,16 @@
 # coding=utf-8
 
 
+###############################################################################
+# weather.py                                                                  #
+# weather station                                                             #
+# several sensors (indoor, outdoor)                                           #
+# rrd statistics                                                              #
+# Version 0.1                                                                 #
+# Thomas Pfeiffer                                                             #
+# 2015                                                                        #
+###############################################################################
+
 import os
 import sys
 import traceback
@@ -12,15 +22,23 @@ import RPi.GPIO as io
 import dhtreader
 
 
-# Sensors ##################
+## Sensors ##################
+#+ Outdoor ##################
+# DHT22/AM2302 (humidiry, air pressure)
 pin_sensor     = 15
 pin_sensor_bcm = 22
 
-# Variables for BMP085
+#+ Indoor ###################
+# DHT22/AM2302 (humidiry, air pressure)
+# ...
+
+
+# BMP085 (air pressure)
 bmp = 0
 
+
 # Misc for rrdtool
-DATAFILE       = "weather.rrd"
+DATAFILE       = "/schild/weather.rrd"
 ERROR          = -999.99
 DS_TEMPINDOOR  = "temp_indoor"   # Besser: Hash mit {DS:...; Name: "..."}
 DS_TEMPOUTDOOR = "temp_outdoor"
@@ -29,6 +47,10 @@ DS_HUMIOUTDOOR = "humi_outdoor"
 DS_AIRPRESSURE = "air_pressure"
 DS_TEMPCPU     = "temp_cpu"
 
+
+# Other global
+
+bDebug = False
 
 
 ################################################################################
@@ -41,7 +63,8 @@ def Exit():
 ################################################################################
 # Log ##########################################################################
 def Log(l):
-   print(l)
+   if (bDebug):
+      print(l)
 
 
 ################################################################################
@@ -73,7 +96,7 @@ def Main():
    i = 1                         # outdoor #
    while (i <= 5):
       try:
-         print("Try #{}".format(i))
+         Log("Try #{}".format(i))
          temp_outdoor, humi_outdoor = dhtreader.read(22,pin_sensor_bcm) 
       except TypeError:
          temp_outdoor = humi_outdoor = ERROR
@@ -86,7 +109,6 @@ def Main():
 
    temp_cpu    = GetCPUTemperature()
 
-# rrdtool update speed.rrd N:$speed
 
 
 # DS_TEMPINDOOR  = "temp_indoor"   # Besser: Hash mit {DS:...; Name: "..."}
@@ -104,27 +126,30 @@ def Main():
                      DS_HUMIOUTDOOR + ":" + \
                      DS_AIRPRESSURE + ":" + \
                      DS_TEMPCPU
-   rrd_writestring = "N:{:.2f}".format(temp_indoor)      + \
-                      ":{:.2f}".format(temp_outdoor)     + \
-                      ":{:.2f}".format(humi_indoor)      + \
-                      ":{:.2f}".format(humi_outdoor)     + \
-                      ":{:.2f}".format(pressure / 100.0) + \
-                      ":{:.2f}".format(temp_cpu)
+   rrd_data = "N:{:.2f}".format(temp_indoor)      + \
+               ":{:.2f}".format(temp_outdoor)     + \
+               ":{:.2f}".format(humi_indoor)      + \
+               ":{:.2f}".format(humi_outdoor)     + \
+               ":{:.2f}".format(pressure / 100.0) + \
+               ":{:.2f}".format(temp_cpu)
 
+   # rrdtool.update(databaseFile, "--template", template, update)
+   rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data)
 
+   Log(rrd_template)
+   Log(rrd_data)
 
-   print rrd_template
-   print rrd_writestring
-
-   print("CPU Temperatur: {:.2f} °C".format(temp_cpu))
-   print("Temperatur DHT: {:.2f} °C".format(temp_outdoor))
-   print("Luftfeuchtigkeit DHT: {:.2f} %".format(humi_outdoor))
-   print("Temperatur BMP: {:.2f} °C".format(temp_indoor))
-   print("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
+   Log("CPU Temperatur: {:.2f} °C".format(temp_cpu))
+   Log("Temperatur DHT: {:.2f} °C".format(temp_outdoor))
+   Log("Luftfeuchtigkeit DHT: {:.2f} %".format(humi_outdoor))
+   Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
+   Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
 
 
 ################################################################################
 try:
+   bDebug = True if (len(sys.argv) > 1) and (sys.argv[1] in ['-v', '-V']) \
+            else False
    Init()
    Main()
 
