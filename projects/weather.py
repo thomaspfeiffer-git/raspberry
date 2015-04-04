@@ -48,7 +48,7 @@ DS_AIRPRESSURE = "air_pressure"
 DS_TEMPCPU     = "temp_cpu"
 
 
-# Other global
+# Other global stuff
 
 bDebug = False
 
@@ -109,23 +109,13 @@ def Main():
 
    temp_cpu    = GetCPUTemperature()
 
-
-
-# DS_TEMPINDOOR  = "temp_indoor"   # Besser: Hash mit {DS:...; Name: "..."}
-# DS_TEMPOUTDOOR = "temp_outdoor"
-# DS_HUMIINDOOR  = "humi_indoor"
-# DS_HUMIOUTDOOR = "humi_outdoor"
-# DS_AIRPRESSURE = "air_pressure"
-# DS_TEMPCPU     = "temp_cpu"
-
-
-
    rrd_template    = DS_TEMPINDOOR  + ":" + \
                      DS_TEMPOUTDOOR + ":" + \
                      DS_HUMIINDOOR  + ":" + \
                      DS_HUMIOUTDOOR + ":" + \
                      DS_AIRPRESSURE + ":" + \
                      DS_TEMPCPU
+
    rrd_data = "N:{:.2f}".format(temp_indoor)      + \
                ":{:.2f}".format(temp_outdoor)     + \
                ":{:.2f}".format(humi_indoor)      + \
@@ -133,7 +123,6 @@ def Main():
                ":{:.2f}".format(pressure / 100.0) + \
                ":{:.2f}".format(temp_cpu)
 
-   # rrdtool.update(databaseFile, "--template", template, update)
    rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data)
 
    Log(rrd_template)
