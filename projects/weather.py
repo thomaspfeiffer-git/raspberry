@@ -7,7 +7,7 @@
 # weather station                                                             #
 # several sensors (indoor, outdoor)                                           #
 # rrd statistics                                                              #
-# Version 0.1                                                                 #
+# Version 0.2                                                                 #
 # Thomas Pfeiffer                                                             #
 # 2015                                                                        #
 ###############################################################################
@@ -24,12 +24,12 @@ import dhtreader
 
 ## Sensors ##################
 #+ Outdoor ##################
-# DHT22/AM2302 (humidiry, air pressure)
+# DHT22/AM2302 (humidity, air pressure)
 pin_sensor     = 15
 pin_sensor_bcm = 22
 
 #+ Indoor ###################
-# DHT22/AM2302 (humidiry, air pressure)
+# DHT22/AM2302 (humidity, air pressure)
 # ...
 
 
@@ -50,7 +50,8 @@ DS_TEMPCPU     = "temp_cpu"
 
 # Other global stuff
 
-bDebug = False
+bDebug  = False
+PIDFile = ""
 
 
 ################################################################################
@@ -58,6 +59,34 @@ bDebug = False
 def Exit():
    Log('Cleaning up ...')
    sys.exit()
+
+
+
+################################################################################
+# CheckPIDFile #################################################################
+def CheckPIDFile():
+   global PIDFile
+   PIDFile = __file__ + ".pid"
+
+   if (os.path.isfile(PIDFile)):
+      Log("PID File exists. Don't start me twice!")
+      Exit()
+
+   f = open(PIDFile, 'w')
+   f.write(str(os.getpid()))
+   f.close()
+
+
+
+################################################################################
+# CleanupPIDFile ###############################################################
+# Must no be called in Cleanup();                                              #
+# this would delete the PID file of other processes                            #
+def CleanupPIDFile():
+   global PIDFile
+
+   os.remove(PIDFile)
+
 
 
 ################################################################################
@@ -139,8 +168,11 @@ def Main():
 try:
    bDebug = True if (len(sys.argv) > 1) and (sys.argv[1] in ['-v', '-V']) \
             else False
+
+   CheckPIDFile()
    Init()
    Main()
+   CleanupPIDFile()
 
 except:
    print(traceback.print_exc())
