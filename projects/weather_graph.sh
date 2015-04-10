@@ -20,7 +20,7 @@ WATERMARK=`date  "+%e. %B %Y, %H:%M:%S"`
 
 rrdtool graph $PNG_TEMP_D    \
 --title "Temperatur [°C]" \
---end now --start end-24h  \
+--end now --start end-36h  \
 -w $WIDTH -h $(($HEIGHT*2)) -a PNG       \
 --watermark "$WATERMARK" \
 --right-axis 1:0         \
@@ -40,7 +40,7 @@ GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n" \
 
 rrdtool graph $PNG_CPU_D    \
 --title "Temperatur Raspberry Pi [°C]" \
---end now --start end-24h  \
+--end now --start end-36h  \
 -w $WIDTH -h $HEIGHT -a PNG       \
 --watermark "$WATERMARK" \
 --right-axis 1:0         \
@@ -51,7 +51,7 @@ LINE1:temp_cpu#FF00FF:"Temperatur Raspberry Pi"
 
 rrdtool graph $PNG_HUMI_D    \
 --title "Luftfeuchtigkeit [%]" \
---end now --start end-24h  \
+--end now --start end-36h  \
 -w $WIDTH -h $HEIGHT -a PNG       \
 --watermark "$WATERMARK" \
 --right-axis 1:0                                     \
@@ -71,21 +71,23 @@ GPRINT:humi_indoor:MIN:"Min\: %5.2lf %%\n"            \
 
 
 rrdtool graph $PNG_PRES_D    \
---title "Luftdruck [hPas]" \
---end now --start end-24h  \
+--title "Luftdruck [hPa]" \
+--end now --start end-36h  \
 -w $WIDTH -h $HEIGHT -a PNG       \
 --alt-autoscale \
 --alt-y-grid \
 --rigid \
 --watermark "$WATERMARK" \
 --right-axis 1:0         \
+--right-axis-format "%4.0lf" \
 DEF:air_pressure=$RRD:air_pressure:AVERAGE        \
 LINE1:air_pressure#40FF00:"Luftdruck"             \
-GPRINT:air_pressure:LAST:"\t Aktuell\: %5.2lf hPas" \
-GPRINT:air_pressure:AVERAGE:"Mittelwert\: %5.2lf hPas" \
-GPRINT:air_pressure:MAX:"Max\: %5.2lf hPas" \
-GPRINT:air_pressure:MIN:"Min\: %5.2lf hPas\n"            \
+GPRINT:air_pressure:LAST:"\t Aktuell\: %5.2lf hPa" \
+GPRINT:air_pressure:AVERAGE:"Mittelwert\: %5.2lf hPa" \
+GPRINT:air_pressure:MAX:"Max\: %5.2lf hPa" \
+GPRINT:air_pressure:MIN:"Min\: %5.2lf hPa\n"            \
 
+#--left-axis-format "%4.0lf" \
 
 
 
@@ -142,7 +144,7 @@ GPRINT:humi_indoor:MIN:"Min\: %5.2lf %%\n"            \
 
 
 rrdtool graph $PNG_PRES_W    \
---title "Luftdruck [hPas]" \
+--title "Luftdruck [hPa]" \
 --end now --start end-7d  \
 -w $WIDTH -h $HEIGHT -a PNG       \
 --alt-autoscale \
@@ -152,9 +154,9 @@ rrdtool graph $PNG_PRES_W    \
 --right-axis 1:0         \
 DEF:air_pressure=$RRD:air_pressure:AVERAGE        \
 LINE1:air_pressure#40FF00:"Luftdruck"             \
-GPRINT:air_pressure:LAST:"\t Aktuell\: %5.2lf hPas" \
-GPRINT:air_pressure:AVERAGE:"Mittelwert\: %5.2lf hPas" \
-GPRINT:air_pressure:MAX:"Max\: %5.2lf hPas" \
-GPRINT:air_pressure:MIN:"Min\: %5.2lf hPas\n"            \
+GPRINT:air_pressure:LAST:"\t Aktuell\: %5.2lf hPa" \
+GPRINT:air_pressure:AVERAGE:"Mittelwert\: %5.2lf hPa" \
+GPRINT:air_pressure:MAX:"Max\: %5.2lf hPa" \
+GPRINT:air_pressure:MIN:"Min\: %5.2lf hPa\n"            \
 
 
