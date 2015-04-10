@@ -2,14 +2,26 @@
 
 RRDPATH=/schild/
 RRD=$RRDPATH/weather.rrd
+
 PNG_TEMP_D=$RRDPATH/weather_temp_d.png
-PNG_HUMI_D=$RRDPATH/weather_humi_d.png
-PNG_PRES_D=$RRDPATH/weather_pressure_d.png
-PNG_CPU_D=$RRDPATH/cpu_temp_d.png
 PNG_TEMP_W=$RRDPATH/weather_temp_w.png
+PNG_TEMP_M=$RRDPATH/weather_temp_m.png
+PNG_TEMP_Y=$RRDPATH/weather_temp_y.png
+
+PNG_HUMI_D=$RRDPATH/weather_humi_d.png
 PNG_HUMI_W=$RRDPATH/weather_humi_w.png
+PNG_HUMI_M=$RRDPATH/weather_humi_m.png
+PNG_HUMI_Y=$RRDPATH/weather_humi_y.png
+
+PNG_PRES_D=$RRDPATH/weather_pressure_d.png
 PNG_PRES_W=$RRDPATH/weather_pressure_w.png
+PNG_PRES_M=$RRDPATH/weather_pressure_m.png
+PNG_PRES_Y=$RRDPATH/weather_pressure_y.png
+
+PNG_CPU_D=$RRDPATH/cpu_temp_d.png
 PNG_CPU_W=$RRDPATH/cpu_temp_w.png
+PNG_CPU_M=$RRDPATH/cpu_temp_m.png
+PNG_CPU_Y=$RRDPATH/cpu_temp_y.png
 
 
 WIDTH=1024
@@ -127,18 +139,23 @@ printAirPressure ()
 
 printTemp "36h", "$PNG_TEMP_D"
 printTemp "7d",  "$PNG_TEMP_W"
+printTemp "30d", "$PNG_TEMP_M"
+printTemp "365d", "$PNG_TEMP_Y"
 
 printCPUTemp "36h", "$PNG_CPU_D"
-printCPUTemp "7d", "$PNG_CPU_W"
+printCPUTemp "7d",  "$PNG_CPU_W"
+printCPUTemp "30d", "$PNG_CPU_M"
+printCPUTemp "365d", "$PNG_CPU_Y"
 
 printHumidity "36h", "$PNG_HUMI_D"
-printHumidity "7d", "$PNG_HUMI_W"
+printHumidity "7d",  "$PNG_HUMI_W"
+printHumidity "30d", "$PNG_HUMI_M"
+printHumidity "365d", "$PNG_HUMI_Y"
 
 printAirPressure "36h", "$PNG_PRES_D"
-printAirPressure "7d", "$PNG_PRES_W"
-
-
-
+printAirPressure "7d",  "$PNG_PRES_W"
+printAirPressure "30d", "$PNG_PRES_M"
+printAirPressure "365d", "$PNG_PRES_Y"
 
 
 
