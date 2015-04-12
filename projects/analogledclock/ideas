@@ -35,6 +35,16 @@ Features:
 
 - day/night modus
 - 1 light as indicator or 1 dark light as inidactor (n-1 burn)
+- use MCP23S17 and MCP23017 in parallel for far more than 128 LEDs
+
+- 12 LEDs for constant hours (on/off switchable)
+- 60 RGB LEDs for hours/mins/secs
+- lights for seconds on/off switchable
+- Color for hours/mins/secs selectable
+- Brightness configurable via PWM (use 1 transistor as switch)
+- Brightness depending on day light (using photocell;
+  http://www.amazon.de/abh%C3%A4ngig-Widerstand-Fotowiderstand-Dependent-GL5528/dp/B009AO35Q8/ref=sr_1_1?ie=UTF8&qid=1428844199&sr=8-1&keywords=photozelle )
+
 
 
 
