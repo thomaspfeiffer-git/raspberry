@@ -37,8 +37,10 @@ all_actors     = [pin_buzzer, \
 
 
 # Sensors ##################
-pin_sensor     = 15
-pin_sensor_bcm = 22
+pin_sensor1     = 15   # Außen #
+pin_sensor1_bcm = 22
+pin_sensor2     = 32   # Innen #
+pin_sensor2_bcm = 12
 
 pin_reed       = 23
 
@@ -304,24 +306,40 @@ def Main():
 
 # Sensor ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       if (command == 'sensor'):
-         i = 1
+         i = 1                                                        # außen #
          while (i <= 5):
             try:
-               print("Try #{}".format(i))
-               t, h = dhtreader.read(22,pin_sensor_bcm)
+               print("Sensor 1, Try #{}".format(i))
+               t1, h1 = dhtreader.read(22,pin_sensor1_bcm)
             except TypeError:
-               t = h = -99.99
+               t1 = h1 = -99.99
                i += 1
                continue
             break
+
+         i = 1                                                        # innen #
+         while (i <= 5):
+            try:
+               print("Sensor 2, Try #{}".format(i))
+               t2, h2 = dhtreader.read(22,pin_sensor2_bcm)
+            except TypeError:
+               t2 = h2 = -99.99
+               i += 1
+               continue
+            break
+
+
+
 
          t_bmp = bmp.readTemperature()
          p_bmp = bmp.readPressure()
 
          CPUTemp = GetCPUTemperature()
          print("CPU Temperatur: {:.2f} °C".format(CPUTemp))
-         print("Temperatur DHT: {:.2f} °C".format(t))
-         print("Luftfeuchtigkeit DHT: {:.2f} %".format(h))
+         print("Temperatur DHT außen: {:.2f} °C".format(t1))
+         print("Luftfeuchtigkeit DHT außen: {:.2f} %".format(h1))
+         print("Temperatur DHT innen: {:.2f} °C".format(t2))
+         print("Luftfeuchtigkeit DHT innen: {:.2f} %".format(h2))
          print("Temperatur BMP: {:.2f} °C".format(t_bmp))
          print("Luftdruck BMP: {:.2f} hPa".format(p_bmp / 100.0))
          continue
