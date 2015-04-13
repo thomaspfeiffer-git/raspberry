@@ -25,12 +25,13 @@ import dhtreader
 ## Sensors ##################
 #+ Outdoor ##################
 # DHT22/AM2302 (humidity, air pressure)
-pin_sensor     = 15
-pin_sensor_bcm = 22
+pin_sensor_outdoor     = 15
+pin_sensor_outdoor_bcm = 22
 
 #+ Indoor ###################
 # DHT22/AM2302 (humidity, air pressure)
-# ...
+pin_sensor_indoor      = 32
+pin_sensor_indoor_bcm  = 12
 
 
 # BMP085 (air pressure)
@@ -120,20 +121,31 @@ def GetCPUTemperature():
 def Main():
    global bmp
 
-   humi_indoor = ERROR
-
    i = 1                         # outdoor #
    while (i <= 5):
       try:
-         Log("Try #{}".format(i))
-         temp_outdoor, humi_outdoor = dhtreader.read(22,pin_sensor_bcm) 
+         Log("Outdoor, try #{}".format(i))
+         temp_outdoor, humi_outdoor = dhtreader.read(22,pin_sensor_outdoor_bcm) 
       except TypeError:
          temp_outdoor = humi_outdoor = ERROR
          i += 1
          continue
       break
 
-   temp_indoor = bmp.readTemperature()  # indoor #
+
+   i = 1                         # indoor #
+   while (i <= 5):
+      try:
+         Log("Indoor, try #{}".format(i))
+         temp_indoor, humi_indoor = dhtreader.read(22,pin_sensor_indoor_bcm) 
+      except TypeError:
+         temp_indoor = humi_indoor = ERROR
+         i += 1
+         continue
+      break
+
+
+#   temp_indoor = bmp.readTemperature()  # indoor #
    pressure    = bmp.readPressure()
 
    temp_cpu    = GetCPUTemperature()
@@ -158,8 +170,10 @@ def Main():
    Log(rrd_data)
 
    Log("CPU Temperatur: {:.2f} °C".format(temp_cpu))
-   Log("Temperatur DHT: {:.2f} °C".format(temp_outdoor))
-   Log("Luftfeuchtigkeit DHT: {:.2f} %".format(humi_outdoor))
+   Log("Temperatur DHT (outdoor): {:.2f} °C".format(temp_outdoor))
+   Log("Luftfeuchtigkeit DHT (outdoor): {:.2f} %".format(humi_outdoor))
+   Log("Temperatur DHT (indoor): {:.2f} °C".format(temp_indoor))
+   Log("Luftfeuchtigkeit DHT (indoor): {:.2f} %".format(humi_indoor))
    Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
    Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
 
