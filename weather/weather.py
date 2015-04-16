@@ -7,7 +7,7 @@
 # weather station                                                             #
 # several sensors (indoor, outdoor)                                           #
 # rrd statistics                                                              #
-# Version 0.2                                                                 #
+# Version 1.0
 # Thomas Pfeiffer                                                             #
 # 2015                                                                        #
 ###############################################################################
@@ -25,13 +25,13 @@ import dhtreader
 ## Sensors ##################
 #+ Outdoor ##################
 # DHT22/AM2302 (humidity, air pressure)
-pin_sensor_outdoor     = 15
-pin_sensor_outdoor_bcm = 22
+pin_sensor_outdoor     = 40
+pin_sensor_outdoor_bcm = 21
 
 #+ Indoor ###################
 # DHT22/AM2302 (humidity, air pressure)
-pin_sensor_indoor      = 32
-pin_sensor_indoor_bcm  = 12
+pin_sensor_indoor      = 38
+pin_sensor_indoor_bcm  = 20
 
 
 # BMP085 (air pressure)
@@ -39,7 +39,7 @@ bmp = 0
 
 
 # Misc for rrdtool
-DATAFILE       = "/schild/weather.rrd"
+DATAFILE       = "/schild/weather/weather.rrd"
 ERROR          = -999.99
 DS_TEMPINDOOR  = "temp_indoor"   # Besser: Hash mit {DS:...; Name: "..."}
 DS_TEMPOUTDOOR = "temp_outdoor"
@@ -103,8 +103,8 @@ def Init():
    global bmp
    Log('Initializing ...')
 
-   dhtreader.init()
-   bmp = BMP085(0x77)
+   dhtreader.init()    
+   bmp = BMP085(0x77) 
 
    Log('Initializing done.')
 
@@ -164,7 +164,7 @@ def Main():
                ":{:.2f}".format(pressure / 100.0) + \
                ":{:.2f}".format(temp_cpu)
 
-   rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data)
+   rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
 
    Log(rrd_template)
    Log(rrd_data)
