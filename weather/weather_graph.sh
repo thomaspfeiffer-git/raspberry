@@ -1,6 +1,6 @@
 #/bin/bash
 
-RRDPATH=/schild/
+RRDPATH=/schild/weather/
 RRD=$RRDPATH/weather.rrd
 
 PNG_TEMP_D=$RRDPATH/weather_temp_d.png
@@ -74,7 +74,11 @@ printCPUTemp ()
     --watermark "$WATERMARK"                             \
     --right-axis 1:0                                     \
     DEF:temp_cpu=$RRD:temp_cpu:AVERAGE                   \
-    LINE1:temp_cpu#FF00FF:"Temperatur Raspberry Pi"      
+    LINE1:temp_cpu#FF00FF:"Temperatur Raspberry Pi"      \
+    GPRINT:temp_cpu:LAST:"\t Aktuell\: %5.2lf %%"        \
+    GPRINT:temp_cpu:AVERAGE:"Mittelwert\: %5.2lf %%"     \
+    GPRINT:temp_cpu:MAX:"Max\: %5.2lf %%"                \
+    GPRINT:temp_cpu:MIN:"Min\: %5.2lf %%\n"     
  }
 
 
