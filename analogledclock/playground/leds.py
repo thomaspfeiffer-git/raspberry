@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import smbus
-import time
+from time import sleep, localtime, strftime
 
 
 IODIRA = 0x00 # Pin direction register
@@ -9,53 +9,118 @@ IODIRB = 0x01 # Pin direction register
 OLATA  = 0x14 # Register for outputs
 OLATB  = 0x15 # Register for outputs
 
-i2c_devices = [0x20, 0x21]
 
 
 i2c = smbus.SMBus(1)
 
 
+tech     = 'tech'
+tech_i2c = 'i2c'
+device   = 'device'
+bank     = 'bank'
+bit      = 'bit'
+
+
+clock_seconds = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
+                 3: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
+                 2: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
+                 1: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
+                 5: {tech: tech_i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
+                 4: {tech: tech_i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
+                 6: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
+                 7: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
+                 8: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
+                 9: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"} }
+
+
+# clock_minutes = ...
+# clock_hours   = ...
+
+bits = {}
 
 
 
-# Init
-# Portexpander #1, Address 0x20
-i2c.write_byte_data(0x20, 0x00, 0x00)
-i2c.write_byte_data(0x20, 0x01, 0b00000000)
+###############################################################################
+# GetBank #####################################################################
+def GetBank(string):
+   if (string == "A"):
+      return OLATA
+   elif (string == "B"):
+      return OLATB
+   else:
+      print "Unknown bank!"
+      # Exception!
+      return 0x14
 
 
-# Init
-# Portexpander #2, Address 0x21
-i2c.write_byte_data(0x21, 0x00, 0b00000000)
-i2c.write_byte_data(0x21, 0x01, 0b00000000)
+
+###############################################################################
+# InitPortExpander ############################################################
+def InitPortExpander():
+   # Portexpander #1, Address 0x20
+   i2c.write_byte_data(0x20, IODIRA, 0b00000000)
+   i2c.write_byte_data(0x20, IODIRB, 0b00000000)
+
+   # Portexpander #2, Address 0x21
+   i2c.write_byte_data(0x21, IODIRA, 0b00000000)
+   i2c.write_byte_data(0x21, IODIRB, 0b00000000)
 
 
+
+###############################################################################
+# InitBits ####################################################################
+def InitBits(pattern):
+   global bits
+
+   bits[tech_i2c,0x20,"A"] = pattern
+   bits[tech_i2c,0x20,"B"] = pattern
+   bits[tech_i2c,0x21,"A"] = pattern
+   bits[tech_i2c,0x21,"B"] = pattern
+
+
+
+###############################################################################
+# WriteBits ###################################################################
+def WriteBits():
+  for k in bits:
+#    print "Tech: ", k[0], "Device: ", k[1], "Bank: ", k[2], "Pattern: ", bits[k]
+
+    if (k[0] == tech_i2c):
+       i2c.write_byte_data(k[1], GetBank(k[2]), bits[k])
+
+
+
+###############################################################################
+# AllOff ######################################################################
 def AllOff():
-   i2c.write_byte_data(0x20, 0x14, 0x00)   # GBAx
-   i2c.write_byte_data(0x20, 0x15, 0x00)   # GBPx
-   i2c.write_byte_data(0x21, 0x14, 0x00)   # GBAx
-   i2c.write_byte_data(0x21, 0x15, 0x00)   # GBPx
+   InitBits(0b00000000)
+   WriteBits()
 
 
-AllOff()
 
-i2c.write_byte_data(0x20, 0x14, 0x80)
-read = i2c.read_byte_data(0x20,012)
-print read
-time.sleep(1)
+###############################################################################
+# Main ########################################################################
+def Main():
+   while(1):
+      h, m, s = strftime("%H:%M:%S", localtime()).split(":")
+      s = int(s) % 10
+      m = int(m)
+      h = int(h) % 12
+      # print s, clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank], clock_seconds[s][bit]
 
-i2c.write_byte_data(0x20, 0x14, 0x40)
-time.sleep(1)
-i2c.write_byte_data(0x20, 0x15, 0x01)
-time.sleep(1)
-i2c.write_byte_data(0x20, 0x15, 0x02)
-time.sleep(1)
-i2c.write_byte_data(0x21, 0x14, 0x80)
-time.sleep(1)
-i2c.write_byte_data(0x21, 0x15, 0x01)
-time.sleep(1)
+      bits[clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank]] = int(clock_seconds[s][bit],2)
+      WriteBits()
+      sleep(1)
+      InitBits(0b00000000)
+      WriteBits()
 
 
-AllOff()
+
+###############################################################################
+###############################################################################
+InitPortExpander()
+InitBits(0b00000000)
+WriteBits()
+Main()
 
 
