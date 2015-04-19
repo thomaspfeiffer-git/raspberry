@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import signal
 import smbus
 import spidev
 from time import sleep, localtime, strftime
@@ -20,10 +21,10 @@ clock_seconds = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}
                  1: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
                  5: {tech: tech_i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
                  4: {tech: tech_i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
-                 6: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
-                 7: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
-                 8: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
-                 9: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"} }
+                 6: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
+                 7: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
+                 8: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00001000"}, \
+                 9: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000100"} }
 
 clock_minutes = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
                  3: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
@@ -31,10 +32,10 @@ clock_minutes = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}
                  1: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
                  5: {tech: tech_i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
                  4: {tech: tech_i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
-                 6: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
-                 7: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
-                 8: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
-                 9: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"} }
+                 6: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000100"}, \
+                 7: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00001000"}, \
+                 8: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00010000"}, \
+                 9: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00100000"} }
 
 # clock_minutes = ...
 # clock_hours   = ...
@@ -52,10 +53,9 @@ OLATB       = 0x15 # Register for outputs
 i2c_devices = (0x20, 0x21)    # Addresses of MCP23017 components
 i2c         = smbus.SMBus(1)
 
-
 # SPI (MCP23S17) ##############################################################
 spi_devices = (0)   ## TODO: define addresses
-spi = spidev.SpiDev()
+spi         = spidev.SpiDev()
 spi.open(0,1)
 
 # http://erik-bartmann.de/component/attachments/download/23.html
@@ -135,6 +135,9 @@ def Exit():
    Cleanup()
    sys.exit()
 
+def _Exit(s,f):
+   print "_Exit"
+   Exit()
 
 
 ###############################################################################
@@ -157,14 +160,21 @@ def Main():
 
 ###############################################################################
 ###############################################################################
+signal.signal(signal.SIGTERM, _Exit)
 try:
    InitPortExpander()
    Main()
 
+except KeyboardInterrupt:
+   Exit()
+
+except SystemExit:                  # Done in signal handler (method _Exit()) #
+   pass
+
 except:
    print(traceback.print_exc())
 
-finally:
-   Exit()
+finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
+   pass
 
 
