@@ -32,6 +32,16 @@ clock_seconds = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}
                  8: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
                  9: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"} }
 
+clock_minutes = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
+                 3: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
+                 2: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
+                 1: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
+                 5: {tech: tech_i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
+                 4: {tech: tech_i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
+                 6: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
+                 7: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
+                 8: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"}, \
+                 9: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000000"} }
 
 # clock_minutes = ...
 # clock_hours   = ...
@@ -104,23 +114,21 @@ def Main():
    while(1):
       h, m, s = strftime("%H:%M:%S", localtime()).split(":")
       s = int(s) % 10
-      m = int(m)
+      m = int(m) % 10
       h = int(h) % 12
       # print s, clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank], clock_seconds[s][bit]
 
-      bits[clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank]] = int(clock_seconds[s][bit],2)
+      AllOff()
+      bits[clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank]]  = int(clock_seconds[s][bit],2)
+      bits[clock_seconds[m][tech], clock_seconds[m][device], clock_seconds[m][bank]] |= int(clock_seconds[m][bit],2)
       WriteBits()
       sleep(1)
-      InitBits(0b00000000)
-      WriteBits()
 
 
 
 ###############################################################################
 ###############################################################################
 InitPortExpander()
-InitBits(0b00000000)
-WriteBits()
 Main()
 
 
