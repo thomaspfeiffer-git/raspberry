@@ -1,21 +1,14 @@
 #!/usr/bin/python
 
 import smbus
+import spidev
 from time import sleep, localtime, strftime
-
-
-IODIRA = 0x00 # Pin direction register
-IODIRB = 0x01 # Pin direction register
-OLATA  = 0x14 # Register for outputs
-OLATB  = 0x15 # Register for outputs
-
-
-
-i2c = smbus.SMBus(1)
-
+import sys
+import traceback
 
 tech     = 'tech'
 tech_i2c = 'i2c'
+tech_spi = 'spi'
 device   = 'device'
 bank     = 'bank'
 bit      = 'bit'
@@ -48,6 +41,25 @@ clock_minutes = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}
 
 bits = {}
 
+###############################################################################
+# Ports of MCP23x17 ###########################################################
+IODIRA      = 0x00 # Pin direction register
+IODIRB      = 0x01 # Pin direction register
+OLATA       = 0x14 # Register for outputs
+OLATB       = 0x15 # Register for outputs
+
+# I2C (MCP23017) ##############################################################
+i2c_devices = (0x20, 0x21)    # Addresses of MCP23017 components
+i2c         = smbus.SMBus(1)
+
+
+# SPI (MCP23S17) ##############################################################
+spi_devices = (0)   ## TODO: define addresses
+spi = spidev.SpiDev()
+spi.open(0,1)
+
+# http://erik-bartmann.de/component/attachments/download/23.html
+# Pi-Book p 460ff.
 
 
 ###############################################################################
@@ -63,17 +75,17 @@ def GetBank(string):
       return 0x14
 
 
-
 ###############################################################################
 # InitPortExpander ############################################################
+# Set port direction to output (0b00000000) ###################################
 def InitPortExpander():
-   # Portexpander #1, Address 0x20
-   i2c.write_byte_data(0x20, IODIRA, 0b00000000)
-   i2c.write_byte_data(0x20, IODIRB, 0b00000000)
+   # I2C ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   for d in i2c_devices:
+      i2c.write_byte_data(d, IODIRA, 0b00000000)
+      i2c.write_byte_data(d, IODIRB, 0b00000000)
 
-   # Portexpander #2, Address 0x21
-   i2c.write_byte_data(0x21, IODIRA, 0b00000000)
-   i2c.write_byte_data(0x21, IODIRB, 0b00000000)
+   # SPI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   # TODO: for d in spi_devices: 
 
 
 
@@ -97,6 +109,7 @@ def WriteBits():
 
     if (k[0] == tech_i2c):
        i2c.write_byte_data(k[1], GetBank(k[2]), bits[k])
+    # TODO: if (k[0] == tech_spi ...
 
 
 
@@ -105,6 +118,22 @@ def WriteBits():
 def AllOff():
    InitBits(0b00000000)
    WriteBits()
+
+
+
+###############################################################################
+# Cleanup #####################################################################
+def Cleanup():
+   AllOff()
+   spi.close()
+
+
+
+###############################################################################
+# Exit ########################################################################
+def Exit():
+   Cleanup()
+   sys.exit()
 
 
 
@@ -128,7 +157,14 @@ def Main():
 
 ###############################################################################
 ###############################################################################
-InitPortExpander()
-Main()
+try:
+   InitPortExpander()
+   Main()
+
+except:
+   print(traceback.print_exc())
+
+finally:
+   Exit()
 
 
