@@ -32,10 +32,10 @@ clock_minutes = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}
                  1: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
                  5: {tech: tech_i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
                  4: {tech: tech_i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
-                 6: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000100"}, \
-                 7: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00001000"}, \
-                 8: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00010000"}, \
-                 9: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00100000"} }
+                 6: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
+                 7: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
+                 8: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
+                 9: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000001"} }
 
 # clock_minutes = ...
 # clock_hours   = ...
@@ -136,7 +136,7 @@ def Exit():
    sys.exit()
 
 def _Exit(s,f):
-   print "_Exit"
+   print "_Exit"   # Wird das wirklich aufgerufen?
    Exit()
 
 
