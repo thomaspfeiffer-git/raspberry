@@ -59,8 +59,8 @@ clock_hours   = {0: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000001"}
                 19: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000011"}, \
                 20: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000101"}, \
                 21: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b11100000"}, \
-                22: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b10100000"}, \
-                23: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b01100000"} }
+                22: {tech: tech_spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
+                23: {tech: tech_spi, device: 0x02, bank: "A", bit: "0b00000001"} }
 
 bits = {}
 
@@ -68,6 +68,8 @@ bits = {}
 # Ports of MCP23x17 ###########################################################
 IODIRA      = 0x00 # Pin direction register
 IODIRB      = 0x01 # Pin direction register
+IOCONA      = 0x0A # MCP23S17 needs hardware addressing explicitly enabled.
+IOCONB      = 0x0B # MCP23S17 needs hardware addressing explicitly enabled.
 OLATA       = 0x14 # Register for outputs
 OLATB       = 0x15 # Register for outputs
 
@@ -76,12 +78,9 @@ i2c_devices = (0x20, 0x21)    # Addresses of MCP23017 components
 i2c         = smbus.SMBus(1)
 
 # SPI (MCP23S17) ##############################################################
-spi_devices          = (0x00)
 SPI_SLAVE_ADDR_BASE  = 0x40
-SPI_SLAVE_WRITE      = 0x00
+spi_devices          = (0x00, 0x02)
 
-ID = 0
-Slave_Addr = SPI_SLAVE_ADDR_BASE | (ID << 1)
 SPI_SCLK = 23
 SPI_MOSI = 19
 SPI_MISO = 21
@@ -111,8 +110,7 @@ def sendSPI(device, addr, data):
     # CS aktive (LOW-Aktiv)
     io.output(SPI_CS, io.LOW)
 
-    # sendValue(device|SPI_SLAVE_WRITE) # TODO: implement device
-    sendValue(Slave_Addr|SPI_SLAVE_WRITE) # OP-Code senden
+    sendValue(device|SPI_SLAVE_ADDR_BASE) 
     sendValue(addr)                            # Adresse senden
     sendValue(data)                            # Daten senden
 
@@ -143,13 +141,20 @@ def InitPortExpander():
    # Pegel vorbereiten
    io.output(SPI_CS,   io.HIGH)
    io.output(SPI_SCLK, io.LOW)
+   
+   # MCP23S17 needs hardware addressing explicitly enabled.
+   sendSPI(0x00, IOCONA, 0b00001000)
+   sendSPI(0x00, IOCONB, 0b00001000)
 
    # TODO:
    # for d in spi_devices:
-   sendSPI(0x00, IODIRA,0x00)
-   sendSPI(0x00, IODIRB,0x00)
+   # set port direction to output
+   sendSPI(0x00, IODIRA, 0x00)
+   sendSPI(0x00, IODIRB, 0x00)
+   sendSPI(0x02, IODIRA, 0x00)
+   sendSPI(0x02, IODIRB, 0x00)
 
-
+    
 
 ###############################################################################
 # InitBits ####################################################################
@@ -162,6 +167,8 @@ def InitBits(pattern):
    bits[tech_i2c,0x21,"B"] = pattern
    bits[tech_spi,0x00,"A"] = pattern
    bits[tech_spi,0x00,"B"] = pattern
+   bits[tech_spi,0x02,"A"] = pattern
+   bits[tech_spi,0x02,"B"] = pattern
 
 
 
