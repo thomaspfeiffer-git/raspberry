@@ -82,7 +82,6 @@ SPI_SLAVE_WRITE      = 0x00
 
 ID = 0
 Slave_Addr = SPI_SLAVE_ADDR_BASE | (ID << 1)
-print("Slave_Addr: ", hex(Slave_Addr))
 SPI_SCLK = 23
 SPI_MOSI = 19
 SPI_MISO = 21
@@ -231,13 +230,15 @@ def Main():
       s = int(s) % 10
       m = int(m) % 10
       h = int(h)
-      print s, clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank], clock_seconds[s][bit]
-      print m, clock_minutes[m][tech], clock_minutes[m][device], clock_minutes[m][bank], clock_minutes[m][bit]
-      print h, clock_hours[h][tech], clock_hours[h][device], clock_hours[h][bank], clock_hours[h][bit]
+      # print s, clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank], clock_seconds[s][bit]
+      # print m, clock_minutes[m][tech], clock_minutes[m][device], clock_minutes[m][bank], clock_minutes[m][bit]
+      # print h, clock_hours[h][tech], clock_hours[h][device], clock_hours[h][bank], clock_hours[h][bit]
 
-      # AllOff()
+      InitBits(0b00000000)
+      # In this project, seconds and minutes share the same LEDs. Therefore
+      # i've to |= the bit array.
       bits[clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank]]  = int(clock_seconds[s][bit],2)
-      bits[clock_minutes[m][tech], clock_minutes[m][device], clock_minutes[m][bank]] = int(clock_minutes[m][bit],2)
+      bits[clock_seconds[m][tech], clock_seconds[m][device], clock_seconds[m][bank]] |= int(clock_seconds[m][bit],2)
       bits[clock_hours[h][tech], clock_hours[h][device], clock_hours[h][bank]] = int(clock_hours[h][bit],2)
       WriteBits()
       sleep(1)
