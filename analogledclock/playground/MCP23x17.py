@@ -1,0 +1,11 @@
+# Ports of MCP23x17 ###########################################################
+class MCP23x17:
+   IODIRA      = 0x00 # Pin direction register
+   IODIRB      = 0x01 # Pin direction register
+   IOCONA      = 0x0A # MCP23S17 needs hardware addressing explicitly enabled.
+   IOCONB      = 0x0B # MCP23S17 needs hardware addressing explicitly enabled.
+   OLATA       = 0x14 # Register for outputs
+   OLATB       = 0x15 # Register for outputs
+
+
+
