@@ -19,62 +19,63 @@ bank     = 'bank'
 bit      = 'bit'
 
 
-clock_seconds = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
-                 3: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
-                 2: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
-                 1: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
-                 5: {tech: tech_i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
-                 4: {tech: tech_i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
-                 6: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
-                 7: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
-                 8: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00001000"}, \
-                 9: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000100"} }
-
-clock_minutes = {0: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
-                 3: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
-                 2: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
-                 1: {tech: tech_i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
-                 5: {tech: tech_i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
-                 4: {tech: tech_i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
-                 6: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
-                 7: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
-                 8: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
-                 9: {tech: tech_i2c, device: 0x20, bank: "A", bit: "0b00000001"} }
-
-clock_hours   = {0: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
-                 1: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
-                 2: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
-                 3: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
-                 4: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
-                 5: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
-                 6: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000011"}, \
-                 7: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000101"}, \
-                 8: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000110"}, \
-                 9: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b11000000"}, \
-                10: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b10100000"}, \
-                11: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b01100000"}, \
-                12: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
-                13: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
-                14: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
-                15: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
-                16: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
-                17: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
-                18: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000111"}, \
-                19: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000011"}, \
-                20: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000101"}, \
-                21: {tech: tech_spi, device: 0x00, bank: "B", bit: "0b11100000"}, \
-                22: {tech: tech_spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
-                23: {tech: tech_spi, device: 0x02, bank: "A", bit: "0b00000001"} }
-
-bits = {}
-
-# I2C (MCP23017) ##############################################################
+# I2C (MCP23017)
 i2c_devices = (0x20, 0x21)    # Addresses of MCP23017 components
 i2c         = MCP23017(i2c_devices)
 
-# SPI (MCP23S17) ##############################################################
+# SPI (MCP23S17) 
 spi_devices = (0x00, 0x02)    # Addresses of MCP23S17 components
 spi         = MCP23S17(spi_devices)
+
+
+clock_seconds = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
+                 3: {tech: i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
+                 2: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
+                 1: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
+                 5: {tech: i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
+                 4: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
+                 6: {tech: i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
+                 7: {tech: i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
+                 8: {tech: i2c, device: 0x20, bank: "A", bit: "0b00001000"}, \
+                 9: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"} }
+
+clock_minutes = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
+                 3: {tech: i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
+                 2: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
+                 1: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
+                 5: {tech: i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
+                 4: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
+                 6: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
+                 7: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
+                 8: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
+                 9: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"} }
+
+clock_hours   = {0: {tech: spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
+                 1: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
+                 2: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
+                 3: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
+                 4: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
+                 5: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
+                 6: {tech: spi, device: 0x00, bank: "A", bit: "0b00000011"}, \
+                 7: {tech: spi, device: 0x00, bank: "A", bit: "0b00000101"}, \
+                 8: {tech: spi, device: 0x00, bank: "A", bit: "0b00000110"}, \
+                 9: {tech: spi, device: 0x00, bank: "B", bit: "0b11000000"}, \
+                10: {tech: spi, device: 0x00, bank: "B", bit: "0b10100000"}, \
+                11: {tech: spi, device: 0x00, bank: "B", bit: "0b01100000"}, \
+                12: {tech: spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
+                13: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
+                14: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
+                15: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
+                16: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
+                17: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
+                18: {tech: spi, device: 0x00, bank: "A", bit: "0b00000111"}, \
+                19: {tech: spi, device: 0x00, bank: "A", bit: "0b00000011"}, \
+                20: {tech: spi, device: 0x00, bank: "A", bit: "0b00000101"}, \
+                21: {tech: spi, device: 0x00, bank: "B", bit: "0b11100000"}, \
+                22: {tech: spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
+                23: {tech: spi, device: 0x02, bank: "A", bit: "0b00000001"} }
+
+bits = {}
 
 
 
@@ -84,12 +85,12 @@ def InitBits(pattern):
    global bits
 
    for d in i2c_devices:
-      bits[tech_i2c,d,"A"] = pattern
-      bits[tech_i2c,d,"B"] = pattern
+      bits[i2c,d,"A"] = pattern
+      bits[i2c,d,"B"] = pattern
 
    for d in spi_devices:
-      bits[tech_spi,d,"A"] = pattern
-      bits[tech_spi,d,"B"] = pattern
+      bits[spi,d,"A"] = pattern
+      bits[spi,d,"B"] = pattern
 
 
 
@@ -111,16 +112,8 @@ def GetBank(string):
 # WriteBits ###################################################################
 def WriteBits():
   for k in bits:
-#    print "Tech: ", k[0], "Device: ", k[1], "Bank: ", k[2], "Pattern: ", bits[k]
-
-    if (k[0] == tech_i2c):
-       i2c.send(k[1], GetBank(k[2]), bits[k])
-    elif (k[0] == tech_spi):
-       spi.send(k[1], GetBank(k[2]), bits[k]) 
-    else:
-       print "Unknown tech!"
-       # TODO: Exception!
-
+     # print "Tech: ", k[0], "Device: ", k[1], "Bank: ", k[2], "Pattern: ", bits[k]
+     k[0].send(k[1], GetBank(k[2]), bits[k])
 
 
 ###############################################################################
