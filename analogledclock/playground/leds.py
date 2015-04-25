@@ -1,8 +1,6 @@
 #!/usr/bin/python
 
-import RPi.GPIO as io
 import signal
-import smbus
 from time import sleep, localtime, strftime
 import sys
 import traceback
