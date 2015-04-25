@@ -7,6 +7,9 @@ from time import sleep, localtime, strftime
 import sys
 import traceback
 
+
+
+
 class MCP23x17:
    IODIRA      = 0x00 # Pin direction register
    IODIRB      = 0x01 # Pin direction register
@@ -14,6 +17,84 @@ class MCP23x17:
    IOCONB      = 0x0B # MCP23S17 needs hardware addressing explicitly enabled.
    OLATA       = 0x14 # Register for outputs
    OLATB       = 0x15 # Register for outputs
+
+
+class MCP23017:
+   def __init__ (self, devices):
+      self.__bus = smbus.SMBus(1)
+      self.devices = devices
+
+      # Set port direction to output (0b00000000) 
+      for d in self.devices:
+         self.send(d, MCP23x17.IODIRA, 0b00000000)
+         self.send(d, MCP23x17.IODIRB, 0b00000000)
+
+   def send(self, device, bank, pattern):
+      self.__bus.write_byte_data(device,bank,pattern)
+
+
+
+class MCP23S17:
+   SPI_SLAVE_ADDR_BASE  = 0x40
+
+   SPI_SCLK = 23
+   SPI_MOSI = 19
+   SPI_MISO = 21
+   SPI_CS = 26
+
+   def __sendValue(self, value):
+     v = value
+
+     for i in range(8):
+        if (v & 0x80):
+             io.output(self.SPI_MOSI, io.HIGH)
+        else:
+             io.output(self.SPI_MOSI, io.LOW)
+
+         # Negative Flanke des Clocksignals generieren
+        io.output(self.SPI_SCLK, io.HIGH)
+        io.output(self.SPI_SCLK, io.LOW)
+        v <<= 1 # Bitfolge eine Position nach links schieben
+
+
+   def send(self, device, addr, data):   # TODO: rename "addr" to "bank"
+      # CS aktive (LOW-Aktiv)
+      io.output(self.SPI_CS, io.LOW)
+
+      self.__sendValue(device|self.SPI_SLAVE_ADDR_BASE) 
+      self.__sendValue(addr)
+      self.__sendValue(data) 
+
+      # CS nicht aktiv
+      io.output(self.SPI_CS, io.HIGH)
+
+
+   def __init__ (self, devices):
+      self.devices = devices
+
+      io.setmode(io.BOARD)
+      io.setwarnings(False)
+
+      # Pin-Programmierung
+      io.setup(self.SPI_SCLK, io.OUT)
+      io.setup(self.SPI_MOSI, io.OUT)
+      io.setup(self.SPI_MISO, io.IN)
+      io.setup(self.SPI_CS,   io.OUT)
+
+      # Pegel vorbereiten
+      io.output(self.SPI_CS,   io.HIGH)
+      io.output(self.SPI_SCLK, io.LOW)
+
+      # MCP23S17 needs hardware addressing explicitly enabled.
+      self.send(0x00, MCP23x17.IOCONA, 0b00001000) # Set HAEN to 1.
+      self.send(0x00, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.
+
+      # Set port direction to output (0b00000000) 
+      for d in self.devices:
+         self.send(d, MCP23x17.IODIRA, 0x00)
+         self.send(d, MCP23x17.IODIRB, 0x00)
+ 
+
 
 
 tech     = 'tech'
@@ -75,82 +156,13 @@ bits = {}
 
 # I2C (MCP23017) ##############################################################
 i2c_devices = (0x20, 0x21)    # Addresses of MCP23017 components
-i2c         = smbus.SMBus(1)
+i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) ##############################################################
-SPI_SLAVE_ADDR_BASE  = 0x40
-spi_devices          = (0x00, 0x02)
-
-SPI_SCLK = 23
-SPI_MOSI = 19
-SPI_MISO = 21
-SPI_CS = 26
+spi_devices = (0x00, 0x02)    # Addresses of MCP23S17 components
+spi         = MCP23S17(spi_devices)
 
 
-
-###############################################################################
-def sendValue(value):
-    v = value
-
-    for i in range(8):
-       if (v & 0x80):
-            io.output(SPI_MOSI, io.HIGH)
-       else:
-            io.output(SPI_MOSI, io.LOW)
-
-        # Negative Flanke des Clocksignals generieren
-       io.output(SPI_SCLK, io.HIGH)
-       io.output(SPI_SCLK, io.LOW)
-       v <<= 1 # Bitfolge eine Position nach links schieben
-
-
-
-###############################################################################
-def sendSPI(device, addr, data):
-    # CS aktive (LOW-Aktiv)
-    io.output(SPI_CS, io.LOW)
-
-    sendValue(device|SPI_SLAVE_ADDR_BASE) 
-    sendValue(addr)                            # Adresse senden
-    sendValue(data)                            # Daten senden
-
-    # CS nicht aktiv
-    io.output(SPI_CS, io.HIGH)
-
-
-
-###############################################################################
-# InitPortExpander ############################################################
-def InitPortExpander():
-   # I2C ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   # Set port direction to output (0b00000000) 
-   for d in i2c_devices:
-      i2c.write_byte_data(d, MCP23x17.IODIRA, 0b00000000)
-      i2c.write_byte_data(d, MCP23x17.IODIRB, 0b00000000)
-
-   # SPI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   io.setmode(io.BOARD)
-   io.setwarnings(False)
-
-   # Pin-Programmierung
-   io.setup(SPI_SCLK, io.OUT)
-   io.setup(SPI_MOSI, io.OUT)
-   io.setup(SPI_MISO, io.IN)
-   io.setup(SPI_CS,   io.OUT)
-
-   # Pegel vorbereiten
-   io.output(SPI_CS,   io.HIGH)
-   io.output(SPI_SCLK, io.LOW)
-   
-   # MCP23S17 needs hardware addressing explicitly enabled.
-   sendSPI(0x00, MCP23x17.IOCONA, 0b00001000) # Set HAEN to 1.
-   sendSPI(0x00, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.
-
-   # Set port direction to output (0b00000000) 
-   for d in spi_devices:
-      sendSPI(d, MCP23x17.IODIRA, 0x00)
-      sendSPI(d, MCP23x17.IODIRB, 0x00)
-    
 
 ###############################################################################
 # InitBits ####################################################################
@@ -162,8 +174,8 @@ def InitBits(pattern):
       bits[tech_i2c,d,"B"] = pattern
 
    for d in spi_devices:
-      bits[tech_spi,0x00,"A"] = pattern
-      bits[tech_spi,0x00,"B"] = pattern
+      bits[tech_spi,d,"A"] = pattern
+      bits[tech_spi,d,"B"] = pattern
 
 
 
@@ -188,9 +200,9 @@ def WriteBits():
 #    print "Tech: ", k[0], "Device: ", k[1], "Bank: ", k[2], "Pattern: ", bits[k]
 
     if (k[0] == tech_i2c):
-       i2c.write_byte_data(k[1], GetBank(k[2]), bits[k])
+       i2c.send(k[1], GetBank(k[2]), bits[k])
     elif (k[0] == tech_spi):
-       sendSPI(k[1], GetBank(k[2]), bits[k]) 
+       spi.send(k[1], GetBank(k[2]), bits[k]) 
     else:
        print "Unknown tech!"
        # TODO: Exception!
@@ -251,7 +263,6 @@ def Main():
 ###############################################################################
 signal.signal(signal.SIGTERM, _Exit)
 try:
-   InitPortExpander()
    Main()
 
 except KeyboardInterrupt:
