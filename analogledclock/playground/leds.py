@@ -8,93 +8,9 @@ import sys
 import traceback
 
 
-
-
-class MCP23x17:
-   IODIRA      = 0x00 # Pin direction register
-   IODIRB      = 0x01 # Pin direction register
-   IOCONA      = 0x0A # MCP23S17 needs hardware addressing explicitly enabled.
-   IOCONB      = 0x0B # MCP23S17 needs hardware addressing explicitly enabled.
-   OLATA       = 0x14 # Register for outputs
-   OLATB       = 0x15 # Register for outputs
-
-
-class MCP23017:
-   def __init__ (self, devices):
-      self.__bus = smbus.SMBus(1)
-      self.devices = devices
-
-      # Set port direction to output (0b00000000) 
-      for d in self.devices:
-         self.send(d, MCP23x17.IODIRA, 0b00000000)
-         self.send(d, MCP23x17.IODIRB, 0b00000000)
-
-   def send(self, device, bank, pattern):
-      self.__bus.write_byte_data(device,bank,pattern)
-
-
-
-class MCP23S17:
-   SPI_SLAVE_ADDR_BASE  = 0x40
-
-   SPI_SCLK = 23
-   SPI_MOSI = 19
-   SPI_MISO = 21
-   SPI_CS = 26
-
-   def __sendValue(self, value):
-     v = value
-
-     for i in range(8):
-        if (v & 0x80):
-             io.output(self.SPI_MOSI, io.HIGH)
-        else:
-             io.output(self.SPI_MOSI, io.LOW)
-
-         # Negative Flanke des Clocksignals generieren
-        io.output(self.SPI_SCLK, io.HIGH)
-        io.output(self.SPI_SCLK, io.LOW)
-        v <<= 1 # Bitfolge eine Position nach links schieben
-
-
-   def send(self, device, addr, data):   # TODO: rename "addr" to "bank"
-      # CS aktive (LOW-Aktiv)
-      io.output(self.SPI_CS, io.LOW)
-
-      self.__sendValue(device|self.SPI_SLAVE_ADDR_BASE) 
-      self.__sendValue(addr)
-      self.__sendValue(data) 
-
-      # CS nicht aktiv
-      io.output(self.SPI_CS, io.HIGH)
-
-
-   def __init__ (self, devices):
-      self.devices = devices
-
-      io.setmode(io.BOARD)
-      io.setwarnings(False)
-
-      # Pin-Programmierung
-      io.setup(self.SPI_SCLK, io.OUT)
-      io.setup(self.SPI_MOSI, io.OUT)
-      io.setup(self.SPI_MISO, io.IN)
-      io.setup(self.SPI_CS,   io.OUT)
-
-      # Pegel vorbereiten
-      io.output(self.SPI_CS,   io.HIGH)
-      io.output(self.SPI_SCLK, io.LOW)
-
-      # MCP23S17 needs hardware addressing explicitly enabled.
-      self.send(0x00, MCP23x17.IOCONA, 0b00001000) # Set HAEN to 1.
-      self.send(0x00, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.
-
-      # Set port direction to output (0b00000000) 
-      for d in self.devices:
-         self.send(d, MCP23x17.IODIRA, 0x00)
-         self.send(d, MCP23x17.IODIRB, 0x00)
- 
-
+from MCP23x17 import MCP23x17
+from MCP23017 import MCP23017
+from MCP23S17 import MCP23S17
 
 
 tech     = 'tech'
