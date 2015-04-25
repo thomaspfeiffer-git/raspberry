@@ -1,3 +1,6 @@
+import smbus
+from MCP23x17 import MCP23x17
+
 class MCP23017:
    def __init__ (self, devices):
       self.__bus = smbus.SMBus(1)

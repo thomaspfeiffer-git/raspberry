@@ -1,3 +1,6 @@
+import RPi.GPIO as io
+from MCP23x17 import MCP23x17
+
 class MCP23S17:
    SPI_SLAVE_ADDR_BASE  = 0x40
 
@@ -35,7 +38,7 @@ class MCP23S17:
 
 
 
-  def __init__ (self, devices):
+   def __init__ (self, devices):
       self.devices = devices
 
       io.setmode(io.BOARD)
