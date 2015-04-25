@@ -7,6 +7,15 @@ from time import sleep, localtime, strftime
 import sys
 import traceback
 
+class MCP23x17:
+   IODIRA      = 0x00 # Pin direction register
+   IODIRB      = 0x01 # Pin direction register
+   IOCONA      = 0x0A # MCP23S17 needs hardware addressing explicitly enabled.
+   IOCONB      = 0x0B # MCP23S17 needs hardware addressing explicitly enabled.
+   OLATA       = 0x14 # Register for outputs
+   OLATB       = 0x15 # Register for outputs
+
+
 tech     = 'tech'
 tech_i2c = 'i2c'
 tech_spi = 'spi'
@@ -64,15 +73,6 @@ clock_hours   = {0: {tech: tech_spi, device: 0x00, bank: "A", bit: "0b00000001"}
 
 bits = {}
 
-###############################################################################
-# Ports of MCP23x17 ###########################################################
-IODIRA      = 0x00 # Pin direction register
-IODIRB      = 0x01 # Pin direction register
-IOCONA      = 0x0A # MCP23S17 needs hardware addressing explicitly enabled.
-IOCONB      = 0x0B # MCP23S17 needs hardware addressing explicitly enabled.
-OLATA       = 0x14 # Register for outputs
-OLATB       = 0x15 # Register for outputs
-
 # I2C (MCP23017) ##############################################################
 i2c_devices = (0x20, 0x21)    # Addresses of MCP23017 components
 i2c         = smbus.SMBus(1)
@@ -121,12 +121,12 @@ def sendSPI(device, addr, data):
 
 ###############################################################################
 # InitPortExpander ############################################################
-# Set port direction to output (0b00000000) ###################################
 def InitPortExpander():
    # I2C ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   # Set port direction to output (0b00000000) 
    for d in i2c_devices:
-      i2c.write_byte_data(d, IODIRA, 0b00000000)
-      i2c.write_byte_data(d, IODIRB, 0b00000000)
+      i2c.write_byte_data(d, MCP23x17.IODIRA, 0b00000000)
+      i2c.write_byte_data(d, MCP23x17.IODIRB, 0b00000000)
 
    # SPI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    io.setmode(io.BOARD)
@@ -143,17 +143,13 @@ def InitPortExpander():
    io.output(SPI_SCLK, io.LOW)
    
    # MCP23S17 needs hardware addressing explicitly enabled.
-   sendSPI(0x00, IOCONA, 0b00001000)
-   sendSPI(0x00, IOCONB, 0b00001000)
+   sendSPI(0x00, MCP23x17.IOCONA, 0b00001000) # Set HAEN to 1.
+   sendSPI(0x00, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.
 
-   # TODO:
-   # for d in spi_devices:
-   # set port direction to output
-   sendSPI(0x00, IODIRA, 0x00)
-   sendSPI(0x00, IODIRB, 0x00)
-   sendSPI(0x02, IODIRA, 0x00)
-   sendSPI(0x02, IODIRB, 0x00)
-
+   # Set port direction to output (0b00000000) 
+   for d in spi_devices:
+      sendSPI(d, MCP23x17.IODIRA, 0x00)
+      sendSPI(d, MCP23x17.IODIRB, 0x00)
     
 
 ###############################################################################
@@ -161,14 +157,13 @@ def InitPortExpander():
 def InitBits(pattern):
    global bits
 
-   bits[tech_i2c,0x20,"A"] = pattern   # TODO: for ...
-   bits[tech_i2c,0x20,"B"] = pattern
-   bits[tech_i2c,0x21,"A"] = pattern
-   bits[tech_i2c,0x21,"B"] = pattern
-   bits[tech_spi,0x00,"A"] = pattern
-   bits[tech_spi,0x00,"B"] = pattern
-   bits[tech_spi,0x02,"A"] = pattern
-   bits[tech_spi,0x02,"B"] = pattern
+   for d in i2c_devices:
+      bits[tech_i2c,d,"A"] = pattern
+      bits[tech_i2c,d,"B"] = pattern
+
+   for d in spi_devices:
+      bits[tech_spi,0x00,"A"] = pattern
+      bits[tech_spi,0x00,"B"] = pattern
 
 
 
@@ -176,13 +171,13 @@ def InitBits(pattern):
 # GetBank #####################################################################
 def GetBank(string):
    if (string == "A"):
-      return OLATA
+      return MCP23x17.OLATA
    elif (string == "B"):
-      return OLATB
+      return MCP23x17.OLATB
    else:
       print "Unknown bank!"
       # TODO: Exception!
-      return OLATA
+      return MCP23x17.OLATA
 
 
 
@@ -199,7 +194,6 @@ def WriteBits():
     else:
        print "Unknown tech!"
        # TODO: Exception!
-       return OLATA
 
 
 
@@ -222,6 +216,7 @@ def Cleanup():
 # Exit ########################################################################
 def Exit():
    Cleanup()
+   print "Exit"
    sys.exit()
 
 def _Exit(s,f):
