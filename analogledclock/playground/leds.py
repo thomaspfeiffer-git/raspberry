@@ -135,6 +135,7 @@ def Cleanup():
 # Exit ########################################################################
 def Exit():
    Cleanup()
+   # TODO: GPIO.cleanup()
    print "Exit"
    sys.exit()
 
