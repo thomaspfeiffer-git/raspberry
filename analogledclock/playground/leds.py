@@ -4,11 +4,13 @@ import signal
 from time import sleep, localtime, strftime
 import sys
 import traceback
+import wiringpi2 as wipi
 
 
 from MCP23x17 import MCP23x17
 from MCP23017 import MCP23017
 from MCP23S17 import MCP23S17
+from MCP3008  import MCP3008
 
 
 tech     = 'tech'
@@ -26,6 +28,9 @@ i2c         = MCP23017(i2c_devices)
 # SPI (MCP23S17) 
 spi_devices = (0x00, 0x02)    # Addresses of MCP23S17 components
 spi         = MCP23S17(spi_devices)
+
+# SPI (MCP3008)
+adc = MCP3008(0)
 
 
 clock_seconds = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
@@ -148,6 +153,17 @@ def _Exit(s,f):
 # Main ########################################################################
 def Main():
    while(1):
+      darkness = adc.read()
+      if (darkness < 512):
+         darkness /= 1.5
+#      else:
+#         darkness *=1.15
+      if (darkness >= 1023):
+         darkness = 1023 
+      darkness = int(darkness)
+      print "Dunkelheit: ", darkness
+      wipi.pwmWrite(12,1024-darkness)
+
       h, m, s = strftime("%H:%M:%S", localtime()).split(":")
       s = int(s) % 10
       m = int(m) % 10
@@ -170,6 +186,9 @@ def Main():
 ###############################################################################
 ###############################################################################
 signal.signal(signal.SIGTERM, _Exit)
+wipi.wiringPiSetupPhys()
+wipi.pinMode(12,2)
+
 try:
    Main()
 
