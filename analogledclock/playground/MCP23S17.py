@@ -1,9 +1,15 @@
+###############################################################################################
+# MCP23017                                                                                    #
+# Communication with MCP23S17                                                                 #
+# Taken from http://erik-bartmann.de/                                                         #
+# (c) https://github.com/thomaspfeiffer-git May 2015                                          #
+###############################################################################################
+
 import RPi.GPIO as io
 from MCP23x17 import MCP23x17
 from SPI_const import SPI_const
 
 
-# Taken from http://erik-bartmann.de/
 
 class MCP23S17:
    SPI_SLAVE_ADDR_BASE  = 0x40
@@ -61,4 +67,7 @@ class MCP23S17:
       for d in self.devices:
          self.send(d, MCP23x17.IODIRA, 0x00)
          self.send(d, MCP23x17.IODIRB, 0x00)
+
+
+### eof ###
 
