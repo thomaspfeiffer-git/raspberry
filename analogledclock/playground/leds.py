@@ -28,7 +28,7 @@ i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) 
 spi_devices = (0x00, 0x02)    # Addresses of MCP23S17 components
-spi         = MCP23S17(spi_devices)
+spi         = MCP23S17(SPI_const.CS1,spi_devices)
 
 # SPI (MCP3008)
 adc = MCP3008(SPI_const.CS0,0)
