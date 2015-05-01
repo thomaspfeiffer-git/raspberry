@@ -1,4 +1,10 @@
-# Ports of MCP23x17 ###########################################################
+###############################################################################################
+# MCP23x17                                                                                    #
+# PINs for MCP23x17 components                                                                #
+# Use with io.setmode(io.BOARD)                                                               #
+# (c) https://github.com/thomaspfeiffer-git May 2015                                          #
+###############################################################################################
+
 class MCP23x17:
    IODIRA      = 0x00 # Pin direction register
    IODIRB      = 0x01 # Pin direction register
@@ -8,4 +14,5 @@ class MCP23x17:
    OLATB       = 0x15 # Register for outputs
 
 
+### eof ###
 
