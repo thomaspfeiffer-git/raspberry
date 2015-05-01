@@ -7,6 +7,7 @@ import traceback
 import wiringpi2 as wipi
 
 
+from SPI_const import SPI_const
 from MCP23x17 import MCP23x17
 from MCP23017 import MCP23017
 from MCP23S17 import MCP23S17
@@ -30,7 +31,11 @@ spi_devices = (0x00, 0x02)    # Addresses of MCP23S17 components
 spi         = MCP23S17(spi_devices)
 
 # SPI (MCP3008)
-adc = MCP3008(0)
+adc = MCP3008(SPI_const.CS0,0)
+
+# PWM (Wiring PI)
+wipi.wiringPiSetupPhys()
+wipi.pinMode(12,2)
 
 
 clock_seconds = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
@@ -161,7 +166,7 @@ def Main():
       if (darkness >= 1023):
          darkness = 1023 
       darkness = int(darkness)
-      print "Dunkelheit: ", darkness
+#      print "Darkness: ", darkness
       wipi.pwmWrite(12,1024-darkness)
 
       h, m, s = strftime("%H:%M:%S", localtime()).split(":")
@@ -186,8 +191,6 @@ def Main():
 ###############################################################################
 ###############################################################################
 signal.signal(signal.SIGTERM, _Exit)
-wipi.wiringPiSetupPhys()
-wipi.pinMode(12,2)
 
 try:
    Main()
