@@ -13,11 +13,14 @@ from MCP3008   import MCP3008
 
 
 class Lightness (threading.Thread):
+   __target = 1023
+   __actual = 1023
+
    def __init__(self):
       threading.Thread.__init__(self)
 
       # SPI (MCP3008)
-      self.adc = MCP3008(SPI_const.CS0,0)
+      self.__adc = MCP3008(SPI_const.CS0,0)
 
       # Hardware PWM
       wipi.wiringPiSetupPhys()
@@ -28,16 +31,17 @@ class Lightness (threading.Thread):
 
    def run(self):
       while (self.running):
-         d = darkness = self.adc.read()
-         if (darkness < 512):
-            darkness /= 1.5
-#         else:
-#            darkness *=1.15
-         if (darkness >= 1023):
-            darkness = 1023
-         darkness = int(darkness)
-         wipi.pwmWrite(12,1024-darkness)
-         print("Darkness: {}/{}".format(d, darkness))
+         self.__actual = self.__adc.read()    # TODO: setter/getter
+         if (self.__actual >= 1023):
+            self.__actual = 1023
+
+         if (self.__actual > self.__target):
+            self.__target += 1
+         elif (self.__actual < self.__target):
+            self.__target -= 1
+
+         wipi.pwmWrite(12,1024-self.__target)
+         # print("Darkness: {}/{}".format(self.__actual, self.__target))
          time.sleep(0.1)
 
 
