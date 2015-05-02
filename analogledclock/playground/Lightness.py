@@ -13,9 +13,6 @@ from MCP3008   import MCP3008
 
 
 class Lightness (threading.Thread):
-   __target = 1023
-   __actual = 1023
-
    def __init__(self):
       threading.Thread.__init__(self)
 
@@ -29,19 +26,49 @@ class Lightness (threading.Thread):
       self.running = True
 
 
+   def __boundaries(value):
+      if (value >= 1023):
+         return 1023
+      elif (value <= 0):
+         return 0
+      else:
+         return value
+
+
+   @property
+   def actual(self):
+      return self.__actual
+
+   @actual.setter
+   def actual(self, value):
+      __actual == __boundaries(value)
+
+
+   @property
+   def target(self):
+      return self.__target
+
+   @target.setter
+   def setter(self,value):      
+      __target = __boundaries(value)
+
+
    def run(self):
+      target = 1024
       while (self.running):
-         self.__actual = self.__adc.read()    # TODO: setter/getter
-         if (self.__actual >= 1023):
-            self.__actual = 1023
+         actual = self.__adc.read() 
 
-         if (self.__actual > self.__target):
-            self.__target += 1
-         elif (self.__actual < self.__target):
-            self.__target -= 1
+         if (actual > target+10):
+            target += 10
+         elif (actual < target-10):
+            target -= 10
+         elif (actual > target):
+            target += 1
+         elif (actual < target):
+            target -= 1
 
-         wipi.pwmWrite(12,1024-self.__target)
-         # print("Darkness: {}/{}".format(self.__actual, self.__target))
+         wipi.pwmWrite(12,1024-target)
+         print("Lightness: {}/{}".format(actual,target))
          time.sleep(0.1)
 
 
@@ -49,3 +76,4 @@ class Lightness (threading.Thread):
       self.running = False
 
 ### eof ###
+
