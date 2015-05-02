@@ -1,15 +1,15 @@
+###############################################################################################
+# Lightness.py                                                                                #
+# Threaded class for control of lightness of LEDs                                             #
+# (c) https://github.com/thomaspfeiffer-git May 2015                                          #
+###############################################################################################
 
-
-
-
-
-
-from time import sleep, localtime, strftime
+import time
 import threading
 import wiringpi2 as wipi
 
 from SPI_const import SPI_const
-from MCP3008  import MCP3008
+from MCP3008   import MCP3008
 
 
 class Lightness (threading.Thread):
@@ -22,7 +22,9 @@ class Lightness (threading.Thread):
       # Hardware PWM
       wipi.wiringPiSetupPhys()
       wipi.pinMode(12,2)
+
       self.running = True
+
 
    def run(self):
       while (self.running):
@@ -36,7 +38,8 @@ class Lightness (threading.Thread):
          darkness = int(darkness)
          wipi.pwmWrite(12,1024-darkness)
          print("Darkness: {}/{}".format(d, darkness))
-         sleep(0.1)
+         time.sleep(0.1)
+
 
    def stop(self):
       self.running = False
