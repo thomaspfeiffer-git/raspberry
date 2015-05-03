@@ -1,9 +1,13 @@
 #!/usr/bin/python
+###############################################################################################
+# clock.py                                                                                    #
+# Build an analog clock with LEDs.                                                            #
+# (c) https://github.com/thomaspfeiffer-git May 2015                                          #
+###############################################################################################
 
 import signal
 from time import sleep, localtime, strftime
 import sys
-import threading
 import traceback
 
 
@@ -29,7 +33,6 @@ i2c         = MCP23017(i2c_devices)
 # SPI (MCP23S17) 
 spi_devices = (0x00, 0x02)    # Addresses of MCP23S17 components
 spi         = MCP23S17(SPI_const.CS1,spi_devices)
-
 
 
 clock_seconds = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
@@ -146,7 +149,7 @@ def Exit():
    sys.exit()
 
 def _Exit(s,f):
-   print "_Exit"   # Wird das wirklich aufgerufen?
+   print "_Exit"
    Exit()
 
 
