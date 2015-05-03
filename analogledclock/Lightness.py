@@ -22,14 +22,13 @@ class Value (object):
 
    @value.setter
    def value(self,v):
-      # print "Setter v:", v
+      v = int(v)
       if (v >= 1023):
          self.__value = 1023
       elif (v <= 0):
          self.__value = 0
       else:
-         self.__value = int(v)
-
+         self.__value = v
 
    def __add__(self, other):
       if not isinstance(other, Value):
