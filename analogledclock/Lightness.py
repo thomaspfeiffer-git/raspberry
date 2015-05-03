@@ -58,6 +58,10 @@ class Lightness (threading.Thread):
       while (self.running):
          actual = self.__adc.read() 
 
+         if (actual > target+25):
+            target += 25
+         elif (actual < target-25):
+            target -= 25
          if (actual > target+10):
             target += 10
          elif (actual < target-10):
