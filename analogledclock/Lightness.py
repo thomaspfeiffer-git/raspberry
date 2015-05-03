@@ -71,6 +71,7 @@ class Lightness (threading.Thread):
          elif (actual < target):
             target -= 1
 
+         target = (target // 10) * 10
          wipi.pwmWrite(12,1024-target)
          # print("Lightness: {}/{}".format(actual,target))
          time.sleep(0.1)
