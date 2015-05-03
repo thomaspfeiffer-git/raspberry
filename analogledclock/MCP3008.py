@@ -1,9 +1,12 @@
+###############################################################################################
+# MCP23017                                                                                    #
+# Communication with MCP3008                                                                  #
+# Taken from http://erik-bartmann.de/                                                         #
+# (c) https://github.com/thomaspfeiffer-git May 2015                                          #
+###############################################################################################
+
 import RPi.GPIO as io
-
 from SPI_const import SPI_const
-
-
-# Taken from http://erik-bartmann.de/
 
 class MCP3008:
    def __init__(self, cs, channel):
@@ -16,13 +19,13 @@ class MCP3008:
       io.setup(SPI_const.SCLK, io.OUT)
       io.setup(SPI_const.MOSI, io.OUT)
       io.setup(SPI_const.MISO, io.IN)
-      io.setup(self.cs,  io.OUT)
+      io.setup(self.cs, io.OUT)
 
 
    def read(self):
       # Negative Flanke des CS-Signals generieren
-      io.output(self.cs,   io.HIGH)
-      io.output(self.cs,   io.LOW)
+      io.output(self.cs, io.HIGH)
+      io.output(self.cs, io.LOW)
       io.output(SPI_const.SCLK, io.LOW)   
 
       sendCMD = self.channel
@@ -50,4 +53,4 @@ class MCP3008:
       return adcValue
 
 
-
+### eof ###
