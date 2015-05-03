@@ -41,7 +41,7 @@ class Lightness (threading.Thread):
 
    @actual.setter
    def actual(self, value):
-      __actual == __boundaries(value)
+      self.__actual == __boundaries(value)
 
 
    @property
@@ -50,7 +50,7 @@ class Lightness (threading.Thread):
 
    @target.setter
    def setter(self,value):      
-      __target = __boundaries(value)
+      self.__target = __boundaries(value)
 
 
    def run(self):
@@ -68,7 +68,7 @@ class Lightness (threading.Thread):
             target -= 1
 
          wipi.pwmWrite(12,1024-target)
-         print("Lightness: {}/{}".format(actual,target))
+         # print("Lightness: {}/{}".format(actual,target))
          time.sleep(0.1)
 
 
