@@ -67,8 +67,7 @@ class Measurements (object):
       for v in self.__m:
          sum += v.value
          i += 1
-      return sum//i
-
+      return ((sum//i) // 10) * 10
 
 
 class Lightness (threading.Thread):
@@ -93,22 +92,16 @@ class Lightness (threading.Thread):
          actual = Value(self.__adc.read())
          measurements.add(actual)
          
+         # Target is quite constant in intervall [avg-10, avg+10]. Thus lights do not bump
+         # on small changes of lightness.
          avg = measurements.avg()
-         if (avg > target+25):
-            target += 25
-         elif (avg < target-25):
-            target -= 25
          if (avg > target+10):
             target += 10
          elif (avg < target-10):
             target -= 10
-         elif (avg > target):
-            target += 1
-         elif (avg < target):
-            target -= 1
 
          wipi.pwmWrite(12,1024-target.value)
-         # print("Lightness: {}/{}".format(actual,target))
+         print("Lightness (actual/avg/target): {}/{}/{}".format(actual,avg,target))
          time.sleep(0.1)
 
 
