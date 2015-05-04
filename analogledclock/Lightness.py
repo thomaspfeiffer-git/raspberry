@@ -111,7 +111,7 @@ class Lightness (threading.Thread):
             target -= 1
 
          wipi.pwmWrite(12,int(1024-target))
-         print("Lightness (actual/avg/target): {}/{}/{}".format(actual,avg,target))
+         # print("{}: Lightness (actual/avg/target): {}/{}/{}".format(time.strftime("%Y%m%d-%H%M%S"),actual,avg,target))
          time.sleep(0.1)
 
 
