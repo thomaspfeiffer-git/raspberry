@@ -4,6 +4,7 @@
 # (c) https://github.com/thomaspfeiffer-git May 2015                                          #
 ###############################################################################################
 
+from collections import deque
 import time
 import threading
 import wiringpi2 as wipi
@@ -54,6 +55,22 @@ class Value (object):
       return str(self.value)
 
 
+class Measurements (object):
+   def __init__(self):
+      self.__m = deque([],25)
+
+   def add(self,v):
+      self.__m.append(v)   # TODO: some check for type safety could be useful
+
+   def avg(self):
+      i = sum = 0
+      for v in self.__m:
+         sum += v.value
+         i += 1
+      return sum//i
+
+
+
 class Lightness (threading.Thread):
    def __init__(self):
       threading.Thread.__init__(self)
@@ -69,21 +86,24 @@ class Lightness (threading.Thread):
 
 
    def run(self):
-      target = Value(102)
+      target = Value(1023)
+      measurements = Measurements()
+
       while (self.running):
          actual = Value(self.__adc.read())
+         measurements.add(actual)
 
-         if (actual > target+25):
+         if (measurements.avg() > target+25):
             target += 25
-         elif (actual < target-25):
+         elif (measurements.avg() < target-25):
             target -= 25
-         if (actual > target+10):
+         if (measurements.avg() > target+10):
             target += 10
-         elif (actual < target-10):
+         elif (measurements.avg() < target-10):
             target -= 10
-         elif (actual > target):
+         elif (measurements.avg() > target):
             target += 1
-         elif (actual < target):
+         elif (measurements.avg() < target):
             target -= 1
 
          wipi.pwmWrite(12,1024-target.value)
