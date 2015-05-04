@@ -63,7 +63,7 @@ class Value (object):
 
 class Measurements (object):
    def __init__(self):
-      self.__m = deque([],25)
+      self.__m = deque([],250)
 
    def add(self,v):
       self.__m.append(v)   # TODO: some check for type safety could be useful
@@ -73,7 +73,7 @@ class Measurements (object):
       for v in self.__m:
          sum += v.value
          i += 1
-      return ((sum//i) // 10) * 10
+      return sum // i
 
 
 class Lightness (threading.Thread):
@@ -105,6 +105,10 @@ class Lightness (threading.Thread):
             target += 10
          elif (avg < target-10):
             target -= 10
+         elif (avg > target):
+            target += 1
+         elif (avg < target):
+            target -= 1
 
          wipi.pwmWrite(12,int(1024-target))
          print("Lightness (actual/avg/target): {}/{}/{}".format(actual,avg,target))
