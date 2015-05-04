@@ -109,7 +109,7 @@ def GetBank(string):
    elif (string == "B"):
       return MCP23x17.OLATB
    else:
-      print "Unknown bank!"
+      print("Unknown bank!")
       # TODO: Exception!
       return MCP23x17.OLATA
 
@@ -145,11 +145,11 @@ def Exit():
    lightness.stop()
    lightness.join()
    # TODO: GPIO.cleanup()
-   print "Exit"
+   print("Exit")
    sys.exit()
 
 def _Exit(s,f):
-   print "_Exit"
+   print("_Exit")
    Exit()
 
 
