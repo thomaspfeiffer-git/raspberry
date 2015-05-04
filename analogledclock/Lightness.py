@@ -40,6 +40,18 @@ class Value (object):
          other = Value(other)
       return Value(self.value - other.value)
 
+   def __lt__(self, other):
+      if not isinstance(other, Value):
+         other = Value(other)
+      return self.value < other.value
+
+   def __gt__(self, other):
+      if not isinstance(other, Value):
+         other = Value(other)
+      return self.value > other.value
+
+   def __str__(self):
+      return str(self.value)
 
 
 class Lightness (threading.Thread):
@@ -57,25 +69,25 @@ class Lightness (threading.Thread):
 
 
    def run(self):
-      target = Value(1024)
+      target = Value(102)
       while (self.running):
          actual = Value(self.__adc.read())
 
-         if (actual.value > target.value+25):
+         if (actual > target+25):
             target += 25
-         elif (actual.value < target.value-25):
+         elif (actual < target-25):
             target -= 25
-         if (actual.value > target.value+10):
+         if (actual > target+10):
             target += 10
-         elif (actual.value < target.value-10):
+         elif (actual < target-10):
             target -= 10
-         elif (actual.value > target.value):
+         elif (actual > target):
             target += 1
-         elif (actual.value < target.value):
+         elif (actual < target):
             target -= 1
 
          wipi.pwmWrite(12,1024-target.value)
-         print("Lightness: {}/{}".format(actual.value,target.value))
+         print("Lightness: {}/{}".format(actual,target))
          time.sleep(0.1)
 
 
