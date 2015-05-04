@@ -92,22 +92,23 @@ class Lightness (threading.Thread):
       while (self.running):
          actual = Value(self.__adc.read())
          measurements.add(actual)
-
-         if (measurements.avg() > target+25):
+         
+         avg = measurements.avg()
+         if (avg > target+25):
             target += 25
-         elif (measurements.avg() < target-25):
+         elif (avg < target-25):
             target -= 25
-         if (measurements.avg() > target+10):
+         if (avg > target+10):
             target += 10
-         elif (measurements.avg() < target-10):
+         elif (avg < target-10):
             target -= 10
-         elif (measurements.avg() > target):
+         elif (avg > target):
             target += 1
-         elif (measurements.avg() < target):
+         elif (avg < target):
             target -= 1
 
          wipi.pwmWrite(12,1024-target.value)
-         print("Lightness: {}/{}".format(actual,target))
+         # print("Lightness: {}/{}".format(actual,target))
          time.sleep(0.1)
 
 
