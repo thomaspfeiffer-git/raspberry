@@ -27,7 +27,7 @@ bit      = 'bit'
 
 
 # I2C (MCP23017)
-i2c_devices = (0x20, 0x21)    # Addresses of MCP23017 components
+i2c_devices = (0x20, 0x21, 0x22)    # Addresses of MCP23017 components
 i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) 
@@ -35,52 +35,87 @@ spi_devices = (0x00, 0x02)    # Addresses of MCP23S17 components
 spi         = MCP23S17(SPI_const.CS1,spi_devices)
 
 
-clock_seconds = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
-                 3: {tech: i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
-                 2: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
-                 1: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
-                 5: {tech: i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
-                 4: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
-                 6: {tech: i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
-                 7: {tech: i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
-                 8: {tech: i2c, device: 0x20, bank: "A", bit: "0b00001000"}, \
-                 9: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"} }
+clock_seconds = {0: {tech: i2c, device: 0x21, bank: "A", bit: "0b00000001"}, \  # red #
+                 1: {tech: i2c, device: 0x21, bank: "A", bit: "0b00001000"}, \
+                 2: {tech: i2c, device: 0x21, bank: "A", bit: "0b01000000"}, \
+                 3: {tech: i2c, device: 0x21, bank: "B", bit: "0b01000000"}, \
+                 4: {tech: i2c, device: 0x21, bank: "B", bit: "0b00001000"}, \
+                 5: {tech: i2c, device: 0x22, bank: "A", bit: "0b00000001"}, \
+                 6: {tech: i2c, device: 0x22, bank: "A", bit: "0b00001000"}, \
+                 7: {tech: i2c, device: 0x22, bank: "A", bit: "0b01000000"}, \
+                 8: {tech: i2c, device: 0x22, bank: "B", bit: "0b01000000"}, \
+                 9: {tech: i2c, device: 0x22, bank: "B", bit: "0b00001000"}, \
+#
+                10: {tech: i2c, device: 0x21, bank: "A", bit: "0b00000010"}, \ # green #
+                11: {tech: i2c, device: 0x21, bank: "A", bit: "0b00010000"}, \
+                12: {tech: i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
+                13: {tech: i2c, device: 0x21, bank: "B", bit: "0b00100000"}, \
+                14: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000100"}, \
+                15: {tech: i2c, device: 0x22, bank: "A", bit: "0b00000010"}, \
+                16: {tech: i2c, device: 0x22, bank: "A", bit: "0b00010000"}, \
+                17: {tech: i2c, device: 0x22, bank: "A", bit: "0b10000000"}, \
+                18: {tech: i2c, device: 0x22, bank: "B", bit: "0b00100000"}, \
+                19: {tech: i2c, device: 0x22, bank: "B", bit: "0b00000100"}, \
+#
+                20: {tech: i2c, device: 0x21, bank: "A", bit: "0b00000100"}, \ # blue #
+                21: {tech: i2c, device: 0x21, bank: "A", bit: "0b00100000"}, \
+                22: {tech: i2c, device: 0x21, bank: "B", bit: "0b10000000"}, \
+                23: {tech: i2c, device: 0x21, bank: "B", bit: "0b00010000"}, \
+                24: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000010"}, \
+                25: {tech: i2c, device: 0x22, bank: "A", bit: "0b00000100"}, \
+                26: {tech: i2c, device: 0x22, bank: "A", bit: "0b00100000"}, \
+                27: {tech: i2c, device: 0x22, bank: "B", bit: "0b10000000"}, \
+                28: {tech: i2c, device: 0x22, bank: "B", bit: "0b00010000"}, \
+                29: {tech: i2c, device: 0x22, bank: "B", bit: "0b00000010"}}
 
-clock_minutes = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
-                 3: {tech: i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
-                 2: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
-                 1: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
-                 5: {tech: i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
-                 4: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
-                 6: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
-                 7: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
-                 8: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
-                 9: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"} }
 
-clock_hours   = {0: {tech: spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
-                 1: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
-                 2: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
-                 3: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
-                 4: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
-                 5: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
-                 6: {tech: spi, device: 0x00, bank: "A", bit: "0b00000011"}, \
-                 7: {tech: spi, device: 0x00, bank: "A", bit: "0b00000101"}, \
-                 8: {tech: spi, device: 0x00, bank: "A", bit: "0b00000110"}, \
-                 9: {tech: spi, device: 0x00, bank: "B", bit: "0b11000000"}, \
-                10: {tech: spi, device: 0x00, bank: "B", bit: "0b10100000"}, \
-                11: {tech: spi, device: 0x00, bank: "B", bit: "0b01100000"}, \
-                12: {tech: spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
-                13: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
-                14: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
-                15: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
-                16: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
-                17: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
-                18: {tech: spi, device: 0x00, bank: "A", bit: "0b00000111"}, \
-                19: {tech: spi, device: 0x00, bank: "A", bit: "0b00000011"}, \
-                20: {tech: spi, device: 0x00, bank: "A", bit: "0b00000101"}, \
-                21: {tech: spi, device: 0x00, bank: "B", bit: "0b11100000"}, \
-                22: {tech: spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
-                23: {tech: spi, device: 0x02, bank: "A", bit: "0b00000001"} }
+
+# clock_seconds = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
+#                  3: {tech: i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
+#                  2: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
+#                  1: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
+#                  5: {tech: i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
+#                  4: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
+#                  6: {tech: i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
+#                  7: {tech: i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
+#                  8: {tech: i2c, device: 0x20, bank: "A", bit: "0b00001000"}, \
+#                  9: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"} }
+
+# clock_minutes = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
+#                  3: {tech: i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
+#                  2: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000001"}, \
+#                  1: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
+#                  5: {tech: i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
+#                  4: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000001"}, \
+#                  6: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
+#                  7: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
+#                  8: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
+#                  9: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"} }
+
+# clock_hours   = {0: {tech: spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
+#                  1: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
+#                  2: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
+#                  3: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
+#                  4: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
+#                  5: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
+#                  6: {tech: spi, device: 0x00, bank: "A", bit: "0b00000011"}, \
+#                  7: {tech: spi, device: 0x00, bank: "A", bit: "0b00000101"}, \
+#                  8: {tech: spi, device: 0x00, bank: "A", bit: "0b00000110"}, \
+#                  9: {tech: spi, device: 0x00, bank: "B", bit: "0b11000000"}, \
+ #                10: {tech: spi, device: 0x00, bank: "B", bit: "0b10100000"}, \
+#                 11: {tech: spi, device: 0x00, bank: "B", bit: "0b01100000"}, \
+#                 12: {tech: spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
+#                 13: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
+#                 14: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
+#                 15: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
+#                 16: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
+#                 17: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
+#                 18: {tech: spi, device: 0x00, bank: "A", bit: "0b00000111"}, \
+#                 19: {tech: spi, device: 0x00, bank: "A", bit: "0b00000011"}, \
+#                 20: {tech: spi, device: 0x00, bank: "A", bit: "0b00000101"}, \
+#                 21: {tech: spi, device: 0x00, bank: "B", bit: "0b11100000"}, \
+#                 22: {tech: spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
+#                 23: {tech: spi, device: 0x02, bank: "A", bit: "0b00000001"} }
 
 bits = {}
 
@@ -158,7 +193,7 @@ def _Exit(s,f):
 def Main():
    while(1):
       h, m, s = strftime("%H:%M:%S", localtime()).split(":")
-      s = int(s) % 10
+      s = int(s) % 30
       m = int(m) % 10
       h = int(h)
       # print s, clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank], clock_seconds[s][bit]
@@ -168,9 +203,10 @@ def Main():
       InitBits(0b00000000)
       # In this project, seconds and minutes share the same LEDs. Therefore
       # i've to |= the bit array.
-      bits[clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank]]  = int(clock_seconds[s][bit],2)
-      bits[clock_seconds[m][tech], clock_seconds[m][device], clock_seconds[m][bank]] |= int(clock_seconds[m][bit],2)
-      bits[clock_hours[h][tech], clock_hours[h][device], clock_hours[h][bank]] = int(clock_hours[h][bit],2)
+      bits[clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank]] = int(clock_seconds[s][bit],2)
+#      bits[clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank]]  = int(clock_seconds[s][bit],2)
+#      bits[clock_seconds[m][tech], clock_seconds[m][device], clock_seconds[m][bank]] |= int(clock_seconds[m][bit],2)
+#      bits[clock_hours[h][tech], clock_hours[h][device], clock_hours[h][bank]] = int(clock_hours[h][bit],2)
       WriteBits()
       sleep(1)
 
