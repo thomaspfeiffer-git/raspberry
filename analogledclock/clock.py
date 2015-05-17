@@ -183,9 +183,9 @@ def Main():
       # print h, clock_hours[h][tech], clock_hours[h][device], clock_hours[h][bank], clock_hours[h][bit]
 
       InitBits(0b00000000)
-      bits[bits_red[s][tech], bits_red[s][device], bits_red[s][bank]]        = int(bits_red[s][bit],2)
+      bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
       bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
-      bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    |= int(bits_blue[h][bit],2)
+      bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
       WriteBits()
       sleep(1)
 
