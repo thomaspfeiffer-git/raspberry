@@ -27,7 +27,7 @@ bit      = 'bit'
 
 
 # I2C (MCP23017)
-i2c_devices = (0x20, 0x21, 0x22, 0x25)    # Addresses of MCP23017 components
+i2c_devices = (0x20, 0x21, 0x22, 0x23, 0x24, 0x25) # Addresses of MCP23017 components
 i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) 
@@ -54,7 +54,17 @@ bits_red   = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
              16: {tech: i2c, device: 0x25, bank: "A", bit: "0b00001000"}, \
              17: {tech: i2c, device: 0x25, bank: "A", bit: "0b01000000"}, \
              18: {tech: i2c, device: 0x25, bank: "B", bit: "0b01000000"}, \
-             19: {tech: i2c, device: 0x25, bank: "B", bit: "0b00001000"} }
+             19: {tech: i2c, device: 0x25, bank: "B", bit: "0b00001000"}, \
+             20: {tech: i2c, device: 0x24, bank: "A", bit: "0b00000001"}, \
+             21: {tech: i2c, device: 0x24, bank: "A", bit: "0b00001000"}, \
+             22: {tech: i2c, device: 0x24, bank: "A", bit: "0b01000000"}, \
+             23: {tech: i2c, device: 0x24, bank: "B", bit: "0b01000000"}, \
+             24: {tech: i2c, device: 0x24, bank: "B", bit: "0b00001000"}, \
+             25: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000001"}, \
+             26: {tech: i2c, device: 0x23, bank: "A", bit: "0b00001000"}, \
+             27: {tech: i2c, device: 0x23, bank: "A", bit: "0b01000000"}, \
+             28: {tech: i2c, device: 0x23, bank: "B", bit: "0b01000000"}, \
+             29: {tech: i2c, device: 0x23, bank: "B", bit: "0b00001000"} }
 
 bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
               1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
@@ -75,7 +85,17 @@ bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
              16: {tech: i2c, device: 0x25, bank: "A", bit: "0b00010000"}, \
              17: {tech: i2c, device: 0x25, bank: "A", bit: "0b10000000"}, \
              18: {tech: i2c, device: 0x25, bank: "B", bit: "0b00100000"}, \
-             19: {tech: i2c, device: 0x25, bank: "B", bit: "0b00000100"} }
+             19: {tech: i2c, device: 0x25, bank: "B", bit: "0b00000100"}, \
+             20: {tech: i2c, device: 0x24, bank: "A", bit: "0b00000010"}, \
+             21: {tech: i2c, device: 0x24, bank: "A", bit: "0b00010000"}, \
+             22: {tech: i2c, device: 0x24, bank: "A", bit: "0b10000000"}, \
+             23: {tech: i2c, device: 0x24, bank: "B", bit: "0b00100000"}, \
+             24: {tech: i2c, device: 0x24, bank: "B", bit: "0b00000100"}, \
+             25: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000010"}, \
+             26: {tech: i2c, device: 0x23, bank: "A", bit: "0b00010000"}, \
+             27: {tech: i2c, device: 0x23, bank: "A", bit: "0b10000000"}, \
+             28: {tech: i2c, device: 0x23, bank: "B", bit: "0b00100000"}, \
+             29: {tech: i2c, device: 0x23, bank: "B", bit: "0b00000100"} }
 
 bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
               1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
@@ -96,7 +116,17 @@ bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
              16: {tech: i2c, device: 0x25, bank: "A", bit: "0b00100000"}, \
              17: {tech: i2c, device: 0x25, bank: "B", bit: "0b10000000"}, \
              18: {tech: i2c, device: 0x25, bank: "B", bit: "0b00010000"}, \
-             19: {tech: i2c, device: 0x25, bank: "B", bit: "0b00000010"} }
+             19: {tech: i2c, device: 0x25, bank: "B", bit: "0b00000010"}, \
+             20: {tech: i2c, device: 0x24, bank: "A", bit: "0b00000100"}, \
+             21: {tech: i2c, device: 0x24, bank: "A", bit: "0b00100000"}, \
+             22: {tech: i2c, device: 0x24, bank: "B", bit: "0b10000000"}, \
+             23: {tech: i2c, device: 0x24, bank: "B", bit: "0b00010000"}, \
+             24: {tech: i2c, device: 0x24, bank: "B", bit: "0b00000010"}, \
+             25: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000100"}, \
+             26: {tech: i2c, device: 0x23, bank: "A", bit: "0b00100000"}, \
+             27: {tech: i2c, device: 0x23, bank: "B", bit: "0b10000000"}, \
+             28: {tech: i2c, device: 0x23, bank: "B", bit: "0b00010000"}, \
+             29: {tech: i2c, device: 0x23, bank: "B", bit: "0b00000010"} }
 
 
 bits = {}
@@ -175,9 +205,9 @@ def _Exit(s,f):
 def Main():
    while(1):
       h, m, s = strftime("%H:%M:%S", localtime()).split(":")
-      s = int(s) % 20
-      m = int(m) % 20
-      h = int(h) % 20
+      s = int(s) % 30
+      m = int(m) % 30
+      h = int(h) % 30
       # print s, clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank], clock_seconds[s][bit]
       # print m, clock_minutes[m][tech], clock_minutes[m][device], clock_minutes[m][bank], clock_minutes[m][bit]
       # print h, clock_hours[h][tech], clock_hours[h][device], clock_hours[h][bank], clock_hours[h][bit]
