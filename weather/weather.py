@@ -24,12 +24,12 @@ import dhtreader
 
 ## Sensors ##################
 #+ Outdoor ##################
-# DHT22/AM2302 (humidity, air pressure)
+# DHT22/AM2302 (humidity, temperature)
 pin_sensor_outdoor     = 40
 pin_sensor_outdoor_bcm = 21
 
 #+ Indoor ###################
-# DHT22/AM2302 (humidity, air pressure)
+# DHT22/AM2302 (humidity, temperature) 
 pin_sensor_indoor      = 38
 pin_sensor_indoor_bcm  = 20
 
