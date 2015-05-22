@@ -4,9 +4,10 @@
 
 import dhtreader
 import os
-import re
 import RPi.GPIO as io
 import time
+
+from DS1820 import DS1820
 
 
 
@@ -17,27 +18,10 @@ def GetCPUTemperature():
    return(float(res.replace("temp=","").replace("'C\n","")))
 
 
-################################################################################
-def read_sensor(path):
-  value = "U"
-  try:
-    f = open(path, "r")
-    line = f.readline()
-    if re.match(r"([0-9a-f]{2} ){9}: crc=[0-9a-f]{2} YES", line):
-      line = f.readline()
-      m = re.match(r"([0-9a-f]{2} ){9}t=([+-]?[0-9]+)", line)
-      if m:
-        value = str(float(m.group(2)) / 1000.0)
-    f.close()
-  except (IOError), e:
-    print time.strftime("%x %X"), "Error reading", path, ": ", e
-  return value
 
-pathes = (
-  "/sys/bus/w1/devices/28-000006b4eb31/w1_slave",
-  "/sys/bus/w1/devices/28-000006b58b12/w1_slave"
-)
 
+t1 = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
+t2 = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
 
 
 # DHT22/AM2302 (humidity, temperature)
@@ -61,9 +45,8 @@ io.cleanup()
 temp_outdoor, humi_outdoor = dhtreader.read(22,pin_sensor_outdoor_bcm)
 
 
-for path in pathes:
-  temp = read_sensor(path)
-  print("Sensor {}: {}".format(path,temp))
+print t1.read()
+print t2.read()
 
 
 print("Temp: {:.2f} °C".format(temp_outdoor))
