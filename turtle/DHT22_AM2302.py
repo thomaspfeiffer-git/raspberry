@@ -7,7 +7,8 @@
 import dhtreader
 
 class DHT22_AM2302:
-   __ERROR = -999.99
+   self.__ERROR = -999.99
+
    def __init__ (self, pin):
       self.__pin = pin
       dhtreader.init()
@@ -18,7 +19,7 @@ class DHT22_AM2302:
          try:
             t, h = dhtreader.read(22,self.__pin) 
          except TypeError:
-            t = h = __ERROR
+            t = h = self.__ERROR
             i += 1
             continue
          break
