@@ -1,12 +1,10 @@
 #!/usr/bin/python
 # coding=utf-8
 
-
-
 import rrdtool
 import signal
 import sys
-from time import localtime, sleep
+from time import *
 import traceback
 
 
@@ -18,7 +16,7 @@ from Heating import Heating
 
 
 HEATING_PIN     = 38
-HEATING_LATENCY = 60
+HEATING_LATENCY = 60 * 15
 
 
 # Misc for rrdtool
@@ -66,14 +64,6 @@ def Main():
    schedule[16][0:59] = [20 for m in range(60)]
    schedule[17][0:59] = [20 for m in range(60)]
 
-
-   # if (schedule[hh][mm] > t2):
-   #    Heizung_ein
-   # else:
-   #    Heizung aus
-   # if (schalter wurd aus oder eingeschaltet (also bei änderung): 
-   #    sleep 10 Min ==> Hystere
-
    while (True):
       heatlamp.on()
 
@@ -103,12 +93,10 @@ def Main():
                       ":{:.2f}".format(_tc) + \
                       ":{:.2f}".format(_h) + \
                       ":{:}".format(_s)
-      print rrd_template
-      print rrd_data
-
+      print strftime("%H:%M:%S", localtime()), rrd_data
 
       heatlamp.off()
-      sleep(45)
+      sleep(4*60)
 
 
 ###############################################################################
