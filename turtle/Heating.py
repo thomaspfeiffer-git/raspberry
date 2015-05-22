@@ -12,14 +12,14 @@ class Heating:
    def __init__ (self, pin):
       self.__pin = pin
       self.__lastchanged = 0
+      self.__status = "off"
 
       io.setmode(io.BOARD)
       io.setup(self.__pin,io.OUT)
 
    def __delayperiod (self):
       t = time()
-      print t
-      if (t >= self.__lastchanged + 100): 
+      if (t >= self.__lastchanged + 60): 
          self.__lastchanged = t
          return True
       else:
@@ -29,18 +29,16 @@ class Heating:
       io.cleanup()
 
    def on (self):
-      print "try on"
-      if (self.__delayperiod()):
-         io.output(self.__pin,io.HIGH)
-         print "on"
+      if (self.__status != "on"):
+         if (self.__delayperiod()):
+            io.output(self.__pin,io.HIGH)
+            self.__status = "on"
 
    def off (self):
-      print "try off"
-      if (self.__delayperiod()):
-         io.output(self.__pin,io.LOW)
-         print "off"
-
-
+      if (self.__status != "off"):
+         if (self.__delayperiod()):
+            io.output(self.__pin,io.LOW)
+            self.__status = "off"
 
 ### eof ###
 
