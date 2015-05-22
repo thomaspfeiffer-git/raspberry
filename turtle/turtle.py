@@ -3,9 +3,10 @@
 
 
 
+import rrdtool
 import signal
 import sys
-from time import sleep
+from time import localtime, sleep
 import traceback
 
 
@@ -16,11 +17,25 @@ from DS1820 import DS1820
 from Heating import Heating
 
 
-t1 = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
-t2 = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
-th = DHT22_AM2302(21)   # BCM 21 = PIN 40
-tc = CPU()
-heatlamp  = Heating(38)
+HEATING_PIN     = 38
+HEATING_LATENCY = 60
+
+
+# Misc for rrdtool
+DATAFILE   = "/schild/weather/turtle.rrd"
+DS_TEMP1   = "turtle_temp1" 
+DS_TEMP2   = "turtle_temp2"
+DS_TEMP3   = "turtle_temp3"
+DS_TEMPCPU = "turtle_tempcpu"
+DS_HUMI    = "turtle_humi"
+DS_HEATING = "turtle_heating"
+
+
+t1        = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
+t2        = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
+th        = DHT22_AM2302(21)   # BCM 21 = PIN 40
+tc        = CPU()
+heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY)
 
 
 ###############################################################################
@@ -38,9 +53,6 @@ def _Exit(s,f):
 ###############################################################################
 # Main ########################################################################
 def Main():
-
-   # Scheduler: https://docs.python.org/2/library/sched.html
-
    schedule = [[5 for m in range(60)] for h in range(24)]
    schedule[ 7][0:59] = [25 for m in range(60)]
    schedule[ 8][0:59] = [25 for m in range(60)]
@@ -65,15 +77,38 @@ def Main():
    while (True):
       heatlamp.on()
 
-      print "T1:", t1.read()
-      print "T2:", t2.read()
-      t3, h = th.read()
-      print "T3:", t3
-      print "H:", h
-      print "CPU:", tc.read()
+
+
+
+      hh, mm  = localtime()[3:5]
+      _t1     = t1.read()
+      _t2     = t2.read()
+      _t3, _h = th.read()
+      _tc     = tc.read()
+      if (schedule[hh][mm] > _t3):
+         heatlamp.on()
+      else:
+         heatlamp.off()
+      _s      = heatlamp.status()
+
+      rrd_template = DS_TEMP1   + ":" + \
+                     DS_TEMP2   + ":" + \
+                     DS_TEMP3   + ":" + \
+                     DS_TEMPCPU + ":" + \
+                     DS_HUMI    + ":" + \
+                     DS_HEATING
+      rrd_data     = "N:{:.2f}".format(_t1) + \
+                      ":{:.2f}".format(_t2) + \
+                      ":{:.2f}".format(_t3) + \
+                      ":{:.2f}".format(_tc) + \
+                      ":{:.2f}".format(_h) + \
+                      ":{:}".format(_s)
+      print rrd_template
+      print rrd_data
+
 
       heatlamp.off()
-      sleep(30)
+      sleep(45)
 
 
 ###############################################################################
