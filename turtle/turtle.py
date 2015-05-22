@@ -5,15 +5,14 @@
 import RPi.GPIO as io
 import time
 
-from DS1820 import DS1820
-from DHT22_AM2302 import DHT22_AM2302
 from CPU import CPU
+from DHT22_AM2302 import DHT22_AM2302
+from DS1820 import DS1820
 
 
 
 # Scheduler: https://docs.python.org/2/library/sched.html
 
-# myArray=[[0 for j in range(3)] for i in range(3)]
 schedule = [[5 for j in range(60)] for i in range(24)]
 
 
@@ -39,16 +38,8 @@ schedule[7][17] = 25
 schedule[7][18] = 25
 schedule[7][19] = 25
 
-schedule[7][20] = 25
-schedule[7][21] = 25
-schedule[7][22] = 25
-schedule[7][23] = 25
-schedule[7][24] = 25
-schedule[7][25] = 25
-schedule[7][26] = 25
-schedule[7][27] = 25
-schedule[7][28] = 25
-schedule[7][29] = 25
+schedule[7][20:29] = [27 for m in range(10)]
+schedule[7][30:39] = [21 for m in range(10)]
 
 
 print schedule[7]
