@@ -2,12 +2,12 @@
 # coding=utf-8
 
 
-import dhtreader
 import os
 import RPi.GPIO as io
 import time
 
 from DS1820 import DS1820
+from DHT22_AM2302 import DHT22_AM2302
 
 
 
@@ -22,13 +22,8 @@ def GetCPUTemperature():
 
 t1 = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
 t2 = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
+th = DHT22_AM2302(21)   # BCM 21 = PIN 40
 
-
-# DHT22/AM2302 (humidity, temperature)
-pin_sensor_outdoor     = 40
-pin_sensor_outdoor_bcm = 21
-
-dhtreader.init()
 
 
 ################################################################################
@@ -42,15 +37,13 @@ io.setup(38,io.OUT)
 io.cleanup()
 
 
-temp_outdoor, humi_outdoor = dhtreader.read(22,pin_sensor_outdoor_bcm)
 
+print "T1:", t1.read()
+print "T2:", t2.read()
+t3, h = th.read()
+print "T3:", t3
+print "H:", h
 
-print t1.read()
-print t2.read()
-
-
-print("Temp: {:.2f} °C".format(temp_outdoor))
-print("Humi: {:.2f} %".format(humi_outdoor))
 
 print("CPU: {:.2f} °C".format(GetCPUTemperature()))
 
