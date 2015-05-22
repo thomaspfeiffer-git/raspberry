@@ -27,12 +27,12 @@ class DHT22_AM2302:
 
 
    def read (self):
-#      sum = 0
-#      for i in range(0, 3):
-#         sum += self.__read_sensor()
-#      return sum/3
-      return self.__read_sensor()
-
+      sum_t = sum_h = 0
+      for i in range(0, 3):
+         t, h = self.__read_sensor()
+         sum_t += t
+         sum_h += h
+      return [sum_t/3, sum_h/3]
 
 ### eof ###
 
