@@ -16,33 +16,18 @@ from DS1820 import DS1820
 schedule = [[5 for j in range(60)] for i in range(24)]
 
 
-schedule[7][0]  = 5
-schedule[7][1]  = 5
-schedule[7][2]  = 5
-schedule[7][3]  = 5
-schedule[7][4]  = 5
-schedule[7][5]  = 5
-schedule[7][6]  = 5
-schedule[7][7]  = 5
-schedule[7][8]  = 5
-schedule[7][9]  = 5
 
-schedule[7][10] = 25
-schedule[7][11] = 25
-schedule[7][12] = 25
-schedule[7][13] = 25
-schedule[7][14] = 25
-schedule[7][15] = 25
-schedule[7][16] = 25
-schedule[7][17] = 25
-schedule[7][18] = 25
-schedule[7][19] = 25
-
-schedule[7][20:29] = [27 for m in range(10)]
-schedule[7][30:39] = [21 for m in range(10)]
-
-
-print schedule[7]
+schedule[ 7][0:59] = [25 for m in range(60)]
+schedule[ 8][0:59] = [25 for m in range(60)]
+schedule[ 9][0:59] = [25 for m in range(60)]
+schedule[10][0:59] = [20 for m in range(60)]
+schedule[11][0:59] = [20 for m in range(60)]
+schedule[12][0:59] = [25 for m in range(60)]
+schedule[13][0:59] = [25 for m in range(60)]
+schedule[14][0:59] = [20 for m in range(60)]
+schedule[15][0:59] = [20 for m in range(60)]
+schedule[16][0:59] = [20 for m in range(60)]
+schedule[17][0:59] = [20 for m in range(60)]
 
 
 t1 = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
