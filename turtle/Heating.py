@@ -29,11 +29,13 @@ class Heating:
       io.cleanup()
 
    def on (self):
+      print "try on"
       if (self.__delayperiod()):
          io.output(self.__pin,io.HIGH)
          print "on"
 
    def off (self):
+      print "try off"
       if (self.__delayperiod()):
          io.output(self.__pin,io.LOW)
          print "off"
