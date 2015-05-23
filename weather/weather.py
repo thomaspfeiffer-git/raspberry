@@ -21,15 +21,17 @@ from Adafruit_BMP085 import BMP085
 import RPi.GPIO as io
 import dhtreader
 
+from DHT22_AM2302 import DHT22_AM2302
+
 
 ## Sensors ##################
 #+ Outdoor ##################
-# DHT22/AM2302 (humidity, temperature)
+# DHT22/AM2302 (humidity, air pressure)
 pin_sensor_outdoor     = 40
 pin_sensor_outdoor_bcm = 21
 
 #+ Indoor ###################
-# DHT22/AM2302 (humidity, temperature) 
+# DHT22/AM2302 (humidity, air pressure)
 pin_sensor_indoor      = 38
 pin_sensor_indoor_bcm  = 20
 
@@ -121,29 +123,11 @@ def GetCPUTemperature():
 def Main():
    global bmp
 
-   i = 1                         # outdoor #
-   while (i <= 5):
-      try:
-         Log("Outdoor, try #{}".format(i))
-         temp_outdoor, humi_outdoor = dhtreader.read(22,pin_sensor_outdoor_bcm) 
-      except TypeError:
-         temp_outdoor = humi_outdoor = ERROR
-         i += 1
-         continue
-      break
+   th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm)
+   th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm)
 
-
-   i = 1                         # indoor #
-   while (i <= 5):
-      try:
-         Log("Indoor, try #{}".format(i))
-         temp_indoor, humi_indoor = dhtreader.read(22,pin_sensor_indoor_bcm) 
-      except TypeError:
-         temp_indoor = humi_indoor = ERROR
-         i += 1
-         continue
-      break
-
+   temp_indoor, humi_indoor   = th_indoor.read()
+   temp_outdoor, humi_outdoor = th_outdoor.read()
 
 #   temp_indoor = bmp.readTemperature()  # indoor #
    pressure    = bmp.readPressure()
