@@ -1,0 +1,10 @@
+turtle.py
+
+Provides some functionality for our turtle's compound:
+
+- monitor temperature with rrd
+- monitor humidity with rrd
+- control temperature
+
+(c) https://github.com/thomaspfeiffer-git 2015
+
