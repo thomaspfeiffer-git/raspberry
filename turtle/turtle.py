@@ -78,7 +78,6 @@ def Main():
          heatlamp.on()
       else:
          heatlamp.off()
-
       _s = heatlamp.status()
 
       rrd_template = DS_TEMP1   + ":" + \
