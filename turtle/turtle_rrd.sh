@@ -3,7 +3,7 @@
 
 HEARTBEAT=90
 
-rrdtool create /schild/weather/weather_turtle.rrd --step 60 \
+rrdtool create /schild/weather/turtle.rrd --step 60 \
 DS:turtle_temp1:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_temp2:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_temp3:GAUGE:$HEARTBEAT:-40:80 \
