@@ -33,7 +33,7 @@ DS_HEATING = "turtle_heating"
 # t2        = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
 th        = DHT22_AM2302(21)   # BCM 21 = PIN 40
 tc        = CPU()
-heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY)
+heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY, False)
 
 
 ###############################################################################
@@ -78,6 +78,7 @@ def Main():
          heatlamp.on()
       else:
          heatlamp.off()
+
       _s = heatlamp.status()
 
       rrd_template = DS_TEMP1   + ":" + \
