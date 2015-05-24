@@ -32,7 +32,7 @@ PNG_HEATING_Y=$RRDPATH/heating_y.png
 
 
 WIDTH=1024
-HEIGHT=120
+HEIGHT=160
 WATERMARK=`date  "+%e. %B %Y, %H:%M:%S"`
 
 
@@ -56,28 +56,28 @@ printTemp ()
     DEF:turtle_temp3=$RRD_T:turtle_temp3:AVERAGE           \
     DEF:turtle_temp2=$RRD_T:turtle_temp2:AVERAGE           \
     DEF:turtle_temp1=$RRD_T:turtle_temp1:AVERAGE           \
-    LINE1:temp_outdoor#0000FF:"Temperatur außen"           \
-    GPRINT:temp_outdoor:LAST:"\t Aktuell\: %5.2lf °C"      \
+    LINE1:temp_outdoor#0000FF:"Temperatur außen          " \
+    GPRINT:temp_outdoor:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"              \
     GPRINT:temp_outdoor:MIN:"Min\: %5.2lf °C\n"            \
-    LINE1:temp_indoor#FF0000:"Temperatur innen"            \
-    GPRINT:temp_indoor:LAST:"\t Aktuell\: %5.2lf °C"       \
+    LINE1:temp_indoor#FF0000:"Temperatur innen          "  \
+    GPRINT:temp_indoor:LAST:"Aktuell\: %5.2lf °C"          \
     GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"    \
     GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"               \
     GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"             \
-    LINE1:turtle_temp3#088A08:"Temperatur Donut Gehege\t"    \
-    GPRINT:turtle_temp3:LAST:"\t Aktuell\: %5.2lf °C"      \
+    LINE1:turtle_temp3#088A08:"Temperatur Donut Gehege   " \
+    GPRINT:turtle_temp3:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:turtle_temp3:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:turtle_temp3:MAX:"Max\: %5.2lf °C"              \
     GPRINT:turtle_temp3:MIN:"Min\: %5.2lf °C\n"            \
     LINE1:turtle_temp2#D7DF01:"Temperatur Donut Heizstein" \
-    GPRINT:turtle_temp2:LAST:"\t Aktuell\: %5.2lf °C"      \
+    GPRINT:turtle_temp2:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:turtle_temp2:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:turtle_temp2:MAX:"Max\: %5.2lf °C"              \
     GPRINT:turtle_temp2:MIN:"Min\: %5.2lf °C\n"            \
-    LINE1:turtle_temp1#01DF74:"Temperatur Donut außen\t"     \
-    GPRINT:turtle_temp1:LAST:"\t Aktuell\: %5.2lf °C"      \
+    LINE1:turtle_temp1#01DF74:"Temperatur Donut außen    " \
+    GPRINT:turtle_temp1:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:turtle_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:turtle_temp1:MAX:"Max\: %5.2lf °C"              \
     GPRINT:turtle_temp1:MIN:"Min\: %5.2lf °C\n" 
@@ -124,15 +124,16 @@ printHeating ()
     rrdtool graph $2                                            \
     --title "Heizung Donut"                                     \
     --end now --start end-$1                                    \
-    -w $WIDTH -h $HEIGHT -a PNG                                 \
+    -w $WIDTH -h $(($HEIGHT/2)) -a PNG                          \
     --watermark "$WATERMARK"                                    \
-    --right-axis 1:0                                            \
+    --alt-y-grid \
     DEF:turtle_heating=$RRD_T:turtle_heating:AVERAGE            \
-    LINE1:turtle_heating#088A08:"Heizung Donut\t"               \
+    AREA:turtle_heating#FF0000:"Heizung Donut\t"               \
     GPRINT:turtle_heating:LAST:"\t Aktuell\: %5.0lf"            \
     GPRINT:turtle_heating:AVERAGE:"Mittelwert\: %5.2lf\n"
  }
 
+#    --alt-autoscale                                             \
 
 
 #######################################################################
@@ -194,8 +195,6 @@ printAirPressure ()
     GPRINT:air_pressure:AVERAGE:"Mittelwert\: %5.2lf hPa" \
     GPRINT:air_pressure:MAX:"Max\: %5.2lf hPa"           \
     GPRINT:air_pressure:MIN:"Min\: %5.2lf hPa\n"
-
-    #--left-axis-format "%4.0lf" \
  }
 
 
