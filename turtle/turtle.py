@@ -20,7 +20,7 @@ HEATING_LATENCY = 60 * 15
 
 
 # Misc for rrdtool
-DATAFILE   = "/schild/weather/turtle.rrd"
+RRDFILE    = "/schild/weather/turtle.rrd"
 DS_TEMP1   = "turtle_temp1" 
 DS_TEMP2   = "turtle_temp2"
 DS_TEMP3   = "turtle_temp3"
@@ -94,6 +94,7 @@ def Main():
                       ":{:.2f}".format(_h) + \
                       ":{:}".format(_s)
       print strftime("%H:%M:%S", localtime()), rrd_data
+      rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
 
       heatlamp.off()
       sleep(4*60)
