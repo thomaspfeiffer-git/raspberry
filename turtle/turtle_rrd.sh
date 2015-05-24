@@ -3,13 +3,13 @@
 
 HEARTBEAT=90
 
-rrdtool create /schild/weather_turtle.rrd --step 60 \
+rrdtool create /schild/weather/weather_turtle.rrd --step 60 \
 DS:turtle_temp1:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_temp2:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_temp3:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_tempcpu:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_humi:GAUGE:$HEARTBEAT:0:100 \
-DS_turtle_heating:GAUGE:$HEARTBEAT:0:1 \
+DS:turtle_heating:GAUGE:$HEARTBEAT:0:1 \
 RRA:AVERAGE:0.5:1:7200 \
 RRA:AVERAGE:0.5:5:4032 \
 RRA:AVERAGE:0.5:60:744 \
