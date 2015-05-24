@@ -77,7 +77,7 @@ def Main():
       if (schedule[hh][mm] > _t3):
          heatlamp.on()
       else:
-         print "want to off"
+         heatlamp.off()
       _s = heatlamp.status()
 
       rrd_template = DS_TEMP1   + ":" + \
