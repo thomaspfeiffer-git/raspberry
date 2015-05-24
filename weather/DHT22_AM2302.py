@@ -27,12 +27,17 @@ class DHT22_AM2302:
 
    def read (self):
       sum_t = sum_h = 0
+      counter = 0
       for i in range(0, 3):
          t, h = self.__read_sensor()
-         sum_t += t
-         sum_h += h
-         # TODO: Better handling for ERROR needed
-      return [sum_t/3, sum_h/3]
+         if (t == self.ERROR):
+            continue
+
+         sum_t   += t
+         sum_h   += h
+         counter += 1
+
+      return [sum_t/counter, sum_h/counter]
 
 ### eof ###
 
