@@ -29,8 +29,8 @@ DS_HUMI    = "turtle_humi"
 DS_HEATING = "turtle_heating"
 
 
-t1        = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
-t2        = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
+# t1        = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
+# t2        = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
 th        = DHT22_AM2302(21)   # BCM 21 = PIN 40
 tc        = CPU()
 heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY)
@@ -65,14 +65,12 @@ def Main():
    schedule[17][0:59] = [20 for m in range(60)]
 
    while (True):
-      heatlamp.on()
-
-
-
-
+#      heatlamp.on()
       hh, mm  = localtime()[3:5]
-      _t1     = t1.read()
-      _t2     = t2.read()
+      # _t1     = t1.read()
+      # _t2     = t2.read()
+      _t1     = -99.9
+      _t2     = -99.0
       _t3, _h = th.read()
       _tc     = tc.read()
       if (schedule[hh][mm] > _t3):
@@ -96,8 +94,8 @@ def Main():
       print strftime("%H:%M:%S", localtime()), rrd_data
       rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
 
-      heatlamp.off()
-      sleep(4*60)
+#      heatlamp.off()
+      sleep(45)
 
 
 ###############################################################################
