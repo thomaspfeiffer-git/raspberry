@@ -45,30 +45,42 @@ WATERMARK=`date  "+%e. %B %Y, %H:%M:%S"`
 #######################################################################
 printTemp ()
   {
-    rrdtool graph $2                                     \
-    --title "Temperatur [°C]"                            \
-    --end now --start end-$1                             \
-    -w $WIDTH -h $(($HEIGHT*2)) -a PNG                   \
-    --watermark "$WATERMARK"                             \
-    --right-axis 1:0                                     \
-    DEF:temp_outdoor=$RRD:temp_outdoor:AVERAGE           \
-    DEF:temp_indoor=$RRD:temp_indoor:AVERAGE             \
-    DEF:turtle_temp3=$RRD_T:turtle_temp3:AVERAGE         \
-    LINE1:temp_outdoor#0000FF:"Temperatur außen"         \
-    GPRINT:temp_outdoor:LAST:"\t Aktuell\: %5.2lf °C"    \
-    GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C" \
-    GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"            \
-    GPRINT:temp_outdoor:MIN:"Min\: %5.2lf °C\n"          \
-    LINE1:temp_indoor#FF0000:"Temperatur innen"          \
-    GPRINT:temp_indoor:LAST:"\t Aktuell\: %5.2lf °C"     \
-    GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"  \
-    GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"             \
-    GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"           \
-    LINE1:turtle_temp3#088A08:"Temperatur Donut"          \
-    GPRINT:turtle_temp3:LAST:"\t Aktuell\: %5.2lf °C"     \
-    GPRINT:turtle_temp3:AVERAGE:"Mittelwert\: %5.2lf °C"  \
-    GPRINT:turtle_temp3:MAX:"Max\: %5.2lf °C"             \
-    GPRINT:turtle_temp3:MIN:"Min\: %5.2lf °C\n" 
+    rrdtool graph $2                                       \
+    --title "Temperatur [°C]"                              \
+    --end now --start end-$1                               \
+    -w $WIDTH -h $(($HEIGHT*2)) -a PNG                     \
+    --watermark "$WATERMARK"                               \
+    --right-axis 1:0                                       \
+    DEF:temp_outdoor=$RRD:temp_outdoor:AVERAGE             \
+    DEF:temp_indoor=$RRD:temp_indoor:AVERAGE               \
+    DEF:turtle_temp3=$RRD_T:turtle_temp3:AVERAGE           \
+    DEF:turtle_temp2=$RRD_T:turtle_temp2:AVERAGE           \
+    DEF:turtle_temp1=$RRD_T:turtle_temp1:AVERAGE           \
+    LINE1:temp_outdoor#0000FF:"Temperatur außen"           \
+    GPRINT:temp_outdoor:LAST:"\t Aktuell\: %5.2lf °C"      \
+    GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C"   \
+    GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"              \
+    GPRINT:temp_outdoor:MIN:"Min\: %5.2lf °C\n"            \
+    LINE1:temp_indoor#FF0000:"Temperatur innen"            \
+    GPRINT:temp_indoor:LAST:"\t Aktuell\: %5.2lf °C"       \
+    GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"    \
+    GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"               \
+    GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"             \
+    LINE1:turtle_temp3#088A08:"Temperatur Donut Gehege\t"    \
+    GPRINT:turtle_temp3:LAST:"\t Aktuell\: %5.2lf °C"      \
+    GPRINT:turtle_temp3:AVERAGE:"Mittelwert\: %5.2lf °C"   \
+    GPRINT:turtle_temp3:MAX:"Max\: %5.2lf °C"              \
+    GPRINT:turtle_temp3:MIN:"Min\: %5.2lf °C\n"            \
+    LINE1:turtle_temp2#D7DF01:"Temperatur Donut Heizstein" \
+    GPRINT:turtle_temp2:LAST:"\t Aktuell\: %5.2lf °C"      \
+    GPRINT:turtle_temp2:AVERAGE:"Mittelwert\: %5.2lf °C"   \
+    GPRINT:turtle_temp2:MAX:"Max\: %5.2lf °C"              \
+    GPRINT:turtle_temp2:MIN:"Min\: %5.2lf °C\n"            \
+    LINE1:turtle_temp1#01DF74:"Temperatur Donut außen\t"     \
+    GPRINT:turtle_temp1:LAST:"\t Aktuell\: %5.2lf °C"      \
+    GPRINT:turtle_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"   \
+    GPRINT:turtle_temp1:MAX:"Max\: %5.2lf °C"              \
+    GPRINT:turtle_temp1:MIN:"Min\: %5.2lf °C\n" 
  }
 
 
@@ -117,10 +129,8 @@ printHeating ()
     --right-axis 1:0                                            \
     DEF:turtle_heating=$RRD_T:turtle_heating:AVERAGE            \
     LINE1:turtle_heating#088A08:"Heizung Donut\t"               \
-    GPRINT:turtle_heating:LAST:"\t Aktuell\: %5.2lf"            \
-    GPRINT:turtle_heating:AVERAGE:"Mittelwert\: %5.2lf"         \
-    GPRINT:turtle_heating:MAX:"Max\: %5.2lf"                    \
-    GPRINT:turtle_heating:MIN:"Min\: %5.2lf\n"                     
+    GPRINT:turtle_heating:LAST:"\t Aktuell\: %5.0lf"            \
+    GPRINT:turtle_heating:AVERAGE:"Mittelwert\: %5.2lf\n"
  }
 
 
