@@ -12,11 +12,12 @@ class Heating:
    ON  = "on"
    OFF = "off" 
 
-   def __init__ (self, pin, latency):
-      self.__pin = pin
+   def __init__ (self, pin, latency, dryRun):
+      self.__pin     = pin
       self.__latency = latency
+      self.__dryRun  = dryRun
       self.__lastchanged = 0
-      self.__status = self.OFF
+      self.__status  = self.OFF
 
       io.setmode(io.BOARD)
       io.setup(self.__pin,io.OUT)
@@ -45,7 +46,10 @@ class Heating:
    def on (self):
       if (self.__status != self.ON):
          if (self.__delayperiod()):
-            io.output(self.__pin,io.HIGH)
+            if (self.__dryRun):
+               print("Dry run: {}".format(self.ON))
+            else:
+               io.output(self.__pin,io.HIGH)
             self.__status = self.ON
 
 
