@@ -62,7 +62,7 @@ def Main():
    schedule[14][0:59] = [20 for m in range(60)]
    schedule[15][0:59] = [20 for m in range(60)]
    schedule[16][0:59] = [20 for m in range(60)]
-   schedule[17][0:29] = [20 for m in range(60)]
+   schedule[17][0:29] = [20 for m in range(30)]
 
    while (True):
 #      heatlamp.on()
@@ -73,11 +73,12 @@ def Main():
       _t2     = -99.9
       _t3, _h = th.read()
       _tc     = tc.read()
+
       if (schedule[hh][mm] > _t3):
          heatlamp.on()
       else:
-         heatlamp.off()
-      _s      = heatlamp.status()
+         print "want to off"
+      _s = heatlamp.status()
 
       rrd_template = DS_TEMP1   + ":" + \
                      DS_TEMP2   + ":" + \
