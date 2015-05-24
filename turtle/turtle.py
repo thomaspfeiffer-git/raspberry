@@ -62,7 +62,7 @@ def Main():
    schedule[14][0:59] = [20 for m in range(60)]
    schedule[15][0:59] = [20 for m in range(60)]
    schedule[16][0:59] = [20 for m in range(60)]
-   schedule[17][0:59] = [20 for m in range(60)]
+   schedule[17][0:29] = [20 for m in range(60)]
 
    while (True):
 #      heatlamp.on()
@@ -70,7 +70,7 @@ def Main():
       # _t1     = t1.read()
       # _t2     = t2.read()
       _t1     = -99.9
-      _t2     = -99.0
+      _t2     = -99.9
       _t3, _h = th.read()
       _tc     = tc.read()
       if (schedule[hh][mm] > _t3):
