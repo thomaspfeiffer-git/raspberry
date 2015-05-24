@@ -33,8 +33,10 @@ class DHT22_AM2302:
          if (t == self.ERROR):
             continue
 
-         sum_t += t
-         sum_h += h
+         sum_t   += t
+         sum_h   += h
+         counter += 1
+
       return [sum_t/counter, sum_h/counter]
 
 ### eof ###
