@@ -40,6 +40,9 @@ class Heating:
 
 
    def cleanup (self):
+      print "Heatlamp.cleanup()"
+      io.output(self.__pin,io.LOW)
+      self.__status = self.OFF                 # TODO: __off()
       io.cleanup()
 
 
@@ -56,7 +59,7 @@ class Heating:
    def off (self):
       if (self.__status != self.OFF):
          if (self.__delayperiod()):
-            io.output(self.__pin,io.LOW)
+            io.output(self.__pin,io.LOW)    # TODO: __off()
             self.__status = self.OFF
 
 ### eof ###
