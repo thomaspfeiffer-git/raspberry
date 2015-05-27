@@ -61,8 +61,7 @@ def Main():
    schedule[13][0:59] = [20 for m in range(60)]
    schedule[14][0:59] = [20 for m in range(60)]
    schedule[15][0:59] = [18 for m in range(60)]
-   schedule[16][0:59] = [17 for m in range(60)]
-   schedule[17][0:29] = [17 for m in range(30)]
+   schedule[16][0:29] = [17 for m in range(30)]
 
    while (True):
 #      heatlamp.on()
