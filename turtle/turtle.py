@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # coding=utf-8
 
+from collections import deque
 import rrdtool
 import signal
 import sys
@@ -63,6 +64,9 @@ def Main():
    schedule[15][0:59] = [18 for m in range(60)]
    schedule[16][0:29] = [17 for m in range(30)]
 
+   t_actual = deque([],3)
+   # TODO: t_actual.avg() or similar
+
    while (True):
 #      heatlamp.on()
       hh, mm  = localtime()[3:5]
@@ -72,6 +76,8 @@ def Main():
       _t2     = -99.9
       _t3, _h = th.read()
       _tc     = tc.read()
+
+      t_actual.append(_t3)
 
       if (schedule[hh][mm] > _t3):
          heatlamp.on()
