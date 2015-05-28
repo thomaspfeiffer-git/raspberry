@@ -65,7 +65,6 @@ def Main():
    schedule[16][0:29] = [17 for m in range(30)]
 
    t_actual = deque([],3)
-   # TODO: t_actual.avg() or similar
 
    while (True):
 #      heatlamp.on()
@@ -78,6 +77,7 @@ def Main():
       _tc     = tc.read()
 
       t_actual.append(_t3)
+      t_avg = sum(list(t_actual)) / float(len(t_actual))
 
       if (schedule[hh][mm] > _t3):
          heatlamp.on()
