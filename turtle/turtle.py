@@ -78,10 +78,9 @@ def Main():
 
       t_actual.append(_t3)
       t_avg = sum(list(t_actual)) / float(len(t_actual))
-      print "Act:", _t3, "Avg:", t_avg, "Anz Messwerte:", len(t_actual)
-      # if (schedule[hh][mm] > t_avg): ...
+      # print "Act:", _t3, "Avg:", t_avg, "Anz Messwerte:", len(t_actual)
 
-      if (schedule[hh][mm] > _t3):
+      if (schedule[hh][mm] > t_avg):
          heatlamp.on()
       else:
          heatlamp.off()
