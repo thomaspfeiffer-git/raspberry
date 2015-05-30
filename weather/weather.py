@@ -13,7 +13,9 @@
 ###############################################################################
 
 import os
+import signal
 import sys
+from time import sleep
 import traceback
 
 import rrdtool
@@ -52,44 +54,17 @@ DS_TEMPCPU     = "temp_cpu"
 
 
 # Other global stuff
-
 bDebug  = False
-PIDFile = ""
 
 
 ################################################################################
-# Exit #########################################################################
+# Exit ########################################################################
 def Exit():
    Log('Cleaning up ...')
    sys.exit()
 
-
-
-################################################################################
-# CheckPIDFile #################################################################
-def CheckPIDFile():
-   global PIDFile
-   PIDFile = __file__ + ".pid"
-
-   if (os.path.isfile(PIDFile)):
-      Log("PID File exists. Don't start me twice!")
-      Exit()
-
-   f = open(PIDFile, 'w')
-   f.write(str(os.getpid()))
-   f.close()
-
-
-
-################################################################################
-# CleanupPIDFile ###############################################################
-# Must no be called in Cleanup();                                              #
-# this would delete the PID file of other processes                            #
-def CleanupPIDFile():
-   global PIDFile
-
-   os.remove(PIDFile)
-
+def _Exit(s,f):
+   Exit()
 
 
 ################################################################################
@@ -126,55 +101,60 @@ def Main():
    th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm)
    th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm)
 
-   temp_indoor, humi_indoor   = th_indoor.read()
-   temp_outdoor, humi_outdoor = th_outdoor.read()
 
-#   temp_indoor = bmp.readTemperature()  # indoor #
-   pressure    = bmp.readPressure()
+   while(True):
+      temp_indoor, humi_indoor   = th_indoor.read()
+      temp_outdoor, humi_outdoor = th_outdoor.read()
+      pressure    = bmp.readPressure()
+      temp_cpu    = GetCPUTemperature()
 
-   temp_cpu    = GetCPUTemperature()
+      rrd_template    = DS_TEMPINDOOR  + ":" + \
+                        DS_TEMPOUTDOOR + ":" + \
+                        DS_HUMIINDOOR  + ":" + \
+                        DS_HUMIOUTDOOR + ":" + \
+                        DS_AIRPRESSURE + ":" + \
+                        DS_TEMPCPU
 
-   rrd_template    = DS_TEMPINDOOR  + ":" + \
-                     DS_TEMPOUTDOOR + ":" + \
-                     DS_HUMIINDOOR  + ":" + \
-                     DS_HUMIOUTDOOR + ":" + \
-                     DS_AIRPRESSURE + ":" + \
-                     DS_TEMPCPU
+      rrd_data = "N:{:.2f}".format(temp_indoor)      + \
+                  ":{:.2f}".format(temp_outdoor)     + \
+                  ":{:.2f}".format(humi_indoor)      + \
+                  ":{:.2f}".format(humi_outdoor)     + \
+                  ":{:.2f}".format(pressure / 100.0) + \
+                  ":{:.2f}".format(temp_cpu)
 
-   rrd_data = "N:{:.2f}".format(temp_indoor)      + \
-               ":{:.2f}".format(temp_outdoor)     + \
-               ":{:.2f}".format(humi_indoor)      + \
-               ":{:.2f}".format(humi_outdoor)     + \
-               ":{:.2f}".format(pressure / 100.0) + \
-               ":{:.2f}".format(temp_cpu)
+      rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
+   
+      Log(rrd_template)
+      Log(rrd_data)
 
-   rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
+      Log("CPU Temperatur: {:.2f} °C".format(temp_cpu))
+      Log("Temperatur DHT (outdoor): {:.2f} °C".format(temp_outdoor))
+      Log("Luftfeuchtigkeit DHT (outdoor): {:.2f} %".format(humi_outdoor))
+      Log("Temperatur DHT (indoor): {:.2f} °C".format(temp_indoor))
+      Log("Luftfeuchtigkeit DHT (indoor): {:.2f} %".format(humi_indoor))
+      Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
+      Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
 
-   Log(rrd_template)
-   Log(rrd_data)
-
-   Log("CPU Temperatur: {:.2f} °C".format(temp_cpu))
-   Log("Temperatur DHT (outdoor): {:.2f} °C".format(temp_outdoor))
-   Log("Luftfeuchtigkeit DHT (outdoor): {:.2f} %".format(humi_outdoor))
-   Log("Temperatur DHT (indoor): {:.2f} °C".format(temp_indoor))
-   Log("Luftfeuchtigkeit DHT (indoor): {:.2f} %".format(humi_indoor))
-   Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
-   Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
+      sleep(50)
 
 
 ################################################################################
-try:
-   bDebug = True if (len(sys.argv) > 1) and (sys.argv[1] in ['-v', '-V']) \
-            else False
+signal.signal(signal.SIGTERM, _Exit)
+bDebug = True if (len(sys.argv) > 1) and (sys.argv[1] in ['-v', '-V']) \
+         else False
 
-   CheckPIDFile()
+try:
    Init()
    Main()
-   CleanupPIDFile()
+
+except KeyboardInterrupt:
+   Exit()
+
+except SystemExit:                  # Done in signal handler (method _Exit()) #
+   pass
 
 except:
    print(traceback.print_exc())
 
 finally:
-   Exit()
-
+   pass
