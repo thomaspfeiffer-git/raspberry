@@ -58,8 +58,8 @@ def Main():
    schedule[ 9][0:59] = [25 for m in range(60)]
    schedule[10][0:59] = [20 for m in range(60)]
    schedule[11][0:59] = [20 for m in range(60)]
-   schedule[12][0:59] = [20 for m in range(60)]
-   schedule[13][0:59] = [20 for m in range(60)]
+   schedule[12][0:59] = [25 for m in range(60)]
+   schedule[13][0:59] = [25 for m in range(60)]
    schedule[14][0:59] = [20 for m in range(60)]
    schedule[15][0:59] = [18 for m in range(60)]
    schedule[16][0:29] = [17 for m in range(30)]
@@ -78,8 +78,6 @@ def Main():
 
       t_actual.append(_t3)
       t_avg = sum(list(t_actual)) / float(len(t_actual))
-      # print "Act:", _t3, "Avg:", t_avg, "Anz Messwerte:", len(t_actual)
-
       if (schedule[hh][mm] > t_avg):
          heatlamp.on()
       else:
