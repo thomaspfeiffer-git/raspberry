@@ -30,27 +30,22 @@ DS_HUMI    = "turtle_humi"
 DS_HEATING = "turtle_heating"
 
 
-# t1        = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
-# t2        = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
+# t0        = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
+# t1        = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
 th        = DHT22_AM2302(21)   # BCM 21 = PIN 40
 tc        = CPU()
 heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY, False)
 
 
-
 ###############################################################################
 # Measurements ################################################################
-# TODO: change parent to "deque" and remove method "add()" instead.
 # TODO: use this class in analogledclock.py/Lightness.py as well.
-class Measurements (object):
-   def __init__(self):
-      self.__m = deque([],5)
-
-   def add(self,v):
-      self.__m.append(v)
+class Measurements (deque):
+   def __init__(self, n=5):
+      super(Measurements,self).__init__([],n)
 
    def avg(self):
-      return sum(list(self.__m)) / float(len(self.__m))
+      return sum(list(self)) / float(len(self))
 
 
 ###############################################################################
@@ -80,25 +75,23 @@ def Main():
    schedule[15][0:59] = [18 for m in range(60)]
    schedule[16][0:29] = [17 for m in range(30)]
 
-   t1_actual = Measurements() # TODO: array
-   t2_actual = Measurements()
-   t3_actual = Measurements()
+   t_actual = [Measurements() for i in range(3)]
 
    while (True):
 #      heatlamp.on()
       hh, mm  = localtime()[3:5]
+      # _t0     = t0.read()
       # _t1     = t1.read()
-      # _t2     = t2.read()
+      _t0     = -99.9
       _t1     = -99.9
-      _t2     = -99.9
-      _t3, _h = th.read()
+      _t2, _h = th.read()
       _tc     = tc.read()
 
-      t1_actual.add(_t1) 
-      t2_actual.add(_t2) 
-      t3_actual.add(_t3) 
+      t_actual[0].append(_t0)
+      t_actual[1].append(_t1)
+      t_actual[2].append(_t2)
 
-      if (schedule[hh][mm] > t3_actual.avg()):
+      if (schedule[hh][mm] > t_actual[2].avg()):
          heatlamp.on()
       else:
          heatlamp.off()
@@ -110,9 +103,9 @@ def Main():
                      DS_TEMPCPU + ":" + \
                      DS_HUMI    + ":" + \
                      DS_HEATING
-      rrd_data     = "N:{:.2f}".format(_t1) + \
+      rrd_data     = "N:{:.2f}".format(_t0) + \
+                      ":{:.2f}".format(_t1) + \
                       ":{:.2f}".format(_t2) + \
-                      ":{:.2f}".format(_t3) + \
                       ":{:.2f}".format(_tc) + \
                       ":{:.2f}".format(_h) + \
                       ":{:}".format(_s)
