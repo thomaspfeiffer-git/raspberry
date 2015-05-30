@@ -18,7 +18,7 @@ class Heating:
       self.__status = self.OFF  
 
 
-   def __init__ (self, pin, latency, dryRun):
+   def __init__ (self, pin, latency, dryRun=False):
       self.__pin     = pin
       self.__latency = latency
       self.__dryRun  = dryRun
