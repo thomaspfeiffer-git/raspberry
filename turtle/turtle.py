@@ -38,7 +38,6 @@ heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY)
 
 ###############################################################################
 # Measurements ################################################################
-# TODO: use this class in analogledclock.py/Lightness.py as well.
 class Measurements (deque):
    def __init__(self, n=5):
       super(Measurements,self).__init__([],n)
