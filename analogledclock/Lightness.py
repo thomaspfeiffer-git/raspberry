@@ -91,8 +91,6 @@ class Lightness (threading.Thread):
          actual = Value(self.__adc.read())
          measurements.append(actual)
          
-         # Target is quite constant in intervall [avg-10, avg+10]. Thus lights do not jitter
-         # on small changes of lightness.
          avg = measurements.avg()
          if (avg > target+10):
             target += 10
