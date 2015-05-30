@@ -37,6 +37,22 @@ tc        = CPU()
 heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY, False)
 
 
+
+###############################################################################
+# Measurements ################################################################
+# TODO: change parent to "deque" and remove method "add()" instead.
+# TODO: use this class in analogledclock.py/Lightness.py as well.
+class Measurements (object):
+   def __init__(self):
+      self.__m = deque([],5)
+
+   def add(self,v):
+      self.__m.append(v)
+
+   def avg(self):
+      return sum(list(self.__m)) / float(len(self.__m))
+
+
 ###############################################################################
 # Exit ########################################################################
 def Exit():
@@ -64,7 +80,9 @@ def Main():
    schedule[15][0:59] = [18 for m in range(60)]
    schedule[16][0:29] = [17 for m in range(30)]
 
-   t_actual = deque([],5)
+   t1_actual = Measurements() # TODO: array
+   t2_actual = Measurements()
+   t3_actual = Measurements()
 
    while (True):
 #      heatlamp.on()
@@ -76,9 +94,11 @@ def Main():
       _t3, _h = th.read()
       _tc     = tc.read()
 
-      t_actual.append(_t3)
-      t_avg = sum(list(t_actual)) / float(len(t_actual))
-      if (schedule[hh][mm] > t_avg):
+      t1_actual.add(_t1) 
+      t2_actual.add(_t2) 
+      t3_actual.add(_t3) 
+
+      if (schedule[hh][mm] > t3_actual.avg()):
          heatlamp.on()
       else:
          heatlamp.off()
