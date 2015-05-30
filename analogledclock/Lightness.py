@@ -61,19 +61,12 @@ class Value (object):
       return str(self.value)
 
 
-class Measurements (object):
-   def __init__(self):
-      self.__m = deque([],250)
-
-   def add(self,v):
-      self.__m.append(v)   # TODO: some check for type safety could be useful
+class Measurements (deque):
+   def __init__(self, n=250):
+      super(Measurements,self).__init__([],n)
 
    def avg(self):
-      i = sum = 0
-      for v in self.__m:
-         sum += v.value
-         i += 1
-      return sum // i
+      return sum(list(self)) / float(len(self))
 
 
 class Lightness (threading.Thread):
@@ -96,7 +89,7 @@ class Lightness (threading.Thread):
 
       while (self.__running):
          actual = Value(self.__adc.read())
-         measurements.add(actual)
+         measurements.append(actual)
          
          # Target is quite constant in intervall [avg-10, avg+10]. Thus lights do not jitter
          # on small changes of lightness.
