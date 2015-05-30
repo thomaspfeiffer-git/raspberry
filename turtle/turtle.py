@@ -9,7 +9,6 @@ from time import *
 import traceback
 
 
-
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
@@ -22,7 +21,7 @@ HEATING_LATENCY = 60 * 15
 
 # Misc for rrdtool
 RRDFILE    = "/schild/weather/turtle.rrd"
-DS_TEMP1   = "turtle_temp1" 
+DS_TEMP1   = "turtle_temp1"
 DS_TEMP2   = "turtle_temp2"
 DS_TEMP3   = "turtle_temp3"
 DS_TEMPCPU = "turtle_tempcpu"
@@ -34,7 +33,7 @@ DS_HEATING = "turtle_heating"
 # t1        = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
 th        = DHT22_AM2302(21)   # BCM 21 = PIN 40
 tc        = CPU()
-heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY, False)
+heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY)
 
 
 ###############################################################################
@@ -52,11 +51,9 @@ class Measurements (deque):
 # Exit ########################################################################
 def Exit():
    heatlamp.cleanup()
-   print("Exit")
    sys.exit()
 
 def _Exit(s,f):
-   print("_Exit")
    Exit()
 
 
