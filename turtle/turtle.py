@@ -45,6 +45,9 @@ class Measurements (deque):
    def avg(self):
       return sum(list(self)) / float(len(self))
 
+   def last(self):
+      return self[len(self)-1]
+
 
 ###############################################################################
 # Exit ########################################################################
@@ -71,27 +74,23 @@ def Main():
    schedule[15][0:59] = [18 for m in range(60)]
    schedule[16][0:29] = [17 for m in range(30)]
 
-   t_actual = [Measurements() for i in range(3)]
+   m = [Measurements() for i in range(3)]
 
    while (True):
 #      heatlamp.on()
       hh, mm  = localtime()[3:5]
-      # _t0     = t0.read()
-      # _t1     = t1.read()
-      _t0     = -99.9
-      _t1     = -99.9
+      # t[0].append(t0.read())
+      # t[1].append(t0.read())
+      m[0].append(-99.9)
+      m[1].append(-99.9)
       _t2, _h = th.read()
+      m[2].append(_t2)
       _tc     = tc.read()
 
-      t_actual[0].append(_t0)
-      t_actual[1].append(_t1)
-      t_actual[2].append(_t2)
-
-      if (schedule[hh][mm] > t_actual[2].avg()):
+      if (schedule[hh][mm] > m[2].avg()):
          heatlamp.on()
       else:
          heatlamp.off()
-      _s = heatlamp.status()
 
       rrd_template = DS_TEMP1   + ":" + \
                      DS_TEMP2   + ":" + \
@@ -99,12 +98,12 @@ def Main():
                      DS_TEMPCPU + ":" + \
                      DS_HUMI    + ":" + \
                      DS_HEATING
-      rrd_data     = "N:{:.2f}".format(_t0) + \
-                      ":{:.2f}".format(_t1) + \
-                      ":{:.2f}".format(_t2) + \
+      rrd_data     = "N:{:.2f}".format(m[0].last()) + \
+                      ":{:.2f}".format(m[1].last()) + \
+                      ":{:.2f}".format(m[2].last()) + \
                       ":{:.2f}".format(_tc) + \
                       ":{:.2f}".format(_h) + \
-                      ":{:}".format(_s)
+                      ":{:}".format(heatlamp.status())
       print strftime("%H:%M:%S", localtime()), rrd_data
       rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
 
