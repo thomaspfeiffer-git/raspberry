@@ -158,9 +158,7 @@ bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
              38: {tech: i2c, device: 0x27, bank: "B", bit: "0b00010000"}, \
              39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00000010"} }
 
-
 bits = {}
-
 
 
 ###############################################################################
@@ -177,7 +175,6 @@ def InitBits(pattern):
       bits[spi,d,"B"] = pattern
 
 
-
 ###############################################################################
 # GetBank #####################################################################
 def GetBank(string):
@@ -189,7 +186,6 @@ def GetBank(string):
       print("Unknown bank!")
       # TODO: Exception!
       return MCP23x17.OLATA
-
 
 
 ###############################################################################
@@ -207,12 +203,10 @@ def AllOff():
    WriteBits()
 
 
-
 ###############################################################################
 # Cleanup #####################################################################
 def Cleanup():
    AllOff()
-
 
 
 ###############################################################################
@@ -238,9 +232,7 @@ def Main():
       s = int(s) % 40
       m = int(m) % 40
       h = int(h) % 40
-      # print s, clock_seconds[s][tech], clock_seconds[s][device], clock_seconds[s][bank], clock_seconds[s][bit]
-      # print m, clock_minutes[m][tech], clock_minutes[m][device], clock_minutes[m][bank], clock_minutes[m][bit]
-      # print h, clock_hours[h][tech], clock_hours[h][device], clock_hours[h][bank], clock_hours[h][bit]
+      print "h:", h, "m:", m, "s:", s
 
       InitBits(0b00000000)
       bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
@@ -273,3 +265,4 @@ finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
    pass
 
 ### eof ###
+
