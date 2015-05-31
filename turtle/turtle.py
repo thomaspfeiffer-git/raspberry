@@ -81,7 +81,6 @@ def Main():
         DS_HUMI:    Measurements()}
  
    while (True):
-#      heatlamp.on()
       hh, mm  = localtime()[3:5]
       # m[DS_TEMP1].append(t1.read())
       # m[DS_TEMP2].append(t2.read())
@@ -112,7 +111,6 @@ def Main():
       print strftime("%H:%M:%S", localtime()), rrd_data
       rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
 
-#      heatlamp.off()
       sleep(45)
 
 
