@@ -36,13 +36,13 @@ class Value (object):
          other = Value(other)
       return Value(self.value + other.value)
 
+   def __radd__(self,other):
+      return Value(other-self.value)
+
    def __sub__(self, other):
       if not isinstance(other, Value):
          other = Value(other)
       return Value(self.value - other.value)
-
-   def __rsub__(self,other):
-      return Value(other-self.value)
 
    def __lt__(self, other):
       if not isinstance(other, Value):
@@ -66,7 +66,11 @@ class Measurements (deque):
       super(Measurements,self).__init__([],n)
 
    def avg(self):
-      return sum(list(self)) / float(len(self))
+      i = s = 0
+      for v in list(self):
+         s += v.value
+         i += 1
+      return s // i
 
 
 class Lightness (threading.Thread):
@@ -102,8 +106,8 @@ class Lightness (threading.Thread):
             target -= 1
 
          # target = 1000
-         wipi.pwmWrite(12,int(1024-target))
-         # print("{}: Lightness (actual/avg/target): {}/{}/{}".format(time.strftime("%Y%m%d-%H%M%S"),actual,avg,target))
+         wipi.pwmWrite(12,int(1024-int(target)))
+         print("{}: Lightness (actual/avg/target): {}/{}/{}".format(time.strftime("%Y%m%d-%H%M%S"),actual,avg,target))
          time.sleep(0.1)
 
 
