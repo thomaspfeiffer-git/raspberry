@@ -18,7 +18,10 @@ class MCP23017:
          self.send(d, MCP23x17.IODIRB, 0b00000000)
 
    def send(self, device, bank, pattern):
-      self.__bus.write_byte_data(device,bank,pattern)
+      try:
+         self.__bus.write_byte_data(device,bank,pattern)
+      except IOError:
+         print "Device:", hex(device), "Bank:", hex(bank), "Pattern:", hex(pattern)
 
 ### eof ###
 
