@@ -31,7 +31,7 @@ i2c_devices = (0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27) # Addresses of MC
 i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) 
-spi_devices = (0x00, 0x02)    # Addresses of MCP23S17 components
+spi_devices = (0x00, 0x01)    # Addresses of MCP23S17 components
 spi         = MCP23S17(SPI_const.CS1,spi_devices)
 
 
@@ -74,7 +74,17 @@ bits_red   = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
              36: {tech: i2c, device: 0x27, bank: "A", bit: "0b00001000"}, \
              37: {tech: i2c, device: 0x27, bank: "A", bit: "0b01000000"}, \
              38: {tech: i2c, device: 0x27, bank: "B", bit: "0b01000000"}, \
-             39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00001000"} }
+             39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00001000"}, \
+             40: {tech: spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
+             41: {tech: spi, device: 0x00, bank: "A", bit: "0b00001000"}, \
+             42: {tech: spi, device: 0x00, bank: "A", bit: "0b01000000"}, \
+             43: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
+             44: {tech: spi, device: 0x00, bank: "B", bit: "0b00001000"}, \
+             45: {tech: spi, device: 0x02, bank: "A", bit: "0b00000001"}, \
+             46: {tech: spi, device: 0x02, bank: "A", bit: "0b00001000"}, \
+             47: {tech: spi, device: 0x02, bank: "A", bit: "0b01000000"}, \
+             48: {tech: spi, device: 0x02, bank: "B", bit: "0b01000000"}, \
+             49: {tech: spi, device: 0x02, bank: "B", bit: "0b00001000"} }
 
 bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
               1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
@@ -116,6 +126,16 @@ bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
              37: {tech: i2c, device: 0x27, bank: "A", bit: "0b10000000"}, \
              38: {tech: i2c, device: 0x27, bank: "B", bit: "0b00100000"}, \
              39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00000100"} }
+             40: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
+             41: {tech: spi, device: 0x00, bank: "A", bit: "0b00010000"}, \
+             42: {tech: spi, device: 0x00, bank: "A", bit: "0b10000000"}, \
+             43: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
+             44: {tech: spi, device: 0x00, bank: "B", bit: "0b00000100"}, \
+             45: {tech: spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
+             46: {tech: spi, device: 0x02, bank: "A", bit: "0b00010000"}, \
+             47: {tech: spi, device: 0x02, bank: "A", bit: "0b10000000"}, \
+             48: {tech: spi, device: 0x02, bank: "B", bit: "0b00100000"}, \
+             49: {tech: spi, device: 0x02, bank: "B", bit: "0b00000100"} }
 
 bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
               1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
@@ -157,6 +177,16 @@ bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
              37: {tech: i2c, device: 0x27, bank: "B", bit: "0b10000000"}, \
              38: {tech: i2c, device: 0x27, bank: "B", bit: "0b00010000"}, \
              39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00000010"} }
+             40: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
+             41: {tech: spi, device: 0x00, bank: "A", bit: "0b00100000"}, \
+             42: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
+             43: {tech: spi, device: 0x00, bank: "B", bit: "0b00010000"}, \
+             44: {tech: spi, device: 0x00, bank: "B", bit: "0b00000010"}, \
+             45: {tech: spi, device: 0x02, bank: "A", bit: "0b00000100"}, \
+             46: {tech: spi, device: 0x02, bank: "A", bit: "0b00100000"}, \
+             47: {tech: spi, device: 0x02, bank: "B", bit: "0b10000000"}, \
+             48: {tech: spi, device: 0x02, bank: "B", bit: "0b00010000"}, \
+             49: {tech: spi, device: 0x02, bank: "B", bit: "0b00000010"} }
 
 bits = {}
 
@@ -232,14 +262,14 @@ def Main():
       s = int(s) % 40
       m = int(m) % 40
       h = int(h) % 40
-      print "h:", h, "m:", m, "s:", s
+      # print "h:", h, "m:", m, "s:", s
 
       InitBits(0b00000000)
       bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
       bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
       bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
       WriteBits()
-      sleep(1)
+      sleep(0.1)
 
 
 
