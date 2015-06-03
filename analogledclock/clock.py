@@ -125,7 +125,7 @@ bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
              36: {tech: i2c, device: 0x27, bank: "A", bit: "0b00010000"}, \
              37: {tech: i2c, device: 0x27, bank: "A", bit: "0b10000000"}, \
              38: {tech: i2c, device: 0x27, bank: "B", bit: "0b00100000"}, \
-             39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00000100"} }
+             39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00000100"}, \
              40: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
              41: {tech: spi, device: 0x00, bank: "A", bit: "0b00010000"}, \
              42: {tech: spi, device: 0x00, bank: "A", bit: "0b10000000"}, \
@@ -176,7 +176,7 @@ bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
              36: {tech: i2c, device: 0x27, bank: "A", bit: "0b00100000"}, \
              37: {tech: i2c, device: 0x27, bank: "B", bit: "0b10000000"}, \
              38: {tech: i2c, device: 0x27, bank: "B", bit: "0b00010000"}, \
-             39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00000010"} }
+             39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00000010"}, \
              40: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
              41: {tech: spi, device: 0x00, bank: "A", bit: "0b00100000"}, \
              42: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
@@ -259,10 +259,10 @@ def _Exit(s,f):
 def Main():
    while(1):
       h, m, s = strftime("%H:%M:%S", localtime()).split(":")
-      s = int(s) % 40
-      m = int(m) % 40
-      h = int(h) % 40
-      # print "h:", h, "m:", m, "s:", s
+      s = int(s) % 50
+      m = int(m) % 50
+      h = int(h) % 50
+      print "h:", h, "m:", m, "s:", s
 
       InitBits(0b00000000)
       bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
