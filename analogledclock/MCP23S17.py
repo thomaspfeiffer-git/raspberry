@@ -6,6 +6,7 @@
 ###############################################################################################
 
 import RPi.GPIO as io
+
 from MCP23x17 import MCP23x17
 from SPI_const import SPI_const
 
@@ -60,8 +61,11 @@ class MCP23S17:
       io.output(SPI_const.SCLK, io.LOW)
 
       # MCP23S17 needs hardware addressing explicitly enabled.
-      self.send(0x00, MCP23x17.IOCONA, 0b00001000) # Set HAEN to 1.
-      self.send(0x00, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.
+      for d in self.devices:
+         self.send(d, MCP23x17.IOCONA, 0b00001000) # Set HAEN to 1.
+         self.send(d, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.
+         # self.send(d, MCP23x17.IOCONA, 0x28) # Set HAEN to 1.
+         # self.send(d, MCP23x17.IOCONB, 0x28) # Set HAEN to 1.
 
       # Set port direction to output (0b00000000)
       for d in self.devices:
