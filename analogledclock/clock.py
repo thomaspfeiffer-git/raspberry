@@ -80,11 +80,11 @@ bits_red   = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
              42: {tech: spi, device: 0x00, bank: "A", bit: "0b01000000"}, \
              43: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
              44: {tech: spi, device: 0x00, bank: "B", bit: "0b00001000"}, \
-             45: {tech: spi, device: 0x02, bank: "A", bit: "0b00000001"}, \
-             46: {tech: spi, device: 0x02, bank: "A", bit: "0b00001000"}, \
-             47: {tech: spi, device: 0x02, bank: "A", bit: "0b01000000"}, \
-             48: {tech: spi, device: 0x02, bank: "B", bit: "0b01000000"}, \
-             49: {tech: spi, device: 0x02, bank: "B", bit: "0b00001000"} }
+             45: {tech: spi, device: 0x01, bank: "A", bit: "0b00000001"}, \
+             46: {tech: spi, device: 0x01, bank: "A", bit: "0b00001000"}, \
+             47: {tech: spi, device: 0x01, bank: "A", bit: "0b01000000"}, \
+             48: {tech: spi, device: 0x01, bank: "B", bit: "0b01000000"}, \
+             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00001000"} }
 
 bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
               1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
@@ -131,11 +131,11 @@ bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
              42: {tech: spi, device: 0x00, bank: "A", bit: "0b10000000"}, \
              43: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
              44: {tech: spi, device: 0x00, bank: "B", bit: "0b00000100"}, \
-             45: {tech: spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
-             46: {tech: spi, device: 0x02, bank: "A", bit: "0b00010000"}, \
-             47: {tech: spi, device: 0x02, bank: "A", bit: "0b10000000"}, \
-             48: {tech: spi, device: 0x02, bank: "B", bit: "0b00100000"}, \
-             49: {tech: spi, device: 0x02, bank: "B", bit: "0b00000100"} }
+             45: {tech: spi, device: 0x01, bank: "A", bit: "0b00000010"}, \
+             46: {tech: spi, device: 0x01, bank: "A", bit: "0b00010000"}, \
+             47: {tech: spi, device: 0x01, bank: "A", bit: "0b10000000"}, \
+             48: {tech: spi, device: 0x01, bank: "B", bit: "0b00100000"}, \
+             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00000100"} }
 
 bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
               1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
@@ -182,11 +182,11 @@ bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
              42: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
              43: {tech: spi, device: 0x00, bank: "B", bit: "0b00010000"}, \
              44: {tech: spi, device: 0x00, bank: "B", bit: "0b00000010"}, \
-             45: {tech: spi, device: 0x02, bank: "A", bit: "0b00000100"}, \
-             46: {tech: spi, device: 0x02, bank: "A", bit: "0b00100000"}, \
-             47: {tech: spi, device: 0x02, bank: "B", bit: "0b10000000"}, \
-             48: {tech: spi, device: 0x02, bank: "B", bit: "0b00010000"}, \
-             49: {tech: spi, device: 0x02, bank: "B", bit: "0b00000010"} }
+             45: {tech: spi, device: 0x01, bank: "A", bit: "0b00000100"}, \
+             46: {tech: spi, device: 0x01, bank: "A", bit: "0b00100000"}, \
+             47: {tech: spi, device: 0x01, bank: "B", bit: "0b10000000"}, \
+             48: {tech: spi, device: 0x01, bank: "B", bit: "0b00010000"}, \
+             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00000010"} }
 
 bits = {}
 
