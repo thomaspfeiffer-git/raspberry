@@ -31,7 +31,7 @@ i2c_devices = (0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27) # Addresses of MC
 i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) 
-spi_devices = (0x00, 0x02)    # Addresses of MCP23S17 components
+spi_devices = (0x00, 0x01)    # Addresses of MCP23S17 components
 spi         = MCP23S17(SPI_const.CS1,spi_devices)
 
 
@@ -269,7 +269,7 @@ def Main():
       bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
       bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
       WriteBits()
-      # sleep(0.1)
+#      sleep(1)
 
 
 
