@@ -14,6 +14,8 @@ from SPI_const import SPI_const
 
 class MCP23S17:
    SPI_SLAVE_ADDR_BASE  = 0x40
+   SPI_SLAVE_READ       = 0x01
+   SPI_SLAVE_WRITE      = 0x00
 
    def __sendValue(self, value):
      v = value
@@ -30,12 +32,13 @@ class MCP23S17:
         v <<= 1 # Bitfolge eine Position nach links schieben
 
 
-   def send(self, device, addr, data):   # TODO: rename "addr" to "bank"
+   def send(self, device, bank, data):
       # CS aktive (LOW-Aktiv)
       io.output(self.cs, io.LOW)
 
-      self.__sendValue(device|self.SPI_SLAVE_ADDR_BASE)
-      self.__sendValue(addr)
+      d = device << 1
+      self.__sendValue(d|self.SPI_SLAVE_ADDR_BASE|self.SPI_SLAVE_WRITE) 
+      self.__sendValue(bank) 
       self.__sendValue(data)
 
       # CS nicht aktiv
