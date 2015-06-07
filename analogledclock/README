@@ -1,0 +1,11 @@
+Building an analog LED clock - dedicated LED for each second/minute/hour
+May look like eg http://download.cnet.com/LED-Analog-Clock-HD/3004-2094_4-11825229-1.html
+
+Files:
+  clock.py: main file
+  Lightness.py: controls lightness of LEDs via PWM and a photo resistor
+  SPI_const.py: various constants for the SPI bus
+  MCP3008.py: reading analog values of photo resistor for lightness control
+  MCP23x17.py: various constants for MCP23x17
+  MCP23017.py: code for MCP23017 (I2C)
+  MCP23S17.py: code for MCP23S17 (SPI)
