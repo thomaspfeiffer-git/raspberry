@@ -5,10 +5,44 @@
 # (c) https://github.com/thomaspfeiffer-git May 2015                                          #
 ###############################################################################################
 
-import RPi.GPIO as io
+import spidev
 
+import RPi.GPIO as io
 from MCP23x17 import MCP23x17
 from SPI_const import SPI_const
+
+
+class MCP23S17_xfer:
+   MCP23S17_SLAVE_ADDR_BASE = 0x40 # TODO: move to MCP23x17.py
+   MCP23S17_SLAVE_WRITE     = 0x00
+   MCP23S17_SLAVE_READ      = 0x01
+
+
+   def send (self, device, register, data):
+      d = device << 1
+      self.spi.xfer2([d|MCP23S17_SLAVE_ADDR_BASE|MCP23S17_SLAVE_WRITE,register,data])
+
+
+   def __init__ (self, cs, devices):
+      self.cs = cs
+      self.device = devices
+
+      self.spi = spidev.SpiDev()
+      self.spi.open(0,1)  # TODO: cs
+
+      # MCP23S17 needs hardware addressing explicitly enabled.
+      for d in self.devices:
+         self.send(d, MCP23x17.IOCONA, 0b00001000) # Set HAEN to 1.
+         self.send(d, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.# set ports to output
+
+      # Set port direction to output (0b00000000)
+      for d in self.devices:
+         self.send(d, MCP23x17.IODIRA, 0x00)
+         self.send(d, MCP23x17.IODIRB, 0x00)
+
+
+   def close (self):
+      self.spi.close()
 
 
 
