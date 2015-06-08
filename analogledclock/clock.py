@@ -15,8 +15,7 @@ from Lightness import Lightness
 from SPI_const import SPI_const
 from MCP23x17 import MCP23x17
 from MCP23017 import MCP23017
-from MCP23S17 import MCP23S17
-
+from MCP23S17 import *
 
 tech     = 'tech'
 tech_i2c = 'i2c'
@@ -32,6 +31,7 @@ i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) 
 spi_devices = (0x00, 0x01)    # Addresses of MCP23S17 components
+#spi         = MCP23S17_xfer(SPI_const.CS1,spi_devices)
 spi         = MCP23S17(SPI_const.CS1,spi_devices)
 
 
@@ -243,6 +243,7 @@ def Cleanup():
 # Exit ########################################################################
 def Exit():
    Cleanup()
+   spi.close()
    lightness.stop()
    lightness.join()
    # TODO: GPIO.cleanup()
@@ -269,7 +270,7 @@ def Main():
       bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
       bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
       WriteBits()
-#      sleep(1)
+      sleep(1)
 
 
 
