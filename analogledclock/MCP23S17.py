@@ -12,19 +12,19 @@ from SPI_const import SPI_const
 
 
 class MCP23S17_xfer:
-   MCP23S17_SLAVE_ADDR_BASE = 0x40 # TODO: move to MCP23x17.py
+   MCP23S17_SLAVE_ADDR_BASE = 0x40
    MCP23S17_SLAVE_WRITE     = 0x00
    MCP23S17_SLAVE_READ      = 0x01
 
-
    def send (self, device, register, data):
       d = device << 1
-      self.spi.xfer2([d|MCP23S17_SLAVE_ADDR_BASE|MCP23S17_SLAVE_WRITE,register,data])
+      self.spi.xfer2([d|self.MCP23S17_SLAVE_ADDR_BASE|self.MCP23S17_SLAVE_WRITE,register,data])
 
 
    def __init__ (self, cs, devices):
       self.cs = cs
-      self.device = devices
+      # self.cs = 0 if (cs == SPI_const.CS0) else 1 
+      self.devices = devices
 
       self.spi = spidev.SpiDev()
       self.spi.open(0,1)  # TODO: cs
