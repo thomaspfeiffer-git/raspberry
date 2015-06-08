@@ -1,8 +1,7 @@
 ###############################################################################################
 # MCP23017                                                                                    #
 # Communication with MCP23S17                                                                 #
-# Taken from http://erik-bartmann.de/                                                         #
-# (c) https://github.com/thomaspfeiffer-git May 2015                                          #
+# (c) https://github.com/thomaspfeiffer-git 2015                                              #
 ###############################################################################################
 
 import spidev
@@ -33,7 +32,7 @@ class MCP23S17_xfer:
       # MCP23S17 needs hardware addressing explicitly enabled.
       for d in self.devices:
          self.send(d, MCP23x17.IOCONA, 0b00001000) # Set HAEN to 1.
-         self.send(d, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.# set ports to output
+         self.send(d, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.
 
       # Set port direction to output (0b00000000)
       for d in self.devices:
