@@ -29,8 +29,8 @@ class MCP23S17:
 
       # MCP23S17 needs hardware addressing explicitly enabled.
       for d in self.devices:
-         self.send(d, MCP23x17.IOCONA, 0b00001000) # Set HAEN to 1.
-         self.send(d, MCP23x17.IOCONB, 0b00001000) # Set HAEN to 1.
+         self.send(d, MCP23x17.IOCONA, MCP23x17.HAEN)
+         self.send(d, MCP23x17.IOCONB, MCP23x17.HAEN)
 
       # Set port direction to output (0b00000000)
       for d in self.devices:
