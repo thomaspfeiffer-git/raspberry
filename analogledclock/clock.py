@@ -2,7 +2,7 @@
 ###############################################################################################
 # clock.py                                                                                    #
 # Build an analog clock with LEDs.                                                            #
-# (c) https://github.com/thomaspfeiffer-git May 2015                                          #
+# (c) https://github.com/thomaspfeiffer-git 2015                                          #
 ###############################################################################################
 
 import signal
@@ -31,7 +31,6 @@ i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) 
 spi_devices = (0x00, 0x01)    # Addresses of MCP23S17 components
-#spi         = MCP23S17_xfer(SPI_const.CS1,spi_devices)
 spi         = MCP23S17(SPI_const.CS1,spi_devices)
 
 
@@ -244,6 +243,7 @@ def Cleanup():
 def Exit():
    Cleanup()
    spi.close()
+   
    lightness.stop()
    lightness.join()
    # TODO: GPIO.cleanup()
