@@ -27,6 +27,7 @@ class MCP23017:
          except IOError:
             print localtime()[3:6], "Device:", hex(device), "Bank:", hex(bank), "Pattern:", bin(pattern)
             i += 1
+            print "Retry:", i
             continue
          break
 
