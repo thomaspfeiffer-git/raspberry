@@ -10,13 +10,13 @@ from MCP23x17 import MCP23x17
 
 
 class MCP23S17:
-   MCP23S17_SLAVE_ADDR_BASE = 0x40
-   MCP23S17_SLAVE_WRITE     = 0x00
-   MCP23S17_SLAVE_READ      = 0x01
+   SLAVE_ADDR_BASE = 0x40
+   SLAVE_WRITE     = 0x00
+   SLAVE_READ      = 0x01
 
    def send (self, device, register, data):
       d = device << 1
-      self.spi.xfer2([d|self.MCP23S17_SLAVE_ADDR_BASE|self.MCP23S17_SLAVE_WRITE,register,data])
+      self.spi.xfer2([d|self.SLAVE_ADDR_BASE|self.SLAVE_WRITE,register,data])
 
 
    def __init__ (self, cs, devices):
