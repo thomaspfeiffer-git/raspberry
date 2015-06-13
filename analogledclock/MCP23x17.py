@@ -13,6 +13,8 @@ class MCP23x17:
    OLATA       = 0x14 # Register for outputs
    OLATB       = 0x15 # Register for outputs
 
+   HAEN        = 0b00001000
+
 
 ### eof ###
 
