@@ -16,13 +16,15 @@ class MCP23S17:
 
    def send (self, device, register, data):
       d = device << 1
-      self.spi.xfer2([d|self.SLAVE_ADDR_BASE|self.SLAVE_WRITE,register,data])
+      with self.lock:
+         self.spi.xfer2([d|self.SLAVE_ADDR_BASE|self.SLAVE_WRITE,register,data])
 
 
-   def __init__ (self, cs, devices):
+   def __init__ (self, cs, devices, lock):
       self.cs = cs
       # self.cs = 0 if (cs == SPI_const.CS0) else 1 
       self.devices = devices
+      self.lock    = lock
 
       self.spi = spidev.SpiDev()
       self.spi.open(0,1)  # TODO: cs
