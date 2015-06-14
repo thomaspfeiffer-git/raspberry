@@ -6,7 +6,7 @@
 
 import spidev
 
-class MCP3008_xfer:
+class MCP3008:
    def __init__(self, cs, channel, lock):
       self.channel = channel
       # self.cs = 0 if (cs == SPI_const.CS0) else 1      
