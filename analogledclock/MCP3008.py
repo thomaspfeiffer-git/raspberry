@@ -8,21 +8,24 @@ import spidev
 
 class MCP3008:
    def __init__(self, cs, channel, lock):
-      self.channel = channel
-      # self.cs = 0 if (cs == SPI_const.CS0) else 1      
-      self.cs      = cs
-      self.lock    = lock
+      self.__channel = channel
+      # self.__cs = 0 if (cs == SPI_const.CS0) else 1      
+      self.__cs      = cs
+      self.__lock    = lock
 
-      self.spi = spidev.SpiDev()
-      self.spi.open(0,0)  # TODO: cs
+      self.__spi = spidev.SpiDev()
+      self.__spi.open(0,0)  # TODO: cs
  
 
    def read(self):
-      with self.lock:
-         adc = self.spi.xfer2([1,(8+self.channel)<<4,0])
+      with self.__lock:
+         adc = self.__spi.xfer2([1,(8+self.__channel)<<4,0])
 
       data = ((adc[1]&3) << 8) + adc[2]
       return data
+
+   def close(self)
+      self.__spi.close()
 
 ### eof ###
 
