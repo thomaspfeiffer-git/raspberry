@@ -16,31 +16,31 @@ class MCP23S17:
 
    def send (self, device, register, data):
       d = device << 1
-      with self.lock:
-         self.spi.xfer2([d|self.SLAVE_ADDR_BASE|self.SLAVE_WRITE,register,data])
+      with self.__lock:
+         self.__spi.xfer2([d|self.SLAVE_ADDR_BASE|self.SLAVE_WRITE,register,data])
 
 
    def __init__ (self, cs, devices, lock):
-      self.cs      = cs
-      self.devices = devices
-      self.lock    = lock
+      self.__cs      = cs
+      self.__devices = devices
+      self.__lock    = lock
 
-      self.spi = spidev.SpiDev()
-      self.spi.open(0,self.cs)
+      self.__spi = spidev.SpiDev()
+      self.__spi.open(0,self.__cs)
 
       # MCP23S17 needs hardware addressing explicitly enabled.
-      for d in self.devices:
+      for d in self.__devices:
          self.send(d, MCP23x17.IOCONA, MCP23x17.HAEN)
          self.send(d, MCP23x17.IOCONB, MCP23x17.HAEN)
 
       # Set port direction to output (0b00000000)
-      for d in self.devices:
+      for d in self.__devices:
          self.send(d, MCP23x17.IODIRA, 0x00)
          self.send(d, MCP23x17.IODIRB, 0x00)
 
 
    def close (self):
-      self.spi.close()
+      self.__spi.close()
 
 
 ### eof ###
