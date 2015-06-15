@@ -76,10 +76,10 @@ class Measurements (deque):
 class Lightness (threading.Thread):
    def __init__(self, lock):
       threading.Thread.__init__(self)
-      self.lock = lock
+      self.__lock = lock
 
       # SPI (MCP3008)
-      self.__adc = MCP3008(SPI_const.CS0,0,self.lock)
+      self.__adc = MCP3008(SPI_const.CS0,0,self.__lock)
 
       # Hardware PWM
       wipi.wiringPiSetupPhys()
@@ -111,6 +111,7 @@ class Lightness (threading.Thread):
          # print("{}: Lightness (actual/avg/target): {}/{}/{}".format(time.strftime("%Y%m%d-%H%M%S"),actual,avg,target))
          time.sleep(0.1)
 
+      self.__adc.close()
 
    def stop(self):
       self.__running = False
