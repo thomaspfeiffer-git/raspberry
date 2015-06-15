@@ -8,13 +8,12 @@ import spidev
 
 class MCP3008:
    def __init__(self, cs, channel, lock):
-      self.__channel = channel
-      # self.__cs = 0 if (cs == SPI_const.CS0) else 1      
       self.__cs      = cs
+      self.__channel = channel
       self.__lock    = lock
 
       self.__spi = spidev.SpiDev()
-      self.__spi.open(0,0)  # TODO: cs
+      self.__spi.open(0,self.__cs)
  
 
    def read(self):
