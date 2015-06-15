@@ -262,17 +262,21 @@ def _Exit(s,f):
 def Main():
    while(1):
       h, m, s = strftime("%H:%M:%S", localtime()).split(":")
+      s = int(s)
+      m = int(m)
+      h = int((int(h) % 12) * 5) + int(m/12)
+
       s = int(s) % 50
       m = int(m) % 50
       h = int(h) % 50
-      # print "h:", h, "m:", m, "s:", s
+      # print "h (computed LED ID):", h, "m:", m, "s:", s
 
       InitBits(0b00000000)
       bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
       bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
       bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
       WriteBits()
-      sleep(1)
+      sleep(0.1)
 
 
 
