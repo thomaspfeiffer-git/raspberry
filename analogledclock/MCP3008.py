@@ -23,7 +23,7 @@ class MCP3008:
       data = ((adc[1]&3) << 8) + adc[2]
       return data
 
-   def close(self)
+   def close(self):
       self.__spi.close()
 
 ### eof ###
