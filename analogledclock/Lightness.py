@@ -14,9 +14,6 @@ from MCP3008   import MCP3008
 
 
 class Value (object):
-   def __init__(self, v):
-      self.value = v
-
    @property
    def value(self):
       return self.__value
@@ -30,6 +27,9 @@ class Value (object):
          self.__value = 0
       else:
          self.__value = v
+
+   def __init__(self, v):
+      self.value = v
 
    def __add__(self, other):
       if not isinstance(other, Value):
