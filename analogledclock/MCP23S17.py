@@ -21,13 +21,12 @@ class MCP23S17:
 
 
    def __init__ (self, cs, devices, lock):
-      self.cs = cs
-      # self.cs = 0 if (cs == SPI_const.CS0) else 1 
+      self.cs      = cs
       self.devices = devices
       self.lock    = lock
 
       self.spi = spidev.SpiDev()
-      self.spi.open(0,1)  # TODO: cs
+      self.spi.open(0,self.cs)
 
       # MCP23S17 needs hardware addressing explicitly enabled.
       for d in self.devices:
