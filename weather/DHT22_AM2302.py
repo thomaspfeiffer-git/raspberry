@@ -5,6 +5,7 @@
 ###############################################################################################
 
 import dhtreader
+import numpy as np
 
 class DHT22_AM2302:
    ERROR = -999.99
@@ -26,18 +27,23 @@ class DHT22_AM2302:
       return [t,h]
 
    def read (self):
-      sum_t = sum_h = 0
-      counter = 0
-      for i in range(0, 3):
-         t, h = self.__read_sensor()
-         if (t == self.ERROR):
+      t = []
+      h = []
+      count = 0
+      for i in range(0, 10):
+         __t, __h = self.__read_sensor()
+         if (__t == self.ERROR):
             continue
+         t.append(__t)
+         h.append(__h)
+         count += 1
 
-         sum_t   += t
-         sum_h   += h
-         counter += 1
+      t.sort()
+      h.sort()
 
-      return [sum_t/counter, sum_h/counter]
+      t_avg = np.mean(t[int(count/3):int(count/3)*2])
+      h_avg = np.mean(h[int(count/3):int(count/3)*2])
+      return [t_avg, h_avg]
 
 ### eof ###
 
