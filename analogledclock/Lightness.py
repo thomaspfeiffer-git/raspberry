@@ -62,7 +62,7 @@ class Value (object):
 
 
 class Measurements (deque):
-   def __init__(self, n=250):
+   def __init__(self, n=50):
       super(Measurements,self).__init__([],n)
 
    def avg(self):
@@ -93,14 +93,14 @@ class Lightness (threading.Thread):
       measurements = Measurements()
 
       while (self.__running):
-         actual = Value(self.__adc.read())
+         actual = Value(self.__adc.read()+100)
          measurements.append(actual)
          
          avg = measurements.avg()
          if (avg > target+10):
-            target += 10
+            target += 2
          elif (avg < target-10):
-            target -= 10
+            target -= 2
          elif (avg > target):
             target += 1
          elif (avg < target):
@@ -108,7 +108,7 @@ class Lightness (threading.Thread):
 
          # target = 1000
          wipi.pwmWrite(12,int(1024-int(target)))  # TODO: Remove int(...
-         # print("{}: Lightness (actual/avg/target): {}/{}/{}".format(time.strftime("%Y%m%d-%H%M%S"),actual,avg,target))
+         print("{}: Lightness (actual/avg/target): {}/{}/{}".format(time.strftime("%Y%m%d-%H%M%S"),actual,avg,target))
          time.sleep(0.1)
 
       self.__adc.close()
