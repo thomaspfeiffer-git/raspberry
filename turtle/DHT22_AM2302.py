@@ -20,6 +20,7 @@ class DHT22_AM2302:
          try:
             h, t = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, self.__pin) # BCM/GPIO
             if (h is None) or (t is None):
+               t = h = self.ERROR
                i += 1
                continue
          except TypeError:
