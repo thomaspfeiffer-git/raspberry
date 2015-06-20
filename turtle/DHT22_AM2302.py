@@ -8,11 +8,6 @@ import Adafruit_DHT
 import numpy as np
 
 
-# git clone https://github.com/adafruit/Adafruit_Python_DHT.git 
-# cd Adafruit_Python_DHT
-# sudo apt-get install build-essential python-dev  
-# sudo python setup.py install 
-
 class DHT22_AM2302:
    ERROR = -999.99
 
