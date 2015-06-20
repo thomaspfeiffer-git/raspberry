@@ -154,17 +154,17 @@ printHumidity ()
     DEF:humi_outdoor=$RRD:humi_outdoor:AVERAGE           \
     DEF:humi_indoor=$RRD:humi_indoor:AVERAGE             \
     DEF:turtle_humi=$RRD_T:turtle_humi:AVERAGE           \
-    LINE1:humi_outdoor#0000FF:"Luftfeuchtigkeit außen"   \
+    LINE1:humi_outdoor#0000FF:"Luftfeuchtigkeit außen     " \
     GPRINT:humi_outdoor:LAST:"\t Aktuell\: %5.2lf %%"    \
     GPRINT:humi_outdoor:AVERAGE:"Mittelwert\: %5.2lf %%" \
     GPRINT:humi_outdoor:MAX:"Max\: %5.2lf %%"            \
     GPRINT:humi_outdoor:MIN:"Min\: %5.2lf %%\n"          \
-    LINE1:humi_indoor#FF0000:"Luftfeuchtigkeit Wohnzimmer" \
+    LINE1:humi_indoor#FF0000:"Luftfeuchtigkeit Wohnzimmer " \
     GPRINT:humi_indoor:LAST:"\t Aktuell\: %5.2lf %%"     \
     GPRINT:humi_indoor:AVERAGE:"Mittelwert\: %5.2lf %%"  \
     GPRINT:humi_indoor:MAX:"Max\: %5.2lf %%"             \
     GPRINT:humi_indoor:MIN:"Min\: %5.2lf %%\n"           \
-    LINE1:turtle_humi#088A08:"Luftfeuchtigkeit Donut"    \
+    LINE1:turtle_humi#088A08:"Luftfeuchtigkeit Donut      " \
     GPRINT:turtle_humi:LAST:"\t Aktuell\: %5.2lf %%"     \
     GPRINT:turtle_humi:AVERAGE:"Mittelwert\: %5.2lf %%"  \
     GPRINT:turtle_humi:MAX:"Max\: %5.2lf %%"             \
