@@ -111,7 +111,7 @@ def Main():
       print strftime("%H:%M:%S", localtime()), rrd_data
       rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
 
-      sleep(45)
+      sleep(35)
 
 
 ###############################################################################
