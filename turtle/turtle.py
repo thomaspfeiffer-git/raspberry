@@ -29,8 +29,8 @@ DS_HUMI    = "turtle_humi"
 DS_HEATING = "turtle_heating"
 
 
-# t1        = DS1820("/sys/bus/w1/devices/28-000006b4eb31/w1_slave")
-# t2        = DS1820("/sys/bus/w1/devices/28-000006b58b12/w1_slave")
+t1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
+t2        = DS1820("/sys/bus/w1/devices/28-000006dd6ac1/w1_slave")
 th        = DHT22_AM2302(21)   # BCM 21 = PIN 40
 tc        = CPU()
 heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY)
@@ -66,8 +66,8 @@ def Main():
    schedule[ 7][0:59] = [25 for m in range(60)]
    schedule[ 8][0:59] = [25 for m in range(60)]
    schedule[ 9][0:59] = [25 for m in range(60)]
-   schedule[10][0:59] = [20 for m in range(60)]
-   schedule[11][0:59] = [20 for m in range(60)]
+   schedule[10][0:59] = [25 for m in range(60)]
+   schedule[11][0:59] = [25 for m in range(60)]
    schedule[12][0:59] = [25 for m in range(60)]
    schedule[13][0:59] = [25 for m in range(60)]
    schedule[14][0:59] = [20 for m in range(60)]
@@ -82,10 +82,10 @@ def Main():
  
    while (True):
       hh, mm  = localtime()[3:5]
-      # m[DS_TEMP1].append(t1.read())
-      # m[DS_TEMP2].append(t2.read())
-      m[DS_TEMP1].append(-99.9)
-      m[DS_TEMP2].append(-99.9)
+      m[DS_TEMP1].append(t1.read())
+      m[DS_TEMP2].append(t2.read())
+      #m[DS_TEMP1].append(-99.9)
+      #m[DS_TEMP2].append(-99.9)
       _t3, _h = th.read()
       m[DS_TEMP3].append(_t3)
       m[DS_HUMI].append(_h)
