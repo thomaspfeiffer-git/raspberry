@@ -1,0 +1,21 @@
+
+
+/etc/modprobe.d/8192cu.conf
+    options 8192cu rtw_power_mgnt=0 rtw_enusbss=0
+
+WIFI-Scan:
+   https://rasspberrypi.wordpress.com/2012/09/09/wifi-tools-for-raspberry-pi/
+
+
+
+Libs:
+=====
+
+DHT22_AM2302:
+-------------
+git clone https://github.com/adafruit/Adafruit_Python_DHT.git 
+cd Adafruit_Python_DHT
+sudo apt-get install build-essential python-dev  
+sudo python setup.py install 
+
+
