@@ -108,7 +108,7 @@ class Lightness (threading.Thread):
 
          # target = 1000
          wipi.pwmWrite(12,int(1024-int(target)))  # TODO: Remove int(...
-         print("{}: Lightness (actual/avg/target): {}/{}/{}".format(time.strftime("%Y%m%d-%H%M%S"),actual,avg,target))
+         # print("{}: Lightness (actual/avg/target): {}/{}/{}".format(time.strftime("%Y%m%d-%H%M%S"),actual,avg,target))
          time.sleep(0.1)
 
       self.__adc.close()

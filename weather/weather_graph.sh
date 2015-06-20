@@ -61,7 +61,7 @@ printTemp ()
     GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"              \
     GPRINT:temp_outdoor:MIN:"Min\: %5.2lf °C\n"            \
-    LINE1:temp_indoor#FF0000:"Temperatur innen          "  \
+    LINE1:temp_indoor#FF0000:"Temperatur Wohnzimmer     "  \
     GPRINT:temp_indoor:LAST:"Aktuell\: %5.2lf °C"          \
     GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"    \
     GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"               \
@@ -126,9 +126,10 @@ printHeating ()
     --end now --start end-$1                                    \
     -w $WIDTH -h $(($HEIGHT/2)) -a PNG                          \
     --watermark "$WATERMARK"                                    \
-    --alt-y-grid \
+    --alt-y-grid                                                \
+    --right-axis 1:0                                            \
     DEF:turtle_heating=$RRD_T:turtle_heating:AVERAGE            \
-    AREA:turtle_heating#FF0000:"Heizung Donut\t"               \
+    AREA:turtle_heating#FF0000:"Heizung Donut\t"                \
     GPRINT:turtle_heating:LAST:"\t Aktuell\: %5.0lf"            \
     GPRINT:turtle_heating:AVERAGE:"Mittelwert\: %5.2lf\n"
  }
@@ -158,7 +159,7 @@ printHumidity ()
     GPRINT:humi_outdoor:AVERAGE:"Mittelwert\: %5.2lf %%" \
     GPRINT:humi_outdoor:MAX:"Max\: %5.2lf %%"            \
     GPRINT:humi_outdoor:MIN:"Min\: %5.2lf %%\n"          \
-    LINE1:humi_indoor#FF0000:"Luftfeuchtigkeit innen"    \
+    LINE1:humi_indoor#FF0000:"Luftfeuchtigkeit Wohnzimmer" \
     GPRINT:humi_indoor:LAST:"\t Aktuell\: %5.2lf %%"     \
     GPRINT:humi_indoor:AVERAGE:"Mittelwert\: %5.2lf %%"  \
     GPRINT:humi_indoor:MAX:"Max\: %5.2lf %%"             \
