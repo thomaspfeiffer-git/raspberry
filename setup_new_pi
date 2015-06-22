@@ -19,3 +19,10 @@ sudo apt-get install build-essential python-dev
 sudo python setup.py install 
 
 
+Kamera:
+-------
+https://github.com/jacksonliam/mjpg-streamer
+sudo aptitude install cmake libx11-dev libjpeg62-dev
+http://www.forum-raspberrypi.de/Thread-tutorial-rasperry-pi-als-hd-mjpeg-netzwerkkamera-zoneminder
+
+
