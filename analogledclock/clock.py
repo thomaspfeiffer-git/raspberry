@@ -296,10 +296,10 @@ def Main():
       m = int(m)
       h = int((int(h) % 12) * 5) + int(m/12)
 
-      s = int(s) % 50
-      m = int(m) % 50
-      h = int(h) % 50
-      # print "h (computed LED ID):", h, "m:", m, "s:", s
+#      s = int(s) % 50
+#      m = int(m) % 50
+#      h = int(h) % 50
+      print "h (computed LED ID):", h, "m:", m, "s:", s
 
       InitBits(0b00000000)
       bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
