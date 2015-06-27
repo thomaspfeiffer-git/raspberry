@@ -32,7 +32,7 @@ i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) 
 spi_lock    = Lock()
-spi_devices = (0x00, 0x01)    # Addresses of MCP23S17 components
+spi_devices = (0x00, 0x01, 0x02, 0x03)    # Addresses of MCP23S17 components
 spi         = MCP23S17(SPI_const.CS1,spi_devices,spi_lock)
 
 
@@ -85,7 +85,17 @@ bits_red   = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
              46: {tech: spi, device: 0x01, bank: "A", bit: "0b00001000"}, \
              47: {tech: spi, device: 0x01, bank: "A", bit: "0b01000000"}, \
              48: {tech: spi, device: 0x01, bank: "B", bit: "0b01000000"}, \
-             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00001000"} }
+             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00001000"}, \
+             50: {tech: spi, device: 0x02, bank: "A", bit: "0b00000001"}, \
+             51: {tech: spi, device: 0x02, bank: "A", bit: "0b00001000"}, \
+             52: {tech: spi, device: 0x02, bank: "A", bit: "0b01000000"}, \
+             53: {tech: spi, device: 0x02, bank: "B", bit: "0b01000000"}, \
+             54: {tech: spi, device: 0x02, bank: "B", bit: "0b00001000"}, \
+             55: {tech: spi, device: 0x03, bank: "A", bit: "0b00000001"}, \
+             56: {tech: spi, device: 0x03, bank: "A", bit: "0b00001000"}, \
+             57: {tech: spi, device: 0x03, bank: "A", bit: "0b01000000"}, \
+             58: {tech: spi, device: 0x03, bank: "B", bit: "0b01000000"}, \
+             59: {tech: spi, device: 0x03, bank: "B", bit: "0b00001000"} }
 
 bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
               1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
@@ -136,7 +146,17 @@ bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
              46: {tech: spi, device: 0x01, bank: "A", bit: "0b00010000"}, \
              47: {tech: spi, device: 0x01, bank: "A", bit: "0b10000000"}, \
              48: {tech: spi, device: 0x01, bank: "B", bit: "0b00100000"}, \
-             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00000100"} }
+             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00000100"}, \
+             50: {tech: spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
+             51: {tech: spi, device: 0x02, bank: "A", bit: "0b00010000"}, \
+             52: {tech: spi, device: 0x02, bank: "A", bit: "0b10000000"}, \
+             53: {tech: spi, device: 0x02, bank: "B", bit: "0b00100000"}, \
+             54: {tech: spi, device: 0x02, bank: "B", bit: "0b00000100"}, \
+             55: {tech: spi, device: 0x03, bank: "A", bit: "0b00000010"}, \
+             56: {tech: spi, device: 0x03, bank: "A", bit: "0b00010000"}, \
+             57: {tech: spi, device: 0x03, bank: "A", bit: "0b10000000"}, \
+             58: {tech: spi, device: 0x03, bank: "B", bit: "0b00100000"}, \
+             59: {tech: spi, device: 0x03, bank: "B", bit: "0b00000100"} }
 
 bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
               1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
@@ -187,7 +207,17 @@ bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
              46: {tech: spi, device: 0x01, bank: "A", bit: "0b00100000"}, \
              47: {tech: spi, device: 0x01, bank: "B", bit: "0b10000000"}, \
              48: {tech: spi, device: 0x01, bank: "B", bit: "0b00010000"}, \
-             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00000010"} }
+             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00000010"}, \
+             50: {tech: spi, device: 0x02, bank: "A", bit: "0b00000100"}, \
+             51: {tech: spi, device: 0x02, bank: "A", bit: "0b00100000"}, \
+             52: {tech: spi, device: 0x02, bank: "B", bit: "0b10000000"}, \
+             53: {tech: spi, device: 0x02, bank: "B", bit: "0b00010000"}, \
+             54: {tech: spi, device: 0x02, bank: "B", bit: "0b00000010"}, \
+             55: {tech: spi, device: 0x03, bank: "A", bit: "0b00000100"}, \
+             56: {tech: spi, device: 0x04, bank: "A", bit: "0b00100000"}, \
+             57: {tech: spi, device: 0x04, bank: "B", bit: "0b10000000"}, \
+             58: {tech: spi, device: 0x04, bank: "B", bit: "0b00010000"}, \
+             59: {tech: spi, device: 0x04, bank: "B", bit: "0b00000010"} }
 
 bits = {}
 
