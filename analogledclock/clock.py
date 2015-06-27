@@ -36,36 +36,36 @@ spi_devices = (0x00, 0x01, 0x02, 0x03)    # Addresses of MCP23S17 components
 spi         = MCP23S17(SPI_const.CS1,spi_devices,spi_lock)
 
 
-bits_red   = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
-              1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00001000"}, \
-              2: {tech: i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
-              3: {tech: i2c, device: 0x20, bank: "B", bit: "0b01000000"}, \
-              4: {tech: i2c, device: 0x20, bank: "B", bit: "0b00001000"}, \
-              5: {tech: i2c, device: 0x21, bank: "A", bit: "0b00000001"}, \
-              6: {tech: i2c, device: 0x21, bank: "A", bit: "0b00001000"}, \
-              7: {tech: i2c, device: 0x21, bank: "A", bit: "0b01000000"}, \
-              8: {tech: i2c, device: 0x21, bank: "B", bit: "0b01000000"}, \
-              9: {tech: i2c, device: 0x21, bank: "B", bit: "0b00001000"}, \
-             10: {tech: i2c, device: 0x22, bank: "A", bit: "0b00000001"}, \
-             11: {tech: i2c, device: 0x22, bank: "A", bit: "0b00001000"}, \
-             12: {tech: i2c, device: 0x22, bank: "A", bit: "0b01000000"}, \
-             13: {tech: i2c, device: 0x22, bank: "B", bit: "0b01000000"}, \
-             14: {tech: i2c, device: 0x22, bank: "B", bit: "0b00001000"}, \
-             15: {tech: i2c, device: 0x25, bank: "A", bit: "0b00000001"}, \
-             16: {tech: i2c, device: 0x25, bank: "A", bit: "0b00001000"}, \
-             17: {tech: i2c, device: 0x25, bank: "A", bit: "0b01000000"}, \
-             18: {tech: i2c, device: 0x25, bank: "B", bit: "0b01000000"}, \
-             19: {tech: i2c, device: 0x25, bank: "B", bit: "0b00001000"}, \
-             20: {tech: i2c, device: 0x24, bank: "A", bit: "0b00000001"}, \
-             21: {tech: i2c, device: 0x24, bank: "A", bit: "0b00001000"}, \
-             22: {tech: i2c, device: 0x24, bank: "A", bit: "0b01000000"}, \
-             23: {tech: i2c, device: 0x24, bank: "B", bit: "0b01000000"}, \
-             24: {tech: i2c, device: 0x24, bank: "B", bit: "0b00001000"}, \
-             25: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000001"}, \
-             26: {tech: i2c, device: 0x23, bank: "A", bit: "0b00001000"}, \
-             27: {tech: i2c, device: 0x23, bank: "A", bit: "0b01000000"}, \
-             28: {tech: i2c, device: 0x23, bank: "B", bit: "0b01000000"}, \
-             29: {tech: i2c, device: 0x23, bank: "B", bit: "0b00001000"}, \
+bits_red   = {0: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000001"}, \
+              1: {tech: i2c, device: 0x23, bank: "A", bit: "0b00001000"}, \
+              2: {tech: i2c, device: 0x23, bank: "A", bit: "0b01000000"}, \
+              3: {tech: i2c, device: 0x23, bank: "B", bit: "0b01000000"}, \
+              4: {tech: i2c, device: 0x23, bank: "B", bit: "0b00001000"}, \
+              5: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
+              6: {tech: i2c, device: 0x20, bank: "A", bit: "0b00001000"}, \
+              7: {tech: i2c, device: 0x20, bank: "A", bit: "0b01000000"}, \
+              8: {tech: i2c, device: 0x20, bank: "B", bit: "0b01000000"}, \
+              9: {tech: i2c, device: 0x20, bank: "B", bit: "0b00001000"}, \
+             10: {tech: i2c, device: 0x24, bank: "A", bit: "0b00000001"}, \
+             11: {tech: i2c, device: 0x24, bank: "A", bit: "0b00001000"}, \
+             12: {tech: i2c, device: 0x24, bank: "A", bit: "0b01000000"}, \
+             13: {tech: i2c, device: 0x24, bank: "B", bit: "0b01000000"}, \
+             14: {tech: i2c, device: 0x24, bank: "B", bit: "0b00001000"}, \
+             15: {tech: i2c, device: 0x21, bank: "A", bit: "0b00000001"}, \
+             16: {tech: i2c, device: 0x21, bank: "A", bit: "0b00001000"}, \
+             17: {tech: i2c, device: 0x21, bank: "A", bit: "0b01000000"}, \
+             18: {tech: i2c, device: 0x21, bank: "B", bit: "0b01000000"}, \
+             19: {tech: i2c, device: 0x21, bank: "B", bit: "0b00001000"}, \
+             20: {tech: i2c, device: 0x22, bank: "A", bit: "0b00000001"}, \
+             21: {tech: i2c, device: 0x22, bank: "A", bit: "0b00001000"}, \
+             22: {tech: i2c, device: 0x22, bank: "A", bit: "0b01000000"}, \
+             23: {tech: i2c, device: 0x22, bank: "B", bit: "0b01000000"}, \
+             24: {tech: i2c, device: 0x22, bank: "B", bit: "0b00001000"}, \
+             25: {tech: i2c, device: 0x25, bank: "A", bit: "0b00000001"}, \
+             26: {tech: i2c, device: 0x25, bank: "A", bit: "0b00001000"}, \
+             27: {tech: i2c, device: 0x25, bank: "A", bit: "0b01000000"}, \
+             28: {tech: i2c, device: 0x25, bank: "B", bit: "0b01000000"}, \
+             29: {tech: i2c, device: 0x25, bank: "B", bit: "0b00001000"}, \
              30: {tech: i2c, device: 0x26, bank: "A", bit: "0b00000001"}, \
              31: {tech: i2c, device: 0x26, bank: "A", bit: "0b00001000"}, \
              32: {tech: i2c, device: 0x26, bank: "A", bit: "0b01000000"}, \
@@ -76,57 +76,57 @@ bits_red   = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000001"}, \
              37: {tech: i2c, device: 0x27, bank: "A", bit: "0b01000000"}, \
              38: {tech: i2c, device: 0x27, bank: "B", bit: "0b01000000"}, \
              39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00001000"}, \
-             40: {tech: spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
-             41: {tech: spi, device: 0x00, bank: "A", bit: "0b00001000"}, \
-             42: {tech: spi, device: 0x00, bank: "A", bit: "0b01000000"}, \
-             43: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
-             44: {tech: spi, device: 0x00, bank: "B", bit: "0b00001000"}, \
-             45: {tech: spi, device: 0x01, bank: "A", bit: "0b00000001"}, \
-             46: {tech: spi, device: 0x01, bank: "A", bit: "0b00001000"}, \
-             47: {tech: spi, device: 0x01, bank: "A", bit: "0b01000000"}, \
-             48: {tech: spi, device: 0x01, bank: "B", bit: "0b01000000"}, \
-             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00001000"}, \
-             50: {tech: spi, device: 0x02, bank: "A", bit: "0b00000001"}, \
-             51: {tech: spi, device: 0x02, bank: "A", bit: "0b00001000"}, \
-             52: {tech: spi, device: 0x02, bank: "A", bit: "0b01000000"}, \
-             53: {tech: spi, device: 0x02, bank: "B", bit: "0b01000000"}, \
-             54: {tech: spi, device: 0x02, bank: "B", bit: "0b00001000"}, \
-             55: {tech: spi, device: 0x03, bank: "A", bit: "0b00000001"}, \
-             56: {tech: spi, device: 0x03, bank: "A", bit: "0b00001000"}, \
-             57: {tech: spi, device: 0x03, bank: "A", bit: "0b01000000"}, \
-             58: {tech: spi, device: 0x03, bank: "B", bit: "0b01000000"}, \
-             59: {tech: spi, device: 0x03, bank: "B", bit: "0b00001000"} }
+             40: {tech: spi, device: 0x01, bank: "A", bit: "0b00000001"}, \
+             41: {tech: spi, device: 0x01, bank: "A", bit: "0b00001000"}, \
+             42: {tech: spi, device: 0x01, bank: "A", bit: "0b01000000"}, \
+             43: {tech: spi, device: 0x01, bank: "B", bit: "0b01000000"}, \
+             44: {tech: spi, device: 0x01, bank: "B", bit: "0b00001000"}, \
+             45: {tech: spi, device: 0x02, bank: "A", bit: "0b00000001"}, \
+             46: {tech: spi, device: 0x02, bank: "A", bit: "0b00001000"}, \
+             47: {tech: spi, device: 0x02, bank: "A", bit: "0b01000000"}, \
+             48: {tech: spi, device: 0x02, bank: "B", bit: "0b01000000"}, \
+             49: {tech: spi, device: 0x02, bank: "B", bit: "0b00001000"}, \
+             50: {tech: spi, device: 0x03, bank: "A", bit: "0b00000001"}, \
+             51: {tech: spi, device: 0x03, bank: "A", bit: "0b00001000"}, \
+             52: {tech: spi, device: 0x03, bank: "A", bit: "0b01000000"}, \
+             53: {tech: spi, device: 0x03, bank: "B", bit: "0b01000000"}, \
+             54: {tech: spi, device: 0x03, bank: "B", bit: "0b00001000"}, \
+             55: {tech: spi, device: 0x00, bank: "A", bit: "0b00000001"}, \
+             56: {tech: spi, device: 0x00, bank: "A", bit: "0b00001000"}, \
+             57: {tech: spi, device: 0x00, bank: "A", bit: "0b01000000"}, \
+             58: {tech: spi, device: 0x00, bank: "B", bit: "0b01000000"}, \
+             59: {tech: spi, device: 0x00, bank: "B", bit: "0b00001000"} }
 
-bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
-              1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
-              2: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
-              3: {tech: i2c, device: 0x20, bank: "B", bit: "0b00100000"}, \
-              4: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000100"}, \
-              5: {tech: i2c, device: 0x21, bank: "A", bit: "0b00000010"}, \
-              6: {tech: i2c, device: 0x21, bank: "A", bit: "0b00010000"}, \
-              7: {tech: i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
-              8: {tech: i2c, device: 0x21, bank: "B", bit: "0b00100000"}, \
-              9: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000100"}, \
-             10: {tech: i2c, device: 0x22, bank: "A", bit: "0b00000010"}, \
-             11: {tech: i2c, device: 0x22, bank: "A", bit: "0b00010000"}, \
-             12: {tech: i2c, device: 0x22, bank: "A", bit: "0b10000000"}, \
-             13: {tech: i2c, device: 0x22, bank: "B", bit: "0b00100000"}, \
-             14: {tech: i2c, device: 0x22, bank: "B", bit: "0b00000100"}, \
-             15: {tech: i2c, device: 0x25, bank: "A", bit: "0b00000010"}, \
-             16: {tech: i2c, device: 0x25, bank: "A", bit: "0b00010000"}, \
-             17: {tech: i2c, device: 0x25, bank: "A", bit: "0b10000000"}, \
-             18: {tech: i2c, device: 0x25, bank: "B", bit: "0b00100000"}, \
-             19: {tech: i2c, device: 0x25, bank: "B", bit: "0b00000100"}, \
-             20: {tech: i2c, device: 0x24, bank: "A", bit: "0b00000010"}, \
-             21: {tech: i2c, device: 0x24, bank: "A", bit: "0b00010000"}, \
-             22: {tech: i2c, device: 0x24, bank: "A", bit: "0b10000000"}, \
-             23: {tech: i2c, device: 0x24, bank: "B", bit: "0b00100000"}, \
-             24: {tech: i2c, device: 0x24, bank: "B", bit: "0b00000100"}, \
-             25: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000010"}, \
-             26: {tech: i2c, device: 0x23, bank: "A", bit: "0b00010000"}, \
-             27: {tech: i2c, device: 0x23, bank: "A", bit: "0b10000000"}, \
-             28: {tech: i2c, device: 0x23, bank: "B", bit: "0b00100000"}, \
-             29: {tech: i2c, device: 0x23, bank: "B", bit: "0b00000100"}, \
+bits_green = {0: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000010"}, \
+              1: {tech: i2c, device: 0x23, bank: "A", bit: "0b00010000"}, \
+              2: {tech: i2c, device: 0x23, bank: "A", bit: "0b10000000"}, \
+              3: {tech: i2c, device: 0x23, bank: "B", bit: "0b00100000"}, \
+              4: {tech: i2c, device: 0x23, bank: "B", bit: "0b00000100"}, \
+              5: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
+              6: {tech: i2c, device: 0x20, bank: "A", bit: "0b00010000"}, \
+              7: {tech: i2c, device: 0x20, bank: "A", bit: "0b10000000"}, \
+              8: {tech: i2c, device: 0x20, bank: "B", bit: "0b00100000"}, \
+              9: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000100"}, \
+             10: {tech: i2c, device: 0x24, bank: "A", bit: "0b00000010"}, \
+             11: {tech: i2c, device: 0x24, bank: "A", bit: "0b00010000"}, \
+             12: {tech: i2c, device: 0x24, bank: "A", bit: "0b10000000"}, \
+             13: {tech: i2c, device: 0x24, bank: "B", bit: "0b00100000"}, \
+             14: {tech: i2c, device: 0x24, bank: "B", bit: "0b00000100"}, \
+             15: {tech: i2c, device: 0x21, bank: "A", bit: "0b00000010"}, \
+             16: {tech: i2c, device: 0x21, bank: "A", bit: "0b00010000"}, \
+             17: {tech: i2c, device: 0x21, bank: "A", bit: "0b10000000"}, \
+             18: {tech: i2c, device: 0x21, bank: "B", bit: "0b00100000"}, \
+             19: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000100"}, \
+             20: {tech: i2c, device: 0x22, bank: "A", bit: "0b00000010"}, \
+             21: {tech: i2c, device: 0x22, bank: "A", bit: "0b00010000"}, \
+             22: {tech: i2c, device: 0x22, bank: "A", bit: "0b10000000"}, \
+             23: {tech: i2c, device: 0x22, bank: "B", bit: "0b00100000"}, \
+             24: {tech: i2c, device: 0x22, bank: "B", bit: "0b00000100"}, \
+             25: {tech: i2c, device: 0x25, bank: "A", bit: "0b00000010"}, \
+             26: {tech: i2c, device: 0x25, bank: "A", bit: "0b00010000"}, \
+             27: {tech: i2c, device: 0x25, bank: "A", bit: "0b10000000"}, \
+             28: {tech: i2c, device: 0x25, bank: "B", bit: "0b00100000"}, \
+             29: {tech: i2c, device: 0x25, bank: "B", bit: "0b00000100"}, \
              30: {tech: i2c, device: 0x26, bank: "A", bit: "0b00000010"}, \
              31: {tech: i2c, device: 0x26, bank: "A", bit: "0b00010000"}, \
              32: {tech: i2c, device: 0x26, bank: "A", bit: "0b10000000"}, \
@@ -137,57 +137,57 @@ bits_green = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000010"}, \
              37: {tech: i2c, device: 0x27, bank: "A", bit: "0b10000000"}, \
              38: {tech: i2c, device: 0x27, bank: "B", bit: "0b00100000"}, \
              39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00000100"}, \
-             40: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
-             41: {tech: spi, device: 0x00, bank: "A", bit: "0b00010000"}, \
-             42: {tech: spi, device: 0x00, bank: "A", bit: "0b10000000"}, \
-             43: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
-             44: {tech: spi, device: 0x00, bank: "B", bit: "0b00000100"}, \
-             45: {tech: spi, device: 0x01, bank: "A", bit: "0b00000010"}, \
-             46: {tech: spi, device: 0x01, bank: "A", bit: "0b00010000"}, \
-             47: {tech: spi, device: 0x01, bank: "A", bit: "0b10000000"}, \
-             48: {tech: spi, device: 0x01, bank: "B", bit: "0b00100000"}, \
-             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00000100"}, \
-             50: {tech: spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
-             51: {tech: spi, device: 0x02, bank: "A", bit: "0b00010000"}, \
-             52: {tech: spi, device: 0x02, bank: "A", bit: "0b10000000"}, \
-             53: {tech: spi, device: 0x02, bank: "B", bit: "0b00100000"}, \
-             54: {tech: spi, device: 0x02, bank: "B", bit: "0b00000100"}, \
-             55: {tech: spi, device: 0x03, bank: "A", bit: "0b00000010"}, \
-             56: {tech: spi, device: 0x03, bank: "A", bit: "0b00010000"}, \
-             57: {tech: spi, device: 0x03, bank: "A", bit: "0b10000000"}, \
-             58: {tech: spi, device: 0x03, bank: "B", bit: "0b00100000"}, \
-             59: {tech: spi, device: 0x03, bank: "B", bit: "0b00000100"} }
+             40: {tech: spi, device: 0x01, bank: "A", bit: "0b00000010"}, \
+             41: {tech: spi, device: 0x01, bank: "A", bit: "0b00010000"}, \
+             42: {tech: spi, device: 0x01, bank: "A", bit: "0b10000000"}, \
+             43: {tech: spi, device: 0x01, bank: "B", bit: "0b00100000"}, \
+             44: {tech: spi, device: 0x01, bank: "B", bit: "0b00000100"}, \
+             45: {tech: spi, device: 0x02, bank: "A", bit: "0b00000010"}, \
+             46: {tech: spi, device: 0x02, bank: "A", bit: "0b00010000"}, \
+             47: {tech: spi, device: 0x02, bank: "A", bit: "0b10000000"}, \
+             48: {tech: spi, device: 0x02, bank: "B", bit: "0b00100000"}, \
+             49: {tech: spi, device: 0x02, bank: "B", bit: "0b00000100"}, \
+             50: {tech: spi, device: 0x03, bank: "A", bit: "0b00000010"}, \
+             51: {tech: spi, device: 0x03, bank: "A", bit: "0b00010000"}, \
+             52: {tech: spi, device: 0x03, bank: "A", bit: "0b10000000"}, \
+             53: {tech: spi, device: 0x03, bank: "B", bit: "0b00100000"}, \
+             54: {tech: spi, device: 0x03, bank: "B", bit: "0b00000100"}, \
+             55: {tech: spi, device: 0x00, bank: "A", bit: "0b00000010"}, \
+             56: {tech: spi, device: 0x00, bank: "A", bit: "0b00010000"}, \
+             57: {tech: spi, device: 0x00, bank: "A", bit: "0b10000000"}, \
+             58: {tech: spi, device: 0x00, bank: "B", bit: "0b00100000"}, \
+             59: {tech: spi, device: 0x00, bank: "B", bit: "0b00000100"} }
 
-bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
-              1: {tech: i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
-              2: {tech: i2c, device: 0x20, bank: "B", bit: "0b10000000"}, \
-              3: {tech: i2c, device: 0x20, bank: "B", bit: "0b00010000"}, \
-              4: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
-              5: {tech: i2c, device: 0x21, bank: "A", bit: "0b00000100"}, \
-              6: {tech: i2c, device: 0x21, bank: "A", bit: "0b00100000"}, \
-              7: {tech: i2c, device: 0x21, bank: "B", bit: "0b10000000"}, \
-              8: {tech: i2c, device: 0x21, bank: "B", bit: "0b00010000"}, \
-              9: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000010"}, \
-             10: {tech: i2c, device: 0x22, bank: "A", bit: "0b00000100"}, \
-             11: {tech: i2c, device: 0x22, bank: "A", bit: "0b00100000"}, \
-             12: {tech: i2c, device: 0x22, bank: "B", bit: "0b10000000"}, \
-             13: {tech: i2c, device: 0x22, bank: "B", bit: "0b00010000"}, \
-             14: {tech: i2c, device: 0x22, bank: "B", bit: "0b00000010"}, \
-             15: {tech: i2c, device: 0x25, bank: "A", bit: "0b00000100"}, \
-             16: {tech: i2c, device: 0x25, bank: "A", bit: "0b00100000"}, \
-             17: {tech: i2c, device: 0x25, bank: "B", bit: "0b10000000"}, \
-             18: {tech: i2c, device: 0x25, bank: "B", bit: "0b00010000"}, \
-             19: {tech: i2c, device: 0x25, bank: "B", bit: "0b00000010"}, \
-             20: {tech: i2c, device: 0x24, bank: "A", bit: "0b00000100"}, \
-             21: {tech: i2c, device: 0x24, bank: "A", bit: "0b00100000"}, \
-             22: {tech: i2c, device: 0x24, bank: "B", bit: "0b10000000"}, \
-             23: {tech: i2c, device: 0x24, bank: "B", bit: "0b00010000"}, \
-             24: {tech: i2c, device: 0x24, bank: "B", bit: "0b00000010"}, \
-             25: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000100"}, \
-             26: {tech: i2c, device: 0x23, bank: "A", bit: "0b00100000"}, \
-             27: {tech: i2c, device: 0x23, bank: "B", bit: "0b10000000"}, \
-             28: {tech: i2c, device: 0x23, bank: "B", bit: "0b00010000"}, \
-             29: {tech: i2c, device: 0x23, bank: "B", bit: "0b00000010"}, \
+bits_blue  = {0: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000100"}, \
+              1: {tech: i2c, device: 0x23, bank: "A", bit: "0b00100000"}, \
+              2: {tech: i2c, device: 0x23, bank: "B", bit: "0b10000000"}, \
+              3: {tech: i2c, device: 0x23, bank: "B", bit: "0b00010000"}, \
+              4: {tech: i2c, device: 0x23, bank: "B", bit: "0b00000010"}, \
+              5: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
+              6: {tech: i2c, device: 0x20, bank: "A", bit: "0b00100000"}, \
+              7: {tech: i2c, device: 0x20, bank: "B", bit: "0b10000000"}, \
+              8: {tech: i2c, device: 0x20, bank: "B", bit: "0b00010000"}, \
+              9: {tech: i2c, device: 0x20, bank: "B", bit: "0b00000010"}, \
+             10: {tech: i2c, device: 0x24, bank: "A", bit: "0b00000100"}, \
+             11: {tech: i2c, device: 0x24, bank: "A", bit: "0b00100000"}, \
+             12: {tech: i2c, device: 0x24, bank: "B", bit: "0b10000000"}, \
+             13: {tech: i2c, device: 0x24, bank: "B", bit: "0b00010000"}, \
+             14: {tech: i2c, device: 0x24, bank: "B", bit: "0b00000010"}, \
+             15: {tech: i2c, device: 0x21, bank: "A", bit: "0b00000100"}, \
+             16: {tech: i2c, device: 0x21, bank: "A", bit: "0b00100000"}, \
+             17: {tech: i2c, device: 0x21, bank: "B", bit: "0b10000000"}, \
+             18: {tech: i2c, device: 0x21, bank: "B", bit: "0b00010000"}, \
+             19: {tech: i2c, device: 0x21, bank: "B", bit: "0b00000010"}, \
+             20: {tech: i2c, device: 0x22, bank: "A", bit: "0b00000100"}, \
+             21: {tech: i2c, device: 0x22, bank: "A", bit: "0b00100000"}, \
+             22: {tech: i2c, device: 0x22, bank: "B", bit: "0b10000000"}, \
+             23: {tech: i2c, device: 0x22, bank: "B", bit: "0b00010000"}, \
+             24: {tech: i2c, device: 0x22, bank: "B", bit: "0b00000010"}, \
+             25: {tech: i2c, device: 0x25, bank: "A", bit: "0b00000100"}, \
+             26: {tech: i2c, device: 0x25, bank: "A", bit: "0b00100000"}, \
+             27: {tech: i2c, device: 0x25, bank: "B", bit: "0b10000000"}, \
+             28: {tech: i2c, device: 0x25, bank: "B", bit: "0b00010000"}, \
+             29: {tech: i2c, device: 0x25, bank: "B", bit: "0b00000010"}, \
              30: {tech: i2c, device: 0x26, bank: "A", bit: "0b00000100"}, \
              31: {tech: i2c, device: 0x26, bank: "A", bit: "0b00100000"}, \
              32: {tech: i2c, device: 0x26, bank: "B", bit: "0b10000000"}, \
@@ -198,26 +198,26 @@ bits_blue  = {0: {tech: i2c, device: 0x20, bank: "A", bit: "0b00000100"}, \
              37: {tech: i2c, device: 0x27, bank: "B", bit: "0b10000000"}, \
              38: {tech: i2c, device: 0x27, bank: "B", bit: "0b00010000"}, \
              39: {tech: i2c, device: 0x27, bank: "B", bit: "0b00000010"}, \
-             40: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
-             41: {tech: spi, device: 0x00, bank: "A", bit: "0b00100000"}, \
-             42: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
-             43: {tech: spi, device: 0x00, bank: "B", bit: "0b00010000"}, \
-             44: {tech: spi, device: 0x00, bank: "B", bit: "0b00000010"}, \
-             45: {tech: spi, device: 0x01, bank: "A", bit: "0b00000100"}, \
-             46: {tech: spi, device: 0x01, bank: "A", bit: "0b00100000"}, \
-             47: {tech: spi, device: 0x01, bank: "B", bit: "0b10000000"}, \
-             48: {tech: spi, device: 0x01, bank: "B", bit: "0b00010000"}, \
-             49: {tech: spi, device: 0x01, bank: "B", bit: "0b00000010"}, \
-             50: {tech: spi, device: 0x02, bank: "A", bit: "0b00000100"}, \
-             51: {tech: spi, device: 0x02, bank: "A", bit: "0b00100000"}, \
-             52: {tech: spi, device: 0x02, bank: "B", bit: "0b10000000"}, \
-             53: {tech: spi, device: 0x02, bank: "B", bit: "0b00010000"}, \
-             54: {tech: spi, device: 0x02, bank: "B", bit: "0b00000010"}, \
-             55: {tech: spi, device: 0x03, bank: "A", bit: "0b00000100"}, \
-             56: {tech: spi, device: 0x04, bank: "A", bit: "0b00100000"}, \
-             57: {tech: spi, device: 0x04, bank: "B", bit: "0b10000000"}, \
-             58: {tech: spi, device: 0x04, bank: "B", bit: "0b00010000"}, \
-             59: {tech: spi, device: 0x04, bank: "B", bit: "0b00000010"} }
+             40: {tech: spi, device: 0x01, bank: "A", bit: "0b00000100"}, \
+             41: {tech: spi, device: 0x01, bank: "A", bit: "0b00100000"}, \
+             42: {tech: spi, device: 0x01, bank: "B", bit: "0b10000000"}, \
+             43: {tech: spi, device: 0x01, bank: "B", bit: "0b00010000"}, \
+             44: {tech: spi, device: 0x01, bank: "B", bit: "0b00000010"}, \
+             45: {tech: spi, device: 0x02, bank: "A", bit: "0b00000100"}, \
+             46: {tech: spi, device: 0x02, bank: "A", bit: "0b00100000"}, \
+             47: {tech: spi, device: 0x02, bank: "B", bit: "0b10000000"}, \
+             48: {tech: spi, device: 0x02, bank: "B", bit: "0b00010000"}, \
+             49: {tech: spi, device: 0x02, bank: "B", bit: "0b00000010"}, \
+             50: {tech: spi, device: 0x03, bank: "A", bit: "0b00000100"}, \
+             51: {tech: spi, device: 0x03, bank: "A", bit: "0b00100000"}, \
+             52: {tech: spi, device: 0x03, bank: "B", bit: "0b10000000"}, \
+             53: {tech: spi, device: 0x03, bank: "B", bit: "0b00010000"}, \
+             54: {tech: spi, device: 0x03, bank: "B", bit: "0b00000010"}, \
+             55: {tech: spi, device: 0x00, bank: "A", bit: "0b00000100"}, \
+             56: {tech: spi, device: 0x00, bank: "A", bit: "0b00100000"}, \
+             57: {tech: spi, device: 0x00, bank: "B", bit: "0b10000000"}, \
+             58: {tech: spi, device: 0x00, bank: "B", bit: "0b00010000"}, \
+             59: {tech: spi, device: 0x00, bank: "B", bit: "0b00000010"} }
 
 bits = {}
 
@@ -296,10 +296,11 @@ def Main():
       m = int(m)
       h = int((int(h) % 12) * 5) + int(m/12)
 
-#      s = int(s) % 50
-#      m = int(m) % 50
-#      h = int(h) % 50
-      print "h (computed LED ID):", h, "m:", m, "s:", s
+#      print "h (computed LED ID):", h, "m:", m, "s:", s
+
+#      h = 15
+#      m = 15
+#      s = 15
 
       InitBits(0b00000000)
       bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
