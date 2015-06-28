@@ -4,21 +4,25 @@
 # (c) https://github.com/thomaspfeiffer-git May 2015                                          #
 ###############################################################################################
 
-import dhtreader
+import Adafruit_DHT
 import numpy as np
+
 
 class DHT22_AM2302:
    ERROR = -999.99
 
    def __init__ (self, pin):
       self.__pin = pin
-      dhtreader.init()
 
    def __read_sensor (self):
       i = 1 
       while (i <= 5):
          try:
-            t, h = dhtreader.read(22,self.__pin) 
+            h, t = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, self.__pin) # BCM/GPIO
+            if (h is None) or (t is None):
+               t = h = self.ERROR
+               i += 1
+               continue
          except TypeError:
             t = h = self.ERROR
             i += 1
