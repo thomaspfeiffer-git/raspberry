@@ -21,7 +21,6 @@ import traceback
 import rrdtool
 from Adafruit_BMP085 import BMP085
 import RPi.GPIO as io
-import dhtreader
 
 from DHT22_AM2302 import DHT22_AM2302
 
@@ -80,7 +79,6 @@ def Init():
    global bmp
    Log('Initializing ...')
 
-   dhtreader.init()    
    bmp = BMP085(0x77) 
 
    Log('Initializing done.')
