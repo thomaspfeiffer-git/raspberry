@@ -78,9 +78,7 @@ def Log(l):
 def Init():
    global bmp
    Log('Initializing ...')
-
-   bmp = BMP085(0x77) 
-
+   bmp = BMP085(0x77,2) 
    Log('Initializing done.')
 
 
@@ -156,3 +154,5 @@ except:
 
 finally:
    pass
+
+
