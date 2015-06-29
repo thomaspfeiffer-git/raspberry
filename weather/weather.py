@@ -13,6 +13,7 @@
 ###############################################################################
 
 import os
+import numpy as np
 import signal
 import sys
 from time import sleep
@@ -90,6 +91,19 @@ def GetCPUTemperature():
 
 
 ################################################################################
+# getPressure ##################################################################
+def getPressure(sensor):
+   p = []
+
+   for i in range(0,10):
+      p.append(sensor.readPressure())
+   p.sort()
+
+   p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])
+   return p_avg
+
+
+################################################################################
 # Main #########################################################################
 def Main():
    global bmp
@@ -97,11 +111,10 @@ def Main():
    th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm)
    th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm)
 
-
    while(True):
       temp_indoor, humi_indoor   = th_indoor.read()
       temp_outdoor, humi_outdoor = th_outdoor.read()
-      pressure    = bmp.readPressure()
+      pressure    = getPressure(bmp)
       temp_cpu    = GetCPUTemperature()
 
       rrd_template    = DS_TEMPINDOOR  + ":" + \
