@@ -68,17 +68,17 @@ def _Exit(s,f):
 ###############################################################################
 # Main ########################################################################
 def Main():
-   schedule = [[5 for m in range(60)] for h in range(24)]
-   schedule[ 7][0:59] = [25 for m in range(60)]
-   schedule[ 8][0:59] = [25 for m in range(60)]
-   schedule[ 9][0:59] = [25 for m in range(60)]
-   schedule[10][0:59] = [30 for m in range(60)]
-   schedule[11][0:59] = [30 for m in range(60)]
-   schedule[12][0:59] = [30 for m in range(60)]
-   schedule[13][0:59] = [25 for m in range(60)]
-   schedule[14][0:59] = [25 for m in range(60)]
-   schedule[15][0:59] = [20 for m in range(60)]
-   schedule[16][0:29] = [18 for m in range(30)]
+   schedule_heat = [[5 for m in range(60)] for h in range(24)]
+   schedule_heat[ 7][0:59] = [25 for m in range(60)]
+   schedule_heat[ 8][0:59] = [25 for m in range(60)]
+   schedule_heat[ 9][0:59] = [25 for m in range(60)]
+   schedule_heat[10][0:59] = [30 for m in range(60)]
+   schedule_heat[11][0:59] = [30 for m in range(60)]
+   schedule_heat[12][0:59] = [30 for m in range(60)]
+   schedule_heat[13][0:59] = [25 for m in range(60)]
+   schedule_heat[14][0:59] = [25 for m in range(60)]
+   schedule_heat[15][0:59] = [20 for m in range(60)]
+   schedule_heat[16][0:29] = [18 for m in range(30)]
 
    m = {DS_TEMP1:   Measurements(), \
         DS_TEMP2:   Measurements(), \
@@ -100,7 +100,7 @@ def Main():
       print("Lese t cpu")
       m[DS_TEMPCPU].append(tc.read())
 
-      if (schedule[hh][mm] > m[DS_TEMP3].avg()):
+      if (schedule_heat[hh][mm] > m[DS_TEMP3].avg()):
          heatlamp.on()
       else:
          heatlamp.off()
