@@ -49,7 +49,7 @@ class Heating:
    def cleanup (self):
       print "Heatlamp.cleanup()"
       self.__off()
-      io.cleanup()
+      io.cleanup()   # TODO: move to super class (necessary if more than one instances of class Heating()).
 
 
    def on (self):
