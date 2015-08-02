@@ -15,8 +15,11 @@ from DS1820 import DS1820
 from Heating import Heating
 
 
-HEATING_PIN     = 38
-HEATING_LATENCY = 60 * 15
+HEATLAMP_PIN      = 38
+HEATLAMP_LATENCY  = 60 * 15
+
+LIGHTLAMP_PIN     = 99 
+LIGHTLAMP_LATENCY = 60 * 15
 
 
 # Misc for rrdtool
@@ -33,7 +36,9 @@ t1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
 t2        = DS1820("/sys/bus/w1/devices/28-000006dd6ac1/w1_slave")
 th        = DHT22_AM2302(21)   # BCM 21 = PIN 40
 tc        = CPU()
-heatlamp  = Heating(HEATING_PIN, HEATING_LATENCY)
+heatlamp  = Heating(HEATLAMP_PIN, HEATLAMP_LATENCY)
+lightlamp = Heating(LIGHTLAMP_PIN, LIGHTLAMP_LATENCY)
+
 
 
 ###############################################################################
@@ -53,6 +58,7 @@ class Measurements (deque):
 # Exit ########################################################################
 def Exit():
    heatlamp.cleanup()
+   lightlamp.cleanup()
    sys.exit()
 
 def _Exit(s,f):
@@ -66,13 +72,13 @@ def Main():
    schedule[ 7][0:59] = [25 for m in range(60)]
    schedule[ 8][0:59] = [25 for m in range(60)]
    schedule[ 9][0:59] = [25 for m in range(60)]
-   schedule[10][0:59] = [25 for m in range(60)]
-   schedule[11][0:59] = [25 for m in range(60)]
-   schedule[12][0:59] = [25 for m in range(60)]
+   schedule[10][0:59] = [30 for m in range(60)]
+   schedule[11][0:59] = [30 for m in range(60)]
+   schedule[12][0:59] = [30 for m in range(60)]
    schedule[13][0:59] = [25 for m in range(60)]
-   schedule[14][0:59] = [20 for m in range(60)]
-   schedule[15][0:59] = [18 for m in range(60)]
-   schedule[16][0:29] = [17 for m in range(30)]
+   schedule[14][0:59] = [25 for m in range(60)]
+   schedule[15][0:59] = [20 for m in range(60)]
+   schedule[16][0:29] = [18 for m in range(30)]
 
    m = {DS_TEMP1:   Measurements(), \
         DS_TEMP2:   Measurements(), \
@@ -82,13 +88,16 @@ def Main():
  
    while (True):
       hh, mm  = localtime()[3:5]
+      print("Lese t1, t2")
       m[DS_TEMP1].append(t1.read())
       m[DS_TEMP2].append(t2.read())
       #m[DS_TEMP1].append(-99.9)
       #m[DS_TEMP2].append(-99.9)
+      print("Lese th")
       _t3, _h = th.read()
       m[DS_TEMP3].append(_t3)
       m[DS_HUMI].append(_h)
+      print("Lese t cpu")
       m[DS_TEMPCPU].append(tc.read())
 
       if (schedule[hh][mm] > m[DS_TEMP3].avg()):
