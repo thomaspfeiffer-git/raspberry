@@ -5,12 +5,14 @@
 ###############################################################################################
 
 import RPi.GPIO as io
+from threading import Lock
 from time import time
 
 
 class Heating:
    ON  = "on"
    OFF = "off" 
+   __instances_lock = Lock()
    __instances = 0
 
    def __off (self):
@@ -19,7 +21,8 @@ class Heating:
 
 
    def __init__ (self, pin, latency, dryRun=False):
-      Heating.__instances += 1   # TODO: lock or semaphore
+      with Heating.__instances_lock:
+         Heating.__instances += 1
       self.__pin     = pin
       self.__latency = latency
       self.__dryRun  = dryRun
@@ -53,7 +56,8 @@ class Heating:
       if Heating.__instances == 1:
          io.cleanup()
       else:
-         Heating.__instances -= 1
+         with Heating.__instances_lock:
+            Heating.__instances -= 1
 
 
    def on (self):
