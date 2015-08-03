@@ -129,9 +129,13 @@ printHeating ()
     --alt-y-grid                                                \
     --right-axis 1:0                                            \
     DEF:turtle_heating=$RRD_T:turtle_heating:AVERAGE            \
+    DEF:turtle_lighting=$RRD_T:turtle_lighting:AVERAGE          \
     AREA:turtle_heating#FF0000:"Heizung Donut\t"                \
     GPRINT:turtle_heating:LAST:"\t Aktuell\: %5.0lf"            \
-    GPRINT:turtle_heating:AVERAGE:"Mittelwert\: %5.2lf\n"
+    GPRINT:turtle_heating:AVERAGE:"Mittelwert\: %5.2lf\n"       \
+    LINE3:turtle_lighting#FFFF00:"Beleuchtung Donut\t"          \
+    GPRINT:turtle_lighting:LAST:"\t Aktuell\: %5.0lf"            \
+    GPRINT:turtle_lighting:AVERAGE:"Mittelwert\: %5.2lf\n"
  }
 
 #    --alt-autoscale                                             \
