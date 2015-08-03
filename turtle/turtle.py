@@ -80,6 +80,12 @@ def Main():
    schedule_heat[15][0:59] = [20 for m in range(60)]
    schedule_heat[16][0:29] = [18 for m in range(30)]
 
+   schedule_light = [[5 for m in range(60)] for h in range(24)]
+   schedule_light[ 7][0:59] = [35 for m in range(60)]
+   schedule_light[ 8][0:59] = [35 for m in range(60)]
+   schedule_light[16][0:59] = [35 for m in range(60)]
+   schedule_light[17][0:59] = [35 for m in range(60)]
+
    m = {DS_TEMP1:   Measurements(), \
         DS_TEMP2:   Measurements(), \
         DS_TEMP3:   Measurements(), \
@@ -99,6 +105,11 @@ def Main():
          heatlamp.on()
       else:
          heatlamp.off()
+
+      if (schedule_light[hh][mm] > m[DS_TEMP3].avg()):
+         lightlamp.on()
+      else:
+         lightlamp.off() 
 
       rrd_template = DS_TEMP1   + ":" + \
                      DS_TEMP2   + ":" + \
