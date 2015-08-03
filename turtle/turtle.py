@@ -18,7 +18,7 @@ from Heating import Heating
 HEATLAMP_PIN      = 38
 HEATLAMP_LATENCY  = 60 * 15
 
-LIGHTLAMP_PIN     = 99 
+LIGHTLAMP_PIN     = 36
 LIGHTLAMP_LATENCY = 60 * 15
 
 
@@ -88,16 +88,11 @@ def Main():
  
    while (True):
       hh, mm  = localtime()[3:5]
-      print("Lese t1, t2")
       m[DS_TEMP1].append(t1.read())
       m[DS_TEMP2].append(t2.read())
-      #m[DS_TEMP1].append(-99.9)
-      #m[DS_TEMP2].append(-99.9)
-      print("Lese th")
       _t3, _h = th.read()
       m[DS_TEMP3].append(_t3)
       m[DS_HUMI].append(_h)
-      print("Lese t cpu")
       m[DS_TEMPCPU].append(tc.read())
 
       if (schedule_heat[hh][mm] > m[DS_TEMP3].avg()):
