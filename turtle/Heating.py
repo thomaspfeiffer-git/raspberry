@@ -1,7 +1,7 @@
 ###############################################################################################
 # Heating.py                                                                                  #
 # Control heating                                                                             #
-# (c) https://github.com/thomaspfeiffer-git May 2015                                          #
+# (c) https://github.com/thomaspfeiffer-git 2015                                              #
 ###############################################################################################
 
 import RPi.GPIO as io
@@ -19,7 +19,7 @@ class Heating:
 
 
    def __init__ (self, pin, latency, dryRun=False):
-      Heating.__instances += 1
+      Heating.__instances += 1   # TODO: lock or semaphore
       self.__pin     = pin
       self.__latency = latency
       self.__dryRun  = dryRun
@@ -48,7 +48,7 @@ class Heating:
 
 
    def cleanup (self):
-      print "Heatlamp.cleanup()"
+      print "Heating.cleanup()"
       self.__off()
       if Heating.__instances == 1:
          io.cleanup()
