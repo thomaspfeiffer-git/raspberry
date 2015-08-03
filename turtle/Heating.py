@@ -11,7 +11,7 @@ from time import time
 class Heating:
    ON  = "on"
    OFF = "off" 
-
+   __instances = 0
 
    def __off (self):
       io.output(self.__pin,io.LOW)
@@ -19,6 +19,7 @@ class Heating:
 
 
    def __init__ (self, pin, latency, dryRun=False):
+      Heating.__instances += 1
       self.__pin     = pin
       self.__latency = latency
       self.__dryRun  = dryRun
@@ -49,7 +50,10 @@ class Heating:
    def cleanup (self):
       print "Heatlamp.cleanup()"
       self.__off()
-      io.cleanup()   # TODO: move to super class (necessary if more than one instances of class Heating()).
+      if Heating.__instances == 1:
+         io.cleanup()
+      else:
+         Heating.__instances -= 1
 
 
    def on (self):
