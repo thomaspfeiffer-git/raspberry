@@ -23,13 +23,14 @@ LIGHTLAMP_LATENCY = 60 * 15
 
 
 # Misc for rrdtool
-RRDFILE    = "/schild/weather/turtle.rrd"
-DS_TEMP1   = "turtle_temp1"
-DS_TEMP2   = "turtle_temp2"
-DS_TEMP3   = "turtle_temp3"
-DS_TEMPCPU = "turtle_tempcpu"
-DS_HUMI    = "turtle_humi"
-DS_HEATING = "turtle_heating"
+RRDFILE     = "/schild/weather/turtle.rrd"
+DS_TEMP1    = "turtle_temp1"
+DS_TEMP2    = "turtle_temp2"
+DS_TEMP3    = "turtle_temp3"
+DS_TEMPCPU  = "turtle_tempcpu"
+DS_HUMI     = "turtle_humi"
+DS_HEATING  = "turtle_heating"
+DS_LIGHTING = "turtle_lighting"
 
 
 t1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
@@ -85,6 +86,8 @@ def Main():
    schedule_light[ 8][0:59] = [35 for m in range(60)]
    schedule_light[16][0:59] = [35 for m in range(60)]
    schedule_light[17][0:59] = [35 for m in range(60)]
+   schedule_light[20][0:59] = [35 for m in range(60)]
+   schedule_light[21][0:59] = [35 for m in range(60)]
 
    m = {DS_TEMP1:   Measurements(), \
         DS_TEMP2:   Measurements(), \
@@ -116,13 +119,16 @@ def Main():
                      DS_TEMP3   + ":" + \
                      DS_TEMPCPU + ":" + \
                      DS_HUMI    + ":" + \
-                     DS_HEATING
+                     DS_HEATING + ":" + \
+                     DS_LIGHTING
+                     
       rrd_data     = "N:{:.2f}".format(m[DS_TEMP1].last()) + \
                       ":{:.2f}".format(m[DS_TEMP2].last()) + \
                       ":{:.2f}".format(m[DS_TEMP3].last()) + \
                       ":{:.2f}".format(m[DS_TEMPCPU].last()) + \
                       ":{:.2f}".format(m[DS_HUMI].last()) + \
-                      ":{:}".format(heatlamp.status())
+                      ":{:}".format(heatlamp.status())    + \
+                      ":{:}".format(lightlamp.status())
       print strftime("%H:%M:%S", localtime()), rrd_data
       rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
 
