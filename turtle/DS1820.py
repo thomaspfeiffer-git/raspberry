@@ -29,7 +29,6 @@ class DS1820:
       sum = 0
       for i in range(0, 3):
          sum += self.__read_sensor()
-
       return sum/3
 
 ### eof ###
