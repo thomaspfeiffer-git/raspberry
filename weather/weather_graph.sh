@@ -122,7 +122,7 @@ printCPUTemp ()
 printHeating ()
   {
     rrdtool graph $2                                            \
-    --title "Heizung Donut"                                     \
+    --title "Heizung und Beleuchtung Donut"                     \
     --end now --start end-$1                                    \
     -w $WIDTH -h $(($HEIGHT/2)) -a PNG                          \
     --watermark "$WATERMARK"                                    \
@@ -133,8 +133,8 @@ printHeating ()
     AREA:turtle_heating#FF0000:"Heizung Donut\t"                \
     GPRINT:turtle_heating:LAST:"\t Aktuell\: %5.0lf"            \
     GPRINT:turtle_heating:AVERAGE:"Mittelwert\: %5.2lf\n"       \
-    LINE3:turtle_lighting#FFFF00:"Beleuchtung Donut\t"          \
-    GPRINT:turtle_lighting:LAST:"\t Aktuell\: %5.0lf"            \
+    STACK:turtle_lighting#FFFF00:"Beleuchtung Donut\t"          \
+    GPRINT:turtle_lighting:LAST:"\t Aktuell\: %5.0lf"           \
     GPRINT:turtle_lighting:AVERAGE:"Mittelwert\: %5.2lf\n"
  }
 
