@@ -51,7 +51,6 @@ class Heating:
 
 
    def cleanup (self):
-      print "Heating.cleanup()"
       self.__off()
       if Heating.__instances == 1:
          io.cleanup()
