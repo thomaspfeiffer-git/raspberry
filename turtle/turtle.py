@@ -2,6 +2,7 @@
 # coding=utf-8
 
 from collections import deque
+import datetime
 import rrdtool
 import signal
 import sys
@@ -81,13 +82,28 @@ def Main():
    schedule_heat[15][0:59] = [20 for m in range(60)]
    schedule_heat[16][0:29] = [18 for m in range(30)]
 
-   schedule_light = [[5 for m in range(60)] for h in range(24)]
-   schedule_light[ 7][0:59] = [35 for m in range(60)]
-   schedule_light[ 8][0:59] = [35 for m in range(60)]
-   schedule_light[16][0:59] = [35 for m in range(60)]
-   schedule_light[17][0:59] = [35 for m in range(60)]
-   schedule_light[20][0:59] = [35 for m in range(60)]
-   schedule_light[21][0:59] = [35 for m in range(60)]
+   print "Current week of year:", datetime.datetime.utcnow().isocalendar()[1]
+   schedule_light = [[[5 for m in range(60)] for h in range(24)] for M in range(53)]
+   schedule_light[32][ 8][0:59] = [35 for m in range(60)]
+   schedule_light[32][ 9][0:59] = [35 for m in range(60)]
+   schedule_light[32][10][0:59] = [35 for m in range(60)]
+   schedule_light[32][11][0:59] = [35 for m in range(60)]
+   schedule_light[32][12][0:59] = [35 for m in range(60)]
+   schedule_light[32][13][0:59] = [35 for m in range(60)]
+
+   schedule_light[33][ 8][0:59] = [35 for m in range(60)]
+   schedule_light[33][ 9][0:59] = [35 for m in range(60)]
+   schedule_light[33][10][0:59] = [35 for m in range(60)]
+   schedule_light[33][11][0:59] = [35 for m in range(60)]
+   schedule_light[33][12][0:59] = [35 for m in range(60)]
+   schedule_light[33][13][0:59] = [35 for m in range(60)]
+
+   schedule_light[34][ 8][0:59] = [35 for m in range(60)]
+   schedule_light[34][ 9][0:59] = [35 for m in range(60)]
+   schedule_light[34][10][0:59] = [35 for m in range(60)]
+   schedule_light[34][11][0:59] = [35 for m in range(60)]
+   schedule_light[34][12][0:59] = [35 for m in range(60)]
+   schedule_light[34][13][0:59] = [35 for m in range(60)]
 
    m = {DS_TEMP1:   Measurements(), \
         DS_TEMP2:   Measurements(), \
@@ -97,6 +113,7 @@ def Main():
  
    while (True):
       hh, mm  = localtime()[3:5]
+      dy      = datetime.datetime.utcnow().isocalendar()[1]
       m[DS_TEMP1].append(t1.read())
       m[DS_TEMP2].append(t2.read())
       _t3, _h = th.read()
@@ -109,7 +126,7 @@ def Main():
       else:
          heatlamp.off()
 
-      if (schedule_light[hh][mm] > m[DS_TEMP3].avg()):
+      if (schedule_light[dy][hh][mm] > m[DS_TEMP3].avg()):
          lightlamp.on()
       else:
          lightlamp.off() 
