@@ -8,24 +8,13 @@ import datetime
 from time import *
 
 
-class __schedule_base(object):
-   def __on(self, value):
-      pass
-
-   def __ts (self):
-      hh, mm  = localtime()[3:5]
-      dy      = datetime.datetime.utcnow().isocalendar()[1]
-      return [dy,hh,mm]
+# TODO: Refactoring
+# class ControlBase:
+# def __ts():
+# def switch():
 
 
-   def switch (self, lamp, value):
-      if (self.__on(value)):
-         lamp.on()
-      else:
-         lamp.off()
-
-
-class HeatControl(__schedule_base):
+class HeatControl:
    __schedule = [[5 for m in range(60)] for h in range(24)]
 
    __schedule[ 7][0:59] = [25 for m in range(60)]
@@ -39,10 +28,15 @@ class HeatControl(__schedule_base):
    __schedule[15][0:59] = [20 for m in range(60)]
    __schedule[16][0:29] = [18 for m in range(30)]
  
+ 
+   def __ts(self):
+      hh, mm  = localtime()[3:5]
+      dy      = datetime.datetime.utcnow().isocalendar()[1]
+      return [dy,hh,mm]
+
 
    def __on (self,value):
       dy, hh, mm = self.__ts()
-
       if (self.__schedule[hh][mm] > value):
          return True
       else:
@@ -50,10 +44,13 @@ class HeatControl(__schedule_base):
 
 
    def switch (self, lamp, value):
-      super(HeatControl,self).switch(lamp,value)
+      if (self.__on(value)):
+         lamp.on()
+      else:
+         lamp.off()
 
 
-class LightControl (__schedule_base):
+class LightControl:
    __schedule = [[[5 for m in range(60)] for h in range(24)] for w in range(53)]
 
    __tmax = 40
@@ -80,9 +77,14 @@ class LightControl (__schedule_base):
    __schedule[34][13][0:59] = [__tmax for m in range(60)]
 
 
+   def __ts(self):
+      hh, mm  = localtime()[3:5]
+      dy      = datetime.datetime.utcnow().isocalendar()[1]
+      return [dy,hh,mm]
+
+   
    def __on (self, value):
       dy, hh, mm = self.__ts()
-
       if (self.__schedule[dy][hh][mm] > value):
          return True
       else:
@@ -90,7 +92,10 @@ class LightControl (__schedule_base):
 
 
    def switch (self, lamp, value):
-      super(LightControl,self).switch(lamp,value)
+      if (self.__on(value)):
+         lamp.on()
+      else:
+         lamp.off()
 
 ### eof ###
 
