@@ -2,7 +2,6 @@
 # coding=utf-8
 
 from collections import deque
-import datetime
 import rrdtool
 import signal
 import sys
@@ -71,6 +70,9 @@ def _Exit(s,f):
 ###############################################################################
 # Main ########################################################################
 def Main():
+   heatcontrol  = Schedules.HeatControl()
+   lightcontrol = Schedules.LightControl()
+
    m = {DS_TEMP1:   Measurements(), \
         DS_TEMP2:   Measurements(), \
         DS_TEMP3:   Measurements(), \
@@ -78,8 +80,6 @@ def Main():
         DS_HUMI:    Measurements()}
  
    while (True):
-      hh, mm  = localtime()[3:5]
-      dy      = datetime.datetime.utcnow().isocalendar()[1]
       m[DS_TEMP1].append(t1.read())
       m[DS_TEMP2].append(t2.read())
       _t3, _h = th.read()
@@ -87,15 +87,9 @@ def Main():
       m[DS_HUMI].append(_h)
       m[DS_TEMPCPU].append(tc.read())
 
-      if (Schedules.heat.schedule[hh][mm] > m[DS_TEMP3].avg()):
-         heatlamp.on()
-      else:
-         heatlamp.off()
 
-      if (Schedules.light.schedule[dy][hh][mm] > m[DS_TEMP3].avg()):
-         lightlamp.on()
-      else:
-         lightlamp.off() 
+      heatcontrol.switch(heatlamp,m[DS_TEMP3].avg())
+      lightcontrol.switch(lightlamp,m[DS_TEMP3].avg())
 
       rrd_template = DS_TEMP1   + ":" + \
                      DS_TEMP2   + ":" + \
