@@ -82,7 +82,6 @@ def Main():
    schedule_heat[15][0:59] = [20 for m in range(60)]
    schedule_heat[16][0:29] = [18 for m in range(30)]
 
-   print "Current week of year:", datetime.datetime.utcnow().isocalendar()[1]
    schedule_light = [[[5 for m in range(60)] for h in range(24)] for M in range(53)]
    schedule_light[32][ 8][0:59] = [35 for m in range(60)]
    schedule_light[32][ 9][0:59] = [35 for m in range(60)]
