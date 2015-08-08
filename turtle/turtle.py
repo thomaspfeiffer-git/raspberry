@@ -14,6 +14,7 @@ from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
 from Heating import Heating
+import Schedules
 
 
 HEATLAMP_PIN      = 38
@@ -70,40 +71,6 @@ def _Exit(s,f):
 ###############################################################################
 # Main ########################################################################
 def Main():
-   schedule_heat = [[5 for m in range(60)] for h in range(24)]
-   schedule_heat[ 7][0:59] = [25 for m in range(60)]
-   schedule_heat[ 8][0:59] = [25 for m in range(60)]
-   schedule_heat[ 9][0:59] = [25 for m in range(60)]
-   schedule_heat[10][0:59] = [30 for m in range(60)]
-   schedule_heat[11][0:59] = [30 for m in range(60)]
-   schedule_heat[12][0:59] = [30 for m in range(60)]
-   schedule_heat[13][0:59] = [25 for m in range(60)]
-   schedule_heat[14][0:59] = [25 for m in range(60)]
-   schedule_heat[15][0:59] = [20 for m in range(60)]
-   schedule_heat[16][0:29] = [18 for m in range(30)]
-
-   schedule_light = [[[5 for m in range(60)] for h in range(24)] for M in range(53)]
-   schedule_light[32][ 8][0:59] = [35 for m in range(60)]
-   schedule_light[32][ 9][0:59] = [35 for m in range(60)]
-   schedule_light[32][10][0:59] = [35 for m in range(60)]
-   schedule_light[32][11][0:59] = [35 for m in range(60)]
-   schedule_light[32][12][0:59] = [35 for m in range(60)]
-   schedule_light[32][13][0:59] = [35 for m in range(60)]
-
-   schedule_light[33][ 8][0:59] = [35 for m in range(60)]
-   schedule_light[33][ 9][0:59] = [35 for m in range(60)]
-   schedule_light[33][10][0:59] = [35 for m in range(60)]
-   schedule_light[33][11][0:59] = [35 for m in range(60)]
-   schedule_light[33][12][0:59] = [35 for m in range(60)]
-   schedule_light[33][13][0:59] = [35 for m in range(60)]
-
-   schedule_light[34][ 8][0:59] = [35 for m in range(60)]
-   schedule_light[34][ 9][0:59] = [35 for m in range(60)]
-   schedule_light[34][10][0:59] = [35 for m in range(60)]
-   schedule_light[34][11][0:59] = [35 for m in range(60)]
-   schedule_light[34][12][0:59] = [35 for m in range(60)]
-   schedule_light[34][13][0:59] = [35 for m in range(60)]
-
    m = {DS_TEMP1:   Measurements(), \
         DS_TEMP2:   Measurements(), \
         DS_TEMP3:   Measurements(), \
@@ -120,12 +87,12 @@ def Main():
       m[DS_HUMI].append(_h)
       m[DS_TEMPCPU].append(tc.read())
 
-      if (schedule_heat[hh][mm] > m[DS_TEMP3].avg()):
+      if (Schedules.heat.schedule[hh][mm] > m[DS_TEMP3].avg()):
          heatlamp.on()
       else:
          heatlamp.off()
 
-      if (schedule_light[dy][hh][mm] > m[DS_TEMP3].avg()):
+      if (Schedules.light.schedule[dy][hh][mm] > m[DS_TEMP3].avg()):
          lightlamp.on()
       else:
          lightlamp.off() 
