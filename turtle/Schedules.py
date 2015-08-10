@@ -8,13 +8,14 @@ import datetime
 from time import *
 
 
-# TODO: Refactoring
-# class ControlBase:
-# def __ts():
-# def switch():
+class ScheduleBase (object):
+   def ts(self):
+      hh, mm = localtime()[3:5]
+      dy     = datetime.datetime.utcnow().isocalendar()[1]
+      return [dy,hh,mm]
 
 
-class HeatControl:
+class ScheduleHeat (ScheduleBase):
    __schedule = [[5 for m in range(60)] for h in range(24)]
 
    __schedule[ 7][0:59] = [25 for m in range(60)]
@@ -28,39 +29,26 @@ class HeatControl:
    __schedule[15][0:59] = [20 for m in range(60)]
    __schedule[16][0:29] = [18 for m in range(30)]
  
- 
-   def __ts(self):
-      hh, mm  = localtime()[3:5]
-      dy      = datetime.datetime.utcnow().isocalendar()[1]
-      return [dy,hh,mm]
 
-
-   def __on (self,value):
-      dy, hh, mm = self.__ts()
+   def on (self,value):
+      dy, hh, mm = self.ts()
       if (self.__schedule[hh][mm] > value):
          return True
       else:
          return False 
 
 
-   def switch (self, lamp, value):
-      if (self.__on(value)):
-         lamp.on()
-      else:
-         lamp.off()
-
-
-class LightControl:
+class ScheduleLight (ScheduleBase):
    __schedule = [[[5 for m in range(60)] for h in range(24)] for w in range(53)]
 
    __tmax = 40
+   __schedule[32][ 7][0:59] = [__tmax for m in range(60)]
    __schedule[32][ 8][0:59] = [__tmax for m in range(60)]
    __schedule[32][ 9][0:59] = [__tmax for m in range(60)]
    __schedule[32][10][0:59] = [__tmax for m in range(60)]
    __schedule[32][11][0:59] = [__tmax for m in range(60)]
    __schedule[32][12][0:59] = [__tmax for m in range(60)]
    __schedule[32][13][0:59] = [__tmax for m in range(60)]
-   __schedule[32][21][0:59] = [__tmax for m in range(60)]
 
    __schedule[33][ 8][0:59] = [__tmax for m in range(60)]
    __schedule[33][ 9][0:59] = [__tmax for m in range(60)]
@@ -77,25 +65,25 @@ class LightControl:
    __schedule[34][13][0:59] = [__tmax for m in range(60)]
 
 
-   def __ts(self):
-      hh, mm  = localtime()[3:5]
-      dy      = datetime.datetime.utcnow().isocalendar()[1]
-      return [dy,hh,mm]
-
-   
-   def __on (self, value):
-      dy, hh, mm = self.__ts()
+   def on (self, value):
+      dy, hh, mm = self.ts()
       if (self.__schedule[dy][hh][mm] > value):
          return True
       else:
          return False 
 
 
-   def switch (self, lamp, value):
-      if (self.__on(value)):
-         lamp.on()
+class Control (object):
+   def __init__(self,schedule,lamp):
+      self.__schedule = schedule
+      self.__lamp     = lamp
+
+
+   def control (self,value):
+      if (self.__schedule.on(value)): 
+         self.__lamp.on()
       else:
-         lamp.off()
+         self.__lamp.off() 
 
 ### eof ###
 
