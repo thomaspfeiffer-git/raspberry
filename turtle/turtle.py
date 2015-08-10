@@ -70,8 +70,8 @@ def _Exit(s,f):
 ###############################################################################
 # Main ########################################################################
 def Main():
-   heatcontrol  = Schedules.HeatControl()
-   lightcontrol = Schedules.LightControl()
+   heatcontrol  = Schedules.Control(Schedules.ScheduleHeat(),heatlamp)
+   lightcontrol = Schedules.Control(Schedules.ScheduleLight(),lightlamp)
 
    m = {DS_TEMP1:   Measurements(), \
         DS_TEMP2:   Measurements(), \
@@ -87,9 +87,8 @@ def Main():
       m[DS_HUMI].append(_h)
       m[DS_TEMPCPU].append(tc.read())
 
-
-      heatcontrol.switch(heatlamp,m[DS_TEMP3].avg())
-      lightcontrol.switch(lightlamp,m[DS_TEMP3].avg())
+      heatcontrol.control(m[DS_TEMP3].avg())
+      lightcontrol.control(m[DS_TEMP3].avg())
 
       rrd_template = DS_TEMP1   + ":" + \
                      DS_TEMP2   + ":" + \
@@ -127,6 +126,7 @@ except SystemExit:                  # Done in signal handler (method _Exit()) #
 
 except:
    print(traceback.print_exc())
+   Exit()
 
 finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
    pass
