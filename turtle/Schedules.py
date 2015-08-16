@@ -18,12 +18,12 @@ class ScheduleBase (object):
 class ScheduleHeat (ScheduleBase):
    __schedule = [[5 for m in range(60)] for h in range(24)]
 
-   __schedule[ 7][0:59] = [25 for m in range(60)]
-   __schedule[ 8][0:59] = [25 for m in range(60)]
-   __schedule[ 9][0:59] = [25 for m in range(60)]
-   __schedule[10][0:59] = [30 for m in range(60)]
-   __schedule[11][0:59] = [30 for m in range(60)]
-   __schedule[12][0:59] = [30 for m in range(60)]
+   __schedule[ 7][0:59] = [28 for m in range(60)]
+   __schedule[ 8][0:59] = [28 for m in range(60)]
+   __schedule[ 9][0:59] = [28 for m in range(60)]
+   __schedule[10][0:59] = [32 for m in range(60)]
+   __schedule[11][0:59] = [32 for m in range(60)]
+   __schedule[12][0:59] = [32 for m in range(60)]
    __schedule[13][0:59] = [25 for m in range(60)]
    __schedule[14][0:59] = [25 for m in range(60)]
    __schedule[15][0:59] = [20 for m in range(60)]
@@ -42,22 +42,18 @@ class ScheduleLight (ScheduleBase):
    __schedule = [[[5 for m in range(60)] for h in range(24)] for w in range(53)]
 
    __tmax = 40
-   __schedule[32][ 7][0:59] = [__tmax for m in range(60)]
-   __schedule[32][ 8][0:59] = [__tmax for m in range(60)]
    __schedule[32][ 9][0:59] = [__tmax for m in range(60)]
    __schedule[32][10][0:59] = [__tmax for m in range(60)]
    __schedule[32][11][0:59] = [__tmax for m in range(60)]
    __schedule[32][12][0:59] = [__tmax for m in range(60)]
    __schedule[32][13][0:59] = [__tmax for m in range(60)]
 
-   __schedule[33][ 8][0:59] = [__tmax for m in range(60)]
    __schedule[33][ 9][0:59] = [__tmax for m in range(60)]
    __schedule[33][10][0:59] = [__tmax for m in range(60)]
    __schedule[33][11][0:59] = [__tmax for m in range(60)]
    __schedule[33][12][0:59] = [__tmax for m in range(60)]
    __schedule[33][13][0:59] = [__tmax for m in range(60)]
 
-   __schedule[34][ 8][0:59] = [__tmax for m in range(60)]
    __schedule[34][ 9][0:59] = [__tmax for m in range(60)]
    __schedule[34][10][0:59] = [__tmax for m in range(60)]
    __schedule[34][11][0:59] = [__tmax for m in range(60)]
