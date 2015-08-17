@@ -12,6 +12,7 @@ class ScheduleBase (object):
    def ts(self):
       hh, mm = localtime()[3:5]
       dy     = datetime.datetime.utcnow().isocalendar()[1]
+      print "Calender week:", dy
       return [dy,hh,mm]
 
 
@@ -59,6 +60,12 @@ class ScheduleLight (ScheduleBase):
    __schedule[34][11][0:59] = [__tmax for m in range(60)]
    __schedule[34][12][0:59] = [__tmax for m in range(60)]
    __schedule[34][13][0:59] = [__tmax for m in range(60)]
+
+   __schedule[35][ 9][0:59] = [__tmax for m in range(60)]
+   __schedule[35][10][0:59] = [__tmax for m in range(60)]
+   __schedule[35][11][0:59] = [__tmax for m in range(60)]
+   __schedule[35][12][0:59] = [__tmax for m in range(60)]
+   __schedule[35][13][0:59] = [__tmax for m in range(60)]
 
 
    def on (self, value):
