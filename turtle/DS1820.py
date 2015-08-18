@@ -11,7 +11,7 @@ class DS1820:
       self.__id = id
    
    def __read_sensor (self):
-     value = 99
+     value = 99 # TODO: improve error handling
      try:
        f = open(self.__id, "r")
        line = f.readline()
@@ -27,7 +27,7 @@ class DS1820:
 
    def read (self):
       sum = 0
-      for i in range(0, 3):
+      for i in range(0, 3): # TODO: improve error handling
          sum += self.__read_sensor()
       return sum/3
 
