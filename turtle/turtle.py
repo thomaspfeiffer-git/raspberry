@@ -51,7 +51,7 @@ class Measurements (deque):
         super(Measurements, self).__init__([], maxlen)
 
     def avg(self):
-        """average of list elements"""
+        """returns average of list elements"""
         return sum(list(self)) / float(len(self))
 
     def last(self):
