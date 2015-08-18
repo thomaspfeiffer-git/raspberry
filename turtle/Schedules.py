@@ -3,6 +3,7 @@
 # Schedule data for heating and light                                        #
 # (c) https://github.com/thomaspfeiffer-git 2015                             #
 ##############################################################################
+"""schedule data for heating and light"""
 
 import datetime
 from time import localtime
