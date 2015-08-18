@@ -1,11 +1,15 @@
 #!/usr/bin/python
 # coding=utf-8
+#############################################################################
+#############################################################################
+"""control of heat and light in our turtle's compound"""
+
 
 from collections import deque
 import rrdtool
 import signal
 import sys
-from time import *
+from time import strftime, localtime, sleep
 import traceback
 
 
@@ -34,10 +38,6 @@ DS_HEATING  = "turtle_heating"
 DS_LIGHTING = "turtle_lighting"
 
 
-t1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
-t2        = DS1820("/sys/bus/w1/devices/28-000006dd6ac1/w1_slave")
-th        = DHT22_AM2302(21)   # BCM 21 = PIN 40
-tc        = CPU()
 heatlamp  = Heating(HEATLAMP_PIN, HEATLAMP_LATENCY)
 lightlamp = Heating(LIGHTLAMP_PIN, LIGHTLAMP_LATENCY)
 
@@ -46,90 +46,100 @@ lightlamp = Heating(LIGHTLAMP_PIN, LIGHTLAMP_LATENCY)
 ###############################################################################
 # Measurements ################################################################
 class Measurements (deque):
-   def __init__(self, n=5):
-      super(Measurements,self).__init__([],n)
+    """extended deque: additional methods for average and last added item"""
+    def __init__(self, maxlen=5):
+        super(Measurements, self).__init__([], maxlen)
 
-   def avg(self):
-      return sum(list(self)) / float(len(self))
+    def avg(self):
+        """average of list elements"""
+        return sum(list(self)) / float(len(self))
 
-   def last(self):
-      return self[len(self)-1]
+    def last(self):
+        """returns last list element"""
+        return self[len(self)-1]
 
 
 ###############################################################################
 # Exit ########################################################################
-def Exit():
-   heatlamp.cleanup()
-   lightlamp.cleanup()
-   sys.exit()
+def _exit():
+    """cleanup stuff"""
+    heatlamp.cleanup()
+    lightlamp.cleanup()
+    sys.exit()
 
-def _Exit(s,f):
-   Exit()
+def __exit(__s, __f):
+    """cleanup stuff used for signal handler"""
+    _exit()
 
 
 ###############################################################################
 # Main ########################################################################
-def Main():
-   heatcontrol  = Schedules.Control(Schedules.ScheduleHeat(),heatlamp)
-   lightcontrol = Schedules.Control(Schedules.ScheduleLight(),lightlamp)
+def main():
+    """main part"""
+    temp1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
+    temp2        = DS1820("/sys/bus/w1/devices/28-000006dd6ac1/w1_slave")
+    temphumi     = DHT22_AM2302(21)   # BCM 21 = PIN 40
+    tempcpu      = CPU()
+    heatcontrol  = Schedules.Control(Schedules.ScheduleHeat(), heatlamp)
+    lightcontrol = Schedules.Control(Schedules.ScheduleLight(), lightlamp)
 
-   m = {DS_TEMP1:   Measurements(), \
-        DS_TEMP2:   Measurements(), \
-        DS_TEMP3:   Measurements(), \
-        DS_TEMPCPU: Measurements(), \
-        DS_HUMI:    Measurements()}
+    measurements = {DS_TEMP1:   Measurements(), \
+                    DS_TEMP2:   Measurements(), \
+                    DS_TEMP3:   Measurements(), \
+                    DS_TEMPCPU: Measurements(), \
+                    DS_HUMI:    Measurements()}
  
-   while (True):
-      m[DS_TEMP1].append(t1.read())
-      m[DS_TEMP2].append(t2.read())
-      _t3, _h = th.read()
-      m[DS_TEMP3].append(_t3)
-      m[DS_HUMI].append(_h)
-      m[DS_TEMPCPU].append(tc.read())
+    while (True):
+        measurements[DS_TEMP1].append(temp1.read())
+        measurements[DS_TEMP2].append(temp2.read())
+        _temp3, _humi = temphumi.read()
+        measurements[DS_TEMP3].append(_temp3)
+        measurements[DS_HUMI].append(_humi)
+        measurements[DS_TEMPCPU].append(tempcpu.read())
 
-      heatcontrol.control(m[DS_TEMP3].avg())
-      lightcontrol.control(m[DS_TEMP3].avg())
+        heatcontrol.control(measurements[DS_TEMP3].avg())
+        lightcontrol.control(measurements[DS_TEMP3].avg())
 
-      rrd_template = DS_TEMP1   + ":" + \
-                     DS_TEMP2   + ":" + \
-                     DS_TEMP3   + ":" + \
-                     DS_TEMPCPU + ":" + \
-                     DS_HUMI    + ":" + \
-                     DS_HEATING + ":" + \
-                     DS_LIGHTING
+        rrd_template = DS_TEMP1   + ":" + \
+                       DS_TEMP2   + ":" + \
+                       DS_TEMP3   + ":" + \
+                       DS_TEMPCPU + ":" + \
+                       DS_HUMI    + ":" + \
+                       DS_HEATING + ":" + \
+                       DS_LIGHTING
                      
-      rrd_data     = "N:{:.2f}".format(m[DS_TEMP1].last()) + \
-                      ":{:.2f}".format(m[DS_TEMP2].last()) + \
-                      ":{:.2f}".format(m[DS_TEMP3].last()) + \
-                      ":{:.2f}".format(m[DS_TEMPCPU].last()) + \
-                      ":{:.2f}".format(m[DS_HUMI].last()) + \
-                      ":{:}".format(heatlamp.status())    + \
-                      ":{:}".format(lightlamp.status())
-      print strftime("%H:%M:%S", localtime()), rrd_data
-      rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
+        rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
+                        ":{:.2f}".format(measurements[DS_TEMP2].last()) + \
+                        ":{:.2f}".format(measurements[DS_TEMP3].last()) + \
+                        ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
+                        ":{:.2f}".format(measurements[DS_HUMI].last()) + \
+                        ":{:}".format(heatlamp.status())    + \
+                        ":{:}".format(lightlamp.status())
+        print strftime("%H:%M:%S", localtime()), rrd_data
+        rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
 
-      sleep(35)
+        sleep(35)
 
 
 ###############################################################################
 ###############################################################################
-signal.signal(signal.SIGTERM, _Exit)
+signal.signal(signal.SIGTERM, _exit)
 
 try:
-   Main()
+    main()
 
 except KeyboardInterrupt:
-   Exit()
+    _exit()
 
 except SystemExit:                  # Done in signal handler (method _Exit()) #
-   pass
+    pass
 
 except:
-   print(traceback.print_exc())
-   Exit()
+    print(traceback.print_exc())
+    _exit()
 
 finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
-   pass
+    pass
 
 ### eof ###
 
