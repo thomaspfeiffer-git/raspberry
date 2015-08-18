@@ -11,7 +11,7 @@ class DS1820:
       self.__id = id
    
    def __read_sensor (self):
-     value = "U"
+     value = 99
      try:
        f = open(self.__id, "r")
        line = f.readline()
