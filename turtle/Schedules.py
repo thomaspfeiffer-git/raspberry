@@ -10,14 +10,16 @@ from time import localtime
 
 
 class ScheduleBase (object):
-    def ts(self):
-        hh, mm = localtime()[3:5]
-        dy     = datetime.datetime.utcnow().isocalendar()[1]
-        # print "Calender week:", dy
-        return [dy, hh, mm]
+    """base for schedule classes. provides a timestamp method"""
+    def timestamp(self):
+        hour, minute = localtime()[3:5]
+        week         = datetime.datetime.utcnow().isocalendar()[1]
+        # print "Calender week:", week_of_year
+        return [week, hour, minute]
 
 
 class ScheduleHeat (ScheduleBase):
+    """schedule class for heating"""
     __schedule = [[5 for m in range(60)] for h in range(24)]
 
     __schedule[ 7][0:59] = [28 for m in range(60)]
@@ -33,14 +35,15 @@ class ScheduleHeat (ScheduleBase):
  
 
     def on (self, value):
-        dy, hh, mm = self.ts()
-        if (self.__schedule[hh][mm] > value):
+        week, hour, minute = self.timestamp()
+        if (self.__schedule[hour][minute] > value):
             return True
         else:
             return False 
 
 
 class ScheduleLight (ScheduleBase):
+    """schedule class for lighting"""
     __schedule = [[[5 for m in range(60)] for h in range(24)] for w in range(53)]
 
     __tmax = 40
@@ -68,10 +71,16 @@ class ScheduleLight (ScheduleBase):
     __schedule[35][12][0:59] = [__tmax for m in range(60)]
     __schedule[35][13][0:59] = [__tmax for m in range(60)]
 
+    __schedule[36][ 9][0:59] = [__tmax for m in range(60)]
+    __schedule[36][10][0:59] = [__tmax for m in range(60)]
+    __schedule[36][11][0:59] = [__tmax for m in range(60)]
+    __schedule[36][12][0:59] = [__tmax for m in range(60)]
+    __schedule[36][13][0:59] = [__tmax for m in range(60)]
+
 
     def on (self, value):
-        dy, hh, mm = self.ts()
-        if (self.__schedule[dy][hh][mm] > value):
+        week, hour, minute = self.timestamp()
+        if (self.__schedule[week][hour][minute] > value):
             return True
         else:
             return False 
