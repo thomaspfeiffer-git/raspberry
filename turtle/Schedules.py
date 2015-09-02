@@ -52,30 +52,48 @@ class ScheduleLight (ScheduleBase):
     __schedule[32][11][0:59] = [__tmax for m in range(60)]
     __schedule[32][12][0:59] = [__tmax for m in range(60)]
     __schedule[32][13][0:59] = [__tmax for m in range(60)]
+    __schedule[32][14][0:59] = [__tmax for m in range(60)]
+    __schedule[32][15][0:59] = [__tmax for m in range(60)]
 
     __schedule[33][ 9][0:59] = [__tmax for m in range(60)]
     __schedule[33][10][0:59] = [__tmax for m in range(60)]
     __schedule[33][11][0:59] = [__tmax for m in range(60)]
     __schedule[33][12][0:59] = [__tmax for m in range(60)]
     __schedule[33][13][0:59] = [__tmax for m in range(60)]
+    __schedule[33][14][0:59] = [__tmax for m in range(60)]
+    __schedule[33][15][0:59] = [__tmax for m in range(60)]
  
     __schedule[34][ 9][0:59] = [__tmax for m in range(60)]
     __schedule[34][10][0:59] = [__tmax for m in range(60)]
     __schedule[34][11][0:59] = [__tmax for m in range(60)]
     __schedule[34][12][0:59] = [__tmax for m in range(60)]
     __schedule[34][13][0:59] = [__tmax for m in range(60)]
+    __schedule[34][14][0:59] = [__tmax for m in range(60)]
+    __schedule[34][15][0:59] = [__tmax for m in range(60)]
 
     __schedule[35][ 9][0:59] = [__tmax for m in range(60)]
     __schedule[35][10][0:59] = [__tmax for m in range(60)]
     __schedule[35][11][0:59] = [__tmax for m in range(60)]
     __schedule[35][12][0:59] = [__tmax for m in range(60)]
     __schedule[35][13][0:59] = [__tmax for m in range(60)]
+    __schedule[35][14][0:59] = [__tmax for m in range(60)]
+    __schedule[35][15][0:59] = [__tmax for m in range(60)]
 
     __schedule[36][ 9][0:59] = [__tmax for m in range(60)]
     __schedule[36][10][0:59] = [__tmax for m in range(60)]
     __schedule[36][11][0:59] = [__tmax for m in range(60)]
     __schedule[36][12][0:59] = [__tmax for m in range(60)]
     __schedule[36][13][0:59] = [__tmax for m in range(60)]
+    __schedule[36][14][0:59] = [__tmax for m in range(60)]
+    __schedule[36][15][0:59] = [__tmax for m in range(60)]
+
+    __schedule[37][ 9][0:59] = [__tmax for m in range(60)]
+    __schedule[37][10][0:59] = [__tmax for m in range(60)]
+    __schedule[37][11][0:59] = [__tmax for m in range(60)]
+    __schedule[37][12][0:59] = [__tmax for m in range(60)]
+    __schedule[37][13][0:59] = [__tmax for m in range(60)]
+    __schedule[37][14][0:59] = [__tmax for m in range(60)]
+    __schedule[37][15][0:59] = [__tmax for m in range(60)]
 
 
     def on (self, value):
