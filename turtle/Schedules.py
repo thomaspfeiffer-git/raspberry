@@ -28,8 +28,8 @@ class ScheduleHeat (ScheduleBase):
     __schedule[10][0:59] = [32 for m in range(60)]
     __schedule[11][0:59] = [32 for m in range(60)]
     __schedule[12][0:59] = [32 for m in range(60)]
-    __schedule[13][0:59] = [25 for m in range(60)]
-    __schedule[14][0:59] = [25 for m in range(60)]
+    __schedule[13][0:59] = [28 for m in range(60)]
+    __schedule[14][0:59] = [28 for m in range(60)]
     __schedule[15][0:59] = [20 for m in range(60)]
     __schedule[16][0:29] = [18 for m in range(30)]
  
@@ -79,6 +79,7 @@ class ScheduleLight (ScheduleBase):
     __schedule[35][14][0:59] = [__tmax for m in range(60)]
     __schedule[35][15][0:59] = [__tmax for m in range(60)]
 
+    __schedule[36][ 8][0:59] = [__tmax for m in range(60)]
     __schedule[36][ 9][0:59] = [__tmax for m in range(60)]
     __schedule[36][10][0:59] = [__tmax for m in range(60)]
     __schedule[36][11][0:59] = [__tmax for m in range(60)]
@@ -87,6 +88,7 @@ class ScheduleLight (ScheduleBase):
     __schedule[36][14][0:59] = [__tmax for m in range(60)]
     __schedule[36][15][0:59] = [__tmax for m in range(60)]
 
+    __schedule[37][ 8][0:59] = [__tmax for m in range(60)]
     __schedule[37][ 9][0:59] = [__tmax for m in range(60)]
     __schedule[37][10][0:59] = [__tmax for m in range(60)]
     __schedule[37][11][0:59] = [__tmax for m in range(60)]
