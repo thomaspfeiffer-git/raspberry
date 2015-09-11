@@ -16,10 +16,12 @@ Libs:
 =====
 
 
-gpio/wiringPi
-git clone git://git.drogon.net/wiringPi
-cd wiringPi/
-./build
+1-wire (DS1820)
+/boot/config.txt:
+   dtoverlay=w1-gpio,gpiopin=4
+/etc/modules:
+   w1-gpio pullup=1
+   w1-therm
 
 
 DHT22_AM2302:
