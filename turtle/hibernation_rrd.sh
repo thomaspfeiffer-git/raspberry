@@ -7,8 +7,8 @@ rrdtool create /schild/weather/hibernation.rrd --step 60 \
 DS:hibernation_temp:GAUGE:$HEARTBEAT:-40:80 \
 DS:hibernation_tempcpu:GAUGE:$HEARTBEAT:-40:80 \
 DS:hibernation_humi:GAUGE:$HEARTBEAT:0:100 \
-DS:hibernation_fridgeon:GAUGE:$HEARTBEAT:0:1 \
-DS:hibernation_dooropen:GAUGE:$HEARTBEAT:0:1 \
+DS:hibernation_on:GAUGE:$HEARTBEAT:0:1 \
+DS:hibernation_open:GAUGE:$HEARTBEAT:0:1 \
 RRA:AVERAGE:0.5:1:7200 \
 RRA:AVERAGE:0.5:5:4032 \
 RRA:AVERAGE:0.5:60:744 \
@@ -20,4 +20,5 @@ RRA:AVERAGE:0.5:1440:3650 \
 #       = 4032 Werte für 14 Tage
 # 744:  je 60 Werte (= 1 Stunde) für 31 Tage: = 24*31 = 744 Werte
 # 3650: je 1440 Werte (=1 Tag) für 10 Jahre = 3650
+
 
