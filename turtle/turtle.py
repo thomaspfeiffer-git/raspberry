@@ -43,6 +43,7 @@ lightlamp = Heating(LIGHTLAMP_PIN, LIGHTLAMP_LATENCY)
 
 
 
+# TODO: dedicated class in extra .py file
 ###############################################################################
 # Measurements ################################################################
 class Measurements (deque):
@@ -99,7 +100,8 @@ def main():
 
         heatcontrol.control(measurements[DS_TEMP3].avg())
         lightcontrol.control(measurements[DS_TEMP3].avg())
-
+        
+        # TODO: move outside of while()
         rrd_template = DS_TEMP1   + ":" + \
                        DS_TEMP2   + ":" + \
                        DS_TEMP3   + ":" + \
