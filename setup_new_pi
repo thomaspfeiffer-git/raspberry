@@ -1,15 +1,30 @@
 
+WIFI:
+=====
 
 /etc/network/interfaces
 /etc/wpa.conf
 
-
-/etc/modprobe.d/8192cu.conf
-    options 8192cu rtw_power_mgnt=0 rtw_enusbss=0
-
 WIFI-Scan:
    https://rasspberrypi.wordpress.com/2012/09/09/wifi-tools-for-raspberry-pi/
 
+
+
+/etc/modprobe.d/8192cu.conf
+    options 8192cu rtw_power_mgnt=0 rtw_enusbss=0
+chown root.root
+chmod 644 8192cu.conf
+
+
+
+
+Misc
+====
+
+# .vimrc
+syntax on
+set number
+set expandtab
 
 
 Libs:
@@ -37,5 +52,24 @@ Kamera:
 https://github.com/jacksonliam/mjpg-streamer
 sudo aptitude install cmake libx11-dev libjpeg62-dev
 http://www.forum-raspberrypi.de/Thread-tutorial-rasperry-pi-als-hd-mjpeg-netzwerkkamera-zoneminder
+
+
+
+GIT
+===
+
+git config --global user.email
+git config --global user.name
+
+https://help.github.com/articles/generating-ssh-keys/#platform-linux
+https://help.github.com/articles/changing-a-remote-s-url/
+
+
+
+
+
+
+
+
 
 
