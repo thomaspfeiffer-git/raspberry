@@ -15,6 +15,13 @@ WIFI-Scan:
 Libs:
 =====
 
+
+gpio/wiringPi
+git clone git://git.drogon.net/wiringPi
+cd wiringPi/
+./build
+
+
 DHT22_AM2302:
 -------------
 git clone https://github.com/adafruit/Adafruit_Python_DHT.git 
