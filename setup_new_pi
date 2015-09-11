@@ -21,7 +21,11 @@ chmod 644 8192cu.conf
 Misc
 ====
 
-# .vimrc
+
+
+sudo apt-get install vim  
+
+# ~/.vimrc
 syntax on
 set number
 set expandtab
