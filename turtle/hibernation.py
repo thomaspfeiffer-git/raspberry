@@ -52,7 +52,7 @@ def main():
     while (True):
         measurements[DS_TEMP].append(temp_fridge.read())
         measurements[DS_TEMPCPU].append(temp_cpu.read())
-        measurements[DS_HUMI].append(47)    
+        measurements[DS_HUMI].append(47)
 
         if (measurements[DS_TEMP] > 6.0):
             fridge.on
@@ -65,7 +65,7 @@ def main():
                         ":{:}".format(fridge.status())    + \
                         ":{:}".format(0)
         print strftime("%H:%M:%S", localtime()), rrd_data
-        rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
+        rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
         sleep(40)
 
