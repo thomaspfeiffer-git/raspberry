@@ -3,7 +3,6 @@
 #############################################################################
 #############################################################################
 
-from collections import deque
 import rrdtool
 import signal
 import sys
@@ -12,6 +11,7 @@ import traceback
 
 from CPU import CPU
 from DS1820 import DS1820
+from Measurements import Measurements
 
 
 
@@ -22,24 +22,6 @@ DS_TEMPCPU = "hibernation_tempcpu"
 DS_HUMI    = "hibernation_humi"
 DS_ON      = "hibernation_on"
 DS_OPEN    = "hibernation_open"
-
-
-# TODO: dedicated class in extra .py file
-###############################################################################
-# Measurements ################################################################
-class Measurements (deque):
-    """extended deque: additional methods for average and last added item"""
-    def __init__(self, maxlen=5):
-        super(Measurements, self).__init__([], maxlen)
-
-    def avg(self):
-        """returns average of list elements"""
-        return sum(list(self)) / float(len(self))
-
-    def last(self):
-        """returns last list element"""
-        return self[len(self)-1]
-
 
 
 
