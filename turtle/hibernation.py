@@ -11,8 +11,12 @@ import traceback
 
 from CPU import CPU
 from DS1820 import DS1820
+from Heating import Heating
 from Measurements import Measurements
 
+
+FRIDGE_PIN      = 38
+FRIDGE_LATENCY  = 60 * 15
 
 
 # Misc for rrdtool
@@ -23,6 +27,9 @@ DS_HUMI    = "hibernation_humi"
 DS_ON      = "hibernation_on"
 DS_OPEN    = "hibernation_open"
 
+
+
+fridge = Heating(FRIDGE_PIN, FRIDGE_LATENCY)
 
 
 ###############################################################################
@@ -47,10 +54,15 @@ def main():
         measurements[DS_TEMPCPU].append(temp_cpu.read())
         measurements[DS_HUMI].append(47)    
 
+        if (measurements[DS_TEMP] > 6.0):
+            fridge.on
+        if (measurements[DS_TEMP] < 4.0):
+            fridge.off
+
         rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
                         ":{:.2f}".format(measurements[DS_HUMI].last()) + \
-                        ":{:}".format(0)    + \
+                        ":{:}".format(fridge.status())    + \
                         ":{:}".format(0)
         print strftime("%H:%M:%S", localtime()), rrd_data
         rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
@@ -63,6 +75,7 @@ def main():
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
+    fridge.cleanup()
     sys.exit()
 
 def __exit(__s, __f):
