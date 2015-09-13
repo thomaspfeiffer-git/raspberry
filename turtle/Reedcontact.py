@@ -7,8 +7,10 @@
 import RPi.GPIO as io
 
 class Reedcontact (object):
+
     def __callback(pin):
         print "callback:", pin
+    # TODO: Check http://stackoverflow.com/questions/8472299/python-callback-inside-class
 
     def __init__(self, pin):
         self.__pin = pin
@@ -21,12 +23,12 @@ class Reedcontact (object):
         # GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)  
 
         io.add_event_detect(self.__pin,io.BOTH)
-        io.add_event_callback(seld.__pin,self.__callback)
+        io.add_event_callback(self.__pin,self.__callback)
 
 
         
 
-    status (self):
+    def status (self):
         return self.__status
 
 
