@@ -54,10 +54,10 @@ def main():
         measurements[DS_TEMPCPU].append(temp_cpu.read())
         measurements[DS_HUMI].append(47)
 
-        if (measurements[DS_TEMP] > 6.0):
-            fridge.on
-        if (measurements[DS_TEMP] < 4.0):
-            fridge.off
+        if (measurements[DS_TEMP].avg() > 6.0):
+            fridge.on()
+        if (measurements[DS_TEMP].avg() < 4.0):
+            fridge.off()
 
         rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
