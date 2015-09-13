@@ -26,7 +26,9 @@ class Reedcontact (object):
         io.add_event_callback(self.__pin,self.__callback)
 
 
-        
+    def __del__(self):
+        io.remove_event_detect(self.__pin)
+
 
     def status (self):
         return self.__status
