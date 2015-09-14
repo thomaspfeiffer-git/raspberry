@@ -97,6 +97,15 @@ class ScheduleLight (ScheduleBase):
     __schedule[37][14][0:59] = [__tmax for m in range(60)]
     __schedule[37][15][0:59] = [__tmax for m in range(60)]
 
+    __schedule[38][ 8][0:59] = [__tmax for m in range(60)]
+    __schedule[38][ 9][0:59] = [__tmax for m in range(60)]
+    __schedule[38][10][0:59] = [__tmax for m in range(60)]
+    __schedule[38][11][0:59] = [__tmax for m in range(60)]
+    __schedule[38][12][0:59] = [__tmax for m in range(60)]
+    __schedule[38][13][0:59] = [__tmax for m in range(60)]
+    __schedule[38][14][0:59] = [__tmax for m in range(60)]
+    __schedule[38][15][0:59] = [__tmax for m in range(60)]
+
 
     def on (self, value):
         week, hour, minute = self.timestamp()
