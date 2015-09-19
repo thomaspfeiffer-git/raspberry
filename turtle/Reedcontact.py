@@ -7,11 +7,9 @@
 import RPi.GPIO as io
 
 class Reedcontact (object):
-
-
     def __init__(self, pin):
         self.__pin = pin
-        self.__status = 0
+        self.__status = False
 
         def ___callback(pin):
             self.__status = io.input(pin)
@@ -23,14 +21,12 @@ class Reedcontact (object):
         io.setup(self.__pin, io.IN, pull_up_down=io.PUD_UP)  
 
 
-    def __del__(self):
-        print "in Reedcontact.__del__()"
+    def cleanup(self):
         io.remove_event_detect(self.__pin)
 
 
     def status (self):
-        return self.__status
-
+        return 1 if self.__status else 0
 
 ### eof ###
 
