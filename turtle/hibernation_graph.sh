@@ -84,6 +84,31 @@ printCPUTemp ()
 
 
 
+
+#######################################################################
+# printHumidity()                                                     #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printHumidity ()
+  {
+    rrdtool graph $2                                     \
+    --title "Luftfeuchtigkeit [%]"                       \
+    --end now --start end-$1                             \
+    -w $WIDTH -h $HEIGHT -a PNG                          \
+    --watermark "$WATERMARK"                             \
+    --right-axis 1:0                                     \
+    DEF:hibernation_humi=$RRD_H:hibernation_humi:AVERAGE   \
+    LINE1:hibernation_humi#0000FF:"Luftfeuchtigkeit"         \
+    GPRINT:hibernation_humi:LAST:"\t Aktuell\: %5.2lf %%"    \
+    GPRINT:hibernation_humi:AVERAGE:"Mittelwert\: %5.2lf %%" \
+    GPRINT:hibernation_humi:MAX:"Max\: %5.2lf %%"            \
+    GPRINT:hibernation_humi:MIN:"Min\: %5.2lf %%\n"   
+ }
+
+
+
 #######################################################################
 # printFridge()                                                       #
 # Parameter:                                                          #
@@ -124,6 +149,11 @@ printCPUTemp "36h", "$PNG_CPU_D"
 printCPUTemp "7d",  "$PNG_CPU_W"
 printCPUTemp "30d", "$PNG_CPU_M"
 printCPUTemp "365d", "$PNG_CPU_Y"
+
+printHumidity "36h", "$PNG_HUMI_D"
+printHumidity "7d",  "$PNG_HUMI_W"
+printHumidity "30d", "$PNG_HUMI_M"
+printHumidity "365d", "$PNG_HUMI_Y"
 
 printFridge "36h", "$PNG_FRIDGE_D"
 printFridge "7d", "$PNG_FRIDGE_W"
