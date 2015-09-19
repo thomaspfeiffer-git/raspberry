@@ -46,13 +46,13 @@ printTemp ()
     --watermark "$WATERMARK"                               \
     --right-axis 1:0                                       \
     DEF:hibernation_temp1=$RRD_H:hibernation_temp1:AVERAGE  \
+    DEF:hibernation_temp2=$RRD_H:hibernation_temp2:AVERAGE  \
     LINE1:hibernation_temp1#2ECCFA:"Temperatur Sensor 1"    \
     GPRINT:hibernation_temp1:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:hibernation_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:hibernation_temp1:MAX:"Max\: %5.2lf °C"              \
     GPRINT:hibernation_temp1:MIN:"Min\: %5.2lf °C\n"            \
-    DEF:hibernation_temp2=$RRD_H:hibernation_temp2:AVERAGE  \
-    LINE1:hibernation_temp2##0040FF:"Temperatur Sensor 2"    \
+    LINE1:hibernation_temp2#0040FF:"Temperatur Sensor 2"    \
     GPRINT:hibernation_temp2:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:hibernation_temp2:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:hibernation_temp2:MAX:"Max\: %5.2lf °C"              \
