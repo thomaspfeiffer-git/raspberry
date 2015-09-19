@@ -14,7 +14,7 @@ from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
 from Heating import Heating
 from Measurements import Measurements
-
+from Reedcontact import Reedcontact
 
 
 DHT22_AM2302_PIN = 40
@@ -36,8 +36,8 @@ DS_ON      = "hibernation_on"
 DS_OPEN    = "hibernation_open"
 
 
-
 fridge = Heating(FRIDGE_PIN, FRIDGE_LATENCY)
+reedcontact = Reedcontact(REEDCONTACT_PIN)
 
 
 ###############################################################################
@@ -88,11 +88,11 @@ def main():
                         ":{:.2f}".format(measurements[DS_TEMP2].last()) + \
                         ":{:.2f}".format(measurements[DS_HUMI].last()) + \
                         ":{:}".format(fridge.status())    + \
-                        ":{:}".format(0)
+                        ":{:}".format(reedcontact.status())
         print strftime("%H:%M:%S", localtime()), rrd_data
         rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
-        sleep(40)
+        sleep(35)
 
 
 
@@ -101,6 +101,7 @@ def main():
 def _exit():
     """cleanup stuff"""
     fridge.cleanup()
+    reedcontact.cleanup()
     sys.exit()
 
 def __exit(__s, __f):
