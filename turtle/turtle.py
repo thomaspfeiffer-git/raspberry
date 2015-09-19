@@ -76,6 +76,14 @@ def main():
                     DS_TEMPCPU: Measurements(), \
                     DS_HUMI:    Measurements()}
  
+    rrd_template = DS_TEMP1   + ":" + \
+                   DS_TEMP2   + ":" + \
+                   DS_TEMP3   + ":" + \
+                   DS_TEMPCPU + ":" + \
+                   DS_HUMI    + ":" + \
+                   DS_HEATING + ":" + \
+                   DS_LIGHTING
+                     
     while (True):
         measurements[DS_TEMP1].append(temp1.read())
         measurements[DS_TEMP2].append(temp2.read())
@@ -87,15 +95,6 @@ def main():
         heatcontrol.control(measurements[DS_TEMP3].avg())
         lightcontrol.control(measurements[DS_TEMP3].avg())
         
-        # TODO: move outside of while()
-        rrd_template = DS_TEMP1   + ":" + \
-                       DS_TEMP2   + ":" + \
-                       DS_TEMP3   + ":" + \
-                       DS_TEMPCPU + ":" + \
-                       DS_HUMI    + ":" + \
-                       DS_HEATING + ":" + \
-                       DS_LIGHTING
-                     
         rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMP2].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMP3].last()) + \
