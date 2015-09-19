@@ -16,6 +16,7 @@ class Reedcontact (object):
         self.__timestretched = time()
 
         def ___callback (pin):
+            """callback when reed contact toggles: GPIO.add_event_callback"""
             if (io.input(pin)): 
                 self.__status = True
             else:
