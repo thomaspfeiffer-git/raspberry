@@ -20,9 +20,10 @@ from Reedcontact import Reedcontact
 DHT22_AM2302_PIN = 40
 
 REEDCONTACT_PIN  = 38
+REED_STRETCH     = 120
 
 FRIDGE_PIN       = 36
-FRIDGE_LATENCY   = 60 * 15
+FRIDGE_LATENCY   = 60 * 10
 
 
 # Misc for rrdtool
@@ -36,7 +37,7 @@ DS_OPEN    = "hibernation_open"
 
 
 fridge = Heating(FRIDGE_PIN, FRIDGE_LATENCY)
-reedcontact = Reedcontact(REEDCONTACT_PIN)
+reedcontact = Reedcontact(REEDCONTACT_PIN, REED_STRETCH)
 
 
 ###############################################################################
@@ -77,7 +78,7 @@ def main():
                         ":{:.2f}".format(measurements[DS_TEMP2].last()) + \
                         ":{:.2f}".format(measurements[DS_HUMI].last()) + \
                         ":{:}".format(fridge.status())    + \
-                        ":{:}".format(reedcontact.status())
+                        ":{:}".format(reedcontact.status_stretched())
         print strftime("%H:%M:%S", localtime()), rrd_data
         rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
