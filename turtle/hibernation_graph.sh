@@ -100,7 +100,7 @@ printHumidity ()
     --watermark "$WATERMARK"                             \
     --right-axis 1:0                                     \
     DEF:hibernation_humi=$RRD_H:hibernation_humi:AVERAGE   \
-    LINE1:hibernation_humi#0000FF:"Luftfeuchtigkeit"         \
+    LINE1:hibernation_humi#FF00FF:"Luftfeuchtigkeit"         \
     GPRINT:hibernation_humi:LAST:"\t Aktuell\: %5.2lf %%"    \
     GPRINT:hibernation_humi:AVERAGE:"Mittelwert\: %5.2lf %%" \
     GPRINT:hibernation_humi:MAX:"Max\: %5.2lf %%"            \
