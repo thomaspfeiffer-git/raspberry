@@ -23,17 +23,19 @@ class Reedcontact (object):
                 self.__timestretched = time() + self.__stretch
 
         io.setmode(io.BOARD)
-        io.setup(self.__pin,io.IN)
-        io.add_event_detect(self.__pin,io.BOTH)
-        io.add_event_callback(self.__pin,___callback)
+        io.setup(self.__pin, io.IN)
+        io.add_event_detect(self.__pin, io.BOTH)
+        io.add_event_callback(self.__pin, ___callback)
         io.setup(self.__pin, io.IN, pull_up_down=io.PUD_UP)  
 
 
     def cleanup (self):
+        """do some cleanup on io"""
         io.remove_event_detect(self.__pin)
 
 
     def status (self):
+        """return status of reedcontact"""
         return 1 if self.__status else 0
 
 
