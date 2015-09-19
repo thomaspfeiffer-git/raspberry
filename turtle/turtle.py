@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # coding=utf-8
 #############################################################################
+# control of heat and light in our turtle's compound                        #
+# (c) https://github.com/thomaspfeiffer-git 2015                            #
 #############################################################################
 """control of heat and light in our turtle's compound"""
 
