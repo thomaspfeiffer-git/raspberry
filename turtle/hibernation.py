@@ -10,19 +10,27 @@ from time import strftime, localtime, sleep
 import traceback
 
 from CPU import CPU
+from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
 from Heating import Heating
 from Measurements import Measurements
 
 
-FRIDGE_PIN      = 38
-FRIDGE_LATENCY  = 60 * 15
+
+DHT22_AM2302_PIN = 40
+
+REEDCONTACT_PIN  = 38
+
+FRIDGE_PIN       = 36
+FRIDGE_LATENCY   = 1
+# FRIDGE_LATENCY   = 60 * 15
 
 
 # Misc for rrdtool
-RRDFILE     = "/schild/weather/hibernation.rrd"
-DS_TEMP    = "hibernation_temp"
+RRDFILE    = "/schild/weather/hibernation.rrd"
+DS_TEMP1   = "hibernation_temp1"
 DS_TEMPCPU = "hibernation_tempcpu"
+DS_TEMP2   = "hibernation_temp2"
 DS_HUMI    = "hibernation_humi"
 DS_ON      = "hibernation_on"
 DS_OPEN    = "hibernation_open"
@@ -38,29 +46,46 @@ def main():
     """main part"""
     temp_fridge = DS1820("/sys/bus/w1/devices/28-000006dc8d42/w1_slave")
     temp_cpu    = CPU()
+    temphumi    = DHT22_AM2302(21)   # BCM 21 = PIN 40
 
-    measurements = {DS_TEMP:    Measurements(), \
+    measurements = {DS_TEMP1:   Measurements(), \
                     DS_TEMPCPU: Measurements(), \
+                    DS_TEMP2:   Measurements(), \
                     DS_HUMI:    Measurements()}
 
-    rrd_template = DS_TEMP    + ":" + \
+    rrd_template = DS_TEMP1   + ":" + \
                    DS_TEMPCPU + ":" + \
+                   DS_TEMP2   + ":" + \
                    DS_HUMI    + ":" + \
                    DS_ON      + ":" + \
                    DS_OPEN
 
+    i = 0
     while (True):
-        measurements[DS_TEMP].append(temp_fridge.read())
+        measurements[DS_TEMP1].append(temp_fridge.read())
         measurements[DS_TEMPCPU].append(temp_cpu.read())
-        measurements[DS_HUMI].append(47)
 
-        if (measurements[DS_TEMP].avg() > 6.0):
+        _temp, _humi = temphumi.read()
+        measurements[DS_TEMP2].append(_temp)
+        measurements[DS_HUMI].append(_humi)
+
+#        if (measurements[DS_TEMP1].avg() > 6.0):
+#            fridge.on()
+#        if (measurements[DS_TEMP1].avg() < 4.0):
+#            fridge.off()
+
+        i += 1
+        if (i % 2 == 0):
+            print "on"
             fridge.on()
-        if (measurements[DS_TEMP].avg() < 4.0):
+        else:
+            print "off"
             fridge.off()
 
-        rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP].last()) + \
+
+        rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
+                        ":{:.2f}".format(measurements[DS_TEMP2].last()) + \
                         ":{:.2f}".format(measurements[DS_HUMI].last()) + \
                         ":{:}".format(fridge.status())    + \
                         ":{:}".format(0)
