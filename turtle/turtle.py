@@ -19,6 +19,7 @@ from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
 from Heating import Heating
+from Measurements import Measurements
 import Schedules
 
 
@@ -43,23 +44,6 @@ DS_LIGHTING = "turtle_lighting"
 heatlamp  = Heating(HEATLAMP_PIN, HEATLAMP_LATENCY)
 lightlamp = Heating(LIGHTLAMP_PIN, LIGHTLAMP_LATENCY)
 
-
-
-# TODO: dedicated class in extra .py file
-###############################################################################
-# Measurements ################################################################
-class Measurements (deque):
-    """extended deque: additional methods for average and last added item"""
-    def __init__(self, maxlen=5):
-        super(Measurements, self).__init__([], maxlen)
-
-    def avg(self):
-        """returns average of list elements"""
-        return sum(list(self)) / float(len(self))
-
-    def last(self):
-        """returns last list element"""
-        return self[len(self)-1]
 
 
 ###############################################################################
