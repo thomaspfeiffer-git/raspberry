@@ -1,7 +1,11 @@
 #!/usr/bin/python
 # coding=utf-8
 #############################################################################
+# hibernation.py                                                            #
+# Have a great hibernation for our turtle.                                  #
+# (c) https://github.com/thomaspfeiffer-git 2015                            #
 #############################################################################
+"""Have a great hibernation for our turtle."""
 
 import rrdtool
 import signal
@@ -20,7 +24,7 @@ from Reedcontact import Reedcontact
 DHT22_AM2302_PIN = 40
 
 REEDCONTACT_PIN  = 38
-REED_STRETCH     = 120
+REED_STRETCH     = 60 * 3
 
 FRIDGE_PIN       = 36
 FRIDGE_LATENCY   = 60 * 10
