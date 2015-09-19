@@ -22,8 +22,7 @@ DHT22_AM2302_PIN = 40
 REEDCONTACT_PIN  = 38
 
 FRIDGE_PIN       = 36
-FRIDGE_LATENCY   = 1
-# FRIDGE_LATENCY   = 60 * 15
+FRIDGE_LATENCY   = 60 * 15
 
 
 # Misc for rrdtool
@@ -60,7 +59,6 @@ def main():
                    DS_ON      + ":" + \
                    DS_OPEN
 
-    i = 0
     while (True):
         measurements[DS_TEMP1].append(temp_fridge.read())
         measurements[DS_TEMPCPU].append(temp_cpu.read())
@@ -69,19 +67,10 @@ def main():
         measurements[DS_TEMP2].append(_temp)
         measurements[DS_HUMI].append(_humi)
 
-#        if (measurements[DS_TEMP1].avg() > 6.0):
-#            fridge.on()
-#        if (measurements[DS_TEMP1].avg() < 4.0):
-#            fridge.off()
-
-        i += 1
-        if (i % 2 == 0):
-            print "on"
+        if (measurements[DS_TEMP1].avg() > 6.0):
             fridge.on()
-        else:
-            print "off"
+        if (measurements[DS_TEMP1].avg() < 4.0):
             fridge.off()
-
 
         rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
