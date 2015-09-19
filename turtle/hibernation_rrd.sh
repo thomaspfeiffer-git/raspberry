@@ -4,8 +4,9 @@
 HEARTBEAT=90
 
 rrdtool create /schild/weather/hibernation.rrd --step 60 \
-DS:hibernation_temp:GAUGE:$HEARTBEAT:-40:80 \
+DS:hibernation_temp1:GAUGE:$HEARTBEAT:-40:80 \
 DS:hibernation_tempcpu:GAUGE:$HEARTBEAT:-40:80 \
+DS:hibernation_temp2:GAUGE:$HEARTBEAT:-40:80 \
 DS:hibernation_humi:GAUGE:$HEARTBEAT:0:100 \
 DS:hibernation_on:GAUGE:$HEARTBEAT:0:1 \
 DS:hibernation_open:GAUGE:$HEARTBEAT:0:1 \
