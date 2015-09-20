@@ -5,7 +5,7 @@
 """Provides some functionality for a reed contact"""
 
 import RPi.GPIO as io
-from time import time
+from time import time, strftime, localtime, sleep
 
 
 class Reedcontact (object):
@@ -19,15 +19,18 @@ class Reedcontact (object):
             """callback when reed contact toggles: GPIO.add_event_callback"""
             if (io.input(pin)): 
                 self.__status = True
+                print strftime("%H:%M:%S", localtime()), "callback of pin", pin, "; defined pin:", self.__pin, "; true"
             else:
                 self.__status = False
                 self.__timestretched = time() + self.__stretch
+                print strftime("%H:%M:%S", localtime()), "callback of pin", pin, "; defined pin:", self.__pin, "; false"
 
         io.setmode(io.BOARD)
         io.setup(self.__pin, io.IN)
         io.add_event_detect(self.__pin, io.BOTH)
         io.add_event_callback(self.__pin, ___callback)
         io.setup(self.__pin, io.IN, pull_up_down=io.PUD_UP)  
+        self.__status = io.input(self.__pin)
 
 
     def cleanup (self):
