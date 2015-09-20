@@ -27,7 +27,7 @@ REEDCONTACT_PIN  = 38
 REED_STRETCH     = 60 * 3
 
 FRIDGE_PIN       = 36
-FRIDGE_LATENCY   = 60 * 10
+FRIDGE_LATENCY   = 60 * 8
 
 
 # Misc for rrdtool
