@@ -74,7 +74,7 @@ def main():
 
         if (measurements[DS_TEMP1].avg() > 6.0):
             fridge.on()
-        if (measurements[DS_TEMP1].avg() < 4.0):
+        if (measurements[DS_TEMP1].avg() < 4.5):
             fridge.off()
 
         rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
