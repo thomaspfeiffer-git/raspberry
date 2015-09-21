@@ -27,7 +27,7 @@ REEDCONTACT_PIN  = 38
 REED_STRETCH     = 60 * 3
 
 FRIDGE_PIN       = 36
-FRIDGE_LATENCY   = 60 * 8
+FRIDGE_LATENCY   = 60 * 6
 
 
 # Misc for rrdtool
@@ -74,7 +74,7 @@ def main():
 
         if (measurements[DS_TEMP1].avg() > 6.0):
             fridge.on()
-        if (measurements[DS_TEMP1].avg() < 4.5):
+        if (measurements[DS_TEMP1].avg() < 5.0):
             fridge.off()
 
         rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
