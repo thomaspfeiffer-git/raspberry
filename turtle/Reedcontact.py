@@ -29,7 +29,7 @@ class Reedcontact (object):
         io.setup(self.__pin, io.IN)
         io.setup(self.__pin, io.IN, pull_up_down=io.PUD_UP)  
         self.__status = io.input(self.__pin)
-        io.add_event_detect(self.__pin, io.BOTH, callback=___callback, bouncetime=300)
+        io.add_event_detect(self.__pin, io.BOTH, callback=___callback, bouncetime=1000)
 
     def cleanup (self):
         """do some cleanup on io"""
