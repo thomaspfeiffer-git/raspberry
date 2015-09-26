@@ -6,34 +6,48 @@
 
 import RPi.GPIO as io
 from time import time, strftime, localtime, sleep
+import threading
 
 
-class Reedcontact (object):
+class Reedcontact (threading.Thread):
     def __init__ (self, pin, stretch):
+        threading.Thread.__init__(self)
+
         self.__pin = pin
         self.__status = False
         self.__stretch = stretch
         self.__timestretched = time()
 
-        def ___callback (pin):
-            """callback when reed contact toggles: GPIO.add_event_callback"""
-            if (io.input(pin)): 
-                self.__status = True
-                print strftime("%H:%M:%S", localtime()), "callback of pin", pin, "; defined pin:", self.__pin, "; true"
-            else:
-                self.__status = False
-                self.__timestretched = time() + self.__stretch
-                print strftime("%H:%M:%S", localtime()), "callback of pin", pin, "; defined pin:", self.__pin, "; false"
-
         io.setmode(io.BOARD)
         io.setup(self.__pin, io.IN)
         io.setup(self.__pin, io.IN, pull_up_down=io.PUD_UP)  
-        self.__status = io.input(self.__pin)
-        io.add_event_detect(self.__pin, io.BOTH, callback=___callback, bouncetime=250)
+
+        self.__running = True
+
+
+    def run(self):
+        i = 0
+        while (self.__running):
+            if (io.input(self.__pin)):
+                i += 1
+            else:
+                i = 0
+                self.__status = False
+
+            if (i >= 10):
+                self.__status = True
+                self.__timestretched = time() + self.__stretch
+                i = 10 # avoid overflow
+            sleep(1)
+
+
+    def stop(self):
+        self.__running = False
+
 
     def cleanup (self):
         """do some cleanup on io"""
-        io.remove_event_detect(self.__pin)
+        self.stop()
 
 
     def status (self):
