@@ -34,6 +34,8 @@ class Reedcontact (threading.Thread):
                 i = 0
                 self.__status = False
 
+            print "i", i
+
             if (i >= 10):
                 self.__status = True
                 self.__timestretched = time() + self.__stretch
@@ -45,11 +47,6 @@ class Reedcontact (threading.Thread):
         self.__running = False
 
 
-    def cleanup (self):
-        """do some cleanup on io"""
-        self.stop()
-
-
     def status (self):
         """return status of reedcontact"""
         return 1 if self.__status else 0
@@ -58,13 +55,10 @@ class Reedcontact (threading.Thread):
     def status_stretched (self):
         """enlarge interval of being "on"; otherwise if door is only 
            opened for a short period of time, it would not be seen in RRD"""
-        if (self.__status):
+        if (time() <= self.__timestretched):
             return 1
         else:
-            if (time() <= self.__timestretched):
-                return 1
-            else:
-                return 0
+            return 0
               
 ### eof ###
 
