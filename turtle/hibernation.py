@@ -42,6 +42,7 @@ DS_OPEN    = "hibernation_open"
 
 fridge = Heating(FRIDGE_PIN, FRIDGE_LATENCY)
 reedcontact = Reedcontact(REEDCONTACT_PIN, REED_STRETCH)
+reedcontact.start()
 
 
 ###############################################################################
@@ -95,7 +96,8 @@ def main():
 def _exit():
     """cleanup stuff"""
     fridge.cleanup()
-    reedcontact.cleanup()
+    reedcontact.stop()
+    reedcontact.join()
     sys.exit()
 
 def __exit(__s, __f):
