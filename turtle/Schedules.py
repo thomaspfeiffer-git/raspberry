@@ -22,16 +22,13 @@ class ScheduleHeat (ScheduleBase):
     """schedule class for heating"""
     __schedule = [[5 for m in range(60)] for h in range(24)]
 
-    __schedule[ 7][0:59] = [28 for m in range(60)]
     __schedule[ 8][0:59] = [28 for m in range(60)]
     __schedule[ 9][0:59] = [28 for m in range(60)]
     __schedule[10][0:59] = [32 for m in range(60)]
     __schedule[11][0:59] = [32 for m in range(60)]
     __schedule[12][0:59] = [32 for m in range(60)]
-    __schedule[13][0:59] = [28 for m in range(60)]
-    __schedule[14][0:59] = [28 for m in range(60)]
-    __schedule[15][0:59] = [20 for m in range(60)]
-    __schedule[16][0:29] = [18 for m in range(30)]
+    __schedule[13][0:59] = [30 for m in range(60)]
+    __schedule[14][0:59] = [30 for m in range(60)]
  
 
     def on (self, value):
@@ -114,6 +111,14 @@ class ScheduleLight (ScheduleBase):
     __schedule[39][13][0:59] = [__tmax for m in range(60)]
     __schedule[39][14][0:59] = [__tmax for m in range(60)]
     __schedule[39][15][0:59] = [__tmax for m in range(60)]
+
+    __schedule[40][ 8][0:59] = [__tmax for m in range(60)]
+    __schedule[40][ 9][0:59] = [__tmax for m in range(60)]
+    __schedule[40][10][0:59] = [__tmax for m in range(60)]
+    __schedule[40][11][0:59] = [__tmax for m in range(60)]
+    __schedule[40][12][0:59] = [__tmax for m in range(60)]
+    __schedule[40][13][0:59] = [__tmax for m in range(60)]
+    __schedule[40][14][0:59] = [__tmax for m in range(60)]
 
     def on (self, value):
         week, hour, minute = self.timestamp()
