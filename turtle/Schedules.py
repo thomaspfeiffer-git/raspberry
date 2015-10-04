@@ -129,7 +129,6 @@ class ScheduleLight (ScheduleBase):
     __schedule[41][14][0:59] = [__tmax for m in range(60)]
 
     def on (self, value):
-    def on (self, value):
         week, hour, minute = self.timestamp()
         if (self.__schedule[week][hour][minute] > value):
             return True
