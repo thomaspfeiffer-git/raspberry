@@ -31,7 +31,7 @@ FRIDGE_LATENCY   = 60 * 6
 
 
 # Misc for rrdtool
-RRDFILE    = "/schild/weather/hibernation.rrd"
+RRDFILE    = "hibernation.rrd"
 DS_TEMP1   = "hibernation_temp1"
 DS_TEMPCPU = "hibernation_tempcpu"
 DS_TEMP2   = "hibernation_temp2"
