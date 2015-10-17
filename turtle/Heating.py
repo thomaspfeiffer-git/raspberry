@@ -10,7 +10,7 @@ from threading import Lock
 from time import time
 
 
-class Heating:
+class Heating (object):
     ON  = "on"
     OFF = "off" 
     __instances_lock = Lock()
