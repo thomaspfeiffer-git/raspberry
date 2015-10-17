@@ -27,7 +27,7 @@ REEDCONTACT_PIN  = 38
 REED_STRETCH     = 60 * 3
 
 FRIDGE_PIN       = 36
-FRIDGE_LATENCY   = 60 * 6
+FRIDGE_LATENCY   = 60
 
 
 # Misc for rrdtool
@@ -73,10 +73,42 @@ def main():
         measurements[DS_TEMP2].append(_temp)
         measurements[DS_HUMI].append(_humi)
 
-        if (measurements[DS_TEMP1].avg() > 6.0):
+#        if (measurements[DS_TEMP1].avg() > 6.0):
+        if (measurements[DS_TEMP1].avg() > -20.0):
             fridge.on()
-        if (measurements[DS_TEMP1].avg() < 5.0):
-            fridge.off()
+#        if (measurements[DS_TEMP1].avg() < 5.0):
+#            fridge.off()
+
+
+
+# if (temp > 6): fridge.on()
+# else if (temp > 5): 
+#   fridge_on_time(60,90) # für 60 sekunden einschalten; 90 Sekunden mindestens aus
+# else if (temp < 5.0): 
+#   fridge.off()
+
+
+# class fridge_... derived from class Heating
+
+# fridge_on_time:
+#  thread:
+#    with lock:
+#        timing = active
+#    __on()
+#    sleep(60)
+#    __off()
+#    sleep(90)
+#    with lock:
+#         timing = non_active
+
+
+# in  on(), off()
+#  ...
+#  if (active): pass
+
+
+
+
 
         rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
