@@ -53,10 +53,10 @@ def main():
     temp_cpu    = CPU()
     temphumi    = DHT22_AM2302(21)   # BCM 21 = PIN 40
 
-    measurements = {DS_TEMP1:   Measurements(), \
-                    DS_TEMPCPU: Measurements(), \
-                    DS_TEMP2:   Measurements(), \
-                    DS_HUMI:    Measurements()}
+    measurements = {DS_TEMP1:   Measurements(3), \
+                    DS_TEMPCPU: Measurements(3), \
+                    DS_TEMP2:   Measurements(3), \
+                    DS_HUMI:    Measurements(3)}
 
     rrd_template = DS_TEMP1   + ":" + \
                    DS_TEMPCPU + ":" + \
