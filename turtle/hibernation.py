@@ -76,7 +76,7 @@ def main():
         if (measurements[DS_TEMP1].avg() > 6.0):
 #        if (measurements[DS_TEMP1].avg() > -20.0):
             fridge.on()
-        if (measurements[DS_TEMP1].avg() < 5.0):
+        if (measurements[DS_TEMP1].avg() < 5.5):
             fridge.off()
 
 
