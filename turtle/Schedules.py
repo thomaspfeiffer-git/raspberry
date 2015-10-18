@@ -20,10 +20,9 @@ class ScheduleBase (object):
 
 class ScheduleHeat (ScheduleBase):
     """schedule class for heating"""
-    __schedule = [[10.5 for m in range(60)] for h in range(24)]
+    __schedule = [[11.5 for m in range(60)] for h in range(24)]
 
-    __schedule[ 8][0:59] = [28 for m in range(60)]
-    __schedule[ 9][0:59] = [28 for m in range(60)]
+    __schedule[ 9][30:59] = [28 for m in range(30)]
     __schedule[10][0:59] = [32 for m in range(60)]
     __schedule[11][0:59] = [32 for m in range(60)]
     __schedule[12][0:59] = [32 for m in range(60)]
@@ -134,6 +133,13 @@ class ScheduleLight (ScheduleBase):
     __schedule[42][12][0:59] = [__tmax for m in range(60)]
     __schedule[42][13][0:59] = [__tmax for m in range(60)]
     __schedule[42][14][0:59] = [__tmax for m in range(60)]
+
+    __schedule[43][ 9][30:59] = [__tmax for m in range(30)]
+    __schedule[43][10][0:59] = [__tmax for m in range(60)]
+    __schedule[43][11][0:59] = [__tmax for m in range(60)]
+    __schedule[43][12][0:59] = [__tmax for m in range(60)]
+    __schedule[43][13][0:59] = [__tmax for m in range(60)]
+    __schedule[43][14][0:59] = [__tmax for m in range(60)]
 
     def on (self, value):
         week, hour, minute = self.timestamp()
