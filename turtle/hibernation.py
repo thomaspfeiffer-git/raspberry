@@ -73,11 +73,11 @@ def main():
         measurements[DS_TEMP2].append(_temp)
         measurements[DS_HUMI].append(_humi)
 
-#        if (measurements[DS_TEMP1].avg() > 6.0):
-        if (measurements[DS_TEMP1].avg() > -20.0):
+        if (measurements[DS_TEMP1].avg() > 6.0):
+#        if (measurements[DS_TEMP1].avg() > -20.0):
             fridge.on()
-#        if (measurements[DS_TEMP1].avg() < 5.0):
-#            fridge.off()
+        if (measurements[DS_TEMP1].avg() < 5.0):
+            fridge.off()
 
 
 
@@ -89,6 +89,10 @@ def main():
 
 
 # class fridge_... derived from class Heating
+
+# threading: https://docs.python.org/2/library/threading.html
+# multi inheritance:  https://docs.python.org/2/tutorial/classes.html#multiple-inheritance
+#    class DerivedClassName(Base1, Base2, Base3):
 
 # fridge_on_time:
 #  thread:
