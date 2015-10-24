@@ -32,6 +32,10 @@ class ScheduleHeat (ScheduleBase):
 
     def on (self, value):
         week, hour, minute = self.timestamp()
+
+        if (hour > 2) and (hour < 22):     # some kind of very strange daylight saving
+            hour += 1
+
         if (self.__schedule[hour][minute] > value):
             return True
         else:
@@ -143,6 +147,10 @@ class ScheduleLight (ScheduleBase):
 
     def on (self, value):
         week, hour, minute = self.timestamp()
+
+        if (hour > 2) and (hour < 22):     # some kind of very strange daylight saving
+            hour += 1
+
         if (self.__schedule[week][hour][minute] > value):
             return True
         else:
