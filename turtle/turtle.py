@@ -30,10 +30,6 @@ LIGHTLAMP_PIN     = 36
 LIGHTLAMP_LATENCY = 60 * 15
 
 
-# File for monitoring
-MONITORING  = "/schild/weather/turtle_monitoring.log"
-
-
 # Misc for rrdtool
 RRDFILE     = "/schild/weather/turtle.rrd"
 DS_TEMP1    = "turtle_temp1"
@@ -61,13 +57,6 @@ def _exit():
 def __exit(__s, __f):
     """cleanup stuff used for signal handler"""
     _exit()
-
-
-def writeMonitoringData(rrd_data):
-    """write various data to a file used for monitoring"""
-    with open(MONITORING, 'w') as f:
-        t = localtime()
-        f.write(strftime("%H:%M:%S:", t) + str(t) + ":" + rrd_data)
 
 
 ###############################################################################
@@ -115,8 +104,6 @@ def main():
                         ":{:}".format(lightlamp.status())
         print strftime("%H:%M:%S", localtime()), rrd_data
         rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
-
-        writeMonitoringData(rrd_data)
 
         sleep(35)
 
