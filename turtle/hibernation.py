@@ -30,6 +30,10 @@ FRIDGE_PIN       = 36
 FRIDGE_LATENCY   = 60
 
 
+# File for monitoring
+MONITORING  = "/schild/weather/turtle_monitoring.log"
+
+
 # Misc for rrdtool
 RRDFILE    = "hibernation.rrd"
 DS_TEMP1   = "hibernation_temp1"
@@ -43,6 +47,16 @@ DS_OPEN    = "hibernation_open"
 fridge = Heating(FRIDGE_PIN, FRIDGE_LATENCY)
 reedcontact = Reedcontact(REEDCONTACT_PIN, REED_STRETCH)
 reedcontact.start()
+
+
+
+def writeMonitoringData(rrd_data):
+    """write various data to a file used for monitoring"""
+    with open(MONITORING, 'w') as f:
+        t = localtime()
+        f.write(strftime("%H:%M:%S:", t) + str(t) + ":" + rrd_data)
+
+
 
 
 ###############################################################################
@@ -73,11 +87,12 @@ def main():
         measurements[DS_TEMP2].append(_temp)
         measurements[DS_HUMI].append(_humi)
 
-        if (measurements[DS_TEMP1].avg() > 5.8):
-#        if (measurements[DS_TEMP1].avg() > -20.0):
-            fridge.on()
-        if (measurements[DS_TEMP1].avg() < 5.6):
-            fridge.off()
+#        if (measurements[DS_TEMP1].avg() > 5.8):
+##        if (measurements[DS_TEMP1].avg() > -20.0):
+#            fridge.on()
+#        if (measurements[DS_TEMP1].avg() < 5.6):
+#            fridge.off()
+        fridge.off()
 
 
 
@@ -122,6 +137,8 @@ def main():
                         ":{:}".format(reedcontact.status_stretched())
         print strftime("%H:%M:%S", localtime()), rrd_data
         rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+
+        writeMonitoringData(rrd_data)
 
         sleep(35)
 
