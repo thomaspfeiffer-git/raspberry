@@ -7,10 +7,11 @@
 #############################################################################
 """Have a great hibernation for our turtle."""
 
+import datetime
 import rrdtool
 import signal
 import sys
-from time import strftime, localtime, sleep
+from time import strftime, localtime, sleep, time
 import traceback
 
 from CPU import CPU
@@ -31,7 +32,7 @@ FRIDGE_LATENCY   = 60
 
 
 # File for monitoring
-MONITORING  = "/schild/weather/turtle_monitoring.log"
+MONITORING  = "turtle_monitoring.log"
 
 
 # Misc for rrdtool
@@ -53,9 +54,8 @@ reedcontact.start()
 def writeMonitoringData(rrd_data):
     """write various data to a file used for monitoring"""
     with open(MONITORING, 'w') as f:
-        t = localtime()
-        f.write(strftime("%H:%M:%S:", t) + str(t) + ":" + rrd_data)
-
+        ts = time()
+        f.write(datetime.datetime.fromtimestamp(ts).strftime("%H:%M:%S:") + str(ts) + ":" + rrd_data)
 
 
 
