@@ -24,7 +24,7 @@ class ScheduleHeat (ScheduleBase):
 
     __schedule[11][30:59] = [32 for m in range(30)]
     __schedule[12][0:59] = [32 for m in range(60)]
-    __schedule[13][0:39] = [30 for m in range(30)]
+    __schedule[13][0:29] = [30 for m in range(30)]
  
 
     def on (self, value):
