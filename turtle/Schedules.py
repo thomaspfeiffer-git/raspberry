@@ -20,7 +20,7 @@ class ScheduleBase (object):
 
 class ScheduleHeat (ScheduleBase):
     """schedule class for heating"""
-    __schedule = [[10.5 for m in range(60)] for h in range(24)]
+    __schedule = [[8.0 for m in range(60)] for h in range(24)]
 
     __schedule[11][30:59] = [32 for m in range(30)]
     __schedule[12][0:59] = [32 for m in range(60)]
