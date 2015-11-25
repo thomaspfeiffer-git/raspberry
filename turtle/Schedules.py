@@ -20,11 +20,11 @@ class ScheduleBase (object):
 
 class ScheduleHeat (ScheduleBase):
     """schedule class for heating"""
-    __schedule = [[8.0 for m in range(60)] for h in range(24)]
+    __schedule = [[7.0 for m in range(60)] for h in range(24)]
 
-    __schedule[11][30:59] = [32 for m in range(30)]
-    __schedule[12][0:59] = [32 for m in range(60)]
-    __schedule[13][0:29] = [30 for m in range(30)]
+#    __schedule[11][30:59] = [32 for m in range(30)]
+#    __schedule[12][0:59] = [32 for m in range(60)]
+#    __schedule[13][0:29] = [30 for m in range(30)]
  
 
     def on (self, value):
