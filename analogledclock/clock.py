@@ -294,64 +294,56 @@ def Main():
    loopcounter = 0
 
    while(1):
-#      h, m, s = strftime("%H:%M:%S", localtime()).split(":")
-#      s = int(s)
-#      m = int(m)
-#      h = int((int(h) % 12) * 5) + int(m/12)
+      h, m, s = strftime("%H:%M:%S", localtime()).split(":")
+      s = int(s)
+      m = int(m)
+      h = int((int(h) % 12) * 5) + int(m/12)
 
 #      print "h (computed LED ID):", h, "m:", m, "s:", s
-#      h = 15
-#      m = 15
-#      s = 15
 
-      h += 1
-      m += 1
-      s += 1
-      if (h >= 60):
-         h = 0
-         loopcounter += 1
-      if (m >= 60):
-         m = 0
-      if (s >= 60):
-         s = 0
-      if (h < 0):
-         h = 59
-      if (m < 0):
-         m = 59
-      if (s < 0):
-         s = 59
+#      h += 1
+#      m += 1
+#      s += 1
+#      if (h >= 60):
+#         h = 0
+#         loopcounter += 1
+#      if (m >= 60):
+#         m = 0
+#      if (s >= 60):
+#         s = 0
+#      if (h < 0):
+#         h = 59
+#      if (m < 0):
+#         m = 59
+#      if (s < 0):
+#         s = 59
 
       InitBits(0b00000000)
 
-# Eigene Farbe je Sekunde/Minute/Stunde
-#      bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
-#      bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
-#      bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
+      bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
+      bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
+      bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
 
-# Alles weiss
-#      bits[bits_red[s][tech], bits_red[s][device], bits_red[s][bank]]        = int(bits_red[s][bit],2)
-#      bits[bits_green[s][tech], bits_green[s][device], bits_green[s][bank]] |= int(bits_green[s][bit],2)
-#      bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
+# All white; 20 lights on at once.
+#      if (loopcounter % 3 == 0):
+#         bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]       = int(bits_red[h][bit],2)
+#      if (loopcounter % 3 == 1):
+#         bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] = int(bits_green[h][bit],2)
+#      if (loopcounter % 3 == 2):
+#         bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    = int(bits_blue[h][bit],2)
 
-      if (loopcounter % 3 == 0):
-         bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]       = int(bits_red[h][bit],2)
-      if (loopcounter % 3 == 1):
-         bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] = int(bits_green[h][bit],2)
-      if (loopcounter % 3 == 2):
-         bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    = int(bits_blue[h][bit],2)
-
-      j = h
-      for i in range (0,20):
-         if (loopcounter % 3 == 0):
-            bits[bits_red[j][tech], bits_red[j][device], bits_red[j][bank]]       |= int(bits_red[j][bit],2)
-         if (loopcounter % 3 == 1):
-            bits[bits_green[j][tech], bits_green[j][device], bits_green[j][bank]] |= int(bits_green[j][bit],2)
-         if (loopcounter % 3 == 2):
-            bits[bits_blue[j][tech], bits_blue[j][device], bits_blue[j][bank]]    |= int(bits_blue[j][bit],2)
-
-         j += 1
-         if (j >= 60):
-            j = 0
+#      j = h
+#      for i in range (0,20):
+#         if (loopcounter % 3 == 0):
+#            bits[bits_red[j][tech], bits_red[j][device], bits_red[j][bank]]       |= int(bits_red[j][bit],2)
+#         if (loopcounter % 3 == 1):
+#            bits[bits_green[j][tech], bits_green[j][device], bits_green[j][bank]] |= int(bits_green[j][bit],2)
+#         if (loopcounter % 3 == 2):
+#            bits[bits_blue[j][tech], bits_blue[j][device], bits_blue[j][bank]]    |= int(bits_blue[j][bit],2)
+#
+#         j += 1
+#         if (j >= 60):
+#            j = 0
 
       WriteBits()
       sleep(0.1)
