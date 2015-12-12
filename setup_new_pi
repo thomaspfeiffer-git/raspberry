@@ -132,6 +132,10 @@ copy .git/config
     https://help.github.com/articles/changing-a-remote-s-url/
 
 
+RRDTool
+=======
+
+sudo apt-get install rrdtool python-rrdtool
 
 
 
