@@ -45,6 +45,35 @@ sudo pip install wiringpi2
 
 
 
+i2c smb
+-------
+
+https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c
+
+sudo apt-get install python-smbus
+sudo apt-get install i2c-tools
+
+sudo raspi-config
+  --> Advanced Options
+      --> Enable SPI
+      --> Enable I2C
+
+
+/etc/modules    add lines:
+i2c-bcm2708 
+i2c-dev
+
+/root/config.txt add lines:
+
+dtparam=i2c1=on
+dtparam=i2c_arm=on
+
+
+reboot
+
+Test:
+sudo i2cdetect -y 1
+
 
 
 
