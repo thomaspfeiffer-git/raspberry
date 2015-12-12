@@ -35,7 +35,22 @@ Libs:
 =====
 
 
+wiringPi
+--------
+
+http://raspi.tv/how-to-install-wiringpi2-for-python-on-the-raspberry-pi
+
+sudo apt-get install python-dev python-pip
+sudo pip install wiringpi2
+
+
+
+
+
+
 1-wire (DS1820)
+---------------
+
 /boot/config.txt:
    dtoverlay=w1-gpio,gpiopin=4
 /etc/modules:
