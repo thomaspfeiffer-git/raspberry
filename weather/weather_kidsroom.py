@@ -23,7 +23,7 @@ DHT22_AM2302_PIN = 35
 
 
 # Misc for rrdtool
-RRDFILE    = "weather_kidsroom.rrd"
+RRDFILE    = "/schild/weather/weather_kidsroom.rrd"
 DS_TEMP1   = "kidsroom_temp1"
 DS_TEMPCPU = "kidsroom_tempcpu"
 DS_TEMP2   = "kidsroom_temp2"
