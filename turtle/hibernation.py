@@ -87,12 +87,10 @@ def main():
         measurements[DS_TEMP2].append(_temp)
         measurements[DS_HUMI].append(_humi)
 
-#        if (measurements[DS_TEMP1].avg() > 5.8):
-##        if (measurements[DS_TEMP1].avg() > -20.0):
-#            fridge.on()
-#        if (measurements[DS_TEMP1].avg() < 5.6):
-#            fridge.off()
-        fridge.off()
+        if (measurements[DS_TEMP1].avg() > 5.8):
+            fridge.on()
+        if (measurements[DS_TEMP1].avg() < 5.6):
+            fridge.off()
 
 
 
