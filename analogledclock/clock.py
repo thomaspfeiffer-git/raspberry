@@ -325,15 +325,17 @@ def Main():
       if (not bTest):
           bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
           bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
-
           bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
-          bits[bits_red[s][tech], bits_red[s][device], bits_red[s][bank]]       |= int(bits_red[s][bit],2)
-          bits[bits_green[s][tech], bits_green[s][device], bits_green[s][bank]] |= int(bits_green[s][bit],2)
+         
+          if (h > 7) and (h < 20): 
+              # make seconds white ...
+              bits[bits_red[s][tech], bits_red[s][device], bits_red[s][bank]]       |= int(bits_red[s][bit],2)
+              bits[bits_green[s][tech], bits_green[s][device], bits_green[s][bank]] |= int(bits_green[s][bit],2)
 
-          # display constant hours (0/12, 1, 2, 3, 4, 5, ...)
-          for hh in range (0,12):
-              hhh = hh * 5
-              bits[bits_blue[hhh][tech], bits_blue[hhh][device], bits_blue[hhh][bank]]    |= int(bits_blue[hhh][bit],2)
+              # ... and display constant hours (0/12, 1, 2, 3, 4, 5, ...)
+              for hh in range (0,12):
+                  hhh = hh * 5
+                  bits[bits_blue[hhh][tech], bits_blue[hhh][device], bits_blue[hhh][bank]] |= int(bits_blue[hhh][bit],2)
 
 
       if (bTest):
