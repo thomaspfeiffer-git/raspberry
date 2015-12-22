@@ -296,11 +296,12 @@ def Main():
 
    while(1):
       if (not bTest):
-          h, m, s = strftime("%H:%M:%S", localtime()).split(":")
+          hour, m, s = strftime("%H:%M:%S", localtime()).split(":")
           s = int(s)
           m = int(m)
-          h = int((int(h) % 12) * 5) + int(m/12)
-#          print "h (computed LED ID):", h, "m:", m, "s:", s
+          hour = int(hour)
+          h = int((hour % 12) * 5) + int(m/12)
+          # print "h (computed LED ID):", h, "m:", m, "s:", s, "hour:", hour
 
       if (bTest):
           h += 1
@@ -326,8 +327,8 @@ def Main():
           bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
           bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
           bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
-         
-          if (h > 7) and (h < 20): 
+        
+          if ((hour >= 7) and (hour < 20)): 
               # make seconds white ...
               bits[bits_red[s][tech], bits_red[s][device], bits_red[s][bank]]       |= int(bits_red[s][bit],2)
               bits[bits_green[s][tech], bits_green[s][device], bits_green[s][bank]] |= int(bits_green[s][bit],2)
