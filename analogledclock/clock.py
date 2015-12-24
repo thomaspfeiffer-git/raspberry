@@ -334,8 +334,7 @@ def Main():
               bits[bits_green[s][tech], bits_green[s][device], bits_green[s][bank]] |= int(bits_green[s][bit],2)
 
               # ... and display constant hours (0/12, 1, 2, 3, 4, 5, ...)
-              for hh in range (0,12):
-                  hhh = hh * 5
+              for hhh in range (0,60,5):
                   bits[bits_blue[hhh][tech], bits_blue[hhh][device], bits_blue[hhh][bank]] |= int(bits_blue[hhh][bit],2)
 
 
