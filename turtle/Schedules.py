@@ -41,7 +41,7 @@ class ScheduleHeat (ScheduleBase):
 
 class ScheduleLight (ScheduleBase):
     """schedule class for lighting"""
-    __schedule = [[[-55 for m in range(60)] for h in range(24)] for w in range(53)]
+    __schedule = [[[-55 for m in range(60)] for h in range(24)] for w in range(54)]
 
     __tmax = 40
     __schedule[32][ 9][0:59] = [__tmax for m in range(60)]
