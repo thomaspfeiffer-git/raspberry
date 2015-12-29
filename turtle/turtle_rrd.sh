@@ -7,6 +7,7 @@ rrdtool create /schild/weather/turtle.rrd --step 60 \
 DS:turtle_temp1:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_temp2:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_temp3:GAUGE:$HEARTBEAT:-40:80 \
+DS:turtle_temp4:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_tempcpu:GAUGE:$HEARTBEAT:-40:80 \
 DS:turtle_humi:GAUGE:$HEARTBEAT:0:100 \
 DS:turtle_heating:GAUGE:$HEARTBEAT:0:1 \
