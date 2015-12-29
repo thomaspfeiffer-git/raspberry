@@ -55,6 +55,7 @@ printTemp ()
     --right-axis 1:0                                         \
     DEF:temp_outdoor=$RRD:temp_outdoor:AVERAGE               \
     DEF:temp_indoor=$RRD:temp_indoor:AVERAGE                 \
+    DEF:turtle_temp4=$RRD_T:turtle_temp4:AVERAGE             \
     DEF:turtle_temp3=$RRD_T:turtle_temp3:AVERAGE             \
     DEF:turtle_temp2=$RRD_T:turtle_temp2:AVERAGE             \
     DEF:turtle_temp1=$RRD_T:turtle_temp1:AVERAGE             \
@@ -74,6 +75,11 @@ printTemp ()
     GPRINT:kidsroom_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:kidsroom_temp1:MAX:"Max\: %5.2lf °C"              \
     GPRINT:kidsroom_temp1:MIN:"Min\: %5.2lf °C\n"            \
+    LINE1:turtle_temp4#4d2600:"Temperatur Donut Erde     "   \
+    GPRINT:turtle_temp4:LAST:"Aktuell\: %5.2lf °C"           \
+    GPRINT:turtle_temp4:AVERAGE:"Mittelwert\: %5.2lf °C"     \
+    GPRINT:turtle_temp4:MAX:"Max\: %5.2lf °C"                \
+    GPRINT:turtle_temp4:MIN:"Min\: %5.2lf °C\n"              \
     LINE1:turtle_temp3#088A08:"Temperatur Donut Gehege   "   \
     GPRINT:turtle_temp3:LAST:"Aktuell\: %5.2lf °C"           \
     GPRINT:turtle_temp3:AVERAGE:"Mittelwert\: %5.2lf °C"     \
