@@ -66,7 +66,7 @@ def main():
     """main part"""
     temp1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
     temp2        = DS1820("/sys/bus/w1/devices/28-000006dd6ac1/w1_slave")
-    # temp4        = DS1820("")
+    temp4        = DS1820("/sys/bus/w1/devices/28-000006de535b/w1_slave")
     temphumi     = DHT22_AM2302(21)   # BCM 21 = PIN 40
     tempcpu      = CPU()
     heatcontrol  = Schedules.Control(Schedules.ScheduleHeat(), heatlamp)
@@ -91,8 +91,7 @@ def main():
     while (True):
         measurements[DS_TEMP1].append(temp1.read())
         measurements[DS_TEMP2].append(temp2.read())
-        # measurements[DS_TEMP4].append(temp4.read())
-        measurements[DS_TEMP4].append(-2.22)
+        measurements[DS_TEMP4].append(temp4.read())
         _temp3, _humi = temphumi.read()
         measurements[DS_TEMP3].append(_temp3)
         measurements[DS_HUMI].append(_humi)
