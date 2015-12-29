@@ -35,6 +35,7 @@ RRDFILE     = "/schild/weather/turtle.rrd"
 DS_TEMP1    = "turtle_temp1"
 DS_TEMP2    = "turtle_temp2"
 DS_TEMP3    = "turtle_temp3"
+DS_TEMP4    = "turtle_temp4"
 DS_TEMPCPU  = "turtle_tempcpu"
 DS_HUMI     = "turtle_humi"
 DS_HEATING  = "turtle_heating"
@@ -65,6 +66,7 @@ def main():
     """main part"""
     temp1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
     temp2        = DS1820("/sys/bus/w1/devices/28-000006dd6ac1/w1_slave")
+    # temp4        = DS1820("")
     temphumi     = DHT22_AM2302(21)   # BCM 21 = PIN 40
     tempcpu      = CPU()
     heatcontrol  = Schedules.Control(Schedules.ScheduleHeat(), heatlamp)
@@ -73,12 +75,14 @@ def main():
     measurements = {DS_TEMP1:   Measurements(), \
                     DS_TEMP2:   Measurements(), \
                     DS_TEMP3:   Measurements(), \
+                    DS_TEMP4:   Measurements(), \
                     DS_TEMPCPU: Measurements(), \
                     DS_HUMI:    Measurements()}
  
     rrd_template = DS_TEMP1   + ":" + \
                    DS_TEMP2   + ":" + \
                    DS_TEMP3   + ":" + \
+                   DS_TEMP4   + ":" + \
                    DS_TEMPCPU + ":" + \
                    DS_HUMI    + ":" + \
                    DS_HEATING + ":" + \
@@ -87,6 +91,8 @@ def main():
     while (True):
         measurements[DS_TEMP1].append(temp1.read())
         measurements[DS_TEMP2].append(temp2.read())
+        # measurements[DS_TEMP4].append(temp4.read())
+        measurements[DS_TEMP4].append(-2.22)
         _temp3, _humi = temphumi.read()
         measurements[DS_TEMP3].append(_temp3)
         measurements[DS_HUMI].append(_humi)
@@ -98,6 +104,7 @@ def main():
         rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMP2].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMP3].last()) + \
+                        ":{:.2f}".format(measurements[DS_TEMP4].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
                         ":{:.2f}".format(measurements[DS_HUMI].last()) + \
                         ":{:}".format(heatlamp.status())    + \
