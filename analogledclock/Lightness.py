@@ -71,10 +71,10 @@ class Measurements (deque):
     def avg(self):
         """provide average of items stored in the deque"""
         i = s = 0
-        for v in list(self):
+        for v in list(self): 
             s += v.value
             i += 1
-        return s // i
+        return s // i  # TODO: len(list(self))
 
 
 class Lightness (threading.Thread):
@@ -88,7 +88,7 @@ class Lightness (threading.Thread):
 
         # Hardware PWM
         wipi.wiringPiSetupPhys()
-        wipi.pinMode(12, 2)
+        wipi.pinMode(12, 2)   # TODO: have pin as parameter to __init__()
 
         self.__running = True
 
