@@ -292,7 +292,7 @@ def Exit():
     print("Exit")
     sys.exit()
 
-def _Exit(_, _):
+def _Exit(__s, __f):
     """exit for signal handler"""
     print("_Exit")
     Exit()
