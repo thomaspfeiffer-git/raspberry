@@ -1,0 +1,65 @@
+english documentation will follow
+
+
+Sourcecode: https://github.com/thomaspfeiffer-git/raspberry/tree/master/analogledclock
+
+Ansteuerung der LEDs:
+---------------------
+
+Die Ansteuerung der 60 3-Farben-LEDs (insgesamt also 180 LEDs) benoetigt
+insgesamt 12 MCP23x17 Port-Expander (16 x 12 = 192 getrennt steuerbare
+Ausgaenge). Da die Adressleitungen für die MCP23x17 nur drei Bit breit 
+sind, benoetigen wir also acht MCP23017, die mit dem I2C-Bus angesteuert
+werden und weitere vier MCP23S17, die mit dem SPI-Bus angesteuert werden.
+
+Die Abbildung der 180 Einzel-LEDs (also Ausgaenge) als Bitmuster findet sich
+in der Datei clock.py in den Arrays bits_red, bits_green und bits_blue. Diese
+auf den ersten Blick etwas komplizierte Darstellung ermoeglicht es, dass die
+einzelnen LED-Adressen von der Business-Logik abstrahiert werden koennen.
+- tech: I2C oder SPI; je nachdem unterschiedliche Ansteuerung der Portbausteine
+        in den jeweiligen Klassen.
+- device: Adresse des jeweiligen Bausteins
+- bank: "A" oder "B" fuer die jeweilige Bank
+- bit: jener Ausgang, der dann die jeweilige LED ansteuert
+
+
+In der Methode Main() in clock.py wird in einer Schleife die aktuelle Uhrzeit
+abgefragt und die zur jeweiligen Sekunde, Minute und Stunde korrespondierenden
+Ausgaenge (LEDs) gesetzt (Array bits und Methode WriteBits()). 
+
+Zwei Anmerkungen hierzu:
+1) Zwischen 20:00 Uhr und 7:00 Uhr leuchten die Stunden-LEDs nicht dauerhaft
+   (das ware naemlich trotz Helligkeitsregelung zu hell).
+2) Das Code rund um die Variable bTest dient zur Generierung eines eigenen
+   Bitmusters (20 LEDs leuchten wie ein sich fortbewegender Wurm). Das unterstuetzt
+   beim richtigen Einbau der LEDs ins Holzgehaeuse.
+
+
+
+
+Helligkeitsregelung:
+--------------------
+
+
+FILES:
+======
+
+
+
+
+LIST OF COMPONENTS
+==================
+
+*  8 MCP23017
+*  4 MCP23S17
+* 24 ULN2803A
+*  1 MCP3008
+Transistorarray
+Lichtsensor
+* 64 LEDs
+Widerstände für LEDs
+Darlington-Schaltung (2 Transistoren!)
+
+* Holzkiste, etwa so gross wie ein A4 Blatt und rund fuenf Zentimeter tief.
+
+
