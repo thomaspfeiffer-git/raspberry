@@ -19,6 +19,10 @@ from MCP23x17 import MCP23x17
 from MCP23017 import MCP23017
 from MCP23S17 import MCP23S17
 
+
+PIN_PWM = 12 # BCM GPIO 18
+
+
 tech     = 'tech'
 tech_i2c = 'i2c'
 tech_spi = 'spi'
@@ -377,7 +381,7 @@ def Main():
 ###############################################################################
 ###############################################################################
 signal.signal(signal.SIGTERM, _Exit)
-lightness = Lightness(spi_lock)
+lightness = Lightness(PIN_PWM, spi_lock)
 lightness.start()
 
 try:
