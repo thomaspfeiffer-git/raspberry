@@ -358,11 +358,11 @@ def Main():
         if (bTest):
             # All white; 20 lights on at once.
             if (loopcounter % 3 == 0):
-                bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit], 2)
+                bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]       = int(bits_red[h][bit], 2)
             if (loopcounter % 3 == 1):
-                bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] |= int(bits_green[h][bit], 2)
+                bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] = int(bits_green[h][bit], 2)
             if (loopcounter % 3 == 2):
-                bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    |= int(bits_blue[h][bit], 2)
+                bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    = int(bits_blue[h][bit], 2)
 
             j = h
             for _ in range (0, 20):
