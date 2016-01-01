@@ -78,8 +78,9 @@ class Measurements (deque):
 
 class Lightness (threading.Thread):
     """threaded control of lightness"""
-    def __init__(self, lock):
+    def __init__(self, pin, lock):
         threading.Thread.__init__(self)
+        self.__pin  = pin
         self.__lock = lock
 
         # SPI (MCP3008)
@@ -87,7 +88,7 @@ class Lightness (threading.Thread):
 
         # Hardware PWM
         wipi.wiringPiSetupPhys()
-        wipi.pinMode(12, 2)   # TODO: have pin as parameter to __init__()
+        wipi.pinMode(self.__pin, 2)
 
         self.__running = True
 
@@ -111,7 +112,7 @@ class Lightness (threading.Thread):
                 target -= 1
 
             # target = 1000
-            wipi.pwmWrite(12, int(1024-int(target)))  # TODO: Remove int(...
+            wipi.pwmWrite(self.__pin, int(1024-int(target)))  # TODO: Remove int(...
             # print("{}: Lightness (actual/avg/target): {}/{}/{}".format(time.strftime("%Y%m%d-%H%M%S"),actual,avg,target))
             time.sleep(0.1)
 
