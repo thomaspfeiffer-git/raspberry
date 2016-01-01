@@ -70,11 +70,10 @@ class Measurements (deque):
 
     def avg(self):
         """provide average of items stored in the deque"""
-        i = s = 0
+        s = 0
         for v in list(self): 
             s += v.value
-            i += 1
-        return s // i  # TODO: len(list(self))
+        return s // len(self)
 
 
 class Lightness (threading.Thread):
