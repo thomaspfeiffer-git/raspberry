@@ -1,9 +1,10 @@
 #!/usr/bin/python
-###############################################################################################
-# clock.py                                                                                    #
-# Build an analog clock with LEDs.                                                            #
-# (c) https://github.com/thomaspfeiffer-git 2015                                          #
-###############################################################################################
+################################################################################
+# clock.py                                                                     #
+# Build an analog clock with LEDs.                                             #
+# (c) https://github.com/thomaspfeiffer-git 2015                               #
+################################################################################
+"""clock.py: control of an analog clock built from 60 three color LEDs"""
 
 import signal
 from time import sleep, localtime, strftime
@@ -33,7 +34,7 @@ i2c         = MCP23017(i2c_devices)
 # SPI (MCP23S17) 
 spi_lock    = Lock()
 spi_devices = (0x00, 0x01, 0x02, 0x03)    # Addresses of MCP23S17 components
-spi         = MCP23S17(SPI_const.CS1,spi_devices,spi_lock)
+spi         = MCP23S17(SPI_const.CS1, spi_devices, spi_lock)
 
 
 bits_red   = {0: {tech: i2c, device: 0x23, bank: "A", bit: "0b00000001"}, \
@@ -225,143 +226,151 @@ bits = {}
 ###############################################################################
 # InitBits ####################################################################
 def InitBits(pattern):
-   global bits
+    """initiates all bits (aka all ports for all LEDs) with pattern"""
+    global bits
 
-   for d in i2c_devices:
-      bits[i2c,d,"A"] = pattern
-      bits[i2c,d,"B"] = pattern
+    for d in i2c_devices:
+        bits[i2c, d, "A"] = pattern
+        bits[i2c, d, "B"] = pattern
 
-   for d in spi_devices:
-      bits[spi,d,"A"] = pattern
-      bits[spi,d,"B"] = pattern
+    for d in spi_devices:
+        bits[spi, d, "A"] = pattern
+        bits[spi, d, "B"] = pattern
 
 
 ###############################################################################
 # GetBank #####################################################################
 def GetBank(string):
-   if (string == "A"):
-      return MCP23x17.OLATA
-   elif (string == "B"):
-      return MCP23x17.OLATB
-   else:
-      print("Unknown bank!")
-      # TODO: Exception!
-      return MCP23x17.OLATA
+    """returns the register of the MCP23x17 for bank A or B respectively"""
+    if (string == "A"):
+        return MCP23x17.OLATA
+    elif (string == "B"):
+        return MCP23x17.OLATB
+    else:
+        print("Unknown bank!")
+        # TODO: Exception!
+        return MCP23x17.OLATA
 
 
 ###############################################################################
 # WriteBits ###################################################################
 def WriteBits():
-  for k in bits:
-     # print "Tech: ", k[0], "Device: ", k[1], "Bank: ", k[2], "Pattern: ", bits[k]
-     k[0].send(k[1], GetBank(k[2]), bits[k])
+    """writes all bits to the ports"""
+    for k in bits:
+        # print "Tech: ", k[0], "Device: ", k[1], "Bank: ", k[2], "Pattern: ", bits[k]
+        k[0].send(k[1], GetBank(k[2]), bits[k])
 
 
 ###############################################################################
 # AllOff ######################################################################
 def AllOff():
-   InitBits(0b00000000)
-   WriteBits()
+    """set all ports to 0"""
+    InitBits(0b00000000)
+    WriteBits()
 
 
 ###############################################################################
 # Cleanup #####################################################################
 def Cleanup():
-   AllOff()
+    """cleanup"""
+    AllOff()
 
 
 ###############################################################################
 # Exit ########################################################################
 def Exit():
-   Cleanup()
-   spi.close()
+    """stuff to be done on exit"""
+    Cleanup()
+    spi.close()
    
-   lightness.stop()
-   lightness.join()
-   # TODO: GPIO.cleanup()
-   print("Exit")
-   sys.exit()
+    lightness.stop()
+    lightness.join()
+    # TODO: GPIO.cleanup()
+    print("Exit")
+    sys.exit()
 
-def _Exit(s,f):
-   print("_Exit")
-   Exit()
+def _Exit(s, f):
+    """exit for signal handler"""
+    print("_Exit")
+    Exit()
 
 
 ###############################################################################
 # Main ########################################################################
 def Main():
-   bTest = False
-   h = m = s = 0
-   loopcounter = 0
+    """main part"""
+    bTest = False
+    h = m = s = 0
+    loopcounter = 0
 
-   while(1):
-      if (not bTest):
-          hour, m, s = strftime("%H:%M:%S", localtime()).split(":")
-          s = int(s)
-          m = int(m)
-          hour = int(hour)
-          h = int((hour % 12) * 5) + int(m/12)
-          # print "h (computed LED ID):", h, "m:", m, "s:", s, "hour:", hour
+    while(1):
+        if (not bTest):
+            hour, m, s = strftime("%H:%M:%S", localtime()).split(":")
+            s = int(s)
+            m = int(m)
+            hour = int(hour)
+            h = int((hour % 12) * 5) + int(m/12)
+            # print "h (computed LED ID):", h, "m:", m, "s:", s, "hour:", hour
 
-      if (bTest):
-          h += 1
-          m += 1
-          s += 1
-          if (h >= 60):
-              h = 0
-              loopcounter += 1
-          if (m >= 60):
-              m = 0
-          if (s >= 60):
-              s = 0
-          if (h < 0):
-              h = 59
-          if (m < 0):
-              m = 59
-          if (s < 0):
-              s = 59
+        if (bTest):
+            h += 1
+            m += 1
+            s += 1
+            if (h >= 60):
+                h = 0
+                loopcounter += 1
+            if (m >= 60):
+                m = 0
+            if (s >= 60):
+                s = 0
+            if (h < 0):
+                h = 59
+            if (m < 0):
+                m = 59
+            if (s < 0):
+                s = 59
 
-      InitBits(0b00000000)
+        InitBits(0b00000000)
 
-      if (not bTest):
-          bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit],2)
-          bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit],2)
-          bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit],2)
+        if (not bTest):
+            bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit], 2)
+            bits[bits_green[m][tech], bits_green[m][device], bits_green[m][bank]] |= int(bits_green[m][bit], 2)
+            bits[bits_blue[s][tech], bits_blue[s][device], bits_blue[s][bank]]    |= int(bits_blue[s][bit], 2)
         
-          if ((hour >= 7) and (hour < 20)): 
-              # make seconds white ...
-              bits[bits_red[s][tech], bits_red[s][device], bits_red[s][bank]]       |= int(bits_red[s][bit],2)
-              bits[bits_green[s][tech], bits_green[s][device], bits_green[s][bank]] |= int(bits_green[s][bit],2)
+            if ((hour >= 7) and (hour < 20)): 
+                # make seconds white ...
+                bits[bits_red[s][tech], bits_red[s][device], bits_red[s][bank]]       |= int(bits_red[s][bit], 2)
+                bits[bits_green[s][tech], bits_green[s][device], bits_green[s][bank]] |= int(bits_green[s][bit], 2)
 
-              # ... and display constant hours (0/12, 1, 2, 3, 4, 5, ...)
-              for hhh in range (0,60,5):
-                  bits[bits_blue[hhh][tech], bits_blue[hhh][device], bits_blue[hhh][bank]] |= int(bits_blue[hhh][bit],2)
+                # ... and display constant hours (0/12, 1, 2, 3, 4, 5, ...)
+                for hhh in range (0, 60, 5):
+                    bits[bits_blue[hhh][tech], bits_blue[hhh][device], bits_blue[hhh][bank]] |= int(bits_blue[hhh][bit], 2)
 
 
-      if (bTest):
-          # All white; 20 lights on at once.
-          if (loopcounter % 3 == 0):
-              bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]       = int(bits_red[h][bit],2)
-          if (loopcounter % 3 == 1):
-              bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] = int(bits_green[h][bit],2)
-          if (loopcounter % 3 == 2):
-              bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    = int(bits_blue[h][bit],2)
+        if (bTest):
+            # All white; 20 lights on at once.
+            if (loopcounter % 3 == 0):
+                bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]       = int(bits_red[h][bit], 2)
+            if (loopcounter % 3 == 1):
+                bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] = int(bits_green[h][bit], 2)
+            if (loopcounter % 3 == 2):
+                bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    = int(bits_blue[h][bit], 2)
 
-          j = h
-          for i in range (0,20):
-              if (loopcounter % 3 == 0):
-                  bits[bits_red[j][tech], bits_red[j][device], bits_red[j][bank]]       |= int(bits_red[j][bit],2)
-              if (loopcounter % 3 == 1):
-                  bits[bits_green[j][tech], bits_green[j][device], bits_green[j][bank]] |= int(bits_green[j][bit],2)
-              if (loopcounter % 3 == 2):
-                  bits[bits_blue[j][tech], bits_blue[j][device], bits_blue[j][bank]]    |= int(bits_blue[j][bit],2)
+            j = h
+            for i in range (0, 20):
+                if (loopcounter % 3 == 0):
+                    bits[bits_red[j][tech], bits_red[j][device], bits_red[j][bank]]       |= int(bits_red[j][bit], 2)
+                if (loopcounter % 3 == 1):
+                    bits[bits_green[j][tech], bits_green[j][device], bits_green[j][bank]] |= int(bits_green[j][bit], 2)
+                if (loopcounter % 3 == 2):
+                    bits[bits_blue[j][tech], bits_blue[j][device], bits_blue[j][bank]]    |= int(bits_blue[j][bit], 2)
 
-              j += 1
-              if (j >= 60):
-                  j = 0
+                j += 1
+                if (j >= 60):
+                    j = 0
 
-      WriteBits()
-      sleep(0.1)
+        WriteBits()
+        sleep(0.1)
 
 
 
@@ -372,19 +381,19 @@ lightness = Lightness(spi_lock)
 lightness.start()
 
 try:
-   Main()
+    Main()
 
 except KeyboardInterrupt:
-   Exit()
+    Exit()
 
 except SystemExit:                  # Done in signal handler (method _Exit()) #
-   pass
+    pass
 
 except:
-   print(traceback.print_exc())
+    print(traceback.print_exc())
 
 finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
-   pass
+    pass
 
 ### eof ###
 
