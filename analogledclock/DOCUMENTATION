@@ -8,7 +8,7 @@ Ansteuerung der LEDs:
 
 Die Ansteuerung der 60 3-Farben-LEDs (insgesamt also 180 LEDs) benoetigt
 insgesamt 12 MCP23x17 Port-Expander (16 x 12 = 192 getrennt steuerbare
-Ausgaenge). Da die Adressleitungen für die MCP23x17 nur drei Bit breit 
+Ausgaenge). Da die Adressleitungen fuer die MCP23x17 nur drei Bit breit 
 sind, benoetigen wir also acht MCP23017, die mit dem I2C-Bus angesteuert
 werden und weitere vier MCP23S17, die mit dem SPI-Bus angesteuert werden.
 
@@ -40,11 +40,37 @@ Zwei Anmerkungen hierzu:
 Helligkeitsregelung:
 --------------------
 
+Die gemessene Helligkeit steuert ueber Puls-Weiten-Modulation PWM die Helligkeit
+der LEDs (wiringPi.pwmWrite()).
+
+Datei: Lightness.py
+
+Ueber einen Lichtsensor und den A/D-Wandler MCP3008 wird als eigener Thread
+ein Helligkeitswert eingelesen. Achtung: Nachdem zwei Threads auf den SPI-Bus
+zugreifen (Ansteuerung der MCP23S17-Bausteine und Ansteuerung des MCP3008),
+ist unbedingt ein Lock erforderlich!
+
+Die Helligkeitsmesswerte werden in einem Deque (class Measurements) gespeichert.
+Der aktuelle Wert (target) wird in einer Schleife dem Durchschnittswert der
+letzten Messungen nachgefuehrt. Dadurch aendert sich die Helligkeit der LEDs
+nicht sprunghaft, sondern sanft.
+
+Der PWM-Ausgang des Pi steuert ueber eine Darlington-Transistorschaltung den
+gemeinsamen Plus-Pol der Dreifarben-LEDs an. Die jeweiligen Minuspole sind
+ueber Transistorarrays ULN2803A mit den Ports der Portexpander MCP23x17 verbunden.
+
+
 
 FILES:
 ======
 
-
+* clock.py: main file
+* Lightness.py: controls lightness of LEDs via PWM and a photo resistor
+* SPI_const.py: various constants for the SPI bus
+* MCP3008.py: reading analog values of photo resistor for lightness control
+* MCP23x17.py: various constants for MCP23x17
+* MCP23017.py: code for MCP23017 (I2C)
+* MCP23S17.py: code for MCP23S17 (SPI)
 
 
 LIST OF COMPONENTS
@@ -54,12 +80,12 @@ LIST OF COMPONENTS
 *  4 MCP23S17
 * 24 ULN2803A
 *  1 MCP3008
-Transistorarray
-Lichtsensor
-* 64 LEDs
-Widerstände für LEDs
-Darlington-Schaltung (2 Transistoren!)
+*  1 Light sensor
+* 60 three color LEDs with common anode
+* 3 x 60 Resistors for LEDs (depending on used voltage)
+* various BC547, BC337 used as darlington pair
+*  1 Holzkiste, etwa so gross wie ein A4 Blatt und rund fuenf Zentimeter tief
+*  1 Raspberry Pi mit SD-Karte, WiFi und Netzteil
 
-* Holzkiste, etwa so gross wie ein A4 Blatt und rund fuenf Zentimeter tief.
 
 
