@@ -231,8 +231,6 @@ bits = {}
 # InitBits ####################################################################
 def InitBits(pattern):
     """initiates all bits (aka all ports for all LEDs) with pattern"""
-    global bits
-
     for d in i2c_devices:
         bits[i2c, d, "A"] = pattern
         bits[i2c, d, "B"] = pattern
