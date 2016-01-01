@@ -39,7 +39,7 @@ class Value (object):
         return Value(self.value + other.value)
 
     def __radd__(self, other):
-        return Value(other-self.value)
+        return Value(other+self.value)
 
     def __sub__(self, other):
         if not isinstance(other, Value):
