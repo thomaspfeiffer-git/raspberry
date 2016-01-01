@@ -31,8 +31,9 @@ bank     = 'bank'
 bit      = 'bit'
 
 
-# I2C (MCP23017)
-i2c_devices = (0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27) # Addresses of MCP23017 components
+# I2C (MCP23017) 
+# Addresses of MCP23017 components
+i2c_devices = (0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27)
 i2c         = MCP23017(i2c_devices)
 
 # SPI (MCP23S17) 
@@ -291,7 +292,7 @@ def Exit():
     print("Exit")
     sys.exit()
 
-def _Exit(s, f):
+def _Exit(_, _):
     """exit for signal handler"""
     print("_Exit")
     Exit()
@@ -305,6 +306,27 @@ def Main():
     h = m = s = 0
     loopcounter = 0
 
+    def adjust_hms(__h, __m, __s, __loopcounter):
+        """deal with 'overflow' of hours, minutes, and seconds"""
+        if (__h >= 60):
+            __h = 0
+            __loopcounter += 1
+
+        if (__m >= 60):
+            __m = 0
+        if (__s >= 60):
+            __s = 0
+
+        if (__h < 0):
+            __h = 59
+            __loopcounter -= 1
+
+        if (__m < 0):
+            __m = 59
+        if (__s < 0):
+            __s = 59
+        return (__h, __m, __s, __loopcounter)
+
     while(1):
         if (not bTest):
             hour, m, s = strftime("%H:%M:%S", localtime()).split(":")
@@ -313,24 +335,8 @@ def Main():
             hour = int(hour)
             h = int((hour % 12) * 5) + int(m/12)
             # print "h (computed LED ID):", h, "m:", m, "s:", s, "hour:", hour
-
-        if (bTest):
-            h += 1
-            m += 1
-            s += 1
-            if (h >= 60):
-                h = 0
-                loopcounter += 1
-            if (m >= 60):
-                m = 0
-            if (s >= 60):
-                s = 0
-            if (h < 0):
-                h = 59
-            if (m < 0):
-                m = 59
-            if (s < 0):
-                s = 59
+        else:
+            (h, m, s, loopcounter) = adjust_hms(h+1, m+1, s+1, loopcounter)
 
         InitBits(0b00000000)
 
@@ -352,14 +358,14 @@ def Main():
         if (bTest):
             # All white; 20 lights on at once.
             if (loopcounter % 3 == 0):
-                bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]       = int(bits_red[h][bit], 2)
+                bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]        = int(bits_red[h][bit], 2)
             if (loopcounter % 3 == 1):
-                bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] = int(bits_green[h][bit], 2)
+                bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] |= int(bits_green[h][bit], 2)
             if (loopcounter % 3 == 2):
-                bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    = int(bits_blue[h][bit], 2)
+                bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    |= int(bits_blue[h][bit], 2)
 
             j = h
-            for i in range (0, 20):
+            for _ in range (0, 20):
                 if (loopcounter % 3 == 0):
                     bits[bits_red[j][tech], bits_red[j][device], bits_red[j][bank]]       |= int(bits_red[j][bit], 2)
                 if (loopcounter % 3 == 1):
