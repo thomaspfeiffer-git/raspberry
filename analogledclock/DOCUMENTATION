@@ -81,9 +81,8 @@ LIST OF COMPONENTS
 *  1 photo resistor
 * 60 three color LEDs with common anode
 * 3 x 60 Resistors for LEDs (depending on used voltage)
-* various BC547, BC337 used as darlington pair
-*  1 Holzkiste, etwa so gross wie ein A4 Blatt und rund fuenf Zentimeter tief
-*  1 Raspberry Pi mit SD-Karte, WiFi und Netzteil
-
+* several BC547, BC337 used as darlington pair
+*  1 wooden box (about 30 cm x 20 x 6 cm)
+*  1 Raspberry Pi with SD card, wifi, and power supply
 
 
