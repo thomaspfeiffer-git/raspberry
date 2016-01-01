@@ -71,7 +71,7 @@ class Measurements (deque):
     def avg(self):
         """provide average of items stored in the deque"""
         s = 0
-        for v in list(self): 
+        for v in self: 
             s += v.value
         return s // len(self)
 
