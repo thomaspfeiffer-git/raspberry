@@ -18,10 +18,12 @@ class Value (object):
     """provides an integer class for numbers in range 0..1023"""
     @property
     def value(self):
+        """getter for value"""
         return self.__value
 
     @value.setter
     def value(self, v):
+        """setter and validator for value"""
         v = int(v)
         if (v >= 1023):
             self.__value = 1023
