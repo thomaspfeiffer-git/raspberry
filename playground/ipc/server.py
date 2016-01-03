@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import signal
+import sys
 import traceback
 
 from SensorQueue import SensorQueueServer
