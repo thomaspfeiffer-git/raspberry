@@ -1,7 +1,7 @@
 class SensorValue (object):
     def __init__ (self, name, kind):
         self.__name = name
-        self.__name = kind
+        self.__kind = kind
 
     def setValue (self, value):
         self.__value = value
