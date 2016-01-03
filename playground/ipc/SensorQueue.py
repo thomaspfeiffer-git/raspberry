@@ -15,13 +15,16 @@ SensorQueueClient: Provides a client for the queue with methods
 from multiprocessing.managers import BaseManager
 import pickle
 import Queue
+import sys
+from time import sleep
 
 
 class SensorQueueConfig (object):
     """some constants for client server communication"""
-    PORT     = 50000
-    HOSTNAME = "pia"
-    AUTHKEY  = "finster war's, der mond schien helle"
+    PORT       = 50000
+    HOSTNAME   = "pia"
+    AUTHKEY    = "finster war's, der mond schien helle"
+    RETRYDELAY = 60
 
 
 class QueueManager(BaseManager): 
@@ -52,20 +55,45 @@ class SensorQueueServer (object):
 class SensorQueueClient (object):
     """client class providing methodes for read from and write to the queue"""
     def __init__ (self):
+        self.__connected = False
         QueueManager.register('get_queue')
-        manager = QueueManager(address=(SensorQueueConfig.HOSTNAME, \
-                                        SensorQueueConfig.PORT), \
-                               authkey=SensorQueueConfig.AUTHKEY)
-        manager.connect()
-        self.__queue = manager.get_queue()
+        self.__manager = QueueManager(address=(SensorQueueConfig.HOSTNAME, \
+                                               SensorQueueConfig.PORT), \
+                                      authkey=SensorQueueConfig.AUTHKEY)
+        self.__connect()
+
+    def __connect (self):
+        """connects to the manager/server"""
+        self.__connected = False
+        while (not self.__connected):
+            try:
+                self.__manager.connect()
+                self.__queue = manager.get_queue()
+                self.__connected = True
+            except:
+                print "cannot connect"
+                sleep(SensorQueueConfig.RETRYDELAY)
+
 
     def read (self):
         """read from the queue"""
-        return pickle.loads(self.__queue.get())
+        if (self.__connected):
+            try:
+                return pickle.loads(self.__queue.get())
+            except:
+                print "something happened on read"
+                self.__connect()
+        else:
+            return None # TODO: raise exception
 
     def write (self, item):
         """write to the queue"""
-        self.__queue.put(pickle.dumps(item))
+        if (self.__connected):
+            try:
+                self.__queue.put_nowait(pickle.dumps(item))
+            except:
+                print "something happened on write"
+                self.__connect()
 
 # eof #
 
