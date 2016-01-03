@@ -1,12 +1,32 @@
 #!/usr/bin/python
 
 
+from SensorQueue import SensorQueueServer
 
-from multiprocessing.managers import BaseManager
-import Queue
-queue = Queue.Queue()
-class QueueManager(BaseManager): pass
-QueueManager.register('get_queue', callable=lambda:queue)
-m = QueueManager(address=('', 50000), authkey='abracadabra')
-s = m.get_server()
-s.serve_forever()
+
+###############################################################################
+# Exit ########################################################################
+def Exit():
+    """stuff to be done on exit"""
+    SensorServer.stop()
+    SensorServer.join()
+    print("Exit")
+    sys.exit()
+
+
+
+def _Exit(__s, __f):
+    """exit for signal handler"""
+    print("_Exit")
+    Exit()
+
+
+
+###############################################################################
+signal.signal(signal.SIGTERM, _Exit)
+
+
+
+SensorServer = SensorQueueServer()
+ServerServer.start()
+
