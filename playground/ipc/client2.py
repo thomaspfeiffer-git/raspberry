@@ -1,16 +1,10 @@
 #!/usr/bin/python
 
-from multiprocessing.managers import BaseManager
-import pickle
+from SensorQueue import SensorQueueClient
 
-
-class QueueManager(BaseManager): pass
-QueueManager.register('get_queue')
-m = QueueManager(address=('pia', 50000), authkey='abracadabra')
-m.connect()
-queue = m.get_queue()
+sq = SensorQueueClient()
 
 while (True):
-    sv = pickle.loads(queue.get())
+    sv = sq.read()
     sv.showContent()
 
