@@ -72,10 +72,11 @@ class SensorQueueClient (object):
         while (not self.__connected):
             try:
                 self.__manager.connect()
-                self.__queue = manager.get_queue()
+                self.__queue = self.__manager.get_queue()
                 self.__connected = True
+                Log("Connected to manager")
             except:
-                Log("Cannot connect to manager")
+                Log("Cannot connect to manager: %s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
                 sleep(SensorQueueConfig.RETRYDELAY)
 
 
@@ -85,7 +86,7 @@ class SensorQueueClient (object):
             try:
                 return pickle.loads(self.__queue.get())
             except:
-                Log("Cannot read from queue")
+                Log("Cannot read from queue: %s" % sys.exc_info()[0])
                 self.__connect()
         else:
             return None # TODO: raise exception
@@ -96,7 +97,7 @@ class SensorQueueClient (object):
             try:
                 self.__queue.put_nowait(pickle.dumps(item))
             except:
-                Log("Cannot write to queue")
+                Log("Cannot write to queue: %s" % sys.exc_info()[0])
                 self.__connect()
 
 # eof #
