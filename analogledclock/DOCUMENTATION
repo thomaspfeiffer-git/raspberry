@@ -30,7 +30,7 @@ Ausgaenge (LEDs) gesetzt (Array bits und Methode WriteBits()).
 Zwei Anmerkungen hierzu:
 1) Zwischen 20:00 Uhr und 7:00 Uhr leuchten die Stunden-LEDs nicht dauerhaft
    (das weare naemlich trotz Helligkeitsregelung zu hell).
-2) Das Code rund um die Variable bTest dient zur Generierung eines eigenen
+2) Der Code rund um die Variable bTest dient zur Generierung eines eigenen
    Bitmusters (20 LEDs leuchten wie ein sich fortbewegender Wurm). Das unterstuetzt
    beim richtigen Einbau der LEDs ins Holzgehaeuse.
 
