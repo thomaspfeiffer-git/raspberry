@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 import signal
+import traceback
+
 from SensorQueue import SensorQueueServer
 
 
@@ -9,11 +11,7 @@ from SensorQueue import SensorQueueServer
 def Exit():
     """stuff to be done on exit"""
     print("Exit")
-    SensorServer.stop()
-    SensorServer.join()
     sys.exit()
-
-
 
 def _Exit(__s, __f):
     """exit for signal handler"""
@@ -23,15 +21,13 @@ def _Exit(__s, __f):
 
 
 ###############################################################################
+###############################################################################
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
     SensorServer = SensorQueueServer()
 
     try:
         SensorServer.start()
-        print "server started"
-        while (True):
-            pass
 
     except KeyboardInterrupt:
         Exit()
