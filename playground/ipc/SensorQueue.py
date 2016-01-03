@@ -16,7 +16,11 @@ from multiprocessing.managers import BaseManager
 import pickle
 import Queue
 import sys
-from time import sleep
+from time import strftime, localtime, sleep
+
+
+def Log (logstr):
+    print strftime("%Y%m%d %H:%M:%S", localtime()), logstr
 
 
 class SensorQueueConfig (object):
@@ -71,7 +75,7 @@ class SensorQueueClient (object):
                 self.__queue = manager.get_queue()
                 self.__connected = True
             except:
-                print "cannot connect"
+                Log("Cannot connect to manager")
                 sleep(SensorQueueConfig.RETRYDELAY)
 
 
@@ -81,7 +85,7 @@ class SensorQueueClient (object):
             try:
                 return pickle.loads(self.__queue.get())
             except:
-                print "something happened on read"
+                Log("Cannot read from queue")
                 self.__connect()
         else:
             return None # TODO: raise exception
@@ -92,7 +96,7 @@ class SensorQueueClient (object):
             try:
                 self.__queue.put_nowait(pickle.dumps(item))
             except:
-                print "something happened on write"
+                Log("Cannot write to queue")
                 self.__connect()
 
 # eof #
