@@ -2,11 +2,8 @@
 #####################
 """bla"""
 
-import threading
-
 from multiprocessing.managers import BaseManager
 import Queue
-
 
 
 class SensorQueueConfig (object):
@@ -17,36 +14,21 @@ class SensorQueueConfig (object):
 
 class QueueManager(BaseManager): pass
 
-class SensorQueueServer (threading.Thread):
+class SensorQueueServer (object):
     def __init__ (self):
-        threading.Thread.__init__(self)    # TODO: use super(... ?
-
         self.__queue = Queue.Queue()
         QueueManager.register('get_queue', callable=lambda:self.__queue)
         m = QueueManager(address=('', SensorQueueConfig.PORT), authkey=SensorQueueConfig.AUTHKEY)
         self.__server = m.get_server()
 
-        self.__running = True
-
-    def run (self):
+    def start (self):
         print "server starting"
         self.__server.serve_forever()
-
-    def stop(self):
-        """stops thread"""
-        self.__running = False
-        self.__server.shutdown()
-#        self.__server.close()
-#        self.__server.join()
-        # TODO: delete queue
 
 
 class SensorQueueClient (object):
     def __init__ (self):
         pass
-
-
-
 
 # eof #
 
