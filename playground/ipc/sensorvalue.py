@@ -7,7 +7,7 @@ class SensorValue (object):
         self.__value = value
 
     def showContent (self):
-        print "Name:", self.__value
+        print "Name:", self.__name
         print "Kind:", self.__kind
         print "Value:", self.__value
 
