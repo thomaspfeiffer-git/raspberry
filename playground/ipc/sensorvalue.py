@@ -7,7 +7,7 @@ class SensorValue (object):
 
     def setValue (self, value):
         self.__value     = value
-        self.__timestamp = datetime.datetime.now
+        self.__timestamp = datetime.datetime.now()
 
     def showContent (self):
         print "Name:", self.__name
