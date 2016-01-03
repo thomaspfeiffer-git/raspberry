@@ -2,7 +2,6 @@
 #####################
 """bla"""
 
-
 import threading
 
 from multiprocessing.managers import BaseManager
@@ -30,11 +29,16 @@ class SensorQueueServer (threading.Thread):
         self.__running = True
 
     def run (self):
+        print "server starting"
         self.__server.serve_forever()
 
     def stop(self):
         """stops thread"""
         self.__running = False
+        self.__server.shutdown()
+#        self.__server.close()
+#        self.__server.join()
+        # TODO: delete queue
 
 
 class SensorQueueClient (object):
