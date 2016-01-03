@@ -3,6 +3,7 @@
 """bla"""
 
 from multiprocessing.managers import BaseManager
+import pickle
 import Queue
 
 
@@ -28,7 +29,16 @@ class SensorQueueServer (object):
 
 class SensorQueueClient (object):
     def __init__ (self):
-        pass
+        QueueManager.register('get_queue')
+        m = QueueManager(address=(SensorQueueConfig.HOSTNAME, SensorQueueConfig.PORT), authkey=SensorQueueConfig.AUTHKEY)
+        m.connect()
+        self.__queue = m.get_queue()
+
+    def read (self):
+        return pickle.loads(self.__queue.get())
+
+    def write (self, item):
+        self.__queue.put(pickle.dumps(item))
 
 # eof #
 
