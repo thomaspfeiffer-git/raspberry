@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-
+import signal
 from SensorQueue import SensorQueueServer
 
 
@@ -24,9 +24,22 @@ def _Exit(__s, __f):
 
 ###############################################################################
 signal.signal(signal.SIGTERM, _Exit)
-
-
-
 SensorServer = SensorQueueServer()
-ServerServer.start()
+
+try:
+    SensorServer.start()
+
+except KeyboardInterrupt:
+    Exit()
+
+except SystemExit:                  # Done in signal handler (method _Exit()) #
+    pass
+
+except:
+    print(traceback.print_exc())
+
+finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
+    pass
+
+### eof ###
 
