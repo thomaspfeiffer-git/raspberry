@@ -14,7 +14,7 @@ class SensorValue (object):
         print "Kind:", self.__kind
         print "Value:", self.__value
         print "Timestamp:", self.__timestamp
-        print "Timestamp:", datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        print "Timestamp:", datetime.datetime.fromtimestamp(self.__timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
 # eof
 
