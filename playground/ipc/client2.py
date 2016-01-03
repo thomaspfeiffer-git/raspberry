@@ -6,5 +6,5 @@ sq = SensorQueueClient()
 
 while (True):
     sv = sq.read()
-    sv.showContent()
+    print sv
 
