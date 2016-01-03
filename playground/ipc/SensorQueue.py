@@ -86,7 +86,7 @@ class SensorQueueClient (object):
             try:
                 return pickle.loads(self.__queue.get())
             except:
-                Log("Cannot read from queue: %s" % sys.exc_info()[0])
+                Log("Cannot read from queue: %s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
                 self.__connect()
         else:
             return None # TODO: raise exception
@@ -97,7 +97,7 @@ class SensorQueueClient (object):
             try:
                 self.__queue.put_nowait(pickle.dumps(item))
             except:
-                Log("Cannot write to queue: %s" % sys.exc_info()[0])
+                Log("Cannot write to queue: %s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
                 self.__connect()
 
 # eof #
