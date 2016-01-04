@@ -63,11 +63,11 @@ class SensorQueueClient (threading.Thread):
     """client class providing methodes for read from and write to the queue"""
     # TODO: expand documentation for threading and sensorvalue lock
     # TODO: Consider separation of read and write process
-    def __init__ (self, sensorvaluelock=None):
+    def __init__ (self):
         threading.Thread.__init__(self)
         self.__connected = False
         self.__queue     = None
-        self.__svl       = sensorvaluelock
+        self.__svl       = []
 
         QueueManager.register('get_queue')
         self.__manager = QueueManager(address=(SensorQueueConfig.HOSTNAME, \
@@ -91,14 +91,21 @@ class SensorQueueClient (threading.Thread):
                     (sys.exc_info()[0], sys.exc_info()[1]))
                 sleep(SensorQueueConfig.RETRYDELAY)
 
+    def register (self, sensorvaluelock):
+         self.__svl.append(sensorvaluelock) 
+
+    def unregister (self, sensorvaluelock):
+         self.__svl.remove(sensorvaluelock) # TODO: try/exception
 
     def run (self):
         """start thread. loop: send data to queue and sleep"""
         while self.__running:
-            with self.__svl.lock:
-                item = self.__svl.sensorvalue  # copy data from sensor
-            Log("in run: %s" % item)
-            self.write(item)                   # write data to queue
+            for sensor in self.__svl:
+                with sensor.lock:
+                    item = sensor.sensorvalue  # copy data from sensor
+                Log("in run: %s" % item)
+                self.write(item)                   # write data to queue
+
             for _ in range(SensorQueueConfig.SENDDELAY):
                 sleep (1)
                 if not self.__running:
