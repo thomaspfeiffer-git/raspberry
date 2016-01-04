@@ -14,4 +14,4 @@ while (True):
     sv.value = i
     sq.write(sv)
     i += 1
-    sleep(55)
+    sleep(25)
