@@ -97,6 +97,7 @@ class SensorQueueClient (object):
                 Log("Cannot read from queue: %s %s" % \
                     (sys.exc_info()[0], sys.exc_info()[1]))
                 self.__connect()
+            return "had an exception" # TODO: improve message
         else:
             return "not connected" # TODO: raise exception or do other usefull stuff
 
