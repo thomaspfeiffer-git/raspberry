@@ -46,13 +46,14 @@ def _Exit(__s, __f):
 ###############################################################################
 # Main ########################################################################
 def Main():
-    i = 0
-    sensor = Sensor(sv)
+    sensor1 = Sensor(sv1)
+    sensor2 = Sensor(sv2)
 
     while (True):
-        value = sensor.read()
-        Log("client1, value = sensor.read(): %s" % value)
-        i += 1
+        value = sensor1.read()
+        Log("client1, sensor1, value = sensor1.read(): %s" % value)
+        value = sensor2.read()
+        Log("client1, sensor2, value = sensor2.read(): %s" % value)
         sleep(25)
 
 
@@ -60,8 +61,11 @@ def Main():
 ###############################################################################
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
-    sv = SensorValueLock("TempWohnzimmer", "temp", Lock())
-    sq = SensorQueueClient(sv)
+    sv1 = SensorValueLock("TempWohnzimmer", "temp", Lock())
+    sv2 = SensorValueLock("HumiWohnzimmer", "humi", Lock())
+    sq = SensorQueueClient()
+    sq.register(sv1)
+    sq.register(sv2)
     sq.start()
 
     try:
