@@ -40,7 +40,7 @@ class SensorQueueServer (object):
         self.__queue = Queue.Queue()
         QueueManager.register('get_queue', callable=lambda:self.__queue)
         manager = QueueManager(address=('', SensorQueueConfig.PORT), \
-                         authkey=SensorQueueConfig.AUTHKEY)
+                               authkey=SensorQueueConfig.AUTHKEY)
         self.__server = manager.get_server()
 
     def start (self):
@@ -85,6 +85,8 @@ class SensorQueueClient (object):
         if (self.__connected):
             try:
                 return pickle.loads(self.__queue.get())
+            except Queue.Empty:
+                Log("Queue empty")
             except:
                 Log("Cannot read from queue: %s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
                 self.__connect()
@@ -96,6 +98,8 @@ class SensorQueueClient (object):
         if (self.__connected):
             try:
                 self.__queue.put_nowait(pickle.dumps(item))
+            except Queue.Full:
+                Log("Queue full")
             except:
                 Log("Cannot write to queue: %s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
                 self.__connect()
