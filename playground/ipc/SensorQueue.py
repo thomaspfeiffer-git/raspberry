@@ -31,6 +31,7 @@ class SensorQueueConfig (object):
     HOSTNAME   = "pia"
     AUTHKEY    = "finster war's, der mond schien helle"
     RETRYDELAY = 60
+    SENDDELAY  = 60
 
 
 class QueueManager(BaseManager): 
@@ -92,17 +93,19 @@ class SensorQueueClient (threading.Thread):
 
 
     def run (self):
+        """start thread. loop: send data to queue and sleep"""
         while (self.__running):
             with self.__svl.lock:
                 item = self.__svl.sensorvalue
             print "in run:", item
             self.write(item)
-            for _ in range(60):   # TODO: use constant
+            for _ in range(SensorQueueConfig.SENDDELAY):
                 sleep (1)
                 if not self.__running:
                     break
 
     def stop (self):
+        """stops the running thread"""
         self.__running = False
 
 
