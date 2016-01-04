@@ -45,15 +45,15 @@ class SensorQueueServer (object):
 
     def start (self):
         """starts the server"""
-        print "server starting"
+        Log("server starting")
         try:
             self.__server.serve_forever()
         except KeyboardInterrupt:
-            print "server stopped by ctrl-c"
+            Log("server stopped by ctrl-c")
         except SystemExit:
-            print "server stopped by sigkill"
+            Log("server stopped by sigkill")
 
-        print "server stopped (other reason)"
+        Log("server stopped (other reason)")
 
 
 class SensorQueueClient (object):
