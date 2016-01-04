@@ -17,6 +17,7 @@ import pickle
 import Queue
 import sys
 from time import strftime, localtime, sleep
+import threading
 
 
 def Log (logstr):
@@ -57,16 +58,23 @@ class SensorQueueServer (object):
         Log("server stopped (other reason)")
 
 
-class SensorQueueClient (object):
+class SensorQueueClient (threading.Thread):
     """client class providing methodes for read from and write to the queue"""
-    def __init__ (self):
+    # TODO: expand documentation for threading and sensorvalue lock
+    # TODO: Consider separation of read and write process
+    def __init__ (self, sensorvaluelock=None):
+        threading.Thread.__init__(self)
         self.__connected = False
         self.__queue     = None
+        self.__svl       = sensorvaluelock
+
         QueueManager.register('get_queue')
         self.__manager = QueueManager(address=(SensorQueueConfig.HOSTNAME, \
                                                SensorQueueConfig.PORT), \
                                       authkey=SensorQueueConfig.AUTHKEY)
         self.__connect()
+        self.__running = True
+
 
     def __connect (self):
         """connects to the manager/server"""
@@ -81,6 +89,18 @@ class SensorQueueClient (object):
                 Log("Cannot connect to manager: %s %s" % \
                     (sys.exc_info()[0], sys.exc_info()[1]))
                 sleep(SensorQueueConfig.RETRYDELAY)
+
+
+    def run (self):
+        while (self.__running):
+            with self.__svl.lock:
+                item = self.__svl.sensorvalue
+            print "in run:", item
+            self.write(item)
+            sleep (60)
+
+    def stop (self):
+        self.__running = False
 
 
     def read (self):
