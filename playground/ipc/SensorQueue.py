@@ -97,7 +97,10 @@ class SensorQueueClient (threading.Thread):
                 item = self.__svl.sensorvalue
             print "in run:", item
             self.write(item)
-            sleep (60)
+            for _ in range(60):   # TODO: use constant
+                sleep (1)
+                if not self.__running:
+                    break
 
     def stop (self):
         self.__running = False
