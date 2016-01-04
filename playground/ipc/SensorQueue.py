@@ -85,6 +85,9 @@ class SensorQueueClient (object):
         if (self.__connected):
             try:
                 return pickle.loads(self.__queue.get())
+            except KeyboardInterrupt:
+                Log("ctrl-c")
+                raise
             except Queue.Empty:
                 Log("Queue empty")
             except:
@@ -98,6 +101,9 @@ class SensorQueueClient (object):
         if (self.__connected):
             try:
                 self.__queue.put_nowait(pickle.dumps(item))
+            except KeyboardInterrupt:
+                Log("ctrl-c")
+                raise
             except Queue.Full:
                 Log("Queue full")
             except:
