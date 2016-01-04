@@ -30,5 +30,23 @@ class SensorValue (object):
                "Timestamp: %s" % self.__timestamp + "\n" + \
                "Timestamp: %s" % datetime.datetime.fromtimestamp(self.__timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
+
+
+class SensorValueLock (object):
+    def __init__ (self, name, kind, lock):
+        self.lock = lock
+        self.sensorvalue = SensorValue(name, kind)
+
+    @property
+    def value (self):
+        with self.lock:
+            return self.sensorvalue.value
+
+    @value.setter
+    def value (self, v):
+        with self.lock:
+             self.sensorvalue.value = v
+
+
 # eof
 
