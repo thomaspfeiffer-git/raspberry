@@ -20,6 +20,7 @@ from time import strftime, localtime, sleep
 
 
 def Log (logstr):
+    """improved log output"""
     print strftime("%Y%m%d %H:%M:%S", localtime()), logstr
 
 
@@ -60,6 +61,7 @@ class SensorQueueClient (object):
     """client class providing methodes for read from and write to the queue"""
     def __init__ (self):
         self.__connected = False
+        self.__queue     = None
         QueueManager.register('get_queue')
         self.__manager = QueueManager(address=(SensorQueueConfig.HOSTNAME, \
                                                SensorQueueConfig.PORT), \
@@ -76,7 +78,8 @@ class SensorQueueClient (object):
                 self.__connected = True
                 Log("Connected to manager")
             except:
-                Log("Cannot connect to manager: %s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
+                Log("Cannot connect to manager: %s %s" % \
+                    (sys.exc_info()[0], sys.exc_info()[1]))
                 sleep(SensorQueueConfig.RETRYDELAY)
 
 
@@ -91,7 +94,8 @@ class SensorQueueClient (object):
             except Queue.Empty:
                 Log("Queue empty")
             except:
-                Log("Cannot read from queue: %s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
+                Log("Cannot read from queue: %s %s" % \
+                    (sys.exc_info()[0], sys.exc_info()[1]))
                 self.__connect()
         else:
             return "not connected" # TODO: raise exception or do other usefull stuff
