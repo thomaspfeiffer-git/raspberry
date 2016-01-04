@@ -63,6 +63,8 @@ class SensorQueueClient (threading.Thread):
     """client class providing methodes for read from and write to the queue"""
     # TODO: expand documentation for threading and sensorvalue lock
     # TODO: Consider separation of read and write process
+    #       class SensorQueueClient_read
+    #       class SensorQueueClient_write
     def __init__ (self):
         threading.Thread.__init__(self)
         self.__connected = False
