@@ -111,7 +111,8 @@ class SensorQueueClient (object):
             except Queue.Full:
                 Log("Queue full")
             except:
-                Log("Cannot write to queue: %s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
+                Log("Cannot write to queue: %s %s" % \
+                    (sys.exc_info()[0], sys.exc_info()[1]))
                 self.__connect()
 
 # eof #
