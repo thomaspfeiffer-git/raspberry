@@ -94,11 +94,11 @@ class SensorQueueClient (threading.Thread):
 
     def run (self):
         """start thread. loop: send data to queue and sleep"""
-        while (self.__running):
+        while self.__running:
             with self.__svl.lock:
-                item = self.__svl.sensorvalue
-            print "in run:", item
-            self.write(item)
+                item = self.__svl.sensorvalue  # copy data from sensor
+            Log("in run: %s" % item)
+            self.write(item)                   # write data to queue
             for _ in range(SensorQueueConfig.SENDDELAY):
                 sleep (1)
                 if not self.__running:
@@ -107,7 +107,6 @@ class SensorQueueClient (threading.Thread):
     def stop (self):
         """stops the running thread"""
         self.__running = False
-
 
     def read (self):
         """read from the queue"""
