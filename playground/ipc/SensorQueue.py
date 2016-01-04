@@ -91,7 +91,7 @@ class SensorQueueClient (object):
                 Log("Cannot read from queue: %s %s" % (sys.exc_info()[0], sys.exc_info()[1]))
                 self.__connect()
         else:
-            return None # TODO: raise exception
+            return "not connected" # TODO: raise exception or do other usefull stuff
 
     def write (self, item):
         """write to the queue"""
