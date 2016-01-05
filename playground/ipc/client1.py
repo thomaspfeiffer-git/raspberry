@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import signal
+import socket
 import sys
 from time import strftime, localtime, sleep
 from threading import Lock
@@ -17,11 +18,12 @@ def Log (logstr):
 
 
 class Sensor (object):   # eg DS1820
-    def __init__ (self, sensorvalue=None):
+    def __init__ (self, value, sensorvalue=None):
+        self.__value = "%f@%s" % (value, socket.gethostname())
         self.__sv = sensorvalue
 
     def read (self):
-        value = 22.2
+        value = self.__value
         if self.__sv is not None:
             self.__sv.value = value 
         return value
@@ -46,8 +48,8 @@ def _Exit(__s, __f):
 ###############################################################################
 # Main ########################################################################
 def Main():
-    sensor1 = Sensor(sv1)
-    sensor2 = Sensor(sv2)
+    sensor1 = Sensor(17.0, sv1)
+    sensor2 = Sensor(45.3, sv2)
 
     while (True):
         value = sensor1.read()
