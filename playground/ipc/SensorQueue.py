@@ -59,50 +59,51 @@ class SensorQueueServer (object):
         Log("server stopped (other reason)")
 
 
-class SensorQueueClient (threading.Thread):
+class SensorQueueClient (object):
     """client class providing methodes for read from and write to the queue"""
     # TODO: expand documentation for threading and sensorvalue lock
-    # TODO: Consider separation of read and write process
-    #       class SensorQueueClient_read
-    #       class SensorQueueClient_write
     def __init__ (self):
-        threading.Thread.__init__(self)
-        self.__connected = False
-        self.__queue     = None
-        self.__svl       = []
+        self.connected = False
+        self.queue     = None
+        self.svl         = []
 
         QueueManager.register('get_queue')
         self.__manager = QueueManager(address=(SensorQueueConfig.HOSTNAME, \
                                                SensorQueueConfig.PORT), \
                                       authkey=SensorQueueConfig.AUTHKEY)
-        self.__connect()
-        self.__running = True
+        self.connect()
 
-
-    def __connect (self):
+    def connect (self):
         """connects to the manager/server"""
-        self.__connected = False
-        while (not self.__connected):
+        self.connected = False
+        while (not self.connected):
             try:
                 self.__manager.connect()
-                self.__queue = self.__manager.get_queue()
-                self.__connected = True
+                self.queue = self.__manager.get_queue()
+                self.connected = True
                 Log("Connected to manager")
             except:
                 Log("Cannot connect to manager: %s %s" % \
                     (sys.exc_info()[0], sys.exc_info()[1]))
                 sleep(SensorQueueConfig.RETRYDELAY)
 
+
+class SensorQueueClient_write (SensorQueueClient, threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        SensorQueueClient.__init__(self)
+        self.__running = True
+
     def register (self, sensorvaluelock):
-         self.__svl.append(sensorvaluelock) 
+         self.svl.append(sensorvaluelock) 
 
     def unregister (self, sensorvaluelock):
-         self.__svl.remove(sensorvaluelock) # TODO: try/exception
+         self.svl.remove(sensorvaluelock) # TODO: try/exception
 
     def run (self):
         """start thread. loop: send data to queue and sleep"""
         while self.__running:
-            for sensor in self.__svl:
+            for sensor in self.svl:
                 with sensor.lock:
                     item = sensor.sensorvalue  # copy data from sensor
                 Log("in run: %s" % item)
@@ -117,29 +118,11 @@ class SensorQueueClient (threading.Thread):
         """stops the running thread"""
         self.__running = False
 
-    def read (self):
-        """read from the queue"""
-        if (self.__connected):
-            try:
-                return pickle.loads(self.__queue.get())
-            except KeyboardInterrupt:
-                Log("ctrl-c")
-                raise
-            except Queue.Empty:
-                Log("Queue empty")
-            except:
-                Log("Cannot read from queue: %s %s" % \
-                    (sys.exc_info()[0], sys.exc_info()[1]))
-                self.__connect()
-            return "had an exception" # TODO: improve message
-        else:
-            return "not connected" # TODO: raise exception or do other usefull stuff
-
     def write (self, item):
         """write to the queue"""
-        if (self.__connected):
+        if (self.connected):
             try:
-                self.__queue.put_nowait(pickle.dumps(item))
+                self.queue.put_nowait(pickle.dumps(item))
             except KeyboardInterrupt:
                 Log("ctrl-c")
                 raise
@@ -148,7 +131,31 @@ class SensorQueueClient (threading.Thread):
             except:
                 Log("Cannot write to queue: %s %s" % \
                     (sys.exc_info()[0], sys.exc_info()[1]))
-                self.__connect()
+                self.connect()
+
+
+class SensorQueueClient_read (SensorQueueClient):
+    def __init__ (self):
+        SensorQueueClient.__init__(self)
+
+    def read (self):
+        """read from the queue"""
+        if (self.connected):
+            try:
+                return pickle.loads(self.queue.get())
+            except KeyboardInterrupt:
+                Log("ctrl-c")
+                raise
+            except Queue.Empty:
+                Log("Queue empty")
+            except:
+                Log("Cannot read from queue: %s %s" % \
+                    (sys.exc_info()[0], sys.exc_info()[1]))
+                self.connect()
+            return "had an exception" # TODO: improve message
+        else:
+            return "not connected" # TODO: raise exception or do other usefull stuff
+
 
 # eof #
 
