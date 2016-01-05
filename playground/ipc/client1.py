@@ -7,7 +7,7 @@ from time import strftime, localtime, sleep
 from threading import Lock
 import traceback
 
-from SensorQueue import SensorQueueClient
+from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValue, SensorValueLock
 
 
@@ -65,7 +65,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
     sv1 = SensorValueLock("TempWohnzimmer", "temp", Lock())
     sv2 = SensorValueLock("HumiWohnzimmer", "humi", Lock())
-    sq = SensorQueueClient()
+    sq = SensorQueueClient_write()
     sq.register(sv1)
     sq.register(sv2)
     sq.start()
