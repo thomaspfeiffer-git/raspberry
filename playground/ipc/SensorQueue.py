@@ -61,11 +61,9 @@ class SensorQueueServer (object):
 
 class SensorQueueClient (object):
     """client class providing methodes for read from and write to the queue"""
-    # TODO: expand documentation for threading and sensorvalue lock
     def __init__ (self):
         self.connected = False
         self.queue     = None
-        self.svl         = []
 
         QueueManager.register('get_queue')
         self.__manager = QueueManager(address=(SensorQueueConfig.HOSTNAME, \
@@ -89,25 +87,29 @@ class SensorQueueClient (object):
 
 
 class SensorQueueClient_write (SensorQueueClient, threading.Thread):
+    """write to queue as a thread"""
     def __init__ (self):
         threading.Thread.__init__(self)
         SensorQueueClient.__init__(self)
+        self.__svl     = []
         self.__running = True
 
     def register (self, sensorvaluelock):
-         self.svl.append(sensorvaluelock) 
+        """add another sensor"""
+        self.__svl.append(sensorvaluelock) 
 
     def unregister (self, sensorvaluelock):
-         self.svl.remove(sensorvaluelock) # TODO: try/exception
+        """remove sensor from list"""
+        self.__svl.remove(sensorvaluelock) # TODO: try/exception
 
     def run (self):
-        """start thread. loop: send data to queue and sleep"""
+        """start thread. loop: send data of all senssor to queue and sleep"""
         while self.__running:
-            for sensor in self.svl:
+            for sensor in self.__svl:
                 with sensor.lock:
                     item = sensor.sensorvalue  # copy data from sensor
                 Log("in run: %s" % item)
-                self.write(item)                   # write data to queue
+                self.write(item)               # write data to queue
 
             for _ in range(SensorQueueConfig.SENDDELAY):
                 sleep (1)
@@ -135,6 +137,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
 
 
 class SensorQueueClient_read (SensorQueueClient):
+    """read from queue"""
     def __init__ (self):
         SensorQueueClient.__init__(self)
 
