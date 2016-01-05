@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-from SensorQueue import SensorQueueClient
+from SensorQueue import SensorQueueClient_read
 
-sq = SensorQueueClient()
+sq = SensorQueueClient_read()
 
 while (True):
     sv = sq.read()
