@@ -56,7 +56,9 @@ def Main():
         Log("client1, sensor1, value = sensor1.read(): %s" % value)
         value = sensor2.read()
         Log("client1, sensor2, value = sensor2.read(): %s" % value)
-        sleep(25)
+
+        for _ in range(25):
+            sleep(1)
 
 
 ###############################################################################
