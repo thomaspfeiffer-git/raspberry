@@ -83,8 +83,11 @@ class SensorQueueClient (object):
             except:
                 Log("Cannot connect to manager: %s %s" % \
                     (sys.exc_info()[0], sys.exc_info()[1]))
-                sleep(SensorQueueConfig.RETRYDELAY)
-
+                if isinstance(self, SensorQueueClient_write):
+                    Log("bin in SensorQueueClient_write")
+                
+                for _ in range(SensorQueueConfig.RETRYDELAY):
+                    sleep (1)
 
 class SensorQueueClient_write (SensorQueueClient, threading.Thread):
     """write to queue as a thread"""
