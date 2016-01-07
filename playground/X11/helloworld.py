@@ -2,10 +2,11 @@
 
 
 import os
-import signal
-import sys
 import pygame
 from pygame.locals import *
+from random import randrange
+import signal
+import sys
 from time import sleep
 import traceback
 
@@ -38,26 +39,39 @@ def _Exit(__s, __f):
 
 
 ###############################################################################
+def randcolor():
+    color = (randrange(256), randrange(256), randrange(256))
+    return color
+
+###############################################################################
+def randcoor():
+    coor = (randrange(width)), randrange(height))
+    return coor
+
+###############################################################################
+def randdiameter():
+    dia = randrange(width)
+    return dia
+
+
+###############################################################################
 # Main ########################################################################
 def Main():
     pygame.init()
     pygame.display.set_caption("Hallo!")
     screen.fill((255,255,255))
 
-    pygame.draw.circle(screen, (255, 0, 0), (100, 100), 100)
-    pygame.draw.circle(screen, (0, 255, 0), (200, 200), 100)
-    pygame.draw.circle(screen, (0, 0, 255), (300, 300), 100)
-
-    pygame.display.update()
-
     while True:
+        pygame.draw.circle(screen, randcolor, randcoor, randdiameter)
+        pygame.display.update()
         event = pygame.event.wait()
         if ((event.type == KEYDOWN) or (event.type == QUIT)):
             Exit()
-        sleep(0.1)
+        sleep(1)
 
 
-
+###############################################################################
+###############################################################################
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
 
