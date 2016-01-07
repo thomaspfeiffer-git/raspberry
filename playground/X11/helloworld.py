@@ -1,17 +1,29 @@
 #!/usr/bin/python3
 
+
+import os
+import sys
 import pygame
-from pygame.local import *
-from time import sleep
+from pygame.locals import *
 
-(B, H) = (FULLSCREEN, FULLSCREEN)
+os.environ["SDL_FBDEV"] = "/dev/fb0"
+os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
+os.environ["SDL_MOUSEDRV"] = "TSLIB"
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 
+# Screen
+width  = 480
+height = 320
+size = (width, height)
+screen = pygame.display.set_mode(size, pygame.NOFRAME)
 pygame.init()
-surf = pygame.display.set_mode((B, H), 0, 32)
+
 
 pygame.display.set_caption("Hallo!")
+screen.fill((255,255,255))
 
-surf.fill((255,255,255))
+pygame.draw.circle(screen, (255, 0, 0), (100, 100), 100)
+
 pygame.display.update()
 
 
