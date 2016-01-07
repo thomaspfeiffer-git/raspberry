@@ -4,11 +4,12 @@
 import os
 import sys
 import pygame
+from time import sleep
 from pygame.locals import *
 
-os.environ["SDL_FBDEV"] = "/dev/fb0"
-os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
-os.environ["SDL_MOUSEDRV"] = "TSLIB"
+os.environ["SDL_FBDEV"] = "/dev/fb1"
+# os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
+# os.environ["SDL_MOUSEDRV"] = "TSLIB"
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Screen
@@ -23,6 +24,8 @@ pygame.display.set_caption("Hallo!")
 screen.fill((255,255,255))
 
 pygame.draw.circle(screen, (255, 0, 0), (100, 100), 100)
+pygame.draw.circle(screen, (0, 255, 0), (200, 200), 100)
+pygame.draw.circle(screen, (0, 0, 255), (300, 300), 100)
 
 pygame.display.update()
 
