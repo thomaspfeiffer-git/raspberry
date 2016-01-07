@@ -45,7 +45,7 @@ def randcolor():
 
 ###############################################################################
 def randcoor():
-    coor = (randrange(width)), randrange(height))
+    coor = (randrange(width), randrange(height))
     return coor
 
 ###############################################################################
@@ -62,7 +62,7 @@ def Main():
     screen.fill((255,255,255))
 
     while True:
-        pygame.draw.circle(screen, randcolor, randcoor, randdiameter)
+        pygame.draw.circle(screen, randcolor(), randcoor(), randdiameter())
         pygame.display.update()
         event = pygame.event.wait()
         if ((event.type == KEYDOWN) or (event.type == QUIT)):
