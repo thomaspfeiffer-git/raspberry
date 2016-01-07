@@ -50,7 +50,7 @@ def randcoor():
 
 ###############################################################################
 def randdiameter():
-    dia = randrange(width)
+    dia = randrange(width/5)
     return dia
 
 
@@ -64,10 +64,12 @@ def Main():
     while True:
         pygame.draw.circle(screen, randcolor(), randcoor(), randdiameter())
         pygame.display.update()
-        event = pygame.event.wait()
-        if ((event.type == KEYDOWN) or (event.type == QUIT)):
-            Exit()
-        sleep(1)
+
+        for event in pygame.event.get():
+           if event.type == QUIT:
+              Exit()
+
+        sleep(5)
 
 
 ###############################################################################
