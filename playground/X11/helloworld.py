@@ -4,7 +4,6 @@
 import os
 import pygame
 from pygame.locals import *
-from random import randrange
 import re
 import signal
 import string
@@ -14,8 +13,6 @@ import traceback
 
 
 os.environ["SDL_FBDEV"] = "/dev/fb1"
-# os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
-# os.environ["SDL_MOUSEDRV"] = "TSLIB"
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Screen
@@ -24,13 +21,18 @@ height   = 480
 fontsize       = int(height / 8)
 sep            = int(fontsize / 5)
 fontsize_small = int(fontsize / 2.4)
+fontsize_tiny  = int(fontsize / 3.4)
 
 screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
 
 class CONFIG:
     COLOR_BG   = (255, 255, 255)
     COLOR_DATE = (0, 0, 0)
+    COLOR_DESC = (0, 0, 0)
     COLOR_SEP  = (0, 0, 0)
+    COLOR_INDOOR  = (255, 0, 0)
+    COLOR_OUTDOOR = (0, 0, 255)
+
 
 DayOfWeek = {'0': 'Sonntag',    \
              '1': 'Montag',     \
@@ -56,22 +58,6 @@ def _Exit(__s, __f):
 
 
 ###############################################################################
-def randcolor():
-    color = (randrange(256), randrange(256), randrange(256))
-    return color
-
-###############################################################################
-def randcoor():
-    coor = (randrange(width), randrange(height))
-    return coor
-
-###############################################################################
-def randdiameter():
-    dia = randrange(width/5)
-    return dia
-
-
-###############################################################################
 # Main ########################################################################
 def Main():
     pygame.init()
@@ -81,20 +67,72 @@ def Main():
     font = pygame.font.SysFont('arial', fontsize)
     font_small = pygame.font.SysFont('arial', fontsize_small)
     font_small_bold = pygame.font.SysFont('arial', fontsize_small, True)
+    font_tiny       = pygame.font.SysFont('arial', fontsize_tiny)
 
-    text = font.render("-22,9 °C", True, (0, 0, 255), CONFIG.COLOR_BG)
-    screen.blit(text, (0, 0))
-    text = font.render("64,5 % rF", True, (0, 0, 255), CONFIG.COLOR_BG)
-    screen.blit(text, (0, fontsize))
+    h = 0
+    # Seperator Indoor #
+    pygame.draw.line(screen, CONFIG.COLOR_SEP, (3, 3), (width-3, 3), 2)
+    h += 8
+    valuestring = "Wohnzimmer:"
+    (_, _h) = font_tiny.size(valuestring)
+    text = font_tiny.render(valuestring, True, CONFIG.COLOR_DESC, CONFIG.COLOR_BG)
+    screen.blit(text, (3, 6))
+    h += _h
 
-    text = font.render("23,4 °C", True, (255, 0, 0), CONFIG.COLOR_BG)
-    screen.blit(text, (0, 2*fontsize+sep))
-    text = font.render("64,5 % rF", True, (255, 0, 0), CONFIG.COLOR_BG)
-    screen.blit(text, (0, 3*fontsize+sep))
+    valuestring = "-22,2 °C"
+    (_, _h) = font.size(valuestring)
+    text = font.render(valuestring, True, CONFIG.COLOR_INDOOR, CONFIG.COLOR_BG)
+    screen.blit(text, (3, h))
+    h += _h + 5
 
+    valuestring = "47,9 % rF"
+    (_, _h) = font.size(valuestring)
+    text = font.render(valuestring, True, CONFIG.COLOR_INDOOR, CONFIG.COLOR_BG)
+    screen.blit(text, (3, h))
+    h += _h + 5
+
+
+    # Seperator Outdoor #
+    h += sep
+    pygame.draw.line(screen, CONFIG.COLOR_SEP, (3, h), (width-3, h), 2)
+    h += 8
+    valuestring = "Draußen:"
+    (_, _h) = font_tiny.size(valuestring)
+    text = font_tiny.render(valuestring, True, CONFIG.COLOR_DESC, CONFIG.COLOR_BG)
+    screen.blit(text, (3, h))
+    h += _h
+    
+    valuestring = "-22,2 °C"
+    (_, _h) = font.size(valuestring)
+    text = font.render(valuestring, True, CONFIG.COLOR_OUTDOOR, CONFIG.COLOR_BG)
+    screen.blit(text, (3, h))
+    h += _h + 5
+
+    valuestring = "47,9 % rF"
+    (_, _h) = font.size(valuestring)
+    text = font.render(valuestring, True, CONFIG.COLOR_OUTDOOR, CONFIG.COLOR_BG)
+    screen.blit(text, (3, h))
+    h += _h + 5
+
+
+
+
+
+    # Seperator Date #
     pygame.draw.line(screen, CONFIG.COLOR_SEP, \
                              (3, height-2*fontsize_small-int(2.5*sep)), \
                              (width-3, height-2*fontsize_small-int(2.5*sep)), 2)
+
+#    text = font.render("-22,9 °C", True, (0, 0, 255), CONFIG.COLOR_BG)
+#    screen.blit(text, (0, 0))
+#    text = font.render("64,5 % rF", True, (0, 0, 255), CONFIG.COLOR_BG)
+#    screen.blit(text, (0, fontsize))
+
+#    text = font.render("23,4 °C", True, (255, 0, 0), CONFIG.COLOR_BG)
+#    screen.blit(text, (0, 2*fontsize+sep))
+#    text = font.render("64,5 % rF", True, (255, 0, 0), CONFIG.COLOR_BG)
+#    screen.blit(text, (0, 3*fontsize+sep))
+
 
     i = 0
     while True:
