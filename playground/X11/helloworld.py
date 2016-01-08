@@ -31,7 +31,14 @@ class CONFIG:
     COLOR_BG   = (255, 255, 255)
     COLOR_DATE = (0, 0, 0)
     COLOR_SEP  = (0, 0, 0)
-   
+
+DayOfWeek = {'0': 'Sonntag',    \
+             '1': 'Montag',     \
+             '2': 'Dienstag',   \
+             '3': 'Mittwoch',   \
+             '4': 'Donnerstag', \
+             '5': 'Freitag',    \
+             '6': 'Samstag'}
 
 
 ###############################################################################
@@ -73,6 +80,7 @@ def Main():
 
     font = pygame.font.SysFont('arial', fontsize)
     font_small = pygame.font.SysFont('arial', fontsize_small)
+    font_small_bold = pygame.font.SysFont('arial', fontsize_small, True)
 
     text = font.render("-22,9 °C", True, (0, 0, 255), CONFIG.COLOR_BG)
     screen.blit(text, (0, 0))
@@ -84,25 +92,27 @@ def Main():
     text = font.render("64,5 % rF", True, (255, 0, 0), CONFIG.COLOR_BG)
     screen.blit(text, (0, 3*fontsize+sep))
 
-    pygame.draw.line(screen, CONFIG.COLOR_SEP, (3, height-fontsize_small-int(1.5*sep)), \
-                                               (width-3, height-fontsize_small-int(1.5*sep)), 2)
+    pygame.draw.line(screen, CONFIG.COLOR_SEP, \
+                             (3, height-2*fontsize_small-int(2.5*sep)), \
+                             (width-3, height-2*fontsize_small-int(2.5*sep)), 2)
 
     i = 0
     while True:
         if (i >= 100):
             timestamp = localtime()
-            A = strftime("%a", timestamp)
+            A = DayOfWeek[strftime("%w", timestamp)]
             d = re.sub('^0', '', strftime("%d", timestamp))
             m = re.sub('^0', '', strftime("%m", timestamp))
             y = strftime("%Y", timestamp)
             datestr = "%s, %s. %s. %s" % (A, d, m, y)
+            (w, h) = font_small.size(datestr)
             text = font_small.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
-            screen.blit(text, (sep, height-fontsize_small-sep))
+            screen.blit(text, ((width-w)/2, height-2*fontsize_small-2*sep))
 
             datestr = strftime("%H:%M:%S", timestamp) 
-            text = font_small.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
-            (w, h) = font_small.size(datestr)
-            screen.blit(text, (width-w-sep, height-fontsize_small-sep))
+            (w, h) = font_small_bold.size(datestr)
+            text = font_small_bold.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
+            screen.blit(text, ((width-w)/2, height-fontsize_small-sep))
 
             pygame.display.update()
             i = 0
