@@ -61,6 +61,10 @@ def Main():
     pygame.display.set_caption("Hallo!")
     screen.fill((255,255,255))
 
+    font = pygame.font.SysFont('arial', 50)
+    text = font.render("Hallo, Welt", True, (0, 0, 200))
+    screen.blit(text, (100, 100))
+
     while True:
         pygame.draw.circle(screen, randcolor(), randcoor(), randdiameter())
         pygame.display.update()
@@ -69,7 +73,10 @@ def Main():
            if event.type == QUIT:
               Exit()
 
-        sleep(5)
+           if event.type == pygame.MOUSEBUTTONDOWN:
+              print "Mausklick"
+
+        pygame.time.sleep(5000)
 
 
 ###############################################################################
@@ -93,6 +100,4 @@ if __name__ == '__main__':
         pass
 
 # eof #
-
-
 
