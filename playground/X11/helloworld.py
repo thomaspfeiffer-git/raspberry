@@ -59,24 +59,28 @@ def randdiameter():
 def Main():
     pygame.init()
     pygame.display.set_caption("Hallo!")
-    screen.fill((255,255,255))
+    screen.fill((255, 255, 255))
 
     font = pygame.font.SysFont('arial', 50)
-    text = font.render("Hallo, Welt", True, (0, 0, 200))
+    text = font.render("Hallo, Welt", True, (0, 0, 255), (255, 255, 255))
     screen.blit(text, (100, 100))
 
+    i = 0
     while True:
-        pygame.draw.circle(screen, randcolor(), randcoor(), randdiameter())
-        pygame.display.update()
+        if (i >= 1000):
+            pygame.draw.circle(screen, randcolor(), randcoor(), randdiameter())
+            pygame.display.update()
+            i = 0
 
         for event in pygame.event.get():
-           if event.type == QUIT:
-              Exit()
+            if event.type == QUIT:
+                Exit()
 
-           if event.type == pygame.MOUSEBUTTONDOWN:
-              print "Mausklick"
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                print("Mausklick")
 
-        pygame.time.sleep(5000)
+        pygame.time.wait(1)
+        i += 1
 
 
 ###############################################################################
@@ -90,13 +94,13 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         Exit()
 
-    except SystemExit:                  # Done in signal handler (method _Exit()) #
+    except SystemExit:              # Done in signal handler (method _Exit()) #
         pass
 
     except:
         print(traceback.print_exc())
 
-    finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
+    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
         pass
 
 # eof #
