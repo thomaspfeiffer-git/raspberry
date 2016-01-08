@@ -5,9 +5,11 @@ import os
 import pygame
 from pygame.locals import *
 from random import randrange
+import re
 import signal
+import string
 import sys
-from time import sleep
+from time import strftime, localtime
 import traceback
 
 
@@ -17,11 +19,19 @@ os.environ["SDL_FBDEV"] = "/dev/fb1"
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 # Screen
-width  = 480
-height = 320
-size = (width, height)
-screen = pygame.display.set_mode(size, pygame.NOFRAME)
+width    = 320
+height   = 480
+fontsize       = int(height / 8)
+sep            = int(fontsize / 5)
+fontsize_small = int(fontsize / 2.4)
 
+screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
+
+class CONFIG:
+    COLOR_BG   = (255, 255, 255)
+    COLOR_DATE = (0, 0, 0)
+    COLOR_SEP  = (0, 0, 0)
+   
 
 
 ###############################################################################
@@ -58,17 +68,42 @@ def randdiameter():
 # Main ########################################################################
 def Main():
     pygame.init()
-    pygame.display.set_caption("Hallo!")
+    pygame.mouse.set_visible(False)
     screen.fill((255, 255, 255))
 
-    font = pygame.font.SysFont('arial', 50)
-    text = font.render("Hallo, Welt", True, (0, 0, 255), (255, 255, 255))
-    screen.blit(text, (100, 100))
+    font = pygame.font.SysFont('arial', fontsize)
+    font_small = pygame.font.SysFont('arial', fontsize_small)
+
+    text = font.render("-22,9 °C", True, (0, 0, 255), CONFIG.COLOR_BG)
+    screen.blit(text, (0, 0))
+    text = font.render("64,5 % rF", True, (0, 0, 255), CONFIG.COLOR_BG)
+    screen.blit(text, (0, fontsize))
+
+    text = font.render("23,4 °C", True, (255, 0, 0), CONFIG.COLOR_BG)
+    screen.blit(text, (0, 2*fontsize+sep))
+    text = font.render("64,5 % rF", True, (255, 0, 0), CONFIG.COLOR_BG)
+    screen.blit(text, (0, 3*fontsize+sep))
+
+    pygame.draw.line(screen, CONFIG.COLOR_SEP, (3, height-fontsize_small-int(1.5*sep)), \
+                                               (width-3, height-fontsize_small-int(1.5*sep)), 2)
 
     i = 0
     while True:
-        if (i >= 1000):
-            pygame.draw.circle(screen, randcolor(), randcoor(), randdiameter())
+        if (i >= 100):
+            timestamp = localtime()
+            A = strftime("%a", timestamp)
+            d = re.sub('^0', '', strftime("%d", timestamp))
+            m = re.sub('^0', '', strftime("%m", timestamp))
+            y = strftime("%Y", timestamp)
+            datestr = "%s, %s. %s. %s" % (A, d, m, y)
+            text = font_small.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
+            screen.blit(text, (sep, height-fontsize_small-sep))
+
+            datestr = strftime("%H:%M:%S", timestamp) 
+            text = font_small.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
+            (w, h) = font_small.size(datestr)
+            screen.blit(text, (width-w-sep, height-fontsize_small-sep))
+
             pygame.display.update()
             i = 0
 
