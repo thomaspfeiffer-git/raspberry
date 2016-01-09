@@ -3,7 +3,7 @@
 
 import os
 import pygame
-from pygame.locals import QUIT, MOUSEBUTTONDOWN
+from pygame.locals import QUIT
 import re
 import signal
 import sys
@@ -14,33 +14,44 @@ import traceback
 os.environ["SDL_FBDEV"] = "/dev/fb1"
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
-# Screen
-width    = 320
-height   = 480
-fontsize       = int(height / 8)
-sep            = int(fontsize / 5)
-fontsize_small = int(fontsize / 2.4)
-fontsize_tiny  = int(fontsize / 3.4)
 
 
 class CONFIG:
-    COLOR_BG       = (255, 255, 255)
-    COLOR_DATE     = (0, 0, 0)
-    COLOR_DESC     = (0, 0, 0)
-    COLOR_SEP      = (0, 0, 0)
-    COLOR_INDOOR   = (255, 0, 0)
-    COLOR_OUTDOOR  = (0, 0, 255)
-    COLOR_KIDSROOM = (0, 0xCC, 0xFF)
-    COLOR_TURTLE   = (0x08, 0x8A, 0x08)
+    """various config stuff"""
+    WIDTH          = 320 # Screen resolution
+    HEIGHT         = 480
+
+    FONTSIZE       = int(HEIGHT / 8)
+    FONTSIZE_SMALL = int(FONTSIZE / 2.4)
+    FONTSIZE_TINY  = int(FONTSIZE / 3.4)
+
+    MARGIN         = 3                 # Margin (pixels) from border
+    SEP_Y          = int(FONTSIZE / 5) # Pixels between different elements
+
+    class COLORS:
+        """definitions of colors"""
+        BACKGROUND = (255, 255, 255)
+        DATE       = (0, 0, 0)
+        DESC       = (0, 0, 0)
+        SEP        = (0, 0, 0)
+        INDOOR     = (255, 0, 0)
+        OUTDOOR    = (0, 0, 255)
+        KIDSROOM   = (0, 0xCC, 0xFF)
+        TURTLE     = (0x08, 0x8A, 0x08)
+
+    TIMETOFALLBACK = 10 # Wait 10 seconds until fallback to main screen
 
 
-DayOfWeek = {'0': 'Sonntag',    \
-             '1': 'Montag',     \
-             '2': 'Dienstag',   \
-             '3': 'Mittwoch',   \
-             '4': 'Donnerstag', \
-             '5': 'Freitag',    \
-             '6': 'Samstag'}
+class CONSTANTS:
+    """constant strings"""
+    DAYOFWEEK = {'0': 'Sonntag',    \
+                 '1': 'Montag',     \
+                 '2': 'Dienstag',   \
+                 '3': 'Mittwoch',   \
+                 '4': 'Donnerstag', \
+                 '5': 'Freitag',    \
+                 '6': 'Samstag'}
+
 
 
 ###############################################################################
@@ -61,32 +72,42 @@ def _Exit(__s, __f):
 ###############################################################################
 class Display (object):
     """all about displaying the various weather values on several screens"""
-    def __init__(self):
-        self.screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
-        self.screen.fill(CONFIG.COLOR_BG)
+    def __init__ (self):
+        self.screen = pygame.display.set_mode((CONFIG.WIDTH, CONFIG.HEIGHT), \
+                                               pygame.NOFRAME)
+        self.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        self.font            = pygame.font.SysFont('arial', fontsize)
-        self.font_small      = pygame.font.SysFont('arial', fontsize_small)
-        self.font_small_bold = pygame.font.SysFont('arial', fontsize_small, True)
-        self.font_tiny       = pygame.font.SysFont('arial', fontsize_tiny)
+        self.font            = pygame.font.SysFont('arial', \
+                                                   CONFIG.FONTSIZE)
+        self.font_small      = pygame.font.SysFont('arial', \
+                                                   CONFIG.FONTSIZE_SMALL)
+        self.font_small_bold = pygame.font.SysFont('arial', \
+                                                   CONFIG.FONTSIZE_SMALL, True)
+        self.font_tiny       = pygame.font.SysFont('arial', \
+                                                   CONFIG.FONTSIZE_TINY)
 
 
     def drawSeperatorLine (self, ypos):
-        pygame.draw.line(self.screen, CONFIG.COLOR_SEP, (3, ypos), (width-3, ypos), 2)
+        """draws a seperator line"""
+        pygame.draw.line(self.screen, CONFIG.COLORS.SEP, \
+                         (CONFIG.MARGIN, ypos),          \
+                         (CONFIG.WIDTH-CONFIG.MARGIN, ypos), 2)
         return ypos + 5
 
 
     def drawItem (self, valuestring, font, color, ypos):
+        """prints one line of text and increases ypos accordingly"""
         (_, _h) = font.size(valuestring)
-        text = font.render(valuestring, True, color, CONFIG.COLOR_BG)
-        self.screen.blit(text, (3, ypos))
+        text = font.render(valuestring, True, color, CONFIG.COLORS.BACKGROUND)
+        self.screen.blit(text, (CONFIG.MARGIN, ypos))
         ypos += _h
         return ypos
 
 
     def drawWeatherItem (self, room, value1, value2, value3, color, ypos):
+        """prints all weather data of one screen section"""
         ypos = self.drawSeperatorLine(ypos)
-        ypos = self.drawItem(room, self.font_tiny, CONFIG.COLOR_DESC, ypos)
+        ypos = self.drawItem(room, self.font_tiny, CONFIG.COLORS.DESC, ypos)
         if value1 is not None:
             ypos = self.drawItem(value1, self.font, color, ypos)
         if value2 is not None:
@@ -97,38 +118,48 @@ class Display (object):
 
 
     def drawSwitchValue (self, switch1, switch2, color, ypos):
+        """prints values of switches"""
         ypos = self.drawItem(switch1, self.font_small, color, ypos)
         ypos = self.drawItem(switch2, self.font_small, color, ypos)
         return ypos
 
 
     def drawTime (self):
-        self.drawSeperatorLine(height-2*fontsize_small-int(2.5*sep))
+        """prints date and time at bottom of display"""
+        self.drawSeperatorLine(CONFIG.HEIGHT- \
+                               2*CONFIG.FONTSIZE_SMALL-int(2.5*CONFIG.SEP_Y))
 
         timestamp = localtime()
-        A = DayOfWeek[strftime("%w", timestamp)]
+        A = CONSTANTS.DAYOFWEEK[strftime("%w", timestamp)]
         d = re.sub('^0', '', strftime("%d", timestamp))
         m = re.sub('^0', '', strftime("%m", timestamp))
         y = strftime("%Y", timestamp)
         datestr = "%s, %s. %s. %s" % (A, d, m, y)
-        (w, h) = self.font_small.size(datestr)
-        text = self.font_small.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
-        self.screen.blit(text, ((width-w)/2, height-2*fontsize_small-2*sep))
+        (w, _) = self.font_small.size(datestr)
+        text = self.font_small.render(datestr, True, \
+                                      CONFIG.COLORS.DATE, \
+                                      CONFIG.COLORS.BACKGROUND)
+        self.screen.blit(text, ((CONFIG.WIDTH-w)/2, \
+                         CONFIG.HEIGHT-2*CONFIG.FONTSIZE_SMALL-2*CONFIG.SEP_Y))
 
         datestr = strftime("%H:%M:%S", timestamp) 
-        (w, h) = self.font_small_bold.size(datestr)
-        text = self.font_small_bold.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
-        self.screen.blit(text, ((width-w)/2, height-fontsize_small-sep))
+        (w, _) = self.font_small_bold.size(datestr)
+        text = self.font_small_bold.render(datestr, True, \
+                                           CONFIG.COLORS.DATE, \
+                                           CONFIG.COLORS.BACKGROUND)
+        self.screen.blit(text, ((CONFIG.WIDTH-w)/2, \
+                         CONFIG.HEIGHT-CONFIG.FONTSIZE_SMALL-CONFIG.SEP_Y))
 
 
     def drawPicture (self, pathToPic, scale, ypos):
+        """loads, scales, and prints ad picture"""
         surface_picture = pygame.image.load(pathToPic)
         (pw, ph) = surface_picture.get_size()
         pw = int(pw*scale)
         ph = int(ph*scale)
         surface_picture = pygame.transform.smoothscale(surface_picture, (pw, ph))
         (pw, ph) = surface_picture.get_size()
-        self.screen.blit(surface_picture, (int((width-pw)/2), ypos))
+        self.screen.blit(surface_picture, (int((CONFIG.WIDTH-pw)/2), ypos))
 
 
 ###############################################################################
@@ -136,15 +167,18 @@ class Display (object):
 class Screens (object):
     """manage various screens changed by a touching the touchscreen"""
     def __init__(self, display):
-        self.display   = display
-        self.screenid  = 1
-        self.__screens = {1: self.Screen1, \
+        self.display    = display
+        self.__screenid = 1
+        self.__screens  = {1: self.Screen1, \
                           2: self.Screen2, \
                           3: self.Screen3}
 
+
     @property
     def screenid (self):
+        """getter for screenid"""
         return self.__screenid
+
 
     @screenid.setter
     def screenid (self, sid):
@@ -156,59 +190,64 @@ class Screens (object):
         else:
             self.__screenid = sid
 
+
     def Screen (self):
+        """calls Screen<n>() whereat n == screenid"""
         self.__screens[self.screenid]()
+
 
     def Screen1 (self):
         """living room and outdoor"""
-        h = 3
-        self.display.screen.fill(CONFIG.COLOR_BG)
+        ypos = CONFIG.MARGIN 
+        self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         v1 = "-33,3 °C"
         v2 = "67,2 % rF"
-        h = self.display.drawWeatherItem("Wohnzimmer:", \
-                                         v1, v2, None,  \
-                                         CONFIG.COLOR_INDOOR, h)
-        h += sep
+        ypos = self.display.drawWeatherItem("Wohnzimmer:", \
+                                            v1, v2, None,  \
+                                            CONFIG.COLORS.INDOOR, ypos)
+        ypos += CONFIG.SEP_Y
 
         v1 = "17,9 °C"
         v2 = "45,2 % rF"
         v3 = "1021 hPa"
-        h  = self.display.drawWeatherItem("Draußen:", \
-                                          v1, v2, v3, \
-                                          CONFIG.COLOR_OUTDOOR, h)
-        h += sep
+        ypos  = self.display.drawWeatherItem("Draußen:", \
+                                             v1, v2, v3, \
+                                             CONFIG.COLORS.OUTDOOR, ypos)
+        ypos += CONFIG.SEP_Y
         self.display.drawTime()
+
 
     def Screen2 (self):
         """kid's room"""
-        h = 3
-        self.display.screen.fill(CONFIG.COLOR_BG)
+        ypos = CONFIG.MARGIN 
+        self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         v1 = "-22,2 °C"
         v2 = "99,9 % rF"
-        h = self.display.drawWeatherItem("Kinderzimmer:", \
-                                         v1, v2, None,    \
-                                         CONFIG.COLOR_KIDSROOM, h)
-        h += sep
-        self.display.drawPicture(os.path.join('data', 'child.png'), 0.8, h)
+        ypos = self.display.drawWeatherItem("Kinderzimmer:", \
+                                            v1, v2, None,    \
+                                            CONFIG.COLORS.KIDSROOM, ypos)
+        ypos += CONFIG.SEP_Y
+        self.display.drawPicture(os.path.join('data', 'child.png'), 0.8, ypos)
         self.display.drawTime()
+
 
     def Screen3 (self):
         """turtle's compound"""
-        h = 3
-        self.display.screen.fill(CONFIG.COLOR_BG)
+        ypos = CONFIG.MARGIN 
+        self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         v1 = "-13,3 °C"
         v2 = "100,0 % rF"
         v3 = "Heizung: ein"
         v4 = "Beleuchtung: aus"
-        h = self.display.drawWeatherItem("Gehege Donut:", \
-                                         v1, v2, None,    \
-                                         CONFIG.COLOR_TURTLE, h)
-        h = self.display.drawSwitchValue(v3, v4, CONFIG.COLOR_TURTLE, h)
-        h += sep
-        self.display.drawPicture(os.path.join('data', 'turtle.png'), 0.4, h)
+        ypos = self.display.drawWeatherItem("Gehege Donut:", \
+                                            v1, v2, None,    \
+                                            CONFIG.COLORS.TURTLE, ypos)
+        ypos = self.display.drawSwitchValue(v3, v4, CONFIG.COLORS.TURTLE, ypos)
+        ypos += CONFIG.SEP_Y
+        self.display.drawPicture(os.path.join('data', 'turtle.png'), 0.4, ypos)
         self.display.drawTime()
 
 
@@ -237,7 +276,7 @@ def Main():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 screens.screenid += 1
-                timestamp = time() + 10
+                timestamp = time() + CONFIG.TIMETOFALLBACK
 
         pygame.time.delay(50)
         i += 1
