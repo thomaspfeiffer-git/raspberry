@@ -85,6 +85,26 @@ class Display (object):
         return ypos
 
 
+    def drawTime (self):
+        self.drawSeperatorLine(height-2*fontsize_small-int(2.5*sep))
+
+        timestamp = localtime()
+        A = DayOfWeek[strftime("%w", timestamp)]
+        d = re.sub('^0', '', strftime("%d", timestamp))
+        m = re.sub('^0', '', strftime("%m", timestamp))
+        y = strftime("%Y", timestamp)
+        datestr = "%s, %s. %s. %s" % (A, d, m, y)
+        (w, h) = self.font_small.size(datestr)
+        text = self.font_small.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
+        self.screen.blit(text, ((width-w)/2, height-2*fontsize_small-2*sep))
+
+        datestr = strftime("%H:%M:%S", timestamp) 
+        (w, h) = self.font_small_bold.size(datestr)
+        text = self.font_small_bold.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
+        self.screen.blit(text, ((width-w)/2, height-fontsize_small-sep))
+
+
+
 ###############################################################################
 # Main ########################################################################
 def Main():
@@ -92,12 +112,6 @@ def Main():
     pygame.mouse.set_visible(False)
 
     display = Display()
-
-    # Seperator Date #
-#    pygame.draw.line(screen, CONFIG.COLOR_SEP, \
-#                             (3, height-2*fontsize_small-int(2.5*sep)), \
-#                             (width-3, height-2*fontsize_small-int(2.5*sep)), 2)
-
 
     i = 0
     while True:
@@ -114,21 +128,7 @@ def Main():
             h  = display.drawWeatherItem("Draußen:", v1, v2, CONFIG.COLOR_OUTDOOR, h)
             h += sep
 
-
-#            timestamp = localtime()
-#            A = DayOfWeek[strftime("%w", timestamp)]
-#            d = re.sub('^0', '', strftime("%d", timestamp))
-#            m = re.sub('^0', '', strftime("%m", timestamp))
-#            y = strftime("%Y", timestamp)
-#            datestr = "%s, %s. %s. %s" % (A, d, m, y)
-#            (w, h) = font_small.size(datestr)
-#            text = font_small.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
-#            screen.blit(text, ((width-w)/2, height-2*fontsize_small-2*sep))
-
-#            datestr = strftime("%H:%M:%S", timestamp) 
-#            (w, h) = font_small_bold.size(datestr)
-#            text = font_small_bold.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
-#            screen.blit(text, ((width-w)/2, height-fontsize_small-sep))
+            display.drawTime()
 
             pygame.display.update()
             i = 0
@@ -138,7 +138,7 @@ def Main():
                 Exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                print("Mausklick")
+                pass
 
         pygame.time.wait(1)
         i += 1
