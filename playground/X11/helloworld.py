@@ -23,7 +23,6 @@ sep            = int(fontsize / 5)
 fontsize_small = int(fontsize / 2.4)
 fontsize_tiny  = int(fontsize / 3.4)
 
-screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
 
 class CONFIG:
     COLOR_BG   = (255, 255, 255)
@@ -57,100 +56,89 @@ def _Exit(__s, __f):
     Exit()
 
 
+class Display (object):
+    def __init__(self):
+        self.screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
+        self.screen.fill((255, 255, 255))
+
+        self.font = pygame.font.SysFont('arial', fontsize)
+        self.font_small = pygame.font.SysFont('arial', fontsize_small)
+        self.font_small_bold = pygame.font.SysFont('arial', fontsize_small, True)
+        self.font_tiny       = pygame.font.SysFont('arial', fontsize_tiny)
+
+
+    def drawSeperatorLine (self, ypos):
+        pygame.draw.line(self.screen, CONFIG.COLOR_SEP, (3, ypos), (width-3, ypos), 2)
+        return ypos + 5
+
+    def drawWeatherItem (self, room, value1, value2, color, height):
+        valuestring = room
+        (_, _h) = self.font_tiny.size(valuestring)
+        text = self.font_tiny.render(valuestring, True, CONFIG.COLOR_DESC, CONFIG.COLOR_BG)
+        self.screen.blit(text, (3, height))
+        height += _h
+
+        valuestring = value1
+        (_, _h) = self.font.size(valuestring)
+        text = self.font.render(valuestring, True, color, CONFIG.COLOR_BG)
+        self.screen.blit(text, (3, height))
+        height += _h + 5
+
+        valuestring = value2
+        (_, _h) = self.font.size(valuestring)
+        text = self.font.render(valuestring, True, color, CONFIG.COLOR_BG)
+        self.screen.blit(text, (3, height))
+        height += _h + 5
+
+        return height
+
+
 ###############################################################################
 # Main ########################################################################
 def Main():
     pygame.init()
     pygame.mouse.set_visible(False)
-    screen.fill((255, 255, 255))
 
-    font = pygame.font.SysFont('arial', fontsize)
-    font_small = pygame.font.SysFont('arial', fontsize_small)
-    font_small_bold = pygame.font.SysFont('arial', fontsize_small, True)
-    font_tiny       = pygame.font.SysFont('arial', fontsize_tiny)
-
-    h = 0
-    # Seperator Indoor #
-    pygame.draw.line(screen, CONFIG.COLOR_SEP, (3, 3), (width-3, 3), 2)
-    h += 8
-    valuestring = "Wohnzimmer:"
-    (_, _h) = font_tiny.size(valuestring)
-    text = font_tiny.render(valuestring, True, CONFIG.COLOR_DESC, CONFIG.COLOR_BG)
-    screen.blit(text, (3, 6))
-    h += _h
-
-    valuestring = "-22,2 °C"
-    (_, _h) = font.size(valuestring)
-    text = font.render(valuestring, True, CONFIG.COLOR_INDOOR, CONFIG.COLOR_BG)
-    screen.blit(text, (3, h))
-    h += _h + 5
-
-    valuestring = "47,9 % rF"
-    (_, _h) = font.size(valuestring)
-    text = font.render(valuestring, True, CONFIG.COLOR_INDOOR, CONFIG.COLOR_BG)
-    screen.blit(text, (3, h))
-    h += _h + 5
-
-
-    # Seperator Outdoor #
-    h += sep
-    pygame.draw.line(screen, CONFIG.COLOR_SEP, (3, h), (width-3, h), 2)
-    h += 8
-    valuestring = "Draußen:"
-    (_, _h) = font_tiny.size(valuestring)
-    text = font_tiny.render(valuestring, True, CONFIG.COLOR_DESC, CONFIG.COLOR_BG)
-    screen.blit(text, (3, h))
-    h += _h
-    
-    valuestring = "-22,2 °C"
-    (_, _h) = font.size(valuestring)
-    text = font.render(valuestring, True, CONFIG.COLOR_OUTDOOR, CONFIG.COLOR_BG)
-    screen.blit(text, (3, h))
-    h += _h + 5
-
-    valuestring = "47,9 % rF"
-    (_, _h) = font.size(valuestring)
-    text = font.render(valuestring, True, CONFIG.COLOR_OUTDOOR, CONFIG.COLOR_BG)
-    screen.blit(text, (3, h))
-    h += _h + 5
-
-
-
-
+    display = Display()
 
     # Seperator Date #
-    pygame.draw.line(screen, CONFIG.COLOR_SEP, \
-                             (3, height-2*fontsize_small-int(2.5*sep)), \
-                             (width-3, height-2*fontsize_small-int(2.5*sep)), 2)
-
-#    text = font.render("-22,9 °C", True, (0, 0, 255), CONFIG.COLOR_BG)
-#    screen.blit(text, (0, 0))
-#    text = font.render("64,5 % rF", True, (0, 0, 255), CONFIG.COLOR_BG)
-#    screen.blit(text, (0, fontsize))
-
-#    text = font.render("23,4 °C", True, (255, 0, 0), CONFIG.COLOR_BG)
-#    screen.blit(text, (0, 2*fontsize+sep))
-#    text = font.render("64,5 % rF", True, (255, 0, 0), CONFIG.COLOR_BG)
-#    screen.blit(text, (0, 3*fontsize+sep))
+#    pygame.draw.line(screen, CONFIG.COLOR_SEP, \
+#                             (3, height-2*fontsize_small-int(2.5*sep)), \
+#                             (width-3, height-2*fontsize_small-int(2.5*sep)), 2)
 
 
     i = 0
     while True:
         if (i >= 100):
-            timestamp = localtime()
-            A = DayOfWeek[strftime("%w", timestamp)]
-            d = re.sub('^0', '', strftime("%d", timestamp))
-            m = re.sub('^0', '', strftime("%m", timestamp))
-            y = strftime("%Y", timestamp)
-            datestr = "%s, %s. %s. %s" % (A, d, m, y)
-            (w, h) = font_small.size(datestr)
-            text = font_small.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
-            screen.blit(text, ((width-w)/2, height-2*fontsize_small-2*sep))
+            h = 3
 
-            datestr = strftime("%H:%M:%S", timestamp) 
-            (w, h) = font_small_bold.size(datestr)
-            text = font_small_bold.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
-            screen.blit(text, ((width-w)/2, height-fontsize_small-sep))
+            h = display.drawSeperatorLine(h)
+            v1 = "-33,3 °C"
+            v2 = "67,2 % rF"
+            h = display.drawWeatherItem("Wohnzimmer:", v1, v2, CONFIG.COLOR_INDOOR, h)
+            h += sep
+
+            h = display.drawSeperatorLine(h)
+            v1 = "17,9 °C"
+            v2 = "45,2 % rF"
+            h  = display.drawWeatherItem("Draußen:", v1, v2, CONFIG.COLOR_OUTDOOR, h)
+            h += sep
+
+
+#            timestamp = localtime()
+#            A = DayOfWeek[strftime("%w", timestamp)]
+#            d = re.sub('^0', '', strftime("%d", timestamp))
+#            m = re.sub('^0', '', strftime("%m", timestamp))
+#            y = strftime("%Y", timestamp)
+#            datestr = "%s, %s. %s. %s" % (A, d, m, y)
+#            (w, h) = font_small.size(datestr)
+#            text = font_small.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
+#            screen.blit(text, ((width-w)/2, height-2*fontsize_small-2*sep))
+
+#            datestr = strftime("%H:%M:%S", timestamp) 
+#            (w, h) = font_small_bold.size(datestr)
+#            text = font_small_bold.render(datestr, True, CONFIG.COLOR_DATE, CONFIG.COLOR_BG)
+#            screen.blit(text, ((width-w)/2, height-fontsize_small-sep))
 
             pygame.display.update()
             i = 0
