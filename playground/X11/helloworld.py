@@ -8,7 +8,7 @@ import re
 import signal
 import string
 import sys
-from time import strftime, localtime
+from time import strftime, localtime, sleep
 import traceback
 
 
@@ -29,8 +29,9 @@ class CONFIG:
     COLOR_DATE = (0, 0, 0)
     COLOR_DESC = (0, 0, 0)
     COLOR_SEP  = (0, 0, 0)
-    COLOR_INDOOR  = (255, 0, 0)
-    COLOR_OUTDOOR = (0, 0, 255)
+    COLOR_INDOOR   = (255, 0, 0)
+    COLOR_OUTDOOR  = (0, 0, 255)
+    COLOR_KIDSROOM = (0, 255, 0)
 
 
 DayOfWeek = {'0': 'Sonntag',    \
@@ -56,10 +57,13 @@ def _Exit(__s, __f):
     Exit()
 
 
+###############################################################################
+###############################################################################
 class Display (object):
+    """all about displaying the various weather values on several screens"""
     def __init__(self):
         self.screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
-        self.screen.fill((255, 255, 255))
+        self.screen.fill(CONFIG.COLOR_BG)
 
         self.font = pygame.font.SysFont('arial', fontsize)
         self.font_small = pygame.font.SysFont('arial', fontsize_small)
@@ -77,11 +81,15 @@ class Display (object):
         ypos += _h
         return ypos
 
-    def drawWeatherItem (self, room, value1, value2, color, ypos):
+    def drawWeatherItem (self, room, value1, value2, value3, color, ypos):
         ypos = self.drawSeperatorLine(ypos)
         ypos = self.drawItem(room, self.font_tiny, CONFIG.COLOR_DESC, ypos)
-        ypos = self.drawItem(value1, self.font, color, ypos)
-        ypos = self.drawItem(value2, self.font, color, ypos)
+        if value1 is not None:
+            ypos = self.drawItem(value1, self.font, color, ypos)
+        if value2 is not None:
+            ypos = self.drawItem(value2, self.font, color, ypos)
+        if value3 is not None:
+            ypos = self.drawItem(value3, self.font, color, ypos)
         return ypos
 
 
@@ -104,6 +112,74 @@ class Display (object):
         self.screen.blit(text, ((width-w)/2, height-fontsize_small-sep))
 
 
+###############################################################################
+###############################################################################
+class Screen (object):
+    """manage various screens changed by a touching the touchscreen"""
+    def __init__(self, display):
+        self.display   = display
+        self.screenid  = 1
+        self.__screens = {1: self.Screen1, \
+                          2: self.Screen2, \
+                          3: self.Screen3}
+
+    @property
+    def screenid (self):
+        return self.__screenid
+
+    @screenid.setter
+    def screenid (self, sid):
+        """add +1 to screenid whenever the touchscreen has been touched"""
+        if (sid <= 1):
+            self.__screenid = 1
+        elif (sid > len(self.__screens)):
+            self.__screenid = 1
+        else:
+            self.__screenid = sid
+
+    def Screen (self):
+        self.__screens[self.screenid]()
+
+    def Screen1 (self):
+        h = 3
+        self.display.screen.fill(CONFIG.COLOR_BG)
+
+        v1 = "-33,3 °C"
+        v2 = "67,2 % rF"
+        h = self.display.drawWeatherItem("Wohnzimmer:", v1, v2, None, CONFIG.COLOR_INDOOR, h)
+        h += sep
+
+        v1 = "17,9 °C"
+        v2 = "45,2 % rF"
+        v3 = "1021 hPa"
+        h  = self.display.drawWeatherItem("Draußen:", v1, v2, v3, CONFIG.COLOR_OUTDOOR, h)
+        h += sep
+
+        self.display.drawTime()
+
+    def Screen2 (self):
+        h = 3
+        self.display.screen.fill(CONFIG.COLOR_BG)
+
+        v1 = "-22,2 °C"
+        v2 = "99,9 % rF"
+        h = self.display.drawWeatherItem("Kinderzimmer:", v1, v2, None, CONFIG.COLOR_KIDSROOM, h)
+        h += sep
+
+        surface_picture = pygame.image.load(os.path.join('data', 'child.png')).convert()
+        (pw, ph) = surface_picture.get_size()
+        pw = int(pw*0.8)
+        ph = int(ph*0.8)
+        surface_picture = pygame.transform.scale(surface_picture, (pw, ph))
+        (pw, ph) = surface_picture.get_size()
+        self.display.screen.blit(surface_picture, (int((width-pw)/2),h))
+
+        self.display.drawTime()
+
+    def Screen3 (self):
+        self.display.screen.fill(CONFIG.COLOR_BG)
+        self.display.drawTime()
+
 
 ###############################################################################
 # Main ########################################################################
@@ -112,24 +188,12 @@ def Main():
     pygame.mouse.set_visible(False)
 
     display = Display()
+    screens = Screen(display)
 
     i = 0
     while True:
-        if (i >= 100):
-            h = 3
-
-            v1 = "-33,3 °C"
-            v2 = "67,2 % rF"
-            h = display.drawWeatherItem("Wohnzimmer:", v1, v2, CONFIG.COLOR_INDOOR, h)
-            h += sep
-
-            v1 = "17,9 °C"
-            v2 = "45,2 % rF"
-            h  = display.drawWeatherItem("Draußen:", v1, v2, CONFIG.COLOR_OUTDOOR, h)
-            h += sep
-
-            display.drawTime()
-
+        if (i >= 10):
+            screens.Screen()
             pygame.display.update()
             i = 0
 
@@ -138,9 +202,10 @@ def Main():
                 Exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pass
+                screens.screenid += 1
 
-        pygame.time.wait(1)
+        # pygame.time.delay(100)
+        sleep(10)
         i += 1
 
 
