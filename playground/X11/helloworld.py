@@ -141,6 +141,7 @@ class Screen (object):
         self.__screens[self.screenid]()
 
     def Screen1 (self):
+        """living room and outdoor"""
         h = 3
         self.display.screen.fill(CONFIG.COLOR_BG)
 
@@ -158,6 +159,7 @@ class Screen (object):
         self.display.drawTime()
 
     def Screen2 (self):
+        """kid's room"""
         h = 3
         self.display.screen.fill(CONFIG.COLOR_BG)
 
@@ -172,11 +174,12 @@ class Screen (object):
         ph = int(ph*0.8)
         surface_picture = pygame.transform.scale(surface_picture, (pw, ph))
         (pw, ph) = surface_picture.get_size()
-        self.display.screen.blit(surface_picture, (int((width-pw)/2),h))
+        self.display.screen.blit(surface_picture, (int((width-pw)/2), h))
 
         self.display.drawTime()
 
     def Screen3 (self):
+        """turtle's compound"""
         self.display.screen.fill(CONFIG.COLOR_BG)
         self.display.drawTime()
 
@@ -204,8 +207,7 @@ def Main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 screens.screenid += 1
 
-        # pygame.time.delay(100)
-        sleep(10)
+        pygame.time.delay(50)
         i += 1
 
 
