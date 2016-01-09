@@ -33,13 +33,13 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         Exit()
 
-    except SystemExit:                  # Done in signal handler (method _Exit()) #
+    except SystemExit:               # Done in signal handler (method _Exit()) #
         pass
 
     except:
         print(traceback.print_exc())
 
-    finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
+    finally:     # All cleanup is done in KeyboardInterrupt or signal handler. #
         pass
 
 ### eof ###
