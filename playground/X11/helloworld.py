@@ -66,7 +66,6 @@ class Display (object):
         self.font_small_bold = pygame.font.SysFont('arial', fontsize_small, True)
         self.font_tiny       = pygame.font.SysFont('arial', fontsize_tiny)
 
-
     def drawSeperatorLine (self, ypos):
         pygame.draw.line(self.screen, CONFIG.COLOR_SEP, (3, ypos), (width-3, ypos), 2)
         return ypos + 5
@@ -78,8 +77,8 @@ class Display (object):
         ypos += _h
         return ypos
 
-
     def drawWeatherItem (self, room, value1, value2, color, ypos):
+        ypos = self.drawSeperatorLine(ypos)
         ypos = self.drawItem(room, self.font_tiny, CONFIG.COLOR_DESC, ypos)
         ypos = self.drawItem(value1, self.font, color, ypos)
         ypos = self.drawItem(value2, self.font, color, ypos)
@@ -105,13 +104,11 @@ def Main():
         if (i >= 100):
             h = 3
 
-            h = display.drawSeperatorLine(h)
             v1 = "-33,3 °C"
             v2 = "67,2 % rF"
             h = display.drawWeatherItem("Wohnzimmer:", v1, v2, CONFIG.COLOR_INDOOR, h)
             h += sep
 
-            h = display.drawSeperatorLine(h)
             v1 = "17,9 °C"
             v2 = "45,2 % rF"
             h  = display.drawWeatherItem("Draußen:", v1, v2, CONFIG.COLOR_OUTDOOR, h)
