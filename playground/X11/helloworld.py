@@ -8,7 +8,7 @@ import re
 import signal
 import string
 import sys
-from time import strftime, localtime, sleep
+from time import strftime, localtime, sleep, time
 import traceback
 
 
@@ -193,9 +193,12 @@ def Main():
     display = Display()
     screens = Screen(display)
 
-    i = 0
+    i = timestamp = 0
     while True:
         if (i >= 10):
+            if (time() >= timestamp):
+                screens.screenid = 1
+
             screens.Screen()
             pygame.display.update()
             i = 0
@@ -206,6 +209,7 @@ def Main():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 screens.screenid += 1
+                timestamp = time() + 10
 
         pygame.time.delay(50)
         i += 1
