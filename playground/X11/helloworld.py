@@ -1,14 +1,13 @@
 #!/usr/bin/python3
-
+"""playground for pygame and a cool weather station"""
 
 import os
 import pygame
-from pygame.locals import *
+from pygame.locals import QUIT, MOUSEBUTTONDOWN
 import re
 import signal
-import string
 import sys
-from time import strftime, localtime, sleep, time
+from time import strftime, localtime, time
 import traceback
 
 
@@ -25,13 +24,14 @@ fontsize_tiny  = int(fontsize / 3.4)
 
 
 class CONFIG:
-    COLOR_BG   = (255, 255, 255)
-    COLOR_DATE = (0, 0, 0)
-    COLOR_DESC = (0, 0, 0)
-    COLOR_SEP  = (0, 0, 0)
+    COLOR_BG       = (255, 255, 255)
+    COLOR_DATE     = (0, 0, 0)
+    COLOR_DESC     = (0, 0, 0)
+    COLOR_SEP      = (0, 0, 0)
     COLOR_INDOOR   = (255, 0, 0)
     COLOR_OUTDOOR  = (0, 0, 255)
-    COLOR_KIDSROOM = (0, 255, 0)
+    COLOR_KIDSROOM = (0, 0xCC, 0xFF)
+    COLOR_TURTLE   = (0x08, 0x8A, 0x08)
 
 
 DayOfWeek = {'0': 'Sonntag',    \
@@ -65,14 +65,16 @@ class Display (object):
         self.screen = pygame.display.set_mode((width, height), pygame.NOFRAME)
         self.screen.fill(CONFIG.COLOR_BG)
 
-        self.font = pygame.font.SysFont('arial', fontsize)
-        self.font_small = pygame.font.SysFont('arial', fontsize_small)
+        self.font            = pygame.font.SysFont('arial', fontsize)
+        self.font_small      = pygame.font.SysFont('arial', fontsize_small)
         self.font_small_bold = pygame.font.SysFont('arial', fontsize_small, True)
         self.font_tiny       = pygame.font.SysFont('arial', fontsize_tiny)
+
 
     def drawSeperatorLine (self, ypos):
         pygame.draw.line(self.screen, CONFIG.COLOR_SEP, (3, ypos), (width-3, ypos), 2)
         return ypos + 5
+
 
     def drawItem (self, valuestring, font, color, ypos):
         (_, _h) = font.size(valuestring)
@@ -80,6 +82,7 @@ class Display (object):
         self.screen.blit(text, (3, ypos))
         ypos += _h
         return ypos
+
 
     def drawWeatherItem (self, room, value1, value2, value3, color, ypos):
         ypos = self.drawSeperatorLine(ypos)
@@ -90,6 +93,12 @@ class Display (object):
             ypos = self.drawItem(value2, self.font, color, ypos)
         if value3 is not None:
             ypos = self.drawItem(value3, self.font, color, ypos)
+        return ypos
+
+
+    def drawSwitchValue (self, switch1, switch2, color, ypos):
+        ypos = self.drawItem(switch1, self.font_small, color, ypos)
+        ypos = self.drawItem(switch2, self.font_small, color, ypos)
         return ypos
 
 
@@ -112,9 +121,19 @@ class Display (object):
         self.screen.blit(text, ((width-w)/2, height-fontsize_small-sep))
 
 
+    def drawPicture (self, pathToPic, scale, ypos):
+        surface_picture = pygame.image.load(pathToPic)
+        (pw, ph) = surface_picture.get_size()
+        pw = int(pw*scale)
+        ph = int(ph*scale)
+        surface_picture = pygame.transform.smoothscale(surface_picture, (pw, ph))
+        (pw, ph) = surface_picture.get_size()
+        self.screen.blit(surface_picture, (int((width-pw)/2), ypos))
+
+
 ###############################################################################
 ###############################################################################
-class Screen (object):
+class Screens (object):
     """manage various screens changed by a touching the touchscreen"""
     def __init__(self, display):
         self.display   = display
@@ -147,15 +166,18 @@ class Screen (object):
 
         v1 = "-33,3 °C"
         v2 = "67,2 % rF"
-        h = self.display.drawWeatherItem("Wohnzimmer:", v1, v2, None, CONFIG.COLOR_INDOOR, h)
+        h = self.display.drawWeatherItem("Wohnzimmer:", \
+                                         v1, v2, None,  \
+                                         CONFIG.COLOR_INDOOR, h)
         h += sep
 
         v1 = "17,9 °C"
         v2 = "45,2 % rF"
         v3 = "1021 hPa"
-        h  = self.display.drawWeatherItem("Draußen:", v1, v2, v3, CONFIG.COLOR_OUTDOOR, h)
+        h  = self.display.drawWeatherItem("Draußen:", \
+                                          v1, v2, v3, \
+                                          CONFIG.COLOR_OUTDOOR, h)
         h += sep
-
         self.display.drawTime()
 
     def Screen2 (self):
@@ -165,22 +187,28 @@ class Screen (object):
 
         v1 = "-22,2 °C"
         v2 = "99,9 % rF"
-        h = self.display.drawWeatherItem("Kinderzimmer:", v1, v2, None, CONFIG.COLOR_KIDSROOM, h)
+        h = self.display.drawWeatherItem("Kinderzimmer:", \
+                                         v1, v2, None,    \
+                                         CONFIG.COLOR_KIDSROOM, h)
         h += sep
-
-        surface_picture = pygame.image.load(os.path.join('data', 'child.png')).convert()
-        (pw, ph) = surface_picture.get_size()
-        pw = int(pw*0.8)
-        ph = int(ph*0.8)
-        surface_picture = pygame.transform.scale(surface_picture, (pw, ph))
-        (pw, ph) = surface_picture.get_size()
-        self.display.screen.blit(surface_picture, (int((width-pw)/2), h))
-
+        self.display.drawPicture(os.path.join('data', 'child.png'), 0.8, h)
         self.display.drawTime()
 
     def Screen3 (self):
         """turtle's compound"""
+        h = 3
         self.display.screen.fill(CONFIG.COLOR_BG)
+
+        v1 = "-13,3 °C"
+        v2 = "100,0 % rF"
+        v3 = "Heizung: ein"
+        v4 = "Beleuchtung: aus"
+        h = self.display.drawWeatherItem("Gehege Donut:", \
+                                         v1, v2, None,    \
+                                         CONFIG.COLOR_TURTLE, h)
+        h = self.display.drawSwitchValue(v3, v4, CONFIG.COLOR_TURTLE, h)
+        h += sep
+        self.display.drawPicture(os.path.join('data', 'turtle.png'), 0.4, h)
         self.display.drawTime()
 
 
@@ -191,12 +219,12 @@ def Main():
     pygame.mouse.set_visible(False)
 
     display = Display()
-    screens = Screen(display)
+    screens = Screens(display)
 
     i = timestamp = 0
     while True:
         if (i >= 10):
-            if (time() >= timestamp):
+            if (time() >= timestamp): # fallback to screenid #1 
                 screens.screenid = 1
 
             screens.Screen()
