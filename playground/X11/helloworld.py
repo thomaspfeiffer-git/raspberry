@@ -71,26 +71,19 @@ class Display (object):
         pygame.draw.line(self.screen, CONFIG.COLOR_SEP, (3, ypos), (width-3, ypos), 2)
         return ypos + 5
 
-    def drawWeatherItem (self, room, value1, value2, color, height):
-        valuestring = room
-        (_, _h) = self.font_tiny.size(valuestring)
-        text = self.font_tiny.render(valuestring, True, CONFIG.COLOR_DESC, CONFIG.COLOR_BG)
-        self.screen.blit(text, (3, height))
-        height += _h
+    def drawItem (self, valuestring, font, color, ypos):
+        (_, _h) = font.size(valuestring)
+        text = font.render(valuestring, True, color, CONFIG.COLOR_BG)
+        self.screen.blit(text, (3, ypos))
+        ypos += _h
+        return ypos
 
-        valuestring = value1
-        (_, _h) = self.font.size(valuestring)
-        text = self.font.render(valuestring, True, color, CONFIG.COLOR_BG)
-        self.screen.blit(text, (3, height))
-        height += _h + 5
 
-        valuestring = value2
-        (_, _h) = self.font.size(valuestring)
-        text = self.font.render(valuestring, True, color, CONFIG.COLOR_BG)
-        self.screen.blit(text, (3, height))
-        height += _h + 5
-
-        return height
+    def drawWeatherItem (self, room, value1, value2, color, ypos):
+        ypos = self.drawItem(room, self.font_tiny, CONFIG.COLOR_DESC, ypos)
+        ypos = self.drawItem(value1, self.font, color, ypos)
+        ypos = self.drawItem(value2, self.font, color, ypos)
+        return ypos
 
 
 ###############################################################################
