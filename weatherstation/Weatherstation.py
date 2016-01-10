@@ -13,9 +13,12 @@ import sys
 from time import time
 import traceback
 
+sys.path.append('../libs')
 from Config import CONFIG
 from Display import Display
 from Screens import Screens
+
+from SensorQueue import SensorQueueClient_read
 
 
 ###############################################################################
@@ -33,6 +36,13 @@ def _Exit(__s, __f):
 
 
 
+def read_sensorvalues (sq, sensorvalues):
+    v = sq.read() 
+    if v is not None:
+        sensorvalues[v.getID()] = v
+
+
+
 ###############################################################################
 # Main ########################################################################
 def Main():
@@ -44,9 +54,16 @@ def Main():
     display = Display()
     screens = Screens(display)
 
+    sq = SensorQueueClient_read()
+    sensorvalues = {}
+
     i = timestamp = 0
     while True:
         if (i >= 10):
+            read_sensorvalues(sq, sensorvalues)
+            for v in sensorvalues:
+                print(v)
+
             if (time() >= timestamp): # fallback to screenid #1 
                 screens.screenid = 1
 
