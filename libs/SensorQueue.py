@@ -14,7 +14,10 @@ SensorQueueClient: Provides a client for the queue with methods
 
 from multiprocessing.managers import BaseManager
 import pickle
-from queue import Queue
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 import sys
 from time import strftime, localtime, sleep
 import threading
@@ -40,7 +43,7 @@ class QueueManager(BaseManager):
 class SensorQueueServer (object):
     """server class"""
     def __init__ (self):
-        self.__queue = Queue()
+        self.__queue = queue.Queue()
         QueueManager.register('get_queue', callable=lambda:self.__queue)
         manager = QueueManager(address=('', SensorQueueConfig.PORT), \
                                authkey=SensorQueueConfig.AUTHKEY)
@@ -150,7 +153,7 @@ class SensorQueueClient_read (SensorQueueClient):
         if (self.connected):
             try:
                 return pickle.loads(self.queue.get_nowait())
-            except Queue.Empty:
+            except queue.Empty:
                 return None
             except:
                 Log("Cannot read from queue: %s %s" % \
