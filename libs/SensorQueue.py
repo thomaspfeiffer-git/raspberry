@@ -131,7 +131,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
         """write to the queue"""
         if (self.connected):
             try:
-                self.queue.put_nowait(pickle.dumps(item))
+                self.queue.put_nowait(pickle.dumps(item, protocol=2))
             except KeyboardInterrupt:
                 Log("ctrl-c")
                 raise
