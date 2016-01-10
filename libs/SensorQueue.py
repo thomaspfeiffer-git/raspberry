@@ -115,6 +115,8 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
             for sensor in self.__svl:
                 with sensor.lock:
                     item = sensor.sensorvalue  # copy data from sensor
+
+                print("item: ", item)
                 Log("in run: %s" % item)
                 self.write(item)               # write data to queue
 
@@ -132,7 +134,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
         if (self.connected):
             try:
                 try:
-                    pickled = pickle.dumps(item, protocol=0)
+                    pickled = pickle.dumps(item)
                 except:
                     Log("Cannot pickle: %s %s" % \
                         (sys.exc_info()[0], sys.exc_info()[1]))
