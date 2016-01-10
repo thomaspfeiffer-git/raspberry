@@ -131,7 +131,13 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
         """write to the queue"""
         if (self.connected):
             try:
-                self.queue.put_nowait(pickle.dumps(item, protocol=2))
+                try:
+                    pickled = pickle.dumps(item, protocol=0)
+                except:
+                    Log("Cannot pickle: %s %s" % \
+                        (sys.exc_info()[0], sys.exc_info()[1]))
+                else:
+                    self.queue.put_nowait(pickled)
             except KeyboardInterrupt:
                 Log("ctrl-c")
                 raise
