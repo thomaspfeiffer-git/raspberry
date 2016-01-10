@@ -22,7 +22,7 @@ import threading
 
 def Log (logstr):
     """improved log output"""
-    print strftime("%Y%m%d %H:%M:%S", localtime()), logstr
+    print(strftime("%Y%m%d %H:%M:%S", localtime()), logstr)
 
 
 class SensorQueueConfig (object):
@@ -157,7 +157,8 @@ class SensorQueueClient_read (SensorQueueClient):
                     (sys.exc_info()[0], sys.exc_info()[1]))
                 self.connect()
         else:
-            return "not connected" # TODO: raise exception or do other usefull stuff
+            Log("not connected")
+            return None # TODO: raise exception or do other usefull stuff
 
 
 # eof #
