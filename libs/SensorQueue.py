@@ -149,17 +149,13 @@ class SensorQueueClient_read (SensorQueueClient):
         """read from the queue"""
         if (self.connected):
             try:
-                return pickle.loads(self.queue.get())
-            except KeyboardInterrupt:
-                Log("ctrl-c")
-                raise
+                return pickle.loads(self.queue.get_nowait())
             except Queue.Empty:
-                Log("Queue empty")
+                return None
             except:
                 Log("Cannot read from queue: %s %s" % \
                     (sys.exc_info()[0], sys.exc_info()[1]))
                 self.connect()
-            return "had an exception" # TODO: improve message
         else:
             return "not connected" # TODO: raise exception or do other usefull stuff
 
