@@ -23,8 +23,11 @@ class SensorValue (object):
         self.__value     = v
         self.__timestamp = time.time()
 
+    def getID (self):
+        return self.__v_id
+
     def __str__ (self):
-        return "ID:        %s" % self.__v_id      + "\n" + \
+        return "ID:        %s" % self.getID()     + "\n" + \
                "Name:      %s" % self.__name      + "\n" + \
                "Kind:      %s" % self.__kind      + "\n" + \
                "Value:     %s" % self.__value     + "\n" + \
