@@ -14,7 +14,7 @@ SensorQueueClient: Provides a client for the queue with methods
 
 from multiprocessing.managers import BaseManager
 import pickle
-import queue
+from queue import Queue
 import sys
 from time import strftime, localtime, sleep
 import threading
@@ -40,7 +40,7 @@ class QueueManager(BaseManager):
 class SensorQueueServer (object):
     """server class"""
     def __init__ (self):
-        self.__queue = Queue.Queue()
+        self.__queue = Queue()
         QueueManager.register('get_queue', callable=lambda:self.__queue)
         manager = QueueManager(address=('', SensorQueueConfig.PORT), \
                                authkey=SensorQueueConfig.AUTHKEY)
