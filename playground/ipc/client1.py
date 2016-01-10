@@ -25,6 +25,7 @@ class Sensor (object):   # eg DS1820
     def read (self):
         value = self.__value
         if self.__sv is not None:
+            print("schreibe value")
             self.__sv.value = value 
         return value
 
@@ -65,9 +66,11 @@ def Main():
 ###############################################################################
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
-    sv1 = SensorValueLock("TempWohnzimmer", "temp", Lock())
-    sv2 = SensorValueLock("HumiWohnzimmer", "humi", Lock())
+    sv1 = SensorValueLock("ID_01", "TempWohnzimmer", "temp", Lock())
+    sv2 = SensorValueLock("ID_02", "HumiWohnzimmer", "humi", Lock())
+    print("vor SensorQueueClient_write")
     sq = SensorQueueClient_write()
+    print("nach SensorQueueClient_write")
     sq.register(sv1)
     sq.register(sv2)
     sq.start()
