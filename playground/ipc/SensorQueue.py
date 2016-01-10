@@ -14,7 +14,7 @@ SensorQueueClient: Provides a client for the queue with methods
 
 from multiprocessing.managers import BaseManager
 import pickle
-import Queue
+import queue
 import sys
 from time import strftime, localtime, sleep
 import threading
@@ -22,14 +22,14 @@ import threading
 
 def Log (logstr):
     """improved log output"""
-    print strftime("%Y%m%d %H:%M:%S", localtime()), logstr
+    print(strftime("%Y%m%d %H:%M:%S", localtime()), logstr)
 
 
 class SensorQueueConfig (object):
     """some constants for client server communication"""
     PORT       = 50000
     HOSTNAME   = "pia"
-    AUTHKEY    = "finster war's, der mond schien helle"
+    AUTHKEY    = "finster war's, der mond schien helle".encode('latin1')
     RETRYDELAY = 60
     SENDDELAY  = 60
 
@@ -40,7 +40,7 @@ class QueueManager(BaseManager):
 class SensorQueueServer (object):
     """server class"""
     def __init__ (self):
-        self.__queue = Queue.Queue()
+        self.__queue = queue.Queue()
         QueueManager.register('get_queue', callable=lambda:self.__queue)
         manager = QueueManager(address=('', SensorQueueConfig.PORT), \
                                authkey=SensorQueueConfig.AUTHKEY)
@@ -89,6 +89,7 @@ class SensorQueueClient (object):
                 for _ in range(SensorQueueConfig.RETRYDELAY):
                     sleep (1)
 
+
 class SensorQueueClient_write (SensorQueueClient, threading.Thread):
     """write to queue as a thread"""
     def __init__ (self):
@@ -106,7 +107,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
         self.__svl.remove(sensorvaluelock) # TODO: try/exception
 
     def run (self):
-        """start thread. loop: send data of all senssor to queue and sleep"""
+        """start thread. loop: send data of all sensors to queue and sleep"""
         while self.__running:
             for sensor in self.__svl:
                 with sensor.lock:
@@ -148,19 +149,16 @@ class SensorQueueClient_read (SensorQueueClient):
         """read from the queue"""
         if (self.connected):
             try:
-                return pickle.loads(self.queue.get())
-            except KeyboardInterrupt:
-                Log("ctrl-c")
-                raise
-            except Queue.Empty:
-                Log("Queue empty")
+                return pickle.loads(self.queue.get_nowait())
+            except queue.Empty:
+                return None
             except:
                 Log("Cannot read from queue: %s %s" % \
                     (sys.exc_info()[0], sys.exc_info()[1]))
                 self.connect()
-            return "had an exception" # TODO: improve message
         else:
-            return "not connected" # TODO: raise exception or do other usefull stuff
+            Log("not connected")
+            return None # TODO: raise exception or do other usefull stuff
 
 
 # eof #
