@@ -1,11 +1,9 @@
 
 
 
-import os
 import pygame
 import re
-import sys
-from time import strftime, localtime, time
+from time import strftime, localtime
 
 from Config import CONFIG
 from Constants import CONSTANTS
