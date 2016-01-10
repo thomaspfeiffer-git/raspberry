@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 import os
 
@@ -33,40 +34,40 @@ class Screens (object):
             self.__screenid = sid
 
 
-    def Screen (self):
+    def Screen (self, allsensorvalues):
         """calls Screen<n>() whereat n == screenid"""
-        self.__screens[self.screenid]()
+        self.__screens[self.screenid](allsensorvalues)
 
 
-    def Screen1 (self):
+    def Screen1 (self, allsensorvalues):
         """living room and outdoor"""
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        v1 = "-33,3 °C"
-        v2 = "67,2 % rF"
         ypos = self.display.drawWeatherItem("Wohnzimmer:", \
-                                            v1, v2, None,  \
+                                            allsensorvalues.read('ID_01'), \
+                                            allsensorvalues.read('ID_02'), \
+                                            None,  \
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
 
-        v1 = "17,9 °C"
-        v2 = "45,2 % rF"
+        v1 = "17,9 C".encode('latin1')
+        v2 = "45,2 % rF".encode('latin1')
         v3 = "1021 hPa"
-        ypos  = self.display.drawWeatherItem("Draußen:", \
+        ypos  = self.display.drawWeatherItem("Draussen:", \
                                              v1, v2, v3, \
                                              CONFIG.COLORS.OUTDOOR, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawTime()
 
 
-    def Screen2 (self):
+    def Screen2 (self, allsensorvalues):
         """kid's room"""
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        v1 = "-22,2 °C"
-        v2 = "99,9 % rF"
+        v1 = "-22,2 C".encode('latin1')
+        v2 = "99,9 % rF".encode('latin1')
         ypos = self.display.drawWeatherItem("Kinderzimmer:", \
                                             v1, v2, None,    \
                                             CONFIG.COLORS.KIDSROOM, ypos)
@@ -75,13 +76,13 @@ class Screens (object):
         self.display.drawTime()
 
 
-    def Screen3 (self):
+    def Screen3 (self, allsensorvalues):
         """turtle's compound"""
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        v1 = "-13,3 °C"
-        v2 = "100,0 % rF"
+        v1 = "-13,3 C".encode('latin1')
+        v2 = "100,0 % rF".encode('latin1')
         v3 = "Heizung: ein"
         v4 = "Beleuchtung: aus"
         ypos = self.display.drawWeatherItem("Gehege Donut:", \
