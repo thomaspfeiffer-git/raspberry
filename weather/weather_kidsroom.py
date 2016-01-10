@@ -60,7 +60,7 @@ def main():
                         ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
                         ":{:.2f}".format(measurements[DS_TEMP2].last()) + \
                         ":{:.2f}".format(measurements[DS_HUMI].last())
-        print strftime("%H:%M:%S", localtime()), rrd_data
+        print(strftime("%H:%M:%S", localtime()), rrd_data)
         rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
         sleep(35)
