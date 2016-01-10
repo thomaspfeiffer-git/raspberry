@@ -14,7 +14,10 @@ SensorQueueClient: Provides a client for the queue with methods
 
 from multiprocessing.managers import BaseManager
 import pickle
-import queue
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 import sys
 from time import strftime, localtime, sleep
 import threading
@@ -128,7 +131,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
         """write to the queue"""
         if (self.connected):
             try:
-                self.queue.put_nowait(pickle.dumps(item))
+                self.queue.put_nowait(pickle.dumps(item, protocol=2))
             except KeyboardInterrupt:
                 Log("ctrl-c")
                 raise
