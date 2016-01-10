@@ -14,7 +14,7 @@ SensorQueueClient: Provides a client for the queue with methods
 
 from multiprocessing.managers import BaseManager
 import pickle
-import Queue
+import queue
 import sys
 from time import strftime, localtime, sleep
 import threading
@@ -29,7 +29,7 @@ class SensorQueueConfig (object):
     """some constants for client server communication"""
     PORT       = 50000
     HOSTNAME   = "pia"
-    AUTHKEY    = "finster war's, der mond schien helle"
+    AUTHKEY    = "finster war's, der mond schien helle".encode('latin1')
     RETRYDELAY = 60
     SENDDELAY  = 60
 
