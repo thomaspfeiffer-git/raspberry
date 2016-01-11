@@ -94,9 +94,9 @@ def __exit(__s, __f):
 ###############################################################################
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, __exit)
-    sq = SensorQueueClient_write()
 
     try:
+        sq = SensorQueueClient_write()
         main()
 
     except KeyboardInterrupt:
