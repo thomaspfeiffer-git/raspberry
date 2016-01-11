@@ -21,6 +21,7 @@ from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from Measurements import Measurements
 from SensorQueue import SensorQueueClient_write
+from SensorValue import SensorValueLock
 
 
 DHT22_AM2302_PIN = 35
