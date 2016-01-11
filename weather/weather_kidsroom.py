@@ -1,9 +1,9 @@
 #!/usr/bin/python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 #############################################################################
 # weather_kidsroom.py                                                       #
 # Monitor temperature and humidity in our kid's room.                       #
-# (c) https://github.com/thomaspfeiffer-git 2015                            #
+# (c) https://github.com/thomaspfeiffer-git 2015, 2016                      #
 #############################################################################
 """Monitor temperature and humidity in our kid's room."""
 
@@ -11,12 +11,15 @@ import datetime
 import rrdtool
 import signal
 import sys
+from threading import Lock
 from time import strftime, localtime, sleep, time
 import traceback
 
+sys.path.append('../libs')
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from Measurements import Measurements
+from SensorQueue import SensorQueueClient_write
 
 
 DHT22_AM2302_PIN = 35
@@ -35,7 +38,14 @@ DS_HUMI    = "kidsroom_humi"
 # Main ########################################################################
 def main():
     """main part"""
-    temphumi    = DHT22_AM2302(19)   # BCM 19 = PIN 35
+    sensor_temp = SensorValueLock("ID_03", "TempKinderzimmer", "temp", Lock())
+    sensor_humi = SensorValueLock("ID_04", "HumiKinderzimmer", "humi", Lock())
+    sq          = SensorQueueClient_write()
+    sq.register(sensor_temp)
+    sq.register(sensor_sensor_temp)
+    sq.start()
+
+    temphumi    = DHT22_AM2302(19, sensor_temp, sensor_humi)   # BCM 19 = PIN 35
     temp_cpu    = CPU()
 
     measurements = {DS_TEMP1:   Measurements(3), \
@@ -69,6 +79,8 @@ def main():
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
+    sq.stop()
+    sq.join()
     sys.exit()
 
 def __exit(__s, __f):
@@ -79,26 +91,24 @@ def __exit(__s, __f):
 
 ###############################################################################
 ###############################################################################
-signal.signal(signal.SIGTERM, __exit)
+if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, __exit)
 
-try:
-    main()
+    try:
+        main()
 
-except KeyboardInterrupt:
-    _exit()
+    except KeyboardInterrupt:
+        _exit()
 
-except SystemExit:                  # Done in signal handler (method _exit()) #
-    pass
+    except SystemExit:              # Done in signal handler (method _exit()) #
+        pass
 
-except:
-    print(traceback.print_exc())
-    _exit()
+    except:
+        print(traceback.print_exc())
+        _exit()
 
-finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
-    pass
+    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
+        pass
 
 ### eof ###
-
-
-
 
