@@ -66,10 +66,10 @@ class Screens (object):
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        v1 = "-22,2 C".encode('latin1')
-        v2 = "99,9 % rF".encode('latin1')
         ypos = self.display.drawWeatherItem("Kinderzimmer:", \
-                                            v1, v2, None,    \
+                                            allsensorvalues.read('ID_04'), \
+                                            allsensorvalues.read('ID_05'), \
+                                            None,    \
                                             CONFIG.COLORS.KIDSROOM, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawPicture(os.path.join('data', 'child.png'), 0.8, ypos)
