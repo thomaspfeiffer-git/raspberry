@@ -28,6 +28,8 @@ sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
 from DHT22_AM2302 import DHT22_AM2302
+from SensorQueue import SensorQueueClient_write
+from SensorValue import SensorValueLock
 
 
 ## Sensors ##################
