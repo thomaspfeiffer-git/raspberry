@@ -16,7 +16,7 @@ from time import strftime, localtime, sleep, time
 import traceback
 
 sys.path.append('../libs')
-sys.path.appent('../libs/sensors')
+sys.path.append('../libs/sensors')
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from Measurements import Measurements
