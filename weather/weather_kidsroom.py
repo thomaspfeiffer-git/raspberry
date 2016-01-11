@@ -16,6 +16,7 @@ from time import strftime, localtime, sleep, time
 import traceback
 
 sys.path.append('../libs')
+sys.path.appent('../libs/sensors')
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from Measurements import Measurements
@@ -38,14 +39,14 @@ DS_HUMI    = "kidsroom_humi"
 # Main ########################################################################
 def main():
     """main part"""
-    sensor_temp = SensorValueLock("ID_03", "TempKinderzimmer", "temp", Lock())
-    sensor_humi = SensorValueLock("ID_04", "HumiKinderzimmer", "humi", Lock())
+    qvalue_temp = SensorValueLock("ID_03", "TempKinderzimmer", "temp", Lock())
+    qvalue_humi = SensorValueLock("ID_04", "HumiKinderzimmer", "humi", Lock())
     sq          = SensorQueueClient_write()
-    sq.register(sensor_temp)
-    sq.register(sensor_sensor_temp)
+    sq.register(qvalue_temp)
+    sq.register(qvalue_temp)
     sq.start()
 
-    temphumi    = DHT22_AM2302(19, sensor_temp, sensor_humi)   # BCM 19 = PIN 35
+    temphumi    = DHT22_AM2302(19, qvalue_temp, qvalue_humi)   # BCM 19 = PIN 35
     temp_cpu    = CPU()
 
     measurements = {DS_TEMP1:   Measurements(3), \
