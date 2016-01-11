@@ -50,11 +50,11 @@ class DHT22_AM2302:
 
       if self.__qvalue_temp is not None:
           value = "%.1f %s" % (t_avg, u'°C')
-          value = value.replace('.', ',')
+          value = value.replace('.', ',')   # TODO: move to SensorValue.value()
           self.__qvalue_temp = value
       if self.__qvalue_humi is not None:
-          value = "%.1f %s" % (t_avg, u'°C')
-          value = value.replace('.', ',')
+          value = "%.1f %s" % (h_avg, u'% rF')
+          value = value.replace('.', ',')   # TODO: move to SensorValue.value() 
           self.__qvalue_humi = value
 
       return [t_avg, h_avg]
