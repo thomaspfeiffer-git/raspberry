@@ -54,9 +54,11 @@ class Screens (object):
         v1 = "17,9 C".encode('latin1')
         v2 = "45,2 % rF".encode('latin1')
         v3 = "1021 hPa"
-        ypos  = self.display.drawWeatherItem("Draussen:", \
-                                             v1, v2, v3, \
-                                             CONFIG.COLORS.OUTDOOR, ypos)
+        ypos = self.display.drawWeatherItem("Draussen:", \
+                                            allsensorvalues.read('ID_03'), \
+                                            allsensorvalues.read('ID_04'), \
+                                            allsensorvalues.read('ID_05'), \
+                                            CONFIG.COLORS.OUTDOOR, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawTime()
 
@@ -67,8 +69,8 @@ class Screens (object):
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         ypos = self.display.drawWeatherItem("Kinderzimmer:", \
-                                            allsensorvalues.read('ID_04'), \
-                                            allsensorvalues.read('ID_05'), \
+                                            allsensorvalues.read('ID_06'), \
+                                            allsensorvalues.read('ID_07'), \
                                             None,    \
                                             CONFIG.COLORS.KIDSROOM, ypos)
         ypos += CONFIG.SEP_Y
