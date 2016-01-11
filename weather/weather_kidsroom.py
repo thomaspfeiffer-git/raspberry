@@ -40,11 +40,10 @@ DS_HUMI    = "kidsroom_humi"
 # Main ########################################################################
 def main():
     """main part"""
-    qvalue_temp = SensorValueLock("ID_04", "TempKinderzimmer", "temp", Lock())
-    qvalue_humi = SensorValueLock("ID_05", "HumiKinderzimmer", "humi", Lock())
-    sq          = SensorQueueClient_write()
+    qvalue_temp = SensorValueLock("ID_06", "TempKinderzimmer", "temp", Lock())
+    qvalue_humi = SensorValueLock("ID_07", "HumiKinderzimmer", "humi", Lock())
     sq.register(qvalue_temp)
-    sq.register(qvalue_temp)
+    sq.register(qvalue_humi)
     sq.start()
 
     temphumi    = DHT22_AM2302(19, qvalue_temp, qvalue_humi)   # BCM 19 = PIN 35
@@ -95,6 +94,7 @@ def __exit(__s, __f):
 ###############################################################################
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, __exit)
+    sq = SensorQueueClient_write()
 
     try:
         main()
