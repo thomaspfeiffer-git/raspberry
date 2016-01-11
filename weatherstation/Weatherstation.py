@@ -76,8 +76,8 @@ def Main():
             for s in ['ID_01', 'ID_02', 'ID_03', 'ID_04', 'ID_05']:
                 print s, ":", allsensorvalues.read(s)
 
-            if (time() >= timestamp): # fallback to screenid #1 
-                screens.screenid = 1
+#            if (time() >= timestamp): # fallback to screenid #1 
+#                screens.screenid = 1
 
             screens.Screen(allsensorvalues)
             pygame.display.update()
