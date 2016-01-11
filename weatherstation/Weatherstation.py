@@ -49,6 +49,8 @@ class AllSensorValues (object):
     def readfromqueue (self):
         v = self.__sensorqueue.read() 
         if v is not None:
+            # TODO: check age of data
+            # if timestamp <= now() + 1 h: sensorvalue[x] = "n/a"
             self.__sensorvalues[v.getID()] = v.value.encode('latin-1')
 
     def read (self, sid):
