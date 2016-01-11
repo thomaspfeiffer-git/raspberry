@@ -100,7 +100,7 @@ def GetCPUTemperature():
 
 ################################################################################
 # getPressure ##################################################################
-def getPressure(sensor):
+def getPressure(sensor, qvalue_pressure):
    p = []
 
    for i in range(0,10):
@@ -108,6 +108,11 @@ def getPressure(sensor):
    p.sort()
 
    p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])
+
+   value = "%.1f %s" % (p_avg, u'hPa')
+   value = value.replace('.', ',')   # TODO: move to SensorValue.value()
+   qvalue_pressure.value = value
+
    return p_avg
 
 
@@ -135,7 +140,7 @@ def Main():
    while(True):
       temp_indoor, humi_indoor   = th_indoor.read()
       temp_outdoor, humi_outdoor = th_outdoor.read()
-      pressure    = getPressure(bmp)
+      pressure    = getPressure(bmp, qvalue_pressure)
       temp_cpu    = GetCPUTemperature()
 
       rrd_template    = DS_TEMPINDOOR  + ":" + \
