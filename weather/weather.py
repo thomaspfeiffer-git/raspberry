@@ -109,7 +109,7 @@ def getPressure(sensor, qvalue_pressure):
 
    p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])
 
-   value = "%.1f %s" % (p_avg, u'hPa')
+   value = "%.1f %s" % (p_avg/100.0, u'hPa')
    value = value.replace('.', ',')   # TODO: move to SensorValue.value()
    qvalue_pressure.value = value
 
