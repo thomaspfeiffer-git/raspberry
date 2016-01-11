@@ -13,6 +13,7 @@ class SensorValue (object):
         self.__kind      = kind
         self.__value     = None
         self.__timestamp = None
+        self.value       = "n/a"
 
     @property
     def value (self):
