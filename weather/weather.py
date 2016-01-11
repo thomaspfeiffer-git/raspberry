@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 
 
 ###############################################################################
@@ -16,12 +16,16 @@ import os
 import numpy as np
 import signal
 import sys
+from threading import Lock
 from time import sleep
 import traceback
 
 import rrdtool
 from Adafruit_BMP085 import BMP085
 import RPi.GPIO as io
+
+sys.path.append('../libs')
+sys.path.append('../libs/sensors')
 
 from DHT22_AM2302 import DHT22_AM2302
 
@@ -61,6 +65,8 @@ bDebug  = False
 # Exit ########################################################################
 def Exit():
    Log('Cleaning up ...')
+   sq.stop()
+   sq.join()
    sys.exit()
 
 def _Exit(s,f):
@@ -108,8 +114,21 @@ def getPressure(sensor):
 def Main():
    global bmp
 
-   th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm)
-   th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm)
+   qvalue_temp_indoor  = SensorValueLock("ID_01", "TempWohnzimmerIndoor", "temp", Lock())
+   qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", "humi", Lock())
+   qvalue_temp_outdoor = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", "temp", Lock())
+   qvalue_humi_outdoor = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", "humi", Lock())
+   qvalue_pressure     = SensorValueLock("ID_05", "Luftdruck", "press", Lock())
+
+   sq.register(qvalue_temp_indoor)
+   sq.register(qvalue_humi_indoor)
+   sq.register(qvalue_temp_outdoor)
+   sq.register(qvalue_humi_outdoor)
+   sq.register(qvalue_pressure)
+   sq.start()
+
+   th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
+   th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
 
    while(True):
       temp_indoor, humi_indoor   = th_indoor.read()
@@ -148,24 +167,27 @@ def Main():
 
 
 ################################################################################
-signal.signal(signal.SIGTERM, _Exit)
-bDebug = True if (len(sys.argv) > 1) and (sys.argv[1] in ['-v', '-V']) \
-         else False
+if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, _Exit)
+    bDebug = True if (len(sys.argv) > 1) and (sys.argv[1] in ['-v', '-V']) \
+             else False
 
-try:
-   Init()
-   Main()
+    try:
+        sq = SensorQueueClient_write()
+        Init()
+        Main()
 
-except KeyboardInterrupt:
-   Exit()
+    except KeyboardInterrupt:
+        Exit()
 
-except SystemExit:                  # Done in signal handler (method _Exit()) #
-   pass
+    except SystemExit:                 # Done in signal handler (method _Exit()) #
+        pass
 
-except:
-   print(traceback.print_exc())
+    except:
+        print(traceback.print_exc())
 
-finally:
-   pass
+    finally:
+        pass
 
+# eof #
 
