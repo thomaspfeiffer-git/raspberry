@@ -44,7 +44,9 @@ class AllSensorValues (object):
                                'ID_02': "n/a", \
                                'ID_03': "n/a", \
                                'ID_04': "n/a", \
-                               'ID_05': "n/a"}
+                               'ID_05': "n/a", \
+                               'ID_06': "n/a", \
+                               'ID_07': "n/a"}
 
     def readfromqueue (self):
         v = self.__sensorqueue.read() 
@@ -53,7 +55,7 @@ class AllSensorValues (object):
             # if timestamp <= now() + 1 h: sensorvalue[x] = "n/a"
             self.__sensorvalues[v.getID()] = v.value.encode('latin-1')
 
-    def read (self, sid):
+    def read (self, sid): # TODO: make array (__get__())
         return self.__sensorvalues[sid]
 
 
@@ -75,7 +77,7 @@ def Main():
     while True:
         if (i >= 10):
             allsensorvalues.readfromqueue()
-            for s in ['ID_01', 'ID_02', 'ID_03', 'ID_04', 'ID_05']:
+            for s in ['ID_01', 'ID_02', 'ID_03', 'ID_04', 'ID_05', 'ID_06', 'ID_07']:
                 print s, ":", allsensorvalues.read(s)
 
 #            if (time() >= timestamp): # fallback to screenid #1 
