@@ -51,10 +51,7 @@ class Screens (object):
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
 
-        v1 = "17,9 C".encode('latin1')
-        v2 = "45,2 % rF".encode('latin1')
-        v3 = "1021 hPa"
-        ypos = self.display.drawWeatherItem("Draussen:", \
+        ypos = self.display.drawWeatherItem(u'Draußen:', \
                                             allsensorvalues.read('ID_03'), \
                                             allsensorvalues.read('ID_04'), \
                                             allsensorvalues.read('ID_05'), \
@@ -83,14 +80,14 @@ class Screens (object):
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        v1 = "-13,3 C".encode('latin1')
-        v2 = "100,0 % rF".encode('latin1')
-        v3 = "Heizung: ein"
-        v4 = "Beleuchtung: aus"
         ypos = self.display.drawWeatherItem("Gehege Donut:", \
-                                            v1, v2, None,    \
+                                            allsensorvalues.read('ID_08'), \
+                                            allsensorvalues.read('ID_09'), \
+                                            None,    \
                                             CONFIG.COLORS.TURTLE, ypos)
-        ypos = self.display.drawSwitchValue(v3, v4, CONFIG.COLORS.TURTLE, ypos)
+        ypos = self.display.drawSwitchValue(allsensorvalues.read('ID_10'), \
+                                            allsensorvalues.read('ID_11'), \
+                                            CONFIG.COLORS.TURTLE, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawPicture(os.path.join('data', 'turtle.png'), 0.4, ypos)
         self.display.drawTime()
