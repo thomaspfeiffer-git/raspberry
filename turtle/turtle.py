@@ -1,11 +1,10 @@
 #!/usr/bin/python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 #############################################################################
 # control of heat and light in our turtle's compound                        #
 # (c) https://github.com/thomaspfeiffer-git 2015                            #
 #############################################################################
 """control of heat and light in our turtle's compound"""
-
 
 from collections import deque
 import rrdtool
@@ -15,12 +14,17 @@ from time import strftime, localtime, sleep
 import traceback
 
 
+sys.path.append('../libs')
+sys.path.append('../libs/sensors')
+
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
 from Heating import Heating
 from Measurements import Measurements
 import Schedules
+from SensorQueue import SensorQueueClient_write
+from SensorValue import SensorValueLock
 
 
 HEATLAMP_PIN      = 38
@@ -116,23 +120,24 @@ def main():
 
 ###############################################################################
 ###############################################################################
-signal.signal(signal.SIGTERM, __exit)
+if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, __exit)
 
-try:
-    main()
+    try:
+        main()
 
-except KeyboardInterrupt:
-    _exit()
+    except KeyboardInterrupt:
+        _exit()
 
-except SystemExit:                  # Done in signal handler (method _Exit()) #
-    pass
+    except SystemExit:              # Done in signal handler (method _Exit()) #
+        pass
 
-except:
-    print(traceback.print_exc())
-    _exit()
+    except:
+        print(traceback.print_exc())
+        _exit()
 
-finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
-    pass
+    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
+        pass
 
 ### eof ###
 
