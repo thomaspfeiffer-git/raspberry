@@ -12,7 +12,7 @@ import numpy as np
 class DHT22_AM2302:
    ERROR = -999.99
 
-   def __init__ (self, pin, qvalue_temp, qvalue_humi):
+   def __init__ (self, pin, qvalue_temp=None, qvalue_humi=None):
       self.__pin = pin
       self.__qvalue_temp = qvalue_temp
       self.__qvalue_humi = qvalue_humi
