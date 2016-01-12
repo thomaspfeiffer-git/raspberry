@@ -46,7 +46,11 @@ class AllSensorValues (object):
                                'ID_04': "n/a", \
                                'ID_05': "n/a", \
                                'ID_06': "n/a", \
-                               'ID_07': "n/a"}
+                               'ID_07': "n/a", \
+                               'ID_08': "n/a", \
+                               'ID_09': "n/a", \
+                               'ID_10': "n/a", \
+                               'ID_11': "n/a"}
 
     def readfromqueue (self):
         v = self.__sensorqueue.read() 
@@ -77,7 +81,7 @@ def Main():
     while True:
         if (i >= 10):
             allsensorvalues.readfromqueue()
-            for s in ['ID_01', 'ID_02', 'ID_03', 'ID_04', 'ID_05', 'ID_06', 'ID_07']:
+            for s in ['ID_01', 'ID_02', 'ID_03', 'ID_04', 'ID_05', 'ID_06', 'ID_07', 'ID_08', 'ID_09', 'ID_10', 'ID_11']:
                 print s, ":", allsensorvalues.read(s)
 
 #            if (time() >= timestamp): # fallback to screenid #1 
