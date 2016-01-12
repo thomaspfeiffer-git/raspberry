@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 #############################################################################
 # hibernation.py                                                            #
 # Have a great hibernation for our turtle.                                  #
@@ -13,6 +13,9 @@ import signal
 import sys
 from time import strftime, localtime, sleep, time
 import traceback
+
+sys.path.append('../libs')
+sys.path.append('../libs/sensors')
 
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
@@ -159,23 +162,24 @@ def __exit(__s, __f):
 
 ###############################################################################
 ###############################################################################
-signal.signal(signal.SIGTERM, __exit)
+if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, __exit)
 
-try:
-    main()
+    try:
+        main()
 
-except KeyboardInterrupt:
-    _exit()
+    except KeyboardInterrupt:
+        _exit()
 
-except SystemExit:                  # Done in signal handler (method _exit()) #
-    pass
+    except SystemExit:              # Done in signal handler (method _exit()) #
+        pass
 
-except:
-    print(traceback.print_exc())
-    _exit()
+    except:
+        print(traceback.print_exc())
+        _exit()
 
-finally:        # All cleanup is done in KeyboardInterrupt or signal handler. #
-    pass
+    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
+        pass
 
 ### eof ###
 
