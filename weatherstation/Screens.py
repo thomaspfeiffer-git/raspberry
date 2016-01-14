@@ -52,7 +52,7 @@ class Screens (object):
         ypos += CONFIG.SEP_Y
 
         ypos = self.display.drawWeatherItem(u'Draußen:', \
-                                            allsensorvalues.read('ID_03'), \
+                                            allsensorvalues.read('ID_12'), \
                                             allsensorvalues.read('ID_04'), \
                                             allsensorvalues.read('ID_05'), \
                                             CONFIG.COLORS.OUTDOOR, ypos)
