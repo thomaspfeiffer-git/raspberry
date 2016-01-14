@@ -37,7 +37,7 @@ class DS1820:
       if self.__qvalue is not None:
           value = "%.1f %s" % (sum, u'°C')
           value = value.replace('.', ',')   # TODO: move to SensorValue.value()
-          self.__qvalue_temp.value = value
+          self.__qvalue.value = value
 
       return sum/3
 
