@@ -74,6 +74,8 @@ def main():
     qvalue_tempbox     = SensorValueLock("ID_08", "TempDonutBox", "temp", Lock())
     qvalue_humi        = SensorValueLock("ID_09", "HumiDonut", "humi", Lock())
     qvalue_tempoutdoor = SensorValueLock("ID_12", "TempDonutOutDoor", "temp", Lock())
+    qvalue_heatlamp    = SensorValueLock("ID_10", "SwitchHeatlamp", "switch", Lock())
+    qvalue_lightlamp   = SensorValueLock("ID_11", "SwitchLightlamp", "switch", Lock())
     sq.register(qvalue_tempbox)
     sq.register(qvalue_humi)
     sq.register(qvalue_tempoutdoor)
