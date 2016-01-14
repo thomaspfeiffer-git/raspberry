@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###############################################################################################
 # DS1820.py                                                                                   #
 # Communication with DS1820                                                                   #
@@ -7,8 +8,9 @@
 import re
 
 class DS1820:
-   def __init__ (self, id):
-      self.__id = id
+   def __init__ (self, id, qvalue=None):
+      self.__id     = id
+      self.__qvalue = qvalue
    
    def __read_sensor (self):
      value = 99 # TODO: improve error handling
@@ -29,6 +31,14 @@ class DS1820:
       sum = 0
       for i in range(0, 3): # TODO: improve error handling
          sum += self.__read_sensor()
+
+      sum = sum/3.0
+
+      if self.__qvalue is not None:
+          value = "%.1f %s" % (sum, u'°C')
+          value = value.replace('.', ',')   # TODO: move to SensorValue.value()
+          self.__qvalue_temp.value = value
+
       return sum/3
 
 ### eof ###
