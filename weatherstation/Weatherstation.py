@@ -50,7 +50,7 @@ class AllSensorValues (object):
                                'ID_08': "n/a", \
                                'ID_09': "n/a", \
                                'ID_10': "n/a", \
-                               'ID_11': "n/a"}
+                               'ID_11': "n/a", \
                                'ID_12': "n/a"}
 
     def readfromqueue (self):
