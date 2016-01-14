@@ -88,8 +88,8 @@ def main():
     temp4        = DS1820("/sys/bus/w1/devices/28-000006de535b/w1_slave")
     temphumi     = DHT22_AM2302(21, qvalue_tempbox, qvalue_humi) # BCM 21 = PIN 40
     tempcpu      = CPU()
-    heatcontrol  = Schedules.Control(Schedules.ScheduleHeat(), heatlamp)
-    lightcontrol = Schedules.Control(Schedules.ScheduleLight(), lightlamp)
+    heatcontrol  = Schedules.Control(Schedules.ScheduleHeat(), heatlamp, qvalue_heatlamp)
+    lightcontrol = Schedules.Control(Schedules.ScheduleLight(), lightlamp, qvalue_lightlamp)
 
     measurements = {DS_TEMP1:   Measurements(), \
                     DS_TEMP2:   Measurements(), \
