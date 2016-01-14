@@ -79,6 +79,8 @@ def main():
     sq.register(qvalue_tempbox)
     sq.register(qvalue_humi)
     sq.register(qvalue_tempoutdoor)
+    sq.register(qvalue_heatlamp)
+    sq.register(qvalue_lightlamp)
     sq.start()
 
     temp1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qvalue_tempoutdoor)
