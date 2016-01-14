@@ -177,15 +177,20 @@ class ScheduleLight (ScheduleBase):
 
 
 class Control (object):
-    def __init__(self, schedule, lamp):
+    def __init__(self, schedule, lamp, qvalue=None):
         self.__schedule = schedule
         self.__lamp     = lamp
+        self.__qvalue   = qvalue
 
 
     def control (self, value):
         if (self.__schedule.on(value)): 
+            if self.__qvalue is not None:
+                self.__qvalue.value = "ein"
             self.__lamp.on()
         else:
+            if self.__qvalue is not None:
+                self.__qvalue.value = "aus"
             self.__lamp.off() 
 
 ### eof ###
