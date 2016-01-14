@@ -39,7 +39,7 @@ class DS1820:
           value = value.replace('.', ',')   # TODO: move to SensorValue.value()
           self.__qvalue.value = value
 
-      return sum/3
+      return sum
 
 ### eof ###
 
