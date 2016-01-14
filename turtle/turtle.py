@@ -71,16 +71,18 @@ def __exit(__s, __f):
 # Main ########################################################################
 def main():
     """main part"""
-    qvalue_temp = SensorValueLock("ID_08", "TempDonut", "temp", Lock())
-    qvalue_humi = SensorValueLock("ID_09", "HumiDonut", "humi", Lock())
-    sq.register(qvalue_temp)
+    qvalue_tempbox     = SensorValueLock("ID_08", "TempDonutBox", "temp", Lock())
+    qvalue_humi        = SensorValueLock("ID_09", "HumiDonut", "humi", Lock())
+    qvalue_tempoutdoor = SensorValueLock("ID_12", "TempDonutOutDoor", "temp", Lock())
+    sq.register(qvalue_tempbox)
     sq.register(qvalue_humi)
+    sq.register(qvalue_tempoutdoor)
     sq.start()
 
-    temp1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
+    temp1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qvalue_tempoutdoor)
     temp2        = DS1820("/sys/bus/w1/devices/28-000006dd6ac1/w1_slave")
     temp4        = DS1820("/sys/bus/w1/devices/28-000006de535b/w1_slave")
-    temphumi     = DHT22_AM2302(21, qvalue_temp, qvalue_humi) # BCM 21 = PIN 40
+    temphumi     = DHT22_AM2302(21, qvalue_tempbox, qvalue_humi) # BCM 21 = PIN 40
     tempcpu      = CPU()
     heatcontrol  = Schedules.Control(Schedules.ScheduleHeat(), heatlamp)
     lightcontrol = Schedules.Control(Schedules.ScheduleLight(), lightlamp)
