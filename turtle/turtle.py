@@ -10,6 +10,7 @@ from collections import deque
 import rrdtool
 import signal
 import sys
+from threading import Lock
 from time import strftime, localtime, sleep
 import traceback
 
@@ -55,6 +56,8 @@ lightlamp = Heating(LIGHTLAMP_PIN, LIGHTLAMP_LATENCY)
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
+    sq.stop()
+    sq.join()
     heatlamp.cleanup()
     lightlamp.cleanup()
     sys.exit()
@@ -68,10 +71,16 @@ def __exit(__s, __f):
 # Main ########################################################################
 def main():
     """main part"""
+    qvalue_temp = SensorValueLock("ID_08", "TempDonut", "temp", Lock())
+    qvalue_humi = SensorValueLock("ID_09", "HumiDonut", "humi", Lock())
+    sq.register(qvalue_temp)
+    sq.register(qvalue_humi)
+    sq.start()
+
     temp1        = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
     temp2        = DS1820("/sys/bus/w1/devices/28-000006dd6ac1/w1_slave")
     temp4        = DS1820("/sys/bus/w1/devices/28-000006de535b/w1_slave")
-    temphumi     = DHT22_AM2302(21)   # BCM 21 = PIN 40
+    temphumi     = DHT22_AM2302(21, qvalue_temp, qvalue_humi) # BCM 21 = PIN 40
     tempcpu      = CPU()
     heatcontrol  = Schedules.Control(Schedules.ScheduleHeat(), heatlamp)
     lightcontrol = Schedules.Control(Schedules.ScheduleLight(), lightlamp)
@@ -124,6 +133,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, __exit)
 
     try:
+        sq = SensorQueueClient_write()
         main()
 
     except KeyboardInterrupt:
