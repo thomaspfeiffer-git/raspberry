@@ -40,18 +40,18 @@ def _Exit(__s, __f):
 class AllSensorValues (object):
     def __init__ (self, sensorqueue):
         self.__sensorqueue = sensorqueue
-        self.__sensorvalues = {'ID_01': "n/a", \
-                               'ID_02': "n/a", \
-                               'ID_03': "n/a", \
-                               'ID_04': "n/a", \
-                               'ID_05': "n/a", \
-                               'ID_06': "n/a", \
-                               'ID_07': "n/a", \
-                               'ID_08': "n/a", \
-                               'ID_09': "n/a", \
-                               'ID_10': "n/a", \
-                               'ID_11': "n/a", \
-                               'ID_12': "n/a"}
+        self.__sensorvalues = {'ID_01': "(n/a)", \
+                               'ID_02': "(n/a)", \
+                               'ID_03': "(n/a)", \
+                               'ID_04': "(n/a)", \
+                               'ID_05': "(n/a)", \
+                               'ID_06': "(n/a)", \
+                               'ID_07': "(n/a)", \
+                               'ID_08': "(n/a)", \
+                               'ID_09': "(n/a)", \
+                               'ID_10': "(n/a)", \
+                               'ID_11': "(n/a)", \
+                               'ID_12': "(n/a)"}
 
     def readfromqueue (self):
         v = self.__sensorqueue.read() 
