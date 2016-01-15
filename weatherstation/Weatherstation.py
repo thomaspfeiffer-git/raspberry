@@ -60,7 +60,7 @@ class AllSensorValues (object):
             # if timestamp <= now() + 1 h: sensorvalue[x] = "n/a"
             self.__sensorvalues[v.getID()] = v.value.encode('latin-1')
 
-    def read (self, sid): # TODO: make array (__get__())
+    def read (self, sid): # TODO: make array (__get__()).
         return self.__sensorvalues[sid]
 
 
