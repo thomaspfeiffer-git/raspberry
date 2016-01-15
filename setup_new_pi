@@ -16,6 +16,12 @@ chown root.root
 chmod 644 8192cu.conf
 
 
+NFS:
+====
+
+local: /etc/fstab
+server: /etc/exports
+
 
 
 Misc
