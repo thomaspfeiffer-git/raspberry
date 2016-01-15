@@ -100,7 +100,7 @@ def Main():
                 screens.screenid += 1
                 timestamp = time() + CONFIG.TIMETOFALLBACK
 
-        pygame.time.delay(50)
+        pygame.time.delay(10)
         i += 1
 
 
