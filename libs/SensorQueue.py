@@ -28,10 +28,10 @@ def Log (logstr):
     print(strftime("%Y%m%d %H:%M:%S", localtime()), logstr)
 
 
-class SensorQueueConfig (object):
+class SensorQueueConfig (object):  # TODO: make constructor
     """some constants for client server communication"""
     PORT       = 50000
-    HOSTNAME   = "pia"
+    HOSTNAME   = "pif"
     AUTHKEY    = "finster war's, der mond schien helle".encode('latin1')
     RETRYDELAY = 60
     SENDDELAY  = 60
