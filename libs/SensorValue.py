@@ -48,6 +48,7 @@ class SensorValueLock (object):
 
     @value.setter
     def value (self, v):
+        v = v.replace('.', ',')
         with self.lock:
              self.sensorvalue.value = v
 
