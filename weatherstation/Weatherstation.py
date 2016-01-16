@@ -6,6 +6,24 @@
 ###############################################################################
 
 
+
+"""TODO: Backlight on/off
+
+import RPi.GPIO as io
+from time import sleep
+
+io.setmode(io.BCM)
+io.setup(18,io.OUT)
+
+while True:
+    io.output(18,1)
+    sleep(1)
+    io.output(18,0)
+    sleep(1)
+"""
+
+
+
 import os
 import pygame
 from pygame.locals import QUIT
