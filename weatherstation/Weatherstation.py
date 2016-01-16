@@ -6,27 +6,13 @@
 ###############################################################################
 
 
-
-"""TODO: Backlight on/off
-
-while True:
-    io.output(18,1)
-    sleep(1)
-    io.output(18,0)
-    sleep(1)
-
-
-"""
-
-
-
 import os
 import pygame
 from pygame.locals import QUIT
 import RPi.GPIO as io
 import signal
 import sys
-from time import sleep, time
+from time import sleep, time, strftime, localtime
 import threading
 import traceback
 
@@ -91,6 +77,7 @@ class Lightness (threading.Thread):
         self.__pin  = 18  # GPIO 18
         with self.__lock:
             self.__on = False
+        self.__timestamp = time()
 
         io.setmode(io.BCM)
         io.setwarnings(False)
@@ -103,48 +90,47 @@ class Lightness (threading.Thread):
         io.output(self.__pin, 0)
         with self.__lock:
             self.__on = True
+        self.__timestamp = time() + 15
+
 
     def __switch_off (self):
-        io.output(self.__pin, 1)
-        with self.__lock:
-            self.__on = False
+        if (time() > self.__timestamp):
+            io.output(self.__pin, 1)
+            with self.__lock:
+                self.__on = False
+            return True
+        else:
+            return False
 
 
     def run (self):
         while (self.__running):
-            self.__switch_on()
-            sleep(1)
-            # self.__switch_off()
-            # sleep(1)
-
-        """
-        if (time > 22:00) and (time < 6:00):
-            if (time > time_to_switch_off):
-                backlight_off()
-        else
-            backlight_on()
+            hour = int(strftime("%H", localtime()))
+            if (hour >= 22) or (hour < 6):  # switch backlight off during night hours
+                self.__switch_off()
+            else:
+                self.__switch_on()
            
-        """
+            sleep(1)
+
+        self.__switch_on()
+
 
     def stop (self):
         self.__switch_on()
         self.__running = False
 
 
-    def key_pressed (self):
-        pass
-        
-        """
-        if (backlight_is_off): 
-            backlight_on()
-            set time for switch off, eg time() + 60 s
+    def keypressed (self):
+        with self.__lock:
+            on = self.__on
+       
+        if not on:
+            self.__switch_on()
             return True
         else:
-            return False  # event pygame.MOUSEBUTTONDOWN has to processed by caller
-
-        """
-
-
+            return False
+ 
 
 ###############################################################################
 # Main ########################################################################
@@ -176,8 +162,9 @@ def Main():
                 Exit()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                screens.screenid += 1
-                timestamp = time() + CONFIG.TIMETOFALLBACK
+                if not lightness.keypressed():
+                    screens.screenid += 1
+                    timestamp = time() + CONFIG.TIMETOFALLBACK
 
         pygame.time.delay(10)
         i += 1
