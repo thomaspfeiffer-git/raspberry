@@ -45,16 +45,16 @@ class Screens (object):
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         ypos = self.display.drawWeatherItem("Wohnzimmer:", \
-                                            allsensorvalues.read('ID_01'), \
-                                            allsensorvalues.read('ID_02'), \
+                                            allsensorvalues['ID_01'], \
+                                            allsensorvalues['ID_02'], \
                                             None,  \
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
 
         ypos = self.display.drawWeatherItem(u'Draußen:', \
-                                            allsensorvalues.read('ID_12'), \
-                                            allsensorvalues.read('ID_04'), \
-                                            allsensorvalues.read('ID_05'), \
+                                            allsensorvalues['ID_12'], \
+                                            allsensorvalues['ID_04'], \
+                                            allsensorvalues['ID_05'], \
                                             CONFIG.COLORS.OUTDOOR, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawTime()
@@ -66,8 +66,8 @@ class Screens (object):
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         ypos = self.display.drawWeatherItem("Kinderzimmer:", \
-                                            allsensorvalues.read('ID_06'), \
-                                            allsensorvalues.read('ID_07'), \
+                                            allsensorvalues['ID_06'], \
+                                            allsensorvalues['ID_07'], \
                                             None,    \
                                             CONFIG.COLORS.KIDSROOM, ypos)
         ypos += CONFIG.SEP_Y
@@ -81,12 +81,12 @@ class Screens (object):
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         ypos = self.display.drawWeatherItem("Gehege Donut:", \
-                                            allsensorvalues.read('ID_08'), \
-                                            allsensorvalues.read('ID_09'), \
+                                            allsensorvalues['ID_08'], \
+                                            allsensorvalues['ID_09'], \
                                             None,    \
                                             CONFIG.COLORS.TURTLE, ypos)
-        ypos = self.display.drawSwitchValue(allsensorvalues.read('ID_10'), \
-                                            allsensorvalues.read('ID_11'), \
+        ypos = self.display.drawSwitchValue(allsensorvalues['ID_10'], \
+                                            allsensorvalues['ID_11'], \
                                             CONFIG.COLORS.TURTLE, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawPicture(os.path.join('data', 'turtle.png'), 0.4, ypos)
