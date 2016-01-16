@@ -90,7 +90,6 @@ class AllSensorValues (dict):
         self['ID_10'] = "(n/a)"
         self['ID_11'] = "(n/a)"
         self['ID_12'] = "(n/a)"
-        print self.keys()
 
     def readfromqueue (self):
         v = self.__sensorqueue.read() 
@@ -118,8 +117,6 @@ def Main():
     while True:
         if (i >= 10):
             allsensorvalues.readfromqueue()
-            for s in ['ID_01', 'ID_02', 'ID_03', 'ID_04', 'ID_05', 'ID_06', 'ID_07', 'ID_08', 'ID_09', 'ID_10', 'ID_11', 'ID_12']:
-                print s, ":", allsensorvalues[s]
 
             if (time() >= timestamp): # fallback to screenid #1 
                 screens.screenid = 1
