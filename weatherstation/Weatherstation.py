@@ -20,6 +20,24 @@ while True:
     sleep(1)
     io.output(18,0)
     sleep(1)
+
+
+class Lightness (def):
+    def __init__(self):
+        pass
+
+    def Touched (self):
+        if user touches screen:
+            if light == off: 
+                light_on()
+                after n seconds
+                light_off()
+
+    todos:
+        a) based on lightness switch backlight automatically on/off
+        b) based on time of day switch backlight automatically on/off
+
+
 """
 
 
