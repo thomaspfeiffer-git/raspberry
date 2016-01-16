@@ -1,10 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 ###############################################################################
-# weatherstation.py                                                           #
+# Weatherstation.py                                                           #
 # (c) https://github.com/thomaspfeiffer-git 2016                              #
 ###############################################################################
-
+"""Weatherstation: collects various data from sensors in our flat and garden
+   and displays them on a Tontec Touch Screen Display."""
 
 import os
 import pygame
@@ -71,10 +72,15 @@ class AllSensorValues (dict):
 ###############################################################################
 ###############################################################################
 class Lightness (threading.Thread):
+    """controls lightness of Tontec Touch Screen Display"""
+    """currently display is switched off between 10 pm and 6 am"""
+
+    DELAYTOLIGHTOFF = 15
+
     def __init__ (self):
         threading.Thread.__init__(self)
         self.__lock = threading.Lock()
-        self.__pin  = 18  # GPIO 18
+        self.__pin  = 18  # GPIO 18 controls backlight of Tontec Touch Screen Display
         with self.__lock:
             self.__on = False
         self.__timestamp = time()
@@ -87,13 +93,16 @@ class Lightness (threading.Thread):
 
 
     def __switch_on (self):
+        """turn backlight on"""
         io.output(self.__pin, 0)
         with self.__lock:
             self.__on = True
-        self.__timestamp = time() + 15
+        self.__timestamp = time() + self.DELAYTOLIGHTOFF
 
 
     def __switch_off (self):
+        """turn backlight off only if DELAYTOLIGHTOFF seconds 
+           have passed after switch on"""
         if (time() > self.__timestamp):
             io.output(self.__pin, 1)
             with self.__lock:
@@ -104,6 +113,7 @@ class Lightness (threading.Thread):
 
 
     def run (self):
+        """main routine of thread"""
         while (self.__running):
             hour = int(strftime("%H", localtime()))
             if (hour >= 22) or (hour < 6):  # switch backlight off during night hours
@@ -113,22 +123,26 @@ class Lightness (threading.Thread):
            
             sleep(1)
 
-        self.__switch_on()
+        # switch backlight on on exit 
+        # (otherwise the display might be very dark :-) )
+        self.__switch_on() 
 
 
     def stop (self):
+        """stops thread and switches backlight on"""
         self.__switch_on()
         self.__running = False
 
 
     def keypressed (self):
+        """touching the display switches backlight on"""
         with self.__lock:
-            on = self.__on
+            already_on = self.__on
+        self.__switch_on()
        
-        if not on:
-            self.__switch_on()
-            return True
-        else:
+        if not already_on: # if the backlight was alread on, touch 
+            return True    # event has to be processed by the caller 
+        else:              # of Lightness.keypressed().
             return False
  
 
