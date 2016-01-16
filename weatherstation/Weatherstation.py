@@ -36,33 +36,33 @@ def _Exit(__s, __f):
     Exit()
 
 
-
-class AllSensorValues (object):
+###############################################################################
+###############################################################################
+class AllSensorValues (dict):
     def __init__ (self, sensorqueue):
+        super(dict, self).__init__()
         self.__sensorqueue = sensorqueue
-        self.__sensorvalues = {'ID_01': "(n/a)", \
-                               'ID_02': "(n/a)", \
-                               'ID_03': "(n/a)", \
-                               'ID_04': "(n/a)", \
-                               'ID_05': "(n/a)", \
-                               'ID_06': "(n/a)", \
-                               'ID_07': "(n/a)", \
-                               'ID_08': "(n/a)", \
-                               'ID_09': "(n/a)", \
-                               'ID_10': "(n/a)", \
-                               'ID_11': "(n/a)", \
-                               'ID_12': "(n/a)"}
+        self['ID_01'] = "(n/a)"
+        self['ID_02'] = "(n/a)"
+        self['ID_03'] = "(n/a)"
+        self['ID_04'] = "(n/a)"
+        self['ID_05'] = "(n/a)"
+        self['ID_06'] = "(n/a)"
+        self['ID_07'] = "(n/a)"
+        self['ID_08'] = "(n/a)"
+        self['ID_09'] = "(n/a)"
+        self['ID_10'] = "(n/a)"
+        self['ID_11'] = "(n/a)"
+        self['ID_12'] = "(n/a)"
+        print self.keys()
 
     def readfromqueue (self):
         v = self.__sensorqueue.read() 
         if v is not None:
             # TODO: check age of data
             # if timestamp <= now() + 1 h: sensorvalue[x] = "n/a"
-            self.__sensorvalues[v.getID()] = v.value.encode('latin-1')
-
-    def read (self, sid): # TODO: make array (__get__()).
-        return self.__sensorvalues[sid]
-
+            # self.__sensorvalues[v.getID()] = v.value.encode('latin-1')
+            self[v.getID()] = v.value.encode('latin-1')
 
 
 ###############################################################################
@@ -83,10 +83,10 @@ def Main():
         if (i >= 10):
             allsensorvalues.readfromqueue()
             for s in ['ID_01', 'ID_02', 'ID_03', 'ID_04', 'ID_05', 'ID_06', 'ID_07', 'ID_08', 'ID_09', 'ID_10', 'ID_11', 'ID_12']:
-                print s, ":", allsensorvalues.read(s)
+                print s, ":", allsensorvalues[s]
 
-#            if (time() >= timestamp): # fallback to screenid #1 
-#                screens.screenid = 1
+            if (time() >= timestamp): # fallback to screenid #1 
+                screens.screenid = 1
 
             screens.Screen(allsensorvalues)
             pygame.display.update()
