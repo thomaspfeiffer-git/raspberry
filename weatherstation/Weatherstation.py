@@ -27,6 +27,7 @@ import RPi.GPIO as io
 import signal
 import sys
 from time import sleep, time
+import threading
 import traceback
 
 sys.path.append('../libs')
@@ -42,6 +43,8 @@ from SensorQueue import SensorQueueClient_read
 def Exit():
     """stuff to be done on exit"""
     print("Exit")
+    lightness.stop()
+    lightness.join()
     pygame.quit()
     sys.exit()
 
@@ -81,15 +84,38 @@ class AllSensorValues (dict):
 
 ###############################################################################
 ###############################################################################
-class Lightness (object):
+class Lightness (threading.Thread):
     def __init__ (self):
-        self.__pin = 18  # GPIO 18
+        threading.Thread.__init__(self)
+        self.__lock = threading.Lock()
+        self.__pin  = 18  # GPIO 18
+        with self.__lock:
+            self.__on = False
 
         io.setmode(io.BCM)
-        io.setup(self.__pin,io.OUT)
+        io.setwarnings(False)
+        io.setup(self.__pin, io.OUT)
+
+        self.__running = True
+
+
+    def __switch_on (self):
+        io.output(self.__pin, 0)
+        with self.__lock:
+            self.__on = True
+
+    def __switch_off (self):
+        io.output(self.__pin, 1)
+        with self.__lock:
+            self.__on = False
+
 
     def run (self):
-        pass
+        while (self.__running):
+            self.__switch_on()
+            sleep(1)
+            # self.__switch_off()
+            # sleep(1)
 
         """
         if (time > 22:00) and (time < 6:00):
@@ -99,6 +125,11 @@ class Lightness (object):
             backlight_on()
            
         """
+
+    def stop (self):
+        self.__switch_on()
+        self.__running = False
+
 
     def key_pressed (self):
         pass
@@ -158,6 +189,8 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
 
     try:
+        lightness = Lightness()
+        lightness.start()
         Main()
 
     except KeyboardInterrupt:
