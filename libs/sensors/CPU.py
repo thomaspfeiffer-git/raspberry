@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ##############################################################################
 # CPU.py                                                                     #
 # Encapsulates CPU temp stuff                                                #
@@ -5,15 +6,15 @@
 ##############################################################################
 """encapsulates CPU temp stuff"""
 
-import os
+import subprocess
 
 class CPU:
     def __init__(self):
         pass
 
     def read(self):
-        res = os.popen('vcgencmd measure_temp').readline()
-        return(float(res.replace("temp=","").replace("'C\n","")))
+        res = subprocess.check_output(["vcgencmd", "measure_temp"])
+        return float(res.replace("temp=","").replace("'C\n",""))
 
 ### eof ###
 
