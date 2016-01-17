@@ -21,7 +21,7 @@ class PWM (object):
         if (value > self.MAX):
             value = self.MAX
         if (value < self.MIN):  
-            value = self.MIN)
+            value = self.MIN
         wipi.pwmWrite(self.__pin, value)
 
     def on (self):
