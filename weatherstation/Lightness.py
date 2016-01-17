@@ -61,6 +61,7 @@ class Lightness (threading.Thread):
                 self.__switch_off()
             else:
                 self.__switch_on()
+            sleep(1)
           
         # switch backlight on on exit 
         # (otherwise the display might be very dark :-) )
