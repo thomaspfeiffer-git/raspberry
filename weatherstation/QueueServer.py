@@ -1,8 +1,9 @@
 #!/usr/bin/python
 ###############################################################################
+# QueueServer.py                                                              #
 # (c) https://github.com/thomaspfeiffer-git 2016                              #
 ###############################################################################
-""" hhhh"""
+"""Server for messages of sensor values based on SensorQueueServer"""
 
 import signal
 import sys
@@ -29,9 +30,9 @@ def _Exit(__s, __f):
 ###############################################################################
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
-    SensorServer = SensorQueueServer()
 
     try:
+        SensorServer = SensorQueueServer()
         SensorServer.start()
 
     except KeyboardInterrupt:
