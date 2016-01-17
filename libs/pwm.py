@@ -8,6 +8,9 @@
 import wiringpi2 as wipi
 
 class PWM (object):
+    MAX = 1023    # bright
+    MIN = 0       # dark
+
     def __init__ (self, pin=12):   # usually BCM GPIO 18
         self.__pin = pin
         wipi.wiringPiSetupPhys()
@@ -15,10 +18,16 @@ class PWM (object):
 
     def control (self, value):
         value = int(value)
-        if (value > 1023):    # bright
-            value = 1023
-        if (value < 0):       # dark
-            value = 0)
+        if (value > self.MAX):
+            value = self.MAX
+        if (value < self.MIN):  
+            value = self.MIN)
         wipi.pwmWrite(self.__pin, value)
+
+    def on (self):
+        self.control(self.MAX)
+
+    def off (self):
+        self.control(self.MIN)
 
 # eof #
