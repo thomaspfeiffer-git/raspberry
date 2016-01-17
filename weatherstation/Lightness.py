@@ -54,7 +54,6 @@ class Lightness (threading.Thread):
 
     def run (self):
         """main routine of thread"""
-        i = 0
         while (self.__running):
             hour = int(strftime("%H", localtime()))
             if (hour >= 22) or (hour < 6):  # switch backlight off during night hours
