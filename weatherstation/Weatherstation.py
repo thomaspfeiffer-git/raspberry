@@ -10,16 +10,15 @@
 import os
 import pygame
 from pygame.locals import QUIT
-import RPi.GPIO as io
 import signal
 import sys
-from time import sleep, time, strftime, localtime
-import threading
+from time import time
 import traceback
 
 sys.path.append('../libs')
 from Config import CONFIG
 from Display import Display
+from Lightness import Lightness
 from Screens import Screens
 
 from SensorQueue import SensorQueueClient_read
@@ -68,83 +67,6 @@ class AllSensorValues (dict):
             # self.__sensorvalues[v.getID()] = v.value.encode('latin-1')
             self[v.getID()] = v.value.encode('latin-1')
 
-
-###############################################################################
-###############################################################################
-class Lightness (threading.Thread):
-    """controls lightness of Tontec Touch Screen Display"""
-    """currently display is switched off between 10 pm and 6 am"""
-
-    DELAYTOLIGHTOFF = 15
-
-    def __init__ (self):
-        threading.Thread.__init__(self)
-        self.__lock = threading.Lock()
-        self.__pin  = 18  # GPIO 18 controls backlight of Tontec Touch Screen Display
-        with self.__lock:
-            self.__on = False
-        self.__timestamp = time()
-
-        io.setmode(io.BCM)
-        io.setwarnings(False)
-        io.setup(self.__pin, io.OUT)
-
-        self.__running = True
-
-
-    def __switch_on (self):
-        """turn backlight on"""
-        io.output(self.__pin, 0)
-        with self.__lock:
-            self.__on = True
-        self.__timestamp = time() + self.DELAYTOLIGHTOFF
-
-
-    def __switch_off (self):
-        """turn backlight off only if DELAYTOLIGHTOFF seconds 
-           have passed after switch on"""
-        if (time() > self.__timestamp):
-            io.output(self.__pin, 1)
-            with self.__lock:
-                self.__on = False
-            return True
-        else:
-            return False
-
-
-    def run (self):
-        """main routine of thread"""
-        while (self.__running):
-            hour = int(strftime("%H", localtime()))
-            if (hour >= 22) or (hour < 6):  # switch backlight off during night hours
-                self.__switch_off()
-            else:
-                self.__switch_on()
-           
-            sleep(1)
-
-        # switch backlight on on exit 
-        # (otherwise the display might be very dark :-) )
-        self.__switch_on() 
-
-
-    def stop (self):
-        """stops thread and switches backlight on"""
-        self.__switch_on()
-        self.__running = False
-
-
-    def keypressed (self):
-        """touching the display switches backlight on"""
-        with self.__lock:
-            already_on = self.__on
-        self.__switch_on()
-       
-        if not already_on: # if the backlight was alread on, touch 
-            return True    # event has to be processed by the caller 
-        else:              # of Lightness.keypressed().
-            return False
- 
 
 ###############################################################################
 # Main ########################################################################
