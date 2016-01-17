@@ -22,7 +22,6 @@ class PWM (object):
             value = self.DARK
         if (value < self.BRIGHT):  
             value = self.BRIGHT
-        print "PWM.control: %s" % value
         wipi.pwmWrite(self.__pin, value)
 
     def on (self):
