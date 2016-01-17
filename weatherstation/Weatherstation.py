@@ -44,7 +44,7 @@ def _Exit(__s, __f):
 ###############################################################################
 class AllSensorValues (dict):
     def __init__ (self, sensorqueue):
-        super(dict, self).__init__()
+        super(AllSensorValues, self).__init__()
         self.__sensorqueue = sensorqueue
         self['ID_01'] = "(n/a)"
         self['ID_02'] = "(n/a)"
