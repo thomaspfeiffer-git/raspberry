@@ -21,12 +21,12 @@ from time import sleep
 import traceback
 
 import rrdtool
-from Adafruit_BMP085 import BMP085
 import RPi.GPIO as io
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
+from Adafruit_BMP085 import BMP085
 from DHT22_AM2302 import DHT22_AM2302
 from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock
