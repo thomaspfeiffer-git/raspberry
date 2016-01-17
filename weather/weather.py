@@ -27,6 +27,7 @@ sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
 from Adafruit_BMP085 import BMP085
+from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock
@@ -92,13 +93,6 @@ def Init():
 
 
 ################################################################################
-# GetCPUTemperature ############################################################
-def GetCPUTemperature():
-   res = os.popen('vcgencmd measure_temp').readline()
-   return(float(res.replace("temp=","").replace("'C\n","")))
-
-
-################################################################################
 # getPressure ##################################################################
 def getPressure(sensor, qvalue_pressure):
    p = []
@@ -121,6 +115,8 @@ def getPressure(sensor, qvalue_pressure):
 def Main():
    global bmp
 
+   tempcpu = CPU()
+
    qvalue_temp_indoor  = SensorValueLock("ID_01", "TempWohnzimmerIndoor", "temp", Lock())
    qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", "humi", Lock())
    qvalue_temp_outdoor = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", "temp", Lock())
@@ -141,7 +137,7 @@ def Main():
       temp_indoor, humi_indoor   = th_indoor.read()
       temp_outdoor, humi_outdoor = th_outdoor.read()
       pressure    = getPressure(bmp, qvalue_pressure)
-      temp_cpu    = GetCPUTemperature()
+      temp_cpu    = tempcpu.read()
 
       rrd_template    = DS_TEMPINDOOR  + ":" + \
                         DS_TEMPOUTDOOR + ":" + \
