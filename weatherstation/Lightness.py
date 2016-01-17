@@ -6,7 +6,7 @@
 """controls lightness of Tontec Touch Screen Display via PWM"""
 
 import threading
-from time import sleep, time 
+from time import sleep, time, strftime, localtime
 
 sys.path.append('../libs')
 from pwm import PWM
