@@ -5,6 +5,7 @@
 ################################################################################
 """controls lightness of Tontec Touch Screen Display via PWM"""
 
+import sys
 import threading
 from time import sleep, time, strftime, localtime
 
