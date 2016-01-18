@@ -21,7 +21,6 @@ from time import sleep
 import traceback
 
 import rrdtool
-import RPi.GPIO as io
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
@@ -101,7 +100,7 @@ def getPressure(sensor, qvalue_pressure):
       p.append(sensor.readPressure())
    p.sort()
 
-   p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])
+   p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])  # TODO: eval Measurements
 
    value = "%.1f %s" % (p_avg/100.0, u'hPa')
    value = value.replace('.', ',')   # TODO: move to SensorValue.value()
