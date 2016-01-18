@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 ##############################################################################
 # Measurements.py                                                            #
-# (c) https://github.com/thomaspfeiffer-git 2015                             #
+# (c) https://github.com/thomaspfeiffer-git 2015, 2016                       #
 ##############################################################################
 """provides an extended deque with average() and last()"""
 
