@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ################################################################################
 # SensorValue.py                                                               #
 # Class providing various data of sensors                                      #
@@ -23,6 +24,9 @@ class SensorValue (object):
     def value (self, v):
         self.__value     = v
         self.__timestamp = time.time()
+
+    def getTimestamp (self):
+        return self.__timestamp
 
     def getID (self):
         return self.__v_id
