@@ -40,32 +40,58 @@ def _Exit(__s, __f):
     Exit()
 
 
+
+###############################################################################
+###############################################################################
+class ValueCache (object):
+    def __init__ (self, value):
+        self.__value     = None
+        self.__timestamp = None
+        self.value       = value
+
+    @property
+    def value (self):
+        if self.__timestamp + 60 < time(): # data is older than 60 seconds
+            return "n/a".encode('latin-1')
+        else:
+            return self.__value
+
+    @value.setter
+    def value (self, value):
+        self.__value     = value
+        self.__timestamp = time()
+    
+
+
 ###############################################################################
 ###############################################################################
 class AllSensorValues (dict):
     def __init__ (self, sensorqueue):
         super(AllSensorValues, self).__init__()
         self.__sensorqueue = sensorqueue
-        self['ID_01'] = "(n/a)"
-        self['ID_02'] = "(n/a)"
-        self['ID_03'] = "(n/a)"
-        self['ID_04'] = "(n/a)"
-        self['ID_05'] = "(n/a)"
-        self['ID_06'] = "(n/a)"
-        self['ID_07'] = "(n/a)"
-        self['ID_08'] = "(n/a)"
-        self['ID_09'] = "(n/a)"
-        self['ID_10'] = "(n/a)"
-        self['ID_11'] = "(n/a)"
-        self['ID_12'] = "(n/a)"
+        self['ID_01'] = "(n/a)".encode('latin-1')
+        self['ID_02'] = "(n/a)".encode('latin-1')
+        self['ID_03'] = "(n/a)".encode('latin-1')
+        self['ID_04'] = "(n/a)".encode('latin-1')
+        self['ID_05'] = "(n/a)".encode('latin-1')
+        self['ID_06'] = "(n/a)".encode('latin-1')
+        self['ID_07'] = "(n/a)".encode('latin-1')
+        self['ID_08'] = "(n/a)".encode('latin-1')
+        self['ID_09'] = "(n/a)".encode('latin-1')
+        self['ID_10'] = "(n/a)".encode('latin-1')
+        self['ID_11'] = "(n/a)".encode('latin-1')
+        self['ID_12'] = "(n/a)".encode('latin-1')
 
     def readfromqueue (self):
         v = self.__sensorqueue.read() 
         if v is not None:
-            # TODO: check age of data
-            # if timestamp <= now() + 1 h: sensorvalue[x] = "n/a"
-            # self.__sensorvalues[v.getID()] = v.value.encode('latin-1')
             self[v.getID()] = v.value.encode('latin-1')
+
+            # TODO: check age of data 
+            #if v.getTimestamp() < time() + 60: 
+            #    self[v.getID()] = v.value.encode('latin-1')
+            #else:
+            #    self[v.getID()] = "n/a".encode('latin-1')
 
 
 ###############################################################################
