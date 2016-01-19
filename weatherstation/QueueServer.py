@@ -17,12 +17,10 @@ from SensorQueue import SensorQueueServer
 # Exit ########################################################################
 def Exit():
     """stuff to be done on exit"""
-    print("Exit")
     sys.exit()
 
 def _Exit(__s, __f):
     """exit for signal handler"""
-    print("_Exit")
     Exit()
 
 
