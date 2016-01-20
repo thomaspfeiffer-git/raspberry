@@ -82,7 +82,6 @@ def Main():
                 screens.screenid = 1
 
             screens.Screen(allsensorvalues)
-            pygame.display.update()
             i = 0
 
         for event in pygame.event.get():

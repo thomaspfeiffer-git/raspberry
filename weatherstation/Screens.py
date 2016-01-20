@@ -47,6 +47,7 @@ class Screens (object):
     def Screen (self, allsensorvalues):
         """calls Screen<n>() whereat n == screenid"""
         self.__screens[self.screenid](allsensorvalues)
+        pygame.display.update()
 
 
     def __getvalue (self, sensorvalue):
