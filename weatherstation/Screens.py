@@ -13,6 +13,7 @@ Currently there are three screens:
 
 
 import os
+import pygame
 from Config import CONFIG
 
 
