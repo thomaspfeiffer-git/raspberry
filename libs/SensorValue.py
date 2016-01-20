@@ -18,12 +18,19 @@ class SensorValue (object):
 
     @property
     def value (self):
-        return self.__value
+        if self.getTimestamp() + 60 < time(): # data is older than 60 seconds
+            return "n/a"
+        else:
+            return self.__value
 
     @value.setter
     def value (self, v):
         self.__value     = v
         self.__timestamp = time.time()
+
+    def getValue (self):
+        """returns value regardless of timestamp"""
+        return self.__value
 
     def getTimestamp (self):
         return self.__timestamp

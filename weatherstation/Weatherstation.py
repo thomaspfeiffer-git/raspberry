@@ -40,64 +40,36 @@ def _Exit(__s, __f):
     Exit()
 
 
-
-###############################################################################
-###############################################################################
-class ValueCache (object):
-    def __init__ (self, value):
-        self.__value     = None
-        self.__timestamp = None
-        self.value       = value
-
-    @property
-    def value (self):
-        if self.__timestamp + 60 < time(): # data is older than 60 seconds
-            return "n/a".encode('latin-1')
-        else:
-            return self.__value
-
-    @value.setter
-    def value (self, value):
-        self.__value     = value
-        self.__timestamp = time()
-    
-
-
 ###############################################################################
 ###############################################################################
 class AllSensorValues (dict):
     def __init__ (self, sensorqueue):
         super(AllSensorValues, self).__init__()
         self.__sensorqueue = sensorqueue
-        self['ID_01'] = "(n/a)".encode('latin-1')
-        self['ID_02'] = "(n/a)".encode('latin-1')
-        self['ID_03'] = "(n/a)".encode('latin-1')
-        self['ID_04'] = "(n/a)".encode('latin-1')
-        self['ID_05'] = "(n/a)".encode('latin-1')
-        self['ID_06'] = "(n/a)".encode('latin-1')
-        self['ID_07'] = "(n/a)".encode('latin-1')
-        self['ID_08'] = "(n/a)".encode('latin-1')
-        self['ID_09'] = "(n/a)".encode('latin-1')
-        self['ID_10'] = "(n/a)".encode('latin-1')
-        self['ID_11'] = "(n/a)".encode('latin-1')
-        self['ID_12'] = "(n/a)".encode('latin-1')
+        self['ID_01'] = None
+        self['ID_02'] = None
+        self['ID_03'] = None
+        self['ID_04'] = None
+        self['ID_05'] = None
+        self['ID_06'] = None
+        self['ID_07'] = None
+        self['ID_08'] = None
+        self['ID_09'] = None
+        self['ID_10'] = None
+        self['ID_11'] = None
+        self['ID_12'] = None
 
     def readfromqueue (self):
+        """polls the queue for new sensor values (only one at a time)"""
         v = self.__sensorqueue.read() 
         if v is not None:
-            self[v.getID()] = v.value.encode('latin-1')
-
-            # TODO: check age of data 
-            #if v.getTimestamp() < time() + 60: 
-            #    self[v.getID()] = v.value.encode('latin-1')
-            #else:
-            #    self[v.getID()] = "n/a".encode('latin-1')
+            self[v.getID()] = v
 
 
 ###############################################################################
 # Main ########################################################################
 def Main():
-    os.environ["SDL_FBDEV"] = "/dev/fb1"
+    os.environ["SDL_FBDEV"] = "/dev/fb1"   # TODO: move to Display.__init__()
     os.environ['SDL_VIDEO_CENTERED'] = '1'
     pygame.init()
     pygame.mouse.set_visible(False)
