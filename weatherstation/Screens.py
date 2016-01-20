@@ -44,7 +44,7 @@ class Screens (object):
             self.__screenid = sid
 
 
-    def Screen (self, allsensorvalues):
+    def drawScreen (self, allsensorvalues):
         """calls Screen<n>() whereat n == screenid"""
         self.__screens[self.screenid](allsensorvalues)
         pygame.display.update()

@@ -81,7 +81,7 @@ def Main():
             if (time() >= timestamp): # fallback to screenid #1 
                 screens.screenid = 1
 
-            screens.Screen(allsensorvalues)
+            screens.drawScreen(allsensorvalues)
             i = 0
 
         for event in pygame.event.get():
