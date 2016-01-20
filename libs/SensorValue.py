@@ -20,7 +20,6 @@ class SensorValue (object):
     def value (self):
         if self.getTimestamp() + 300 < time.time():
             return "n/a"  # data is older than 5 minutes
-
         else:
             return self.__value
 
