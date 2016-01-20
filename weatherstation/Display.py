@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+###############################################################################
+# Display.py                                                                  #
+# (c) https://github.com/thomaspfeiffer-git 2016                              #
+###############################################################################
 
 
-
+import os
 import pygame
 import re
 from time import strftime, localtime
@@ -14,6 +19,11 @@ from Constants import CONSTANTS
 class Display (object):
     """all about displaying the various weather values on several screens"""
     def __init__ (self):
+        os.environ["SDL_FBDEV"] = "/dev/fb1" 
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
+        pygame.init()
+        pygame.mouse.set_visible(False)
+
         self.screen = pygame.display.set_mode((CONFIG.WIDTH, CONFIG.HEIGHT), \
                                                pygame.NOFRAME)
         self.screen.fill(CONFIG.COLORS.BACKGROUND)

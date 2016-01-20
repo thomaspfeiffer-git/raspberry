@@ -7,7 +7,6 @@
 """Weatherstation: collects various data from sensors in our flat and garden
    and displays them on a Tontec Touch Screen Display."""
 
-import os
 import pygame
 from pygame.locals import QUIT
 import signal
@@ -69,11 +68,6 @@ class AllSensorValues (dict):
 ###############################################################################
 # Main ########################################################################
 def Main():
-    os.environ["SDL_FBDEV"] = "/dev/fb1"   # TODO: move to Display.__init__()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
-    pygame.init()
-    pygame.mouse.set_visible(False)
-
     display = Display()
     screens = Screens(display)
 
@@ -86,6 +80,9 @@ def Main():
 
             if (time() >= timestamp): # fallback to screenid #1 
                 screens.screenid = 1
+
+            # if allsensorvalues['ID_01'] is not None:
+            #    print "ID_01:", allsensorvalues['ID_01'].getTimestamp()
 
             screens.Screen(allsensorvalues)
             pygame.display.update()
