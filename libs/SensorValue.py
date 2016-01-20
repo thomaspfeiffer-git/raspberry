@@ -18,7 +18,7 @@ class SensorValue (object):
 
     @property
     def value (self):
-        if self.getTimestamp() + 60 < time(): # data is older than 60 seconds
+        if self.getTimestamp() + 60 < time.time(): # data is older than 60 seconds
             return "n/a"
         else:
             return self.__value
