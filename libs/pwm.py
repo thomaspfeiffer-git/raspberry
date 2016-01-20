@@ -8,8 +8,8 @@
 import wiringpi2 as wipi
 
 class PWM (object):
-    BRIGHT = 0    
-    DARK   = 1023 
+    BRIGHT = 0        # Warning: Bright and Dark depends on the hardware 
+    DARK   = 1023     # controlled by the PWM.
 
     def __init__ (self, pin=12):   # usually BCM GPIO 18
         self.__pin = pin
