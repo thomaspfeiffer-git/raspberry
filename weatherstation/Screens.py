@@ -54,7 +54,7 @@ class Screens (object):
         if sensorvalue is not None:
             return sensorvalue.value.encode('latin-1')
         else:
-            return "n/a".encode('latin-1')
+            return "(n/a)".encode('latin-1')
 
 
     def Screen1 (self, allsensorvalues):
