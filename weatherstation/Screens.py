@@ -51,7 +51,7 @@ class Screens (object):
 
 
     def __getvalue (self, sensorvalue):
-        """returns measured value of sensor or "n/a" of sensorvalue == None"""
+        """returns measured value of sensor or "n/a" if sensorvalue == None"""
         if sensorvalue is not None:
             return sensorvalue.value.encode('latin-1')
         else:
