@@ -81,9 +81,6 @@ def Main():
             if (time() >= timestamp): # fallback to screenid #1 
                 screens.screenid = 1
 
-            # if allsensorvalues['ID_01'] is not None:
-            #    print "ID_01:", allsensorvalues['ID_01'].getTimestamp()
-
             screens.Screen(allsensorvalues)
             pygame.display.update()
             i = 0
