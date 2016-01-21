@@ -1,30 +1,26 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+#############################################################################
+# weather.py                                                                #
+# Monitor temperature, humidity, and air pressure in our living room        #
+# and outside.                                                              #
+# (c) https://github.com/thomaspfeiffer-git 2015, 2016                      #
+#############################################################################
+"""Monitor temperature, humidity, and air pressure"""
 
 
-###############################################################################
-# weather.py                                                                  #
-# weather station                                                             #
-# several sensors (indoor, outdoor)                                           #
-# rrd statistics                                                              #
-# Version 1.0
-# Thomas Pfeiffer                                                             #
-# 2015                                                                        #
-###############################################################################
-
-import os
 import numpy as np
+import os
+import rrdtool
 import signal
 import sys
 from threading import Lock
 from time import sleep
 import traceback
 
-import rrdtool
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
-
 from Adafruit_BMP085 import BMP085
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
@@ -51,7 +47,7 @@ bmp = 0
 # Misc for rrdtool
 DATAFILE       = "/schild/weather/weather.rrd"
 ERROR          = -999.99
-DS_TEMPINDOOR  = "temp_indoor"   # Besser: Hash mit {DS:...; Name: "..."}
+DS_TEMPINDOOR  = "temp_indoor" 
 DS_TEMPOUTDOOR = "temp_outdoor"
 DS_HUMIINDOOR  = "humi_indoor"
 DS_HUMIOUTDOOR = "humi_outdoor"
@@ -87,7 +83,7 @@ def Log(l):
 def Init():
    global bmp
    Log('Initializing ...')
-   bmp = BMP085(0x77,2) 
+   bmp = BMP085(0x77, 2) 
    Log('Initializing done.')
 
 
@@ -112,60 +108,58 @@ def getPressure(sensor, qvalue_pressure):
 ################################################################################
 # Main #########################################################################
 def Main():
-   global bmp
+    tempcpu = CPU()
 
-   tempcpu = CPU()
+    qvalue_temp_indoor  = SensorValueLock("ID_01", "TempWohnzimmerIndoor", "temp", Lock())
+    qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", "humi", Lock())
+    qvalue_temp_outdoor = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", "temp", Lock())
+    qvalue_humi_outdoor = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", "humi", Lock())
+    qvalue_pressure     = SensorValueLock("ID_05", "Luftdruck", "press", Lock())
 
-   qvalue_temp_indoor  = SensorValueLock("ID_01", "TempWohnzimmerIndoor", "temp", Lock())
-   qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", "humi", Lock())
-   qvalue_temp_outdoor = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", "temp", Lock())
-   qvalue_humi_outdoor = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", "humi", Lock())
-   qvalue_pressure     = SensorValueLock("ID_05", "Luftdruck", "press", Lock())
+    sq.register(qvalue_temp_indoor)
+    sq.register(qvalue_humi_indoor)
+    sq.register(qvalue_temp_outdoor)
+    sq.register(qvalue_humi_outdoor)
+    sq.register(qvalue_pressure)
+    sq.start()
 
-   sq.register(qvalue_temp_indoor)
-   sq.register(qvalue_humi_indoor)
-   sq.register(qvalue_temp_outdoor)
-   sq.register(qvalue_humi_outdoor)
-   sq.register(qvalue_pressure)
-   sq.start()
+    th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
+    th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
 
-   th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
-   th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
+    while(True):
+        temp_indoor, humi_indoor   = th_indoor.read()
+        temp_outdoor, humi_outdoor = th_outdoor.read()
+        pressure                   = getPressure(bmp, qvalue_pressure)
+        temp_cpu                   = tempcpu.read()
 
-   while(True):
-      temp_indoor, humi_indoor   = th_indoor.read()
-      temp_outdoor, humi_outdoor = th_outdoor.read()
-      pressure    = getPressure(bmp, qvalue_pressure)
-      temp_cpu    = tempcpu.read()
+        rrd_template    = DS_TEMPINDOOR  + ":" + \
+                          DS_TEMPOUTDOOR + ":" + \
+                          DS_HUMIINDOOR  + ":" + \
+                          DS_HUMIOUTDOOR + ":" + \
+                          DS_AIRPRESSURE + ":" + \
+                          DS_TEMPCPU
 
-      rrd_template    = DS_TEMPINDOOR  + ":" + \
-                        DS_TEMPOUTDOOR + ":" + \
-                        DS_HUMIINDOOR  + ":" + \
-                        DS_HUMIOUTDOOR + ":" + \
-                        DS_AIRPRESSURE + ":" + \
-                        DS_TEMPCPU
+        rrd_data = "N:{:.2f}".format(temp_indoor)      + \
+                    ":{:.2f}".format(temp_outdoor)     + \
+                    ":{:.2f}".format(humi_indoor)      + \
+                    ":{:.2f}".format(humi_outdoor)     + \
+                    ":{:.2f}".format(pressure / 100.0) + \
+                    ":{:.2f}".format(temp_cpu)
 
-      rrd_data = "N:{:.2f}".format(temp_indoor)      + \
-                  ":{:.2f}".format(temp_outdoor)     + \
-                  ":{:.2f}".format(humi_indoor)      + \
-                  ":{:.2f}".format(humi_outdoor)     + \
-                  ":{:.2f}".format(pressure / 100.0) + \
-                  ":{:.2f}".format(temp_cpu)
-
-      rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
+        rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
    
-      Log(rrd_template)
-      Log(rrd_data)
+        Log(rrd_template)
+        Log(rrd_data)
 
-      Log("CPU Temperatur: {:.2f} °C".format(temp_cpu))
-      Log("Temperatur DHT (outdoor): {:.2f} °C".format(temp_outdoor))
-      Log("Luftfeuchtigkeit DHT (outdoor): {:.2f} %".format(humi_outdoor))
-      Log("Temperatur DHT (indoor): {:.2f} °C".format(temp_indoor))
-      Log("Luftfeuchtigkeit DHT (indoor): {:.2f} %".format(humi_indoor))
-      Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
-      Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
+        Log("CPU Temperatur: {:.2f} °C".format(temp_cpu))
+        Log("Temperatur DHT (outdoor): {:.2f} °C".format(temp_outdoor))
+        Log("Luftfeuchtigkeit DHT (outdoor): {:.2f} %".format(humi_outdoor))
+        Log("Temperatur DHT (indoor): {:.2f} °C".format(temp_indoor))
+        Log("Luftfeuchtigkeit DHT (indoor): {:.2f} %".format(humi_indoor))
+        Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
+        Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
 
-      sleep(30)
+        sleep(30)
 
 
 ################################################################################
