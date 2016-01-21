@@ -10,6 +10,13 @@ import sys
 
 import Adafruit_BMP085
 
+# maybe necessary:
+#     import numpy
+#     for i in range(0,10):
+#         p.append(sensor.readPressure())
+#     p.sort()
+#     p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])
+# or check useability of class Measurements
 
 class BMP085 (object):
     """class for handling the air pressure sensor BMP085"""

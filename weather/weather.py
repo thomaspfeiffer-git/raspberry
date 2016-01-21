@@ -9,7 +9,7 @@
 """Monitor temperature, humidity, and air pressure"""
 
 
-import numpy as np
+# import numpy as np
 import os
 import rrdtool
 import signal
@@ -21,7 +21,7 @@ import traceback
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
-from Adafruit_BMP085 import BMP085
+from BMP085 import BMP085
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from SensorQueue import SensorQueueClient_write
@@ -40,10 +40,6 @@ pin_sensor_indoor      = 38
 pin_sensor_indoor_bcm  = 20
 
 
-# BMP085 (air pressure)
-bmp = 0
-
-
 # Misc for rrdtool
 DATAFILE       = "/schild/weather/weather.rrd"
 ERROR          = -999.99
@@ -56,53 +52,44 @@ DS_TEMPCPU     = "temp_cpu"
 
 
 # Other global stuff
-bDebug  = False
+bDebug = False
 
 
 ################################################################################
 # Exit ########################################################################
 def Exit():
-   Log('Cleaning up ...')
-   sq.stop()
-   sq.join()
-   sys.exit()
+    Log('Cleaning up ...')
+    sq.stop()
+    sq.join()
+    sys.exit()
 
 def _Exit(s,f):
-   Exit()
+    Exit()
 
 
 ################################################################################
 # Log ##########################################################################
 def Log(l):
-   if (bDebug):
-      print(l)
-
-
-################################################################################
-# Init #########################################################################
-def Init():
-   global bmp
-   Log('Initializing ...')
-   bmp = BMP085(0x77, 2) 
-   Log('Initializing done.')
+    if (bDebug):
+        print(l)
 
 
 ################################################################################
 # getPressure ##################################################################
-def getPressure(sensor, qvalue_pressure):
-   p = []
-
-   for i in range(0,10):
-      p.append(sensor.readPressure())
-   p.sort()
-
-   p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])  # TODO: eval Measurements
-
-   value = "%.1f %s" % (p_avg/100.0, u'hPa')
-   value = value.replace('.', ',')   # TODO: move to SensorValue.value()
-   qvalue_pressure.value = value
-
-   return p_avg
+#def getPressure(sensor, qvalue_pressure):
+#   p = []
+#
+#   for i in range(0,10):
+#      p.append(sensor.readPressure())
+#   p.sort()
+#
+#   p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])  # TODO: eval Measurements
+#
+#   value = "%.1f %s" % (p_avg/100.0, u'hPa')
+#   value = value.replace('.', ',')   # TODO: move to SensorValue.value()
+#   qvalue_pressure.value = value
+#
+#   return p_avg
 
 
 ################################################################################
@@ -125,11 +112,12 @@ def Main():
 
     th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
     th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
+    bmp085     = BMP085(qvalue_pressure)
 
     while(True):
         temp_indoor, humi_indoor   = th_indoor.read()
         temp_outdoor, humi_outdoor = th_outdoor.read()
-        pressure                   = getPressure(bmp, qvalue_pressure)
+        pressure                   = bmp085.read()
         temp_cpu                   = tempcpu.read()
 
         rrd_template    = DS_TEMPINDOOR  + ":" + \
@@ -170,7 +158,6 @@ if __name__ == '__main__':
 
     try:
         sq = SensorQueueClient_write()
-        Init()
         Main()
 
     except KeyboardInterrupt:
