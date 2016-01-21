@@ -3,6 +3,7 @@
 # Display.py                                                                  #
 # (c) https://github.com/thomaspfeiffer-git 2016                              #
 ###############################################################################
+"""all about displaying the various weather values on several screens"""
 
 
 import os
