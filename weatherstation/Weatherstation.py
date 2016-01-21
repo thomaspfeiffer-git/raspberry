@@ -42,6 +42,8 @@ def _Exit(__s, __f):
 ###############################################################################
 ###############################################################################
 class AllSensorValues (dict):
+    """contains the (locally cached) values of all sensors and
+       provides a method for polling the queue of the sensor values"""
     def __init__ (self, sensorqueue):
         super(AllSensorValues, self).__init__()
         self.__sensorqueue = sensorqueue
@@ -68,6 +70,13 @@ class AllSensorValues (dict):
 ###############################################################################
 # Main ########################################################################
 def Main():
+    """main program containing a loop for:
+       - reading sensor values from the queue
+       - update the screens accordingly
+         . change screen on touch event
+         . fallback to screen #1
+         . update displayed values
+    """
     display = Display()
     screens = Screens(display)
 
