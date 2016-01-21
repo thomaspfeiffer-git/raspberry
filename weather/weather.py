@@ -62,17 +62,17 @@ def Exit():
     sq.join()
     sys.exit()
 
-def _Exit(s, f):
+def _Exit(__s, __f):
     """cleanup stuff used for signal handler"""
     Exit()
 
 
 ################################################################################
 # Log ##########################################################################
-def Log(l):
+def Log(message):
     """prints debug messages"""
     if (bDebug):
-        print(l)
+        print(message)
 
 
 ################################################################################
