@@ -19,7 +19,7 @@ class Lightness (threading.Thread):
     """controls lightness of Tontec Touch Screen Display"""
     """currently display is switched off between 10 pm and 6 am"""
 
-    DELAYTOLIGHTOFF = 15
+    DELAYTOLIGHTOFF = 15.0
 
     def __init__ (self):
         threading.Thread.__init__(self)
