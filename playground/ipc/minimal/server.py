@@ -12,7 +12,7 @@ class QueueManager(BaseManager):
 
 q = queue.Queue()
 QueueManager.register('get_queue', callable=lambda:q)
-manager = QueueManager(address=('', 50001), authkey="hallo".encode('latin1'))
+manager = QueueManager(address=('', 50001), authkey="hallo".encode('latin1'), serializer="xmlrpclib")
 server = manager.get_server()
 server.serve_forever()
 
