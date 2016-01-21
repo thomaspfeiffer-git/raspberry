@@ -9,7 +9,6 @@
 """Monitor temperature, humidity, and air pressure"""
 
 
-# import numpy as np
 import os
 import rrdtool
 import signal
@@ -72,24 +71,6 @@ def _Exit(s,f):
 def Log(l):
     if (bDebug):
         print(l)
-
-
-################################################################################
-# getPressure ##################################################################
-#def getPressure(sensor, qvalue_pressure):
-#   p = []
-#
-#   for i in range(0,10):
-#      p.append(sensor.readPressure())
-#   p.sort()
-#
-#   p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])  # TODO: eval Measurements
-#
-#   value = "%.1f %s" % (p_avg/100.0, u'hPa')
-#   value = value.replace('.', ',')   # TODO: move to SensorValue.value()
-#   qvalue_pressure.value = value
-#
-#   return p_avg
 
 
 ################################################################################
