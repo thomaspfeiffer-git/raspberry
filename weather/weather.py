@@ -9,7 +9,6 @@
 """Monitor temperature, humidity, and air pressure"""
 
 
-import os
 import rrdtool
 import signal
 import sys
@@ -57,18 +56,21 @@ bDebug = False
 ################################################################################
 # Exit ########################################################################
 def Exit():
+    """cleanup stuff"""
     Log('Cleaning up ...')
     sq.stop()
     sq.join()
     sys.exit()
 
-def _Exit(s,f):
+def _Exit(s, f):
+    """cleanup stuff used for signal handler"""
     Exit()
 
 
 ################################################################################
 # Log ##########################################################################
 def Log(l):
+    """prints debug messages"""
     if (bDebug):
         print(l)
 
@@ -76,7 +78,9 @@ def Log(l):
 ################################################################################
 # Main #########################################################################
 def Main():
-    tempcpu = CPU()
+    """initialize lots of sensor values for the sensor value queue
+       initialize the sensors
+       poll the sensor in a loop and write data to rrd"""
 
     qvalue_temp_indoor  = SensorValueLock("ID_01", "TempWohnzimmerIndoor", "temp", Lock())
     qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", "humi", Lock())
@@ -91,6 +95,7 @@ def Main():
     sq.register(qvalue_pressure)
     sq.start()
 
+    tempcpu = CPU()
     th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
     th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
     bmp085     = BMP085(qvalue_pressure)
