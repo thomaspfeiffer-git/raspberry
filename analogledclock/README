@@ -1,5 +1,5 @@
 Building an analog LED clock - dedicated LEDs for each second/minute/hour
-May look like eg http://download.cnet.com/LED-Analog-Clock-HD/3004-2094_4-11825229-1.html
+(c) https://github.com/thomaspfeiffer-git 2015, 2016 
 
 Files:
   clock.py: main file
