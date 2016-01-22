@@ -9,14 +9,13 @@ verschiedener ueber Wohnung und Garten verteilter Sensoren und zeigt
 diese auf drei Screens (Wechsel durch Touch auf das Display) an.
 
 
-
 Queue fuer die Messwerte:
 -------------------------
 
 Die Messwerte der Sensoren verschiedener Raspberry Pis in der Wohnung 
 bzw im Garten werden ueber eine Queue uebertragen. QueueServer.py ist
 der Server fuer diese Queue. Die zugehoerigen Klassen fuer das Lesen
-bzw Schreiben der Queue bzw fuer den Messwerte sind in 
+bzw Schreiben der Queue bzw fuer die Messwerte sind in 
 ../libs/SensorQueue.py und ../libs/SensorValue.py.
 
 Die Sensoren in ../libs/sensors/ erhalten eine Instanz von SensorValue
@@ -64,4 +63,6 @@ Bauteilliste:
 
 
 
+
+# eof #
 
