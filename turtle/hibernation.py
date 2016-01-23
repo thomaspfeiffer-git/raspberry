@@ -7,6 +7,11 @@
 #############################################################################
 """Have a great hibernation for our turtle."""
 
+"""TODOs:
+   - use external NTP for timestamps for monitoring
+"""
+
+
 import datetime
 import rrdtool
 import signal
