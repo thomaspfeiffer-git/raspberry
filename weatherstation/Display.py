@@ -103,7 +103,7 @@ class Display (object):
                          CONFIG.HEIGHT-CONFIG.FONTSIZE_SMALL-CONFIG.SEP_Y))
 
 
-    def drawPicture (self, pathToPic, scale, ypos):
+    def drawPicture (self, pathToPic, scale, xpos="c", ypos):
         """loads, scales, and prints a picture"""
         surface_picture = pygame.image.load(pathToPic)
         (pw, ph) = surface_picture.get_size()
