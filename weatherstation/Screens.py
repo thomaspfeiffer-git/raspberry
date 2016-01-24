@@ -71,10 +71,21 @@ class Screens (object):
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
 
-        pressure = self.__getvalue(allsensorvalues['ID_05'])
-        print "Druck:", pressure
+        pressure = self.__getvalue(allsensorvalues['ID_05']).split()[0].replace(',', '.')
+                        # TODO: SensorValue must provide value and unit separatedly
 
-        self.display.drawPicture(os.path.join('data', 'symbol_sunny.png'), 0.4, xpos="r", ypos=ypos)
+        if pressure > 1000.0:
+            picture = 'symbol_sunny.png'
+        elif pressure > 990.0:
+            picture = 'symbol_cloudy.png'
+        elif pressure > 980.0:
+            picture = 'symbol_overcast.png'
+        else:
+            picture = 'symbol_rain.png'
+
+        # TODO: remove os.path.join()
+        self.display.drawPicture(os.path.join('data', picture), 0.3, 
+                                 xpos="r", ypos=ypos+CONFIG.MARGIN)
         ypos = self.display.drawWeatherItem(u'Draußen:', \
                                             self.__getvalue(allsensorvalues['ID_12']), \
                                             self.__getvalue(allsensorvalues['ID_04']), \
