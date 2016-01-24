@@ -104,7 +104,7 @@ class Display (object):
 
 
     def drawPicture (self, pathToPic, scale, ypos):
-        """loads, scales, and prints ad picture"""
+        """loads, scales, and prints a picture"""
         surface_picture = pygame.image.load(pathToPic)
         (pw, ph) = surface_picture.get_size()
         pw = int(pw*scale)
