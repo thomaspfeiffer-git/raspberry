@@ -14,10 +14,10 @@ class MCP23017:
     """control component MCP23017"""
     def __init__ (self, devices):
         self.__bus = smbus.SMBus(1)
-        self.devices = devices
+        self.__devices = devices
 
         # Set port direction to output (0b00000000)
-        for d in self.devices:
+        for d in self.__devices:
             self.send(d, MCP23x17.IODIRA, 0b00000000)
             self.send(d, MCP23x17.IODIRB, 0b00000000)
 
