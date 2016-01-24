@@ -71,7 +71,10 @@ class Screens (object):
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
 
-        self.display.drawPicture(os.path.join('data', 'symbol_sunny.png'), 0.4, xpos="r", ypos)
+        pressure = self.__getvalue(allsensorvalues['ID_05'])
+        print "Druck:", pressure
+
+        self.display.drawPicture(os.path.join('data', 'symbol_sunny.png'), 0.4, xpos="r", ypos=ypos)
         ypos = self.display.drawWeatherItem(u'Draußen:', \
                                             self.__getvalue(allsensorvalues['ID_12']), \
                                             self.__getvalue(allsensorvalues['ID_04']), \
@@ -92,7 +95,7 @@ class Screens (object):
                                             None,    \
                                             CONFIG.COLORS.KIDSROOM, ypos)
         ypos += CONFIG.SEP_Y
-        self.display.drawPicture(os.path.join('data', 'child.png'), 0.8, xpos="c", ypos)
+        self.display.drawPicture(os.path.join('data', 'child.png'), 0.8, xpos="c", ypos=ypos)
         self.display.drawTime()
 
 
@@ -110,7 +113,7 @@ class Screens (object):
                                             self.__getvalue(allsensorvalues['ID_11']), \
                                             CONFIG.COLORS.TURTLE, ypos)
         ypos += CONFIG.SEP_Y
-        self.display.drawPicture(os.path.join('data', 'turtle.png'), 0.4, xpos="c", ypos)
+        self.display.drawPicture(os.path.join('data', 'turtle.png'), 0.4, xpos="c", ypos=ypos)
         self.display.drawTime()
 
 # eof #

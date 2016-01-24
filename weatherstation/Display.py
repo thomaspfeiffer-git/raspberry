@@ -103,7 +103,7 @@ class Display (object):
                          CONFIG.HEIGHT-CONFIG.FONTSIZE_SMALL-CONFIG.SEP_Y))
 
 
-    def drawPicture (self, pathToPic, scale, xpos="c", ypos):
+    def drawPicture (self, pathToPic, scale, xpos, ypos):
         """loads, scales, and prints a picture"""
         surface_picture = pygame.image.load(pathToPic)
         (pw, ph) = surface_picture.get_size()
@@ -111,7 +111,15 @@ class Display (object):
         ph = int(ph*scale)
         surface_picture = pygame.transform.smoothscale(surface_picture, (pw, ph))
         (pw, ph) = surface_picture.get_size()
-        self.screen.blit(surface_picture, (int((CONFIG.WIDTH-pw)/2), ypos))
+        if xpos == "c":
+            x = int((CONFIG.WIDTH-pw)/2)
+        elif xpos == "r":
+            x = CONFIG.WIDTH-CONFIG.MARGIN-pw
+        elif xpos == "l":
+            x = CONFIG.MARGIN
+        else:
+            x = 0 # TODO: Raise exception
+        self.screen.blit(surface_picture, (x, ypos))
 
 # eof #
 
