@@ -19,6 +19,11 @@ from Constants import CONSTANTS
 ###############################################################################
 class Display (object):
     """all about displaying the various weather values on several screens"""
+
+    class Position:
+        """enum for positioning"""
+        Left, Center, Right, Top, Bottom = range(5)
+
     def __init__ (self):
         os.environ["SDL_FBDEV"] = "/dev/fb1" 
         os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -111,14 +116,14 @@ class Display (object):
         ph = int(ph*scale)
         surface_picture = pygame.transform.smoothscale(surface_picture, (pw, ph))
         (pw, ph) = surface_picture.get_size()
-        if xpos == "c":
+        if xpos == Display.Position.Center:
             x = int((CONFIG.WIDTH-pw)/2)
-        elif xpos == "r":
+        elif xpos == Display.Position.Right:
             x = CONFIG.WIDTH-CONFIG.MARGIN-pw
-        elif xpos == "l":
+        elif xpos == Display.Position.Left:
             x = CONFIG.MARGIN
         else:
-            x = 0 # TODO: Raise exception
+            raise ValueError("unknown value for xpos in Display.drawPicture()")
         self.screen.blit(surface_picture, (x, ypos))
 
 # eof #
