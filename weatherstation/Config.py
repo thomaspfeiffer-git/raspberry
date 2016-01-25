@@ -1,4 +1,15 @@
-
+# -*- coding: utf-8 -*-
+###############################################################################
+# Screens.py                                                                  #
+# (c) https://github.com/thomaspfeiffer-git 2016                              #
+###############################################################################
+"""lots of config stuff
+   1) display properties
+   2) colors
+   3) files
+"""
+ 
+import os
 
 class CONFIG:
     """various config stuff"""
@@ -22,6 +33,17 @@ class CONFIG:
         OUTDOOR    = (0, 0, 255)
         KIDSROOM   = (0, 0xCC, 0xFF)
         TURTLE     = (0x08, 0x8A, 0x08)
+
+    class IMAGES:
+        """definitions of images and path to images"""
+        PATH          = 'data'
+        PIC_KIDSROOM  = os.path.join(PATH, 'child.png')
+        PIC_TURTLE    = os.path.join(PATH, 'turtle.png')
+
+        ICON_SUNNY    = os.path.join(PATH, 'ico_sunny.png')
+        ICON_CLOUDY   = os.path.join(PATH, 'ico_cloudy.png')
+        ICON_OVERCAST = os.path.join(PATH, 'ico_overcast.png')
+        ICON_RAINY    = os.path.join(PATH, 'ico_rainy.png')
 
     TIMETOFALLBACK = 10 # Wait 10 seconds until fallback to main screen
 
