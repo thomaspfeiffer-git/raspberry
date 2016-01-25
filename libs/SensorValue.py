@@ -22,7 +22,7 @@ class SensorValue (object):
         if self.getTimestamp() + 300.0 < time.time():
             return "n/a"  # data is older than 5 minutes
         else:
-            return self.__value
+            return "%s %s" % (self.__value, self.__unit)
 
     @value.setter
     def value (self, v):
@@ -63,7 +63,7 @@ class SensorValueLock (object):
     def value (self, v):
         v = v.replace('.', ',')
         with self.lock:
-             self.sensorvalue.value = v
+            self.sensorvalue.value = v
 
 
 # eof
