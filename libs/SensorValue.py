@@ -8,11 +8,12 @@
 import time, datetime
 
 class SensorValue (object):
-    def __init__ (self, v_id, name, kind):
+    def __init__ (self, v_id, name, kind, unit="XX"):
         self.__v_id      = v_id
         self.__name      = name
         self.__kind      = kind
         self.__value     = None
+        self.__unit      = unit
         self.__timestamp = None
         self.value       = "n/a"
 
@@ -43,6 +44,7 @@ class SensorValue (object):
                "Name:      %s" % self.__name      + "\n" + \
                "Kind:      %s" % self.__kind      + "\n" + \
                "Value:     %s" % self.__value     + "\n" + \
+               "Unit:      %s" % self.__unit      + "\n" + \
                "Timestamp: %s" % self.__timestamp + "\n" + \
                "Timestamp: %s" % datetime.datetime.fromtimestamp(self.__timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
