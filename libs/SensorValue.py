@@ -8,7 +8,7 @@
 import time, datetime
 
 class SensorValue (object):
-    def __init__ (self, v_id, name, kind, unit="XX"):
+    def __init__ (self, v_id, name, kind, unit):
         self.__v_id      = v_id
         self.__name      = name
         self.__kind      = kind
@@ -22,7 +22,11 @@ class SensorValue (object):
         if self.timestamp + 300.0 < time.time():
             return "n/a"  # data is older than 5 minutes
         else:
-            return "%s %s" % (self.__value, self.__unit)
+            if hasattr(self, "__unit"):
+                return "%s %s" % (self.__value, self.unit)
+            else:
+                # print "Sensor ID %s: no '__unit'" % self.id
+                return self.__value
 
     @value.setter
     def value (self, v):
@@ -37,6 +41,7 @@ class SensorValue (object):
     @property
     def unit (self):
         """returns unit of measurement regardless of timestamp"""
+        return self.__unit
 
     @property
     def timestamp (self):
@@ -59,9 +64,9 @@ class SensorValue (object):
 
 
 class SensorValueLock (object):
-    def __init__ (self, v_id, name, kind, lock):
+    def __init__ (self, v_id, name, kind, unit, lock):
         self._lock = lock
-        self._sensorvalue = SensorValue(v_id, name, kind)
+        self._sensorvalue = SensorValue(v_id, name, kind, unit)
 
     @property
     def value (self):
@@ -73,7 +78,6 @@ class SensorValueLock (object):
         v = v.replace('.', ',')
         with self._lock:
             self._sensorvalue.value = v
-
 
 # eof
 
