@@ -64,7 +64,7 @@ class AllSensorValues (dict):
         """polls the queue for new sensor values (only one at a time)"""
         v = self.__sensorqueue.read() 
         if v is not None:
-            self[v.getID()] = v
+            self[v.id] = v
 
 
 ###############################################################################
