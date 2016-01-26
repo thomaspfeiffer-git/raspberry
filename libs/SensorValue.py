@@ -19,7 +19,7 @@ class SensorValue (object):
 
     @property
     def value (self):
-        if self.getTimestamp() + 300.0 < time.time():
+        if self.timestamp + 300.0 < time.time():
             return "n/a"  # data is older than 5 minutes
         else:
             return "%s %s" % (self.__value, self.__unit)
@@ -49,7 +49,7 @@ class SensorValue (object):
         return self.__v_id
 
     def __str__ (self):
-        return "ID:        %s" % self.getID()     + "\n" + \
+        return "ID:        %s" % self.id     + "\n" + \
                "Name:      %s" % self.__name      + "\n" + \
                "Kind:      %s" % self.__kind      + "\n" + \
                "Value:     %s" % self.__value     + "\n" + \
