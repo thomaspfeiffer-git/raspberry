@@ -50,10 +50,10 @@ class DHT22_AM2302:
       h_avg = np.mean(h[int(len(h)/3):int(len(h)/3)*2])
 
       if self.__qvalue_temp is not None:
-          value = "%.1f %s" % (t_avg, u'°C')
+          value = "%.1f" % t_avg
           self.__qvalue_temp.value = value
       if self.__qvalue_humi is not None:
-          value = "%.1f %s" % (h_avg, u'% rF')
+          value = "%.1f" % h_avg
           self.__qvalue_humi.value = value
 
       return [t_avg, h_avg]
