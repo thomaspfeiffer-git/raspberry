@@ -113,7 +113,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
         """start thread. loop: send data of all sensors to queue and sleep"""
         while self.__running:
             for sensor in self.__svl:
-                with sensor.lock:
+                with sensor._lock:
                     item = sensor.sensorvalue  # copy data from sensor
 
                 Log("in run: %s" % item)
