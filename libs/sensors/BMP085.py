@@ -29,7 +29,7 @@ class BMP085 (object):
         value = self.__bmp.readPressure()
 
         if self.__qvalue is not None:
-            self.__qvalue.value = "%.1f" % value/100.0
+            self.__qvalue.value = "%.1f" % (value/100.0)
 
         return value
 
