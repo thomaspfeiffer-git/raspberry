@@ -23,7 +23,7 @@ class SensorValue (object):
             return "n/a"  # data is older than 5 minutes
         else:
             try:
-                return "%s %s" % (self.__value, self.__unit)
+                return "%s %s" % (self.__value, self.unit)
             except AttributeError:
                 print "Sensor Name %s, ID %s: no '__unit'" % (self.__name, self.id)
                 return self.__value
