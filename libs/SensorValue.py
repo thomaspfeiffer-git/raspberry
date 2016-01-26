@@ -22,10 +22,10 @@ class SensorValue (object):
         if self.timestamp + 300.0 < time.time():
             return "n/a"  # data is older than 5 minutes
         else:
-            if hasattr(self, "__unit"):
+            try:
                 return "%s %s" % (self.__value, self.unit)
-            else:
-                # print "Sensor ID %s: no '__unit'" % self.id
+            except AttributeError:
+                print "Sensor Name %s, ID %s: no '__unit'" % (self.__name, self.id)
                 return self.__value
 
     @value.setter
