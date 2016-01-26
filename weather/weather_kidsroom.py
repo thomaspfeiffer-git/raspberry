@@ -40,8 +40,8 @@ DS_HUMI    = "kidsroom_humi"
 # Main ########################################################################
 def main():
     """main part"""
-    qvalue_temp = SensorValueLock("ID_06", "TempKinderzimmer", "temp", u'°CX', Lock())
-    qvalue_humi = SensorValueLock("ID_07", "HumiKinderzimmer", "humi", u'% rFX', Lock())
+    qvalue_temp = SensorValueLock("ID_06", "TempKinderzimmer", "temp", u'°C', Lock())
+    qvalue_humi = SensorValueLock("ID_07", "HumiKinderzimmer", "humi", u'% rF', Lock())
     sq.register(qvalue_temp)
     sq.register(qvalue_humi)
     sq.start()
