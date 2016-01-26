@@ -35,7 +35,7 @@ class DS1820:
       sum = sum/3.0
 
       if self.__qvalue is not None:
-          value = "%.1f %s" % (sum, u'°C')
+          value = "%.1f" % (sum)
           self.__qvalue.value = value
 
       return sum
