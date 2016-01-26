@@ -114,7 +114,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
         while self.__running:
             for sensor in self.__svl:
                 with sensor._lock:
-                    item = sensor.sensorvalue  # copy data from sensor
+                    item = sensor._sensorvalue  # copy data from sensor
 
                 Log("in run: %s" % item)
                 self.write(item)               # write data to queue
