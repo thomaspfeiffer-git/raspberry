@@ -22,6 +22,8 @@ io.output(pin_red, 0)
 
 
 def GoRed ():
+    io.output(pin_green, 0)
+    sleep(0.5)
     io.output(pin_green, 1)
     sleep(0.5)
     io.output(pin_green, 0)
