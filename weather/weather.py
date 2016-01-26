@@ -83,7 +83,7 @@ def Main():
        poll the sensor in a loop and write data to rrd"""
 
     qvalue_temp_indoor  = SensorValueLock("ID_01", "TempWohnzimmerIndoor", "temp", u'°C', Lock())
-    qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", "humi", u'% rF' Lock())
+    qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", "humi", u'% rF', Lock())
     qvalue_temp_outdoor = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", "temp", u'°C', Lock())
     qvalue_humi_outdoor = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", "humi", u'% rF', Lock())
     qvalue_pressure     = SensorValueLock("ID_05", "Luftdruck", "press", u'hPa', Lock())
