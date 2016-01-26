@@ -29,14 +29,23 @@ class SensorValue (object):
         self.__value     = v
         self.__timestamp = time.time()
 
-    def getValue (self):
+    @property
+    def valuenumber (self):
         """returns value regardless of timestamp"""
         return self.__value
 
-    def getTimestamp (self):
+    @property
+    def unit (self):
+        """returns unit of measurement regardless of timestamp"""
+
+    @property
+    def timestamp (self):
+        """returns timestamp of measurement"""
         return self.__timestamp
 
-    def getID (self):
+    @property
+    def id (self):
+        """returns ID of measurement"""
         return self.__v_id
 
     def __str__ (self):
@@ -51,19 +60,19 @@ class SensorValue (object):
 
 class SensorValueLock (object):
     def __init__ (self, v_id, name, kind, lock):
-        self.lock = lock
-        self.sensorvalue = SensorValue(v_id, name, kind)
+        self._lock = lock
+        self._sensorvalue = SensorValue(v_id, name, kind)
 
     @property
     def value (self):
-        with self.lock:
-            return self.sensorvalue.value
+        with self._lock:
+            return self._sensorvalue.value
 
     @value.setter
     def value (self, v):
         v = v.replace('.', ',')
-        with self.lock:
-            self.sensorvalue.value = v
+        with self._lock:
+            self._sensorvalue.value = v
 
 
 # eof
