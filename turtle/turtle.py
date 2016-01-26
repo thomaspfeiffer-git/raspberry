@@ -71,11 +71,11 @@ def __exit(__s, __f):
 # Main ########################################################################
 def main():
     """main part"""
-    qvalue_tempbox     = SensorValueLock("ID_08", "TempDonutBox", "temp", Lock())
-    qvalue_humi        = SensorValueLock("ID_09", "HumiDonut", "humi", Lock())
-    qvalue_tempoutdoor = SensorValueLock("ID_12", "TempDonutOutDoor", "temp", Lock())
-    qvalue_heatlamp    = SensorValueLock("ID_10", "SwitchHeatlamp", "switch", Lock())
-    qvalue_lightlamp   = SensorValueLock("ID_11", "SwitchLightlamp", "switch", Lock())
+    qvalue_tempbox     = SensorValueLock("ID_08", "TempDonutBox", "temp", u'°C', Lock())
+    qvalue_humi        = SensorValueLock("ID_09", "HumiDonut", "humi", u'% rF', Lock())
+    qvalue_tempoutdoor = SensorValueLock("ID_12", "TempDonutOutDoor", "temp", u'°C', Lock())
+    qvalue_heatlamp    = SensorValueLock("ID_10", "SwitchHeatlamp", "switch", u'% rF', Lock())
+    qvalue_lightlamp   = SensorValueLock("ID_11", "SwitchLightlamp", "switch", "", Lock())
     sq.register(qvalue_tempbox)
     sq.register(qvalue_humi)
     sq.register(qvalue_tempoutdoor)
