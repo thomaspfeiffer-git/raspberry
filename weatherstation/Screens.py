@@ -17,6 +17,14 @@ from Config import CONFIG
 from Display import Display
 
 
+def __getvalue (sensorvalue):
+    """returns measured value of sensor or "n/a" if sensorvalue == None"""
+    if sensorvalue is not None:
+        return sensorvalue.value.encode('latin-1')
+    else:
+        return "(n/a)".encode('latin-1')
+
+
 ###############################################################################
 class Screens (object):
     """manage various screens changed by a touching the touchscreen"""
@@ -47,12 +55,6 @@ class Screens (object):
         self.__screens[self.screenid](allsensorvalues)
         pygame.display.update()
 
-    def __getvalue (self, sensorvalue):
-        """returns measured value of sensor or "n/a" if sensorvalue == None"""
-        if sensorvalue is not None:
-            return sensorvalue.value.encode('latin-1')
-        else:
-            return "(n/a)".encode('latin-1')
 
     def Screen1 (self, allsensorvalues):
         """living room and outdoor"""
@@ -60,8 +62,8 @@ class Screens (object):
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         ypos = self.display.drawWeatherItem("Wohnzimmer:", \
-                                            self.__getvalue(allsensorvalues['ID_01']), \
-                                            self.__getvalue(allsensorvalues['ID_02']), \
+                                            __getvalue(allsensorvalues['ID_01']), \
+                                            __getvalue(allsensorvalues['ID_02']), \
                                             None,  \
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
@@ -84,9 +86,9 @@ class Screens (object):
                                  xpos=Display.Position.Right, 
                                  ypos=ypos+CONFIG.MARGIN)
         ypos = self.display.drawWeatherItem(u'Draußen:', \
-                                            self.__getvalue(allsensorvalues['ID_12']), \
-                                            self.__getvalue(allsensorvalues['ID_04']), \
-                                            self.__getvalue(allsensorvalues['ID_05']), \
+                                            __getvalue(allsensorvalues['ID_12']), \
+                                            __getvalue(allsensorvalues['ID_04']), \
+                                            __getvalue(allsensorvalues['ID_05']), \
                                             CONFIG.COLORS.OUTDOOR, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawTime()
@@ -98,8 +100,8 @@ class Screens (object):
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         ypos = self.display.drawWeatherItem("Kinderzimmer:", \
-                                            self.__getvalue(allsensorvalues['ID_06']), \
-                                            self.__getvalue(allsensorvalues['ID_07']), \
+                                            __getvalue(allsensorvalues['ID_06']), \
+                                            __getvalue(allsensorvalues['ID_07']), \
                                             None,    \
                                             CONFIG.COLORS.KIDSROOM, ypos)
         ypos += CONFIG.SEP_Y
@@ -114,12 +116,12 @@ class Screens (object):
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         ypos = self.display.drawWeatherItem("Gehege Donut:", \
-                                            self.__getvalue(allsensorvalues['ID_08']), \
-                                            self.__getvalue(allsensorvalues['ID_09']), \
+                                            __getvalue(allsensorvalues['ID_08']), \
+                                            __getvalue(allsensorvalues['ID_09']), \
                                             None,    \
                                             CONFIG.COLORS.TURTLE, ypos)
-        ypos = self.display.drawSwitchValue(self.__getvalue(allsensorvalues['ID_10']), \
-                                            self.__getvalue(allsensorvalues['ID_11']), \
+        ypos = self.display.drawSwitchValue(__getvalue(allsensorvalues['ID_10']), \
+                                            __getvalue(allsensorvalues['ID_11']), \
                                             CONFIG.COLORS.TURTLE, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawPicture(CONFIG.IMAGES.PIC_TURTLE, 0.4, 
