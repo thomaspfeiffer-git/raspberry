@@ -8,6 +8,10 @@
 import time, datetime
 
 class SensorValue (object):
+    class Types:
+        """enum for sensor types"""
+        Temp, Humi, Pressure, Switch = range(4)
+
     def __init__ (self, v_id, name, kind, unit):
         self.__v_id      = v_id
         self.__name      = name
@@ -50,13 +54,13 @@ class SensorValue (object):
         return self.__v_id
 
     def __str__ (self):
-        return "ID:        %s" % self.id     + "\n" + \
-               "Name:      %s" % self.__name      + "\n" + \
-               "Kind:      %s" % self.__kind      + "\n" + \
-               "Value:     %s" % self.__value     + "\n" + \
-               "Unit:      %s" % self.__unit      + "\n" + \
-               "Timestamp: %s" % self.__timestamp + "\n" + \
-               "Timestamp: %s" % datetime.datetime.fromtimestamp(self.__timestamp).strftime('%Y-%m-%d %H:%M:%S')
+        return "ID:        %s" % self.id        + "\n" + \
+               "Name:      %s" % self.__name    + "\n" + \
+               "Kind:      %s" % self.__kind    + "\n" + \
+               "Value:     %s" % self.value     + "\n" + \
+               "Unit:      %s" % self.unit      + "\n" + \
+               "Timestamp: %s" % self.timestamp + "\n" + \
+               "Timestamp: %s" % datetime.datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
 
 class SensorValueLock (object):
