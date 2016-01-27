@@ -4,10 +4,15 @@
 # Class providing various data of sensors                                      #
 # (c) https://github.com/thomaspfeiffer-git 2016                               #
 ################################################################################
+"""provides classes for:
+   SensorValue: measured values including a timestamp of all weather sensors
+   SensorValueLock: Wraps SensorValue read and write access with a Lock.
+"""
 
 import time, datetime
 
 class SensorValue (object):
+    """contains various data of measured values"""
     class Types:
         """enum for sensor types"""
         Temp, Humi, Pressure, Switch = range(4)
@@ -23,6 +28,8 @@ class SensorValue (object):
 
     @property
     def value (self):
+        """returns the measured value as string including unit of
+           measurement; eg: "13,4 °C" (please note the decimal coma here)"""
         if (self.timestamp + 300.0 < time.time()):
             return "n/a"  # data is older than 5 minutes
         else:
@@ -33,6 +40,8 @@ class SensorValue (object):
 
     @value.setter
     def value (self, _value):
+        """sets the value of measurement
+           please note the decimal coma here"""
         _value = _value.replace('.', ',')
         self.__value     = _value
         self.__timestamp = time.time()
@@ -82,11 +91,13 @@ class SensorValueLock (object):
 
     @property
     def value (self):
+        """sets the value of measurement synchronized by a lock"""
         with self._lock:
             return self._sensorvalue.value
 
     @value.setter
     def value (self, _value):
+        """returns the value of measurement synchronized by a lock"""
         with self._lock:
             self._sensorvalue.value = _value
 
