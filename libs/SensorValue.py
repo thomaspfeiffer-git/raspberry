@@ -33,6 +33,7 @@ class SensorValue (object):
 
     @value.setter
     def value (self, _value):
+        _value = _value.replace('.', ',')
         self.__value     = _value
         self.__timestamp = time.time()
 
@@ -86,7 +87,6 @@ class SensorValueLock (object):
 
     @value.setter
     def value (self, _value):
-        _value = _value.replace('.', ',')
         with self._lock:
             self._sensorvalue.value = _value
 
