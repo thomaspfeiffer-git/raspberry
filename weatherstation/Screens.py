@@ -27,12 +27,10 @@ class Screens (object):
                            2: self.Screen2, \
                            3: self.Screen3}
 
-
     @property
     def screenid (self):
         """getter for screenid"""
         return self.__screenid
-
 
     @screenid.setter
     def screenid (self, sid):
@@ -44,12 +42,10 @@ class Screens (object):
         else:
             self.__screenid = sid
 
-
     def drawScreen (self, allsensorvalues):
         """calls Screen<n>() whereat n == screenid"""
         self.__screens[self.screenid](allsensorvalues)
         pygame.display.update()
-
 
     def __getvalue (self, sensorvalue):
         """returns measured value of sensor or "n/a" if sensorvalue == None"""
@@ -57,7 +53,6 @@ class Screens (object):
             return sensorvalue.value.encode('latin-1')
         else:
             return "(n/a)".encode('latin-1')
-
 
     def Screen1 (self, allsensorvalues):
         """living room and outdoor"""
@@ -71,8 +66,10 @@ class Screens (object):
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
 
-        pressure = self.__getvalue(allsensorvalues['ID_05']).split()[0].replace(',', '.')
-                        # TODO: SensorValue must provide value and unit separatedly
+        if allsensorvalues['ID_05'] is not None:
+            pressure = float(allsensorvalues['ID_05'].valuenumber.replace(',', '.'))
+        else:
+            pressure = 1013.25
 
         if pressure > 1000.0:
             picture = CONFIG.IMAGES.ICON_SUNNY
