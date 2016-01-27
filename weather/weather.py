@@ -23,7 +23,7 @@ from BMP085 import BMP085
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from SensorQueue import SensorQueueClient_write
-from SensorValue import SensorValueLock
+from SensorValue import SensorValueLock, SensorValue
 
 
 ## Sensors ##################
@@ -82,11 +82,11 @@ def Main():
        initialize the sensors
        poll the sensor in a loop and write data to rrd"""
 
-    qvalue_temp_indoor  = SensorValueLock("ID_01", "TempWohnzimmerIndoor", "temp", u'°C', Lock())
-    qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", "humi", u'% rF', Lock())
-    qvalue_temp_outdoor = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", "temp", u'°C', Lock())
-    qvalue_humi_outdoor = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", "humi", u'% rF', Lock())
-    qvalue_pressure     = SensorValueLock("ID_05", "Luftdruck", "press", u'hPa', Lock())
+    qvalue_temp_indoor  = SensorValueLock("ID_01", "TempWohnzimmerIndoor", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", SensorValue.Types.Humi, u'% rF', Lock())
+    qvalue_temp_outdoor = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_humi_outdoor = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, u'% rF', Lock())
+    qvalue_pressure     = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, u'hPa', Lock())
 
     sq.register(qvalue_temp_indoor)
     sq.register(qvalue_humi_indoor)

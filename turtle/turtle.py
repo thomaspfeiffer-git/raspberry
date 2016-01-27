@@ -25,7 +25,7 @@ from Heating import Heating
 from Measurements import Measurements
 import Schedules
 from SensorQueue import SensorQueueClient_write
-from SensorValue import SensorValueLock
+from SensorValue import SensorValueLock, SensorValue
 
 
 HEATLAMP_PIN      = 38
@@ -71,11 +71,11 @@ def __exit(__s, __f):
 # Main ########################################################################
 def main():
     """main part"""
-    qvalue_tempbox     = SensorValueLock("ID_08", "TempDonutBox", "temp", u'°C', Lock())
-    qvalue_humi        = SensorValueLock("ID_09", "HumiDonut", "humi", u'% rF', Lock())
-    qvalue_tempoutdoor = SensorValueLock("ID_12", "TempDonutOutDoor", "temp", u'°C', Lock())
-    qvalue_heatlamp    = SensorValueLock("ID_10", "SwitchHeatlamp", "switch", u'Heizung:', Lock())
-    qvalue_lightlamp   = SensorValueLock("ID_11", "SwitchLightlamp", "switch", u'Beleuchtung:', Lock())
+    qvalue_tempbox     = SensorValueLock("ID_08", "TempDonutBox", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_humi        = SensorValueLock("ID_09", "HumiDonut", SensorValue.Types.Humi, u'% rF', Lock())
+    qvalue_tempoutdoor = SensorValueLock("ID_12", "TempDonutOutDoor", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_heatlamp    = SensorValueLock("ID_10", "SwitchHeatlamp", SensorValue.Types.Switch, u'Heizung:', Lock())
+    qvalue_lightlamp   = SensorValueLock("ID_11", "SwitchLightlamp", SensorValue.Types.Switch, u'Beleuchtung:', Lock())
     sq.register(qvalue_tempbox)
     sq.register(qvalue_humi)
     sq.register(qvalue_tempoutdoor)

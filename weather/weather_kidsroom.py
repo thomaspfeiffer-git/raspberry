@@ -21,7 +21,7 @@ from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from Measurements import Measurements
 from SensorQueue import SensorQueueClient_write
-from SensorValue import SensorValueLock
+from SensorValue import SensorValueLock, SensorValue
 
 
 DHT22_AM2302_PIN = 35
@@ -40,8 +40,8 @@ DS_HUMI    = "kidsroom_humi"
 # Main ########################################################################
 def main():
     """main part"""
-    qvalue_temp = SensorValueLock("ID_06", "TempKinderzimmer", "temp", u'°C', Lock())
-    qvalue_humi = SensorValueLock("ID_07", "HumiKinderzimmer", "humi", u'% rF', Lock())
+    qvalue_temp = SensorValueLock("ID_06", "TempKinderzimmer", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_humi = SensorValueLock("ID_07", "HumiKinderzimmer", SensorValue.Types.Humi, u'% rF', Lock())
     sq.register(qvalue_temp)
     sq.register(qvalue_humi)
     sq.start()
