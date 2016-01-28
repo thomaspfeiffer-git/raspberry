@@ -70,21 +70,20 @@ class Screens (object):
 
         if allsensorvalues['ID_05'] is not None:
             pressure = float(allsensorvalues['ID_05'].valuenumber.replace(',', '.'))
-        else:
-            pressure = 1013.25
 
-        if pressure > 1000.0:
-            picture = CONFIG.IMAGES.ICON_SUNNY
-        elif pressure > 990.0:
-            picture = CONFIG.IMAGES.ICON_CLOUDY
-        elif pressure > 980.0:
-            picture = CONFIG.IMAGES.ICON_OVERCAST
-        else:
-            picture = CONFIG.IMAGES.ICON_RAINY
+            if pressure > 1000.0:
+                picture = CONFIG.IMAGES.ICON_SUNNY
+            elif pressure > 990.0:
+                picture = CONFIG.IMAGES.ICON_CLOUDY
+            elif pressure > 980.0:
+                picture = CONFIG.IMAGES.ICON_OVERCAST
+            else:
+                picture = CONFIG.IMAGES.ICON_RAINY
 
-        self.display.drawPicture(picture, 0.3, 
-                                 xpos=Display.Position.Right, 
-                                 ypos=ypos+CONFIG.MARGIN)
+            self.display.drawPicture(picture, 0.3, 
+                                     xpos=Display.Position.Right, 
+                                     ypos=ypos+CONFIG.MARGIN)
+
         ypos = self.display.drawWeatherItem(u'Draußen:', \
                                             getvalue(allsensorvalues['ID_12']), \
                                             getvalue(allsensorvalues['ID_04']), \
