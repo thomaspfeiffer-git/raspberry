@@ -5,5 +5,19 @@ Some ideas to implement and play with:
   [1,2,3,4,5,6]
   [6,5,4,3,2,1]
   [1,3,5,...]
-- analoguhr (mit vielen LEDs)
+
+- Waetherstation:
+  http://www.forum-raspberrypi.de/Thread-projekt-wetterstation-mit-tontec-touchscreen-display-vermutlich-das-317-projekt-dieser-art
+
+- Analog clock with 60 LEDs
+  http://www.forum-raspberrypi.de/Thread-projekt-analoguhr-mit-60-dreifarben-leds
+
+- traffic light
+- cinema for cars with tontec touchscreen display
+
+- Light Painting:
+  https://learn.adafruit.com/light-painting-with-raspberry-pi/overview
+
+- Minecraft:
+  https://www.raspberrypi.org/learning/getting-started-with-minecraft-pi/
 
