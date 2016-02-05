@@ -25,3 +25,7 @@ Some ideas to implement and play with:
 - Minecraft:
   https://www.raspberrypi.org/learning/getting-started-with-minecraft-pi/
 
+- Adafruit TSL2561 Digital Luminosity/Lux/Light 
+- SI1145 Digital UV Index / IR / Visible Light Sensor
+- Adafruit BME280 I2C or SPI Temperature Humidity Pressure Sensor
+
