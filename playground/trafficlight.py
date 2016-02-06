@@ -16,13 +16,13 @@ from time import sleep
 import traceback
 
 
-TL1_PIN_RED    = 15
-TL1_PIN_ORANGE = 36
+TL1_PIN_RED    = 29
+TL1_PIN_ORANGE = 31
 TL1_PIN_GREEN  = 33
 
-TL2_PIN_RED    = 99
-TL2_PIN_ORANGE = 99
-TL2_PIN_GREEN  = 99
+TL2_PIN_RED    = 36
+TL2_PIN_ORANGE = 38
+TL2_PIN_GREEN  = 40
 
 
 class Lamp (object):
@@ -72,7 +72,7 @@ class Trafficlights (object):
         self._tl2 = tl2
         self.__running = True
 
-    def _blink (self, lamp, count=4):
+    def _blink (self, lamp, count=5):
         """flashes a lamp <count> times with a frequency of 1 Hz"""
         for _ in range(count):
             self.__sleep(0.5)
@@ -112,9 +112,9 @@ class Trafficlights (object):
            switches tl2 to green and red"""
         while self.__running:
             self._go_red(self._tl1)
-#            self._go_green(self._tl2)
+            self._go_green(self._tl2)
             self.__sleep(self.TIME_RED)
-#            self._go_red(self._tl2)
+            self._go_red(self._tl2)
             self._go_green(self._tl1)
             self.__sleep(self.TIME_GREEN)
 
@@ -149,8 +149,7 @@ if __name__ == '__main__':
 
     try:
         T1 = Trafficlight(TL1_PIN_RED, TL1_PIN_ORANGE, TL1_PIN_GREEN)
-#        T2 = Trafficlight(TL2_PIN_RED, TL2_PIN_ORANGE, TL2_PIN_GREEN)
-        T2 = None
+        T2 = Trafficlight(TL2_PIN_RED, TL2_PIN_ORANGE, TL2_PIN_GREEN)
         T = Trafficlights(T1, T2)
         T.run()
 
