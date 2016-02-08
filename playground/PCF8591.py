@@ -17,12 +17,14 @@ class I2C (object):
     _lock = None
     
     def __init__ (self, lock=None):
-        self._bus  = smbus.SMBus(1)
-        if self._lock is None:
+        if I2C._bus is None:
+            I2C._bus  = smbus.SMBus(1)
+
+        if I2C._lock is None:
             if lock is None:
-                self._lock = Lock()
+                I2C._lock = Lock()
             else:
-                self._lock = lock
+                I2C._lock = lock
         else:
             if lock is not None:
                 raise ValueError("Lock already set!")
@@ -34,17 +36,17 @@ class PCF8591 (I2C):
         self._address = address
 
     def read (self, channel=0):
-        with self._lock:
-            self._bus.write_byte(self._address, 0x40|channel)
-            ack = self._bus.read_byte(self._address)  # don't use ack
-            return self._bus.read_byte(self._address) 
+        with I2C._lock:
+            I2C._bus.write_byte(self._address, 0x40|channel)
+            ack = I2C._bus.read_byte(self._address)  # don't use ack
+            return I2C._bus.read_byte(self._address) 
 
     def write (self, value):
         raise NotImplementedError
 
 
 if __name__ == '__main__':
-    adc = PCF8591(0x48)
+    adc = PCF8591(0x48, Lock())
 
     while True:
         result = adc.read(channel=0)
