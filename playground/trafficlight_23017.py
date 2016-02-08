@@ -144,7 +144,7 @@ class Trafficlights (object):
 
 class Lightness (threading.Thread):
     def __init__ (self):
-        super().__init__()
+        threading.Thread.__init__(self)
         self._adc = PCF8591(0x48)
         self._pwm = PWM()
 
@@ -152,8 +152,10 @@ class Lightness (threading.Thread):
 
     def run (self):
         while self.__running:
-            v = self._adc.read() * 4
-            print("Value ADC: %i" % v) 
+            v = (self._adc.read() * 4) - 80
+            if v < 4:
+               v = 4
+            # print("Value ADC: %i" % v) 
             self._pwm.control(v)
             sleep(0.5)
 
