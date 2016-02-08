@@ -11,14 +11,18 @@
 
 import signal
 import sys
+import threading
 from time import sleep
 import traceback
+
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
 from MCP23x17 import MCP23x17
 from MCP23017 import MCP23017
+from PCF8591 import PCF8591
+from pwm     import PWM
 
 
 TL1_PIN_RED    = 0b10000000
@@ -136,6 +140,26 @@ class Trafficlights (object):
     def stop (self):
         """shall be called in order to stop the thread"""
         self.__running = False
+
+
+class Lightness (threading.Thread):
+    def __init__ (self):
+        super().__init__()
+        self._adc = PCF8591(0x48)
+        self._pwm = PWM()
+
+        self.__running = True
+
+    def run (self):
+        while self.__running:
+            v = self._adc.read() * 4
+            print("Value ADC: %i" % v) 
+            self._pwm.control(v)
+            sleep(0.5)
+
+    def stop (self):
+        self.__running = False
+
        
 
 ###############################################################################
@@ -143,6 +167,8 @@ class Trafficlights (object):
 def Exit():
     """stuff to be done on exit"""
     print("Exit")
+    lightness.stop()
+    lightness.join()
     T.stop()
     sys.exit()
 
@@ -158,6 +184,9 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
 
     try:
+        lightness = Lightness()
+        lightness.start()
+
         T1 = Trafficlight(TL1_PIN_RED, TL1_PIN_ORANGE, TL1_PIN_GREEN)
         T2 = Trafficlight(TL2_PIN_RED, TL2_PIN_ORANGE, TL2_PIN_GREEN)
         T = Trafficlights(T1, T2)
