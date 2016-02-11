@@ -168,10 +168,10 @@ class Lightness (threading.Thread):
 
     def run (self):
         while self.__running:
-            v = (self._adc.read() * 4) - 80
-            if v < 4:
-               v = 4
-            # print("Value ADC: %i" % v) 
+            v = 1024 - (self._adc.read() * 4) 
+            if v > 1015:
+               v = 1015
+            print("Value ADC: %i" % v) 
             self._pwm.control(v)
             sleep(0.5)
 
