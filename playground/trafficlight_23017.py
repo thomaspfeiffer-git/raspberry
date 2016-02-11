@@ -171,7 +171,7 @@ class Lightness (threading.Thread):
             v = 1024 - (self._adc.read() * 4) 
             if v > 1015:
                v = 1015
-            print("Value ADC: %i" % v) 
+            # print("Value ADC: %i" % v) 
             self._pwm.control(v)
             sleep(0.5)
 
