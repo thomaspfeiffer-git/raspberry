@@ -10,7 +10,7 @@
    Lightness of lamps is controlled by PWM using an LDR.
    Additionally the values of the LDR are written to the display.
    Goal: Test if a Tontec display works properly when an I2C bus is used
-   as well (for and MCP23017 and a PCF8591).
+   as well (for an MCP23017 and a PCF8591).
 """
 
 import os
