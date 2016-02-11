@@ -162,6 +162,9 @@ class Lightness (threading.Thread):
     def stop (self):
         self.__running = False
 
+    def getadc (self):
+        return self._adc.read()
+
        
 
 ###############################################################################
