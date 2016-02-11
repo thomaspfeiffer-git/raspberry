@@ -198,7 +198,7 @@ class Display (object):
         pygame.display.update()
 
     def draw (self):
-        value = str(self._getadc())
+        value = "%s   " % str(self._getadc())
         text = self.font.render(value, True, (255, 0, 0), (255, 255, 255))
         self.screen.blit(text, (10, 10))
         pygame.display.update()
