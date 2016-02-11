@@ -7,8 +7,14 @@
 """Simulates a usual traffic light (located at a usual crossroad)
    TL1: Traffic light for street #1
    TL2: Traffic light for street #2
+   Lightness of lamps is controlled by PWM using an LDR.
+   Additionally the values of the LDR are written to the display.
+   Goal: Test if a Tontec display works properly when an I2C bus is used
+   as well (for and MCP23017 and a PCF8591).
 """
 
+import os
+import pygame
 import signal
 import sys
 import threading
@@ -34,6 +40,7 @@ TL2_PIN_ORANGE = 0b00001000
 TL2_PIN_GREEN  = 0b00000100
 
 
+###############################################################################
 class Lamp (object):
     """one lamp of the traffic light (typically red, orange, or green)"""
     _device  = MCP23017(0x20)
@@ -57,6 +64,7 @@ class Lamp (object):
         Lamp._device.send(MCP23x17.OLATA, Lamp._pattern)
 
 
+###############################################################################
 class Trafficlight (object):
     """one traffic light built of three lamps (red, orange, green)"""
     def __init__ (self, pin_red, pin_orange, pin_green):
@@ -77,6 +85,7 @@ class Trafficlight (object):
             lamp.off()
 
 
+###############################################################################
 class Trafficlights (object):
     """control of complete traffic light"""
     TIME_RED    = 10 
@@ -127,11 +136,17 @@ class Trafficlights (object):
            switches tl1 to red and green and 
            switches tl2 to green and red"""
         while self.__running:
+            display.draw()
             self._go_red(self._tl1)
+            display.draw()
             self._go_green(self._tl2)
+            display.draw()
             self.__sleep(self.TIME_RED)
+            display.draw()
             self._go_red(self._tl2)
+            display.draw()
             self._go_green(self._tl1)
+            display.draw()
             self.__sleep(self.TIME_GREEN)
 
         for trafficlight in (self._tl1, self._tl2):
@@ -142,6 +157,7 @@ class Trafficlights (object):
         self.__running = False
 
 
+###############################################################################
 class Lightness (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
@@ -165,6 +181,28 @@ class Lightness (threading.Thread):
     def getadc (self):
         return self._adc.read()
 
+
+###############################################################################
+class Display (object):
+    def __init__ (self, getadc):
+        self._getadc = getadc
+
+        os.environ["SDL_FBDEV"] = "/dev/fb1" 
+        os.environ['SDL_VIDEO_CENTERED'] = '1'
+        pygame.init()
+        pygame.mouse.set_visible(False)
+
+        self.screen = pygame.display.set_mode((480, 320), pygame.NOFRAME)
+        self.screen.fill((255, 255, 255))
+        self.font = pygame.font.SysFont('arial', int(480/2))
+        pygame.display.update()
+
+    def draw (self):
+        value = str(self._getadc())
+        text = self.font.render(value, True, (255, 0, 0), (255, 255, 255))
+        self.screen.blit(text, (10, 10))
+        pygame.display.update()
+
        
 
 ###############################################################################
@@ -175,6 +213,7 @@ def Exit():
     lightness.stop()
     lightness.join()
     T.stop()
+    pygame.quit()
     sys.exit()
 
 def _Exit(__s, __f):
@@ -191,6 +230,8 @@ if __name__ == '__main__':
     try:
         lightness = Lightness()
         lightness.start()
+
+        display = Display(lightness.getadc)
 
         T1 = Trafficlight(TL1_PIN_RED, TL1_PIN_ORANGE, TL1_PIN_GREEN)
         T2 = Trafficlight(TL2_PIN_RED, TL2_PIN_ORANGE, TL2_PIN_GREEN)
