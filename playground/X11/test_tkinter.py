@@ -31,7 +31,7 @@ def Play():
     if i is not ():
         filename = listbox.get(i).split(":")[0]
         fullfilename = "%s%s" % (PATH, filename)
-        returncode = subprocess.call(["mplayer", fullfilename])
+        returncode = subprocess.call(["mplayer", "-fs", fullfilename])
 
 def FillListbox():
     for filename in glob.iglob(AVI):
