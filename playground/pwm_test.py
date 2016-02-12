@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import time
@@ -13,5 +13,5 @@ while True:
     wipi.pwmWrite(PIN, i % 1024)
     i += 1
     time.sleep(0.01)
-    # print i
+    print(i)
 
