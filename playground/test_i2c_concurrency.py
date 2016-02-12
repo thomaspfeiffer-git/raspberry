@@ -47,16 +47,16 @@ class Display (object):
         pygame.init()
         pygame.mouse.set_visible(False)
 
-        self.screen = pygame.display.set_mode((480, 320), pygame.NOFRAME)
-        self.screen.fill((255, 255, 255))
-        self.font = pygame.font.SysFont('arial', int(480/20))
+        self._screen = pygame.display.set_mode((480, 320), pygame.NOFRAME)
+        self._screen.fill((255, 255, 255))
+        self._font = pygame.font.SysFont('arial', int(480/20))
         pygame.display.update()
 
     def draw (self, value):
-        text = self.font.render(value, True, (255, 0, 0), (255, 255, 255))
-        self.screen.blit(text, (10, 10))
-        self.screen.blit(text, (10, 50))
-        self.screen.blit(text, (10, 90))
+        text = self._font.render(value, True, (255, 0, 0), (255, 255, 255))
+        self._screen.blit(text, (10, 10))
+        self._screen.blit(text, (10, 50))
+        self._screen.blit(text, (10, 90))
         pygame.display.update()
 
        
