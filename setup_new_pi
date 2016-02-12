@@ -170,6 +170,9 @@ sudo apt-get install rrdtool python-rrdtool
 
 
 
+pylint
+======
 
+sudo apt-get install pylint
 
 
