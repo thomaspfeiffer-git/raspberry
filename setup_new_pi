@@ -19,9 +19,15 @@ chmod 644 8192cu.conf
 NFS:
 ====
 
-local: /etc/fstab
-server: /etc/exports
+local: 
+  /etc/fstab
 
+  jessie: 
+      sudo update-rc.d rpcbind enable
+
+server: 
+  /etc/exports
+  exportfs -r
 
 
 Misc
