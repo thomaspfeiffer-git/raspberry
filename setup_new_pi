@@ -182,3 +182,11 @@ pylint
 sudo apt-get install pylint
 
 
+
+Remove unnecessary packages:  (used: 3.4 GB --> 2.7 GB)
+============================
+
+sudo apt-get remove --purge wolfram-engine libreoffice
+sudo apt-get autoremove
+
+
