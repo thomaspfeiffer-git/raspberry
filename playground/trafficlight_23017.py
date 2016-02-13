@@ -203,12 +203,11 @@ class Display (threading.Thread):
         self.__running = False      
 
     def draw (self):
-        value = "%s   " % str(self._getadc())
+        value = "%s     " % str(self._getadc())
         text = self.font.render(value, True, (255, 0, 0), (255, 255, 255))
         self.screen.blit(text, (10, 10))
         pygame.display.update()
 
-       
 
 ###############################################################################
 # Exit ########################################################################
