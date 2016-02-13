@@ -136,17 +136,11 @@ class Trafficlights (object):
            switches tl1 to red and green and 
            switches tl2 to green and red"""
         while self.__running:
-            display.draw()
             self._go_red(self._tl1)
-            display.draw()
             self._go_green(self._tl2)
-            display.draw()
             self.__sleep(self.TIME_RED)
-            display.draw()
             self._go_red(self._tl2)
-            display.draw()
             self._go_green(self._tl1)
-            display.draw()
             self.__sleep(self.TIME_GREEN)
 
         for trafficlight in (self._tl1, self._tl2):
@@ -183,8 +177,9 @@ class Lightness (threading.Thread):
 
 
 ###############################################################################
-class Display (object):
+class Display (threading.Thread):
     def __init__ (self, getadc):
+        threading.Thread.__init__(self)
         self._getadc = getadc
 
         os.environ["SDL_FBDEV"] = "/dev/fb1" 
@@ -196,6 +191,16 @@ class Display (object):
         self.screen.fill((255, 255, 255))
         self.font = pygame.font.SysFont('arial', int(480/2))
         pygame.display.update()
+
+        self.__running = True
+
+    def run (self):
+        while self.__running:
+            self.draw()
+            sleep(0.5)
+      
+    def stop (self):
+        self.__running = False      
 
     def draw (self):
         value = "%s   " % str(self._getadc())
@@ -232,6 +237,7 @@ if __name__ == '__main__':
         lightness.start()
 
         display = Display(lightness.getadc)
+        display.start()
 
         T1 = Trafficlight(TL1_PIN_RED, TL1_PIN_ORANGE, TL1_PIN_GREEN)
         T2 = Trafficlight(TL2_PIN_RED, TL2_PIN_ORANGE, TL2_PIN_GREEN)
