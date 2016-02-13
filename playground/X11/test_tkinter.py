@@ -21,9 +21,8 @@ PATH='/media/pi/6464-6335/DCIM/101VTECH/'
 AVI='/media/pi/6464-6335/DCIM/101VTECH/*.AVI'
 
 
-def Exit():
-    w.quit()
-    sys.exit()
+def Reload():
+    pass
 
 
 def Play():
@@ -33,11 +32,29 @@ def Play():
         fullfilename = "%s%s" % (PATH, filename)
         returncode = subprocess.call(["mplayer", "-fs", fullfilename])
 
+
+def Eject():
+    pass
+    # sudo apt-get install eject
+    # udisks --unmount /dev/sda
+    # udisks --eject /dev/sda
+
+
 def FillListbox():
     for filename in glob.iglob(AVI):
         filetime = os.path.getmtime(filename)
         (_, filename) = os.path.split(filename)
         listbox.insert(END, "%s: %s" % (filename, time.ctime(filetime)))
+
+
+def Exit():
+    w.quit()
+    sys.exit()
+
+
+def Shutdown():
+    pass
+
 
 
 
@@ -51,10 +68,11 @@ lbfont  = tkf.Font(family='Arial', size=20)
 
 
 buttonframe  = Frame(w)
-btn_connect  = Button(buttonframe, text="Reload", font=btnfont, width=10)
-btn_play     = Button(buttonframe, command=Play, text="Play", font=btnfont, width=10)
-btn_exit     = Button(buttonframe, command=Exit, text="Exit", font=btnfont, width=10)
-btn_shutdown = Button(buttonframe, text="Shutdown", font=btnfont, width=10)
+btn_connect  = Button(buttonframe, command=Reload,   text="Reload", font=btnfont, width=10)
+btn_play     = Button(buttonframe, command=Play,     text="Play", font=btnfont, width=10)
+btn_eject    = Button(buttonframe, command=Eject,    text="Eject", font=btnfont, width=10)
+btn_exit     = Button(buttonframe, command=Exit,     text="Exit", font=btnfont, width=10)
+btn_shutdown = Button(buttonframe, command=Shutdown, text="Shutdown", font=btnfont, width=10)
 btn_connect.pack()
 btn_play.pack()
 btn_exit.pack()
