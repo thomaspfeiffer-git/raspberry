@@ -75,6 +75,7 @@ btn_exit     = Button(buttonframe, command=Exit,     text="Exit", font=btnfont, 
 btn_shutdown = Button(buttonframe, command=Shutdown, text="Shutdown", font=btnfont, width=10)
 btn_connect.pack()
 btn_play.pack()
+btn_eject.pack()
 btn_exit.pack()
 btn_shutdown.pack()
 buttonframe.pack(side=RIGHT, anchor=N)
