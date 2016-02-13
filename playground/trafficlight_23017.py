@@ -27,8 +27,8 @@ sys.path.append('../libs/sensors')
 
 from MCP23x17 import MCP23x17
 from MCP23017 import MCP23017
-from PCF8591 import PCF8591
-from pwm     import PWM
+from PCF8591  import PCF8591
+from pwm      import PWM
 
 
 TL1_PIN_RED    = 0b10000000
@@ -214,6 +214,8 @@ class Display (threading.Thread):
 def Exit():
     """stuff to be done on exit"""
     print("Exit")
+    display.stop()
+    display.join()
     lightness.stop()
     lightness.join()
     T.stop()
