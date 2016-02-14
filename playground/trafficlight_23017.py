@@ -54,14 +54,15 @@ class Lamp (object):
     def on (self):
         """turns lamp on"""
         Lamp._pattern |= self._pin
-        self._write()
+        Lamp._write()
 
     def off (self):
         """turns lamp off"""
         Lamp._pattern &= ~self._pin
-        self._write()
+        Lamp._write()
 
-    def _write (self):
+    @staticmethod
+    def _write():
         Lamp._device.send(MCP23x17.OLATA, Lamp._pattern)
 
 
@@ -80,7 +81,7 @@ class Trafficlight (object):
             lamp.on()
 
     def all_off (self):
-        """switch all lamps off; 
+        """switch all lamps off;
            needed at start of program and for cleanup"""
         for lamp in self._lamps:
             lamp.off()
@@ -166,13 +167,13 @@ class Lightness (threading.Thread):
             if gesture.active:
                 v = 1
             else:
-                v = 1024 - (self._adc.read() * 4) 
+                v = 1024 - (self._adc.read() * 4)
                 if v > 1020:
-                   v = 1020
+                    v = 1020
                 # print("Value ADC: %i" % v) 
 
             self._pwm.control(v)
-            sleep(0.5)
+            sleep(0.25)
 
     def stop (self):
         self.__running = False
