@@ -68,7 +68,8 @@ class Screens (object):
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
 
-        if allsensorvalues['ID_05'] is not None:
+        if allsensorvalues['ID_05'] is not None and \
+           allsensorvalues['ID_05'] != "n/a":
             pressure = float(allsensorvalues['ID_05'].valuenumber.replace(',', '.'))
 
             if pressure > 1000.0:
