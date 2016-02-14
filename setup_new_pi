@@ -95,7 +95,7 @@ sudo raspi-config
 i2c-bcm2708 
 i2c-dev
 
-/root/config.txt add lines:
+/boot/config.txt add lines:
 
 dtparam=i2c1=on
 dtparam=i2c_arm=on
