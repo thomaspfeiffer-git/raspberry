@@ -5,12 +5,18 @@
 ################################################################################
 """controls A/D converter PCF8591"""
 
-from i2c import I2C
+import sys
 from time import localtime
+
+from i2c import I2C
 
 class PCF8591 (I2C):
     def __init__ (self, address, lock=None):
-        super().__init__(lock)
+        if sys.version_info >= (3,0):
+            super().__init__(lock)
+        else:
+            super(PCF8591, self).__init__(lock)
+
         self._address    = address
         self.__lastvalue = 0
 
