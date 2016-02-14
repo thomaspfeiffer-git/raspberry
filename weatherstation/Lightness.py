@@ -10,6 +10,9 @@ import threading
 from time import sleep, time, strftime, localtime
 
 sys.path.append('../libs')
+sys.path.append('../libs/sensors')
+
+from PCF8591  import PCF8591
 from pwm import PWM
 
 
@@ -23,8 +26,11 @@ class Lightness (threading.Thread):
 
     def __init__ (self):
         threading.Thread.__init__(self)
+
         self.__lock = threading.Lock()
+        self.__adc  = PCF8591(0x48)
         self.__pwm  = PWM()
+
         with self.__lock:
             self.__on = False
         self.__timestamp = time()
@@ -44,7 +50,11 @@ class Lightness (threading.Thread):
         """turn backlight off only if DELAYTOLIGHTOFF seconds 
            have passed after switch on"""
         if (time() > self.__timestamp):
-            self.__pwm.off()
+            # self.__pwm.off()
+            lightness = 1024 - (self.__adc.read() * 4) 
+            if lightness > 1020:
+                lightness = 1020
+            self.__pwm.control(lightness)
             with self.__lock:
                 self.__on = False
             return True
@@ -55,6 +65,7 @@ class Lightness (threading.Thread):
     def run (self):
         """main routine of thread"""
         while (self.__running):
+
             hour = int(strftime("%H", localtime()))
             if (hour >= 22) or (hour < 6):  # switch backlight off during night hours
                 self.__switch_off()
