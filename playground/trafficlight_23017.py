@@ -15,6 +15,7 @@
 
 import os
 import pygame
+import RPi.GPIO as io
 import signal
 import sys
 import threading
@@ -162,10 +163,14 @@ class Lightness (threading.Thread):
 
     def run (self):
         while self.__running:
-            v = 1024 - (self._adc.read() * 4) 
-            if v > 1020:
-               v = 1020
-            # print("Value ADC: %i" % v) 
+            if gesture.active:
+                v = 1
+            else:
+                v = 1024 - (self._adc.read() * 4) 
+                if v > 1020:
+                   v = 1020
+                # print("Value ADC: %i" % v) 
+
             self._pwm.control(v)
             sleep(0.5)
 
@@ -210,6 +215,42 @@ class Display (threading.Thread):
 
 
 ###############################################################################
+class Gesture (threading.Thread):
+    def __init__ (self, pin):
+        threading.Thread.__init__(self)
+        self.__pin = pin
+        io.setmode(io.BCM)
+        io.setup(self.__pin, io.IN) 
+
+        self.__lock = threading.Lock()
+
+        with self.__lock:
+            self.__active = False
+
+        self.__running = True
+
+    def run (self):
+        while self.__running:
+            value = io.input(self.__pin)
+
+            with self.__lock:
+                if value == 0: # Todo: shorten code
+                    self.__active = True
+                else:
+                    self.__active = False
+
+            sleep(0.25)
+
+    def stop (self):
+        self.__running = False
+
+    @property
+    def active (self):
+        with self.__lock:
+            return self.__active
+
+
+###############################################################################
 # Exit ########################################################################
 def Exit():
     """stuff to be done on exit"""
@@ -218,6 +259,8 @@ def Exit():
     display.join()
     lightness.stop()
     lightness.join()
+    gesture.stop()
+    gesture.join()
     T.stop()
     pygame.quit()
     sys.exit()
@@ -234,6 +277,9 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
 
     try:
+        gesture   = Gesture(pin=26)  # BCM! cause of PWM
+        gesture.start()
+
         lightness = Lightness()
         lightness.start()
 
