@@ -68,22 +68,24 @@ class Screens (object):
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
 
-        if allsensorvalues['ID_05'] is not None and \
-           allsensorvalues['ID_05'] != "n/a":
-            pressure = float(allsensorvalues['ID_05'].valuenumber.replace(',', '.'))
+        if allsensorvalues['ID_05'] is not None:
+            try:
+                pressure = float(allsensorvalues['ID_05'].valuenumber.replace(',', '.'))
 
-            if pressure > 1000.0:
-                picture = CONFIG.IMAGES.ICON_SUNNY
-            elif pressure > 990.0:
-                picture = CONFIG.IMAGES.ICON_CLOUDY
-            elif pressure > 980.0:
-                picture = CONFIG.IMAGES.ICON_OVERCAST
-            else:
-                picture = CONFIG.IMAGES.ICON_RAINY
+                if pressure > 1000.0:
+                    picture = CONFIG.IMAGES.ICON_SUNNY
+                elif pressure > 990.0:
+                    picture = CONFIG.IMAGES.ICON_CLOUDY
+                elif pressure > 980.0:
+                    picture = CONFIG.IMAGES.ICON_OVERCAST
+                else:
+                    picture = CONFIG.IMAGES.ICON_RAINY
 
-            self.display.drawPicture(picture, 0.3, 
-                                     xpos=Display.Position.Right, 
-                                     ypos=ypos+CONFIG.MARGIN)
+                self.display.drawPicture(picture, 0.3, 
+                                         xpos=Display.Position.Right, 
+                                         ypos=ypos+CONFIG.MARGIN)
+            except ValueError:
+                pass
 
         ypos = self.display.drawWeatherItem(u'Draußen:', \
                                             getvalue(allsensorvalues['ID_12']), \
