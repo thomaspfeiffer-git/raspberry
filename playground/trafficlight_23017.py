@@ -232,14 +232,8 @@ class Gesture (threading.Thread):
 
     def run (self):
         while self.__running:
-            value = io.input(self.__pin)
-
             with self.__lock:
-                if value == 0: # Todo: shorten code
-                    self.__active = True
-                else:
-                    self.__active = False
-
+                self.__active = True if (io.input(self.__pin) == 0) else False
             sleep(0.25)
 
     def stop (self):
