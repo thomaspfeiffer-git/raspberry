@@ -69,8 +69,7 @@ class ControlLightness (threading.Thread):
         """control backlight according to lightness only 
            if DELAYTOLIGHTOFF seconds have passed after switch on"""
         if (time() > self.__timestamp):
-            lightness = self.__sensor.read()
-            self.__pwm.control(lightness)
+            self.__pwm.control(self.__sensor.read())
             with self.__lock:
                 self.__on = False
             return True
