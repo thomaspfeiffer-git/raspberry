@@ -12,11 +12,30 @@ from time import sleep, time, strftime, localtime
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
-from PCF8591  import PCF8591
+from Measurements import Measurements
+from PCF8591 import PCF8591
 from pwm import PWM
 
 
 ###############################################################################
+class Sensor (object):
+    """Reads data from A/D Converter (PCD8591). In order to smooth transitions
+       from dark to bright and bright to dark, the average of 20 sensor values 
+       is used for lightness control"""
+       
+    def __init__ (self):
+        self.__adc = PCF8591(0x48)
+        self.__measurements = Measurements(maxlen=20)
+
+    def read (self):
+        """read ADC and update deque for averaging"""
+        v = 1024 - (self.__adc.read() * 4)
+        if v > 1020:
+            v = 1020
+        self.__measurements.append(v)
+        return self.__measurements.avg() 
+
+
 ###############################################################################
 class ControlLightness (threading.Thread):
     """controls lightness of Tontec Touch Screen Display"""
@@ -26,9 +45,9 @@ class ControlLightness (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
 
-        self.__lock = threading.Lock()
-        self.__adc  = PCF8591(0x48)
-        self.__pwm  = PWM()
+        self.__lock   = threading.Lock()
+        self.__sensor = Sensor()
+        self.__pwm    = PWM()
 
         with self.__lock:
             self.__on = False
@@ -38,6 +57,8 @@ class ControlLightness (threading.Thread):
 
 
     def __switch_on (self):
+        """switch backlight on and set timestamp in order to switch off
+           after self.DELAYTOLIGHTOFF seconds at the earliest"""
         self.__pwm.on()
         with self.__lock:
             self.__on = True
@@ -45,13 +66,10 @@ class ControlLightness (threading.Thread):
 
 
     def __switch_off (self):
-        """turn backlight off only if DELAYTOLIGHTOFF seconds 
-           have passed after switch on"""
+        """control backlight according to lightness only 
+           if DELAYTOLIGHTOFF seconds have passed after switch on"""
         if (time() > self.__timestamp):
-            # self.__pwm.off()
-            lightness = 1024 - (self.__adc.read() * 4) 
-            if lightness > 1020:
-                lightness = 1020
+            lightness = self.__sensor.read()
             self.__pwm.control(lightness)
             with self.__lock:
                 self.__on = False
@@ -69,7 +87,7 @@ class ControlLightness (threading.Thread):
                 self.__switch_off()
             else:
                 self.__switch_on()
-            sleep(1)
+            sleep(0.02)
           
         # switch backlight on on exit 
         # (otherwise the display might be very dark :-) )
@@ -94,3 +112,4 @@ class ControlLightness (threading.Thread):
             return False
 
 # eof #
+
