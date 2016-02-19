@@ -6,19 +6,23 @@
 """provides an extended deque with average() and last()"""
 
 from collections import deque
+import sys
 
 class Measurements (deque):
     """extended deque: additional methods for average and last added item"""
-    def __init__(self, maxlen=5):
-        super(Measurements, self).__init__([], maxlen)
+    def __init__ (self, maxlen=5):
+        if sys.version_info >= (3,0):
+            super().__init__([], maxlen)
+        else:
+            super(Measurements, self).__init__([], maxlen)
 
-    def avg(self):
+    def avg (self):
         """returns average of list elements"""
         return sum(list(self)) / float(len(self))
 
-    def last(self):
+    def last (self):
         """returns last list element"""
-        return self[len(self)-1]
+        return self[-1]
 
 # eof #
 
