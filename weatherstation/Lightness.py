@@ -82,10 +82,10 @@ class ControlLightness (threading.Thread):
         while (self.__running):
 
             hour = int(strftime("%H", localtime()))
-            if (hour >= 22) or (hour < 6):  # switch backlight off during night hours
-                self.__switch_off()
-            else:
+            if (6 <= hour < 22): # switch backlight off during night hours
                 self.__switch_on()
+            else:
+                self.__switch_off()
             sleep(0.02)
           
         # switch backlight on on exit 
