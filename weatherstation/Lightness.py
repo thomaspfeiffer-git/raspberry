@@ -18,9 +18,8 @@ from pwm import PWM
 
 ###############################################################################
 ###############################################################################
-class Lightness (threading.Thread):
+class ControlLightness (threading.Thread):
     """controls lightness of Tontec Touch Screen Display"""
-    """currently display is switched off between 10 pm and 6 am"""
 
     DELAYTOLIGHTOFF = 15.0
 
@@ -39,7 +38,6 @@ class Lightness (threading.Thread):
 
 
     def __switch_on (self):
-        """turn backlight on"""
         self.__pwm.on()
         with self.__lock:
             self.__on = True
@@ -92,7 +90,7 @@ class Lightness (threading.Thread):
        
         if not already_on: # if the backlight was alread on, touch 
             return True    # event has to be processed by the caller 
-        else:              # of Lightness.keypressed().
+        else:              # of ControlLightness.keypressed().
             return False
 
 # eof #

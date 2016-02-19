@@ -17,7 +17,7 @@ import traceback
 sys.path.append('../libs')
 from Config import CONFIG
 from Display import Display
-from Lightness import Lightness
+from Lightness import ControlLightness
 from Screens import Screens
 
 from SensorQueue import SensorQueueClient_read
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
 
     try:
-        lightness = Lightness()
+        lightness = ControlLightness()
         lightness.start()
         Main()
 
