@@ -41,6 +41,10 @@ def Eject():
     # udisks --unmount /dev/sda
     # udisks --eject /dev/sda
 
+    # $> mount
+    # /dev/sda1 on /media/pi/6464-6335 type vfat (rw,nosuid,nodev,relatime,uid=1000,gid=1000,fmask=0022,dmask=0077,codepage=437,iocharset=ascii,shortname=mixed,showexec,utf8,flush,errors=remount-ro,uhelper=udisks2)
+    # /dev/sdc1 on /media/pi/VT SYSTEM type vfat (rw,nosuid,nodev,relatime,uid=1000,gid=1000,fmask=0022,dmask=0077,codepage=437,iocharset=ascii,shortname=mixed,showexec,utf8,flush,errors=remount-ro,uhelper=udisks2)
+
 
 def FillListbox():
     for filename in glob.iglob(AVI):
