@@ -22,7 +22,8 @@ AVI='/media/pi/6464-6335/DCIM/101VTECH/*.AVI'
 
 
 def Reload():
-    pass
+    EmptyListbox()
+    FillListbox()
 
 
 def Play():
@@ -34,6 +35,7 @@ def Play():
 
 
 def Eject():
+    EmptyListbox()
     pass
     # sudo apt-get install eject
     # udisks --unmount /dev/sda
@@ -45,6 +47,10 @@ def FillListbox():
         filetime = os.path.getmtime(filename)
         (_, filename) = os.path.split(filename)
         listbox.insert(END, "%s: %s" % (filename, time.ctime(filetime)))
+
+
+def EmptyListbox():
+    listbox.delete(0, END)
 
 
 def Exit():
