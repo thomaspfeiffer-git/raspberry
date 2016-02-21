@@ -36,14 +36,9 @@ def Play():
 
 def Eject():
     EmptyListbox()
-    pass
-    # sudo apt-get install eject
-    # udisks --unmount /dev/sda
-    # udisks --eject /dev/sda
-
-    # $> mount
-    # /dev/sda1 on /media/pi/6464-6335 type vfat (rw,nosuid,nodev,relatime,uid=1000,gid=1000,fmask=0022,dmask=0077,codepage=437,iocharset=ascii,shortname=mixed,showexec,utf8,flush,errors=remount-ro,uhelper=udisks2)
-    # /dev/sdc1 on /media/pi/VT SYSTEM type vfat (rw,nosuid,nodev,relatime,uid=1000,gid=1000,fmask=0022,dmask=0077,codepage=437,iocharset=ascii,shortname=mixed,showexec,utf8,flush,errors=remount-ro,uhelper=udisks2)
+    returncode = subprocess.call(["sudo", "udisks", "--unmount", "/dev/sda1"])
+    returncode = subprocess.call(["sudo", "udisks", "--unmount", "/dev/sdc1"])
+    returncode = subprocess.call(["sudo", "udisks", "--eject", "/dev/sda"])
 
 
 def FillListbox():
@@ -78,12 +73,12 @@ lbfont  = tkf.Font(family='Arial', size=20)
 
 
 buttonframe  = Frame(w)
-btn_connect  = Button(buttonframe, command=Reload,   text="Reload", font=btnfont, width=10)
-btn_play     = Button(buttonframe, command=Play,     text="Play", font=btnfont, width=10)
-btn_eject    = Button(buttonframe, command=Eject,    text="Eject", font=btnfont, width=10)
-btn_exit     = Button(buttonframe, command=Exit,     text="Exit", font=btnfont, width=10)
+btn_reload   = Button(buttonframe, command=Reload,   text="Reload",   font=btnfont, width=10)
+btn_play     = Button(buttonframe, command=Play,     text="Play",     font=btnfont, width=10)
+btn_eject    = Button(buttonframe, command=Eject,    text="Eject",    font=btnfont, width=10)
+btn_exit     = Button(buttonframe, command=Exit,     text="Exit",     font=btnfont, width=10)
 btn_shutdown = Button(buttonframe, command=Shutdown, text="Shutdown", font=btnfont, width=10)
-btn_connect.pack()
+btn_reload.pack()
 btn_play.pack()
 btn_eject.pack()
 btn_exit.pack()
