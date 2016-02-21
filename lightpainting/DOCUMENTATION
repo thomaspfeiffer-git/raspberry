@@ -8,7 +8,6 @@ Examples:
 Libs & Documentation:
   current led strip:
 - https://learn.adafruit.com/light-painting-with-raspberry-pi/software
-- http://www.amazon.de/LPD8806-Streifen-Strip-Stripe-IP20/dp/B00KFQN3IU/
 
   other led strips may use this:
 - https://learn.adafruit.com/neopixels-on-raspberry-pi/software
@@ -16,6 +15,8 @@ Libs & Documentation:
 
 Hardware:
 - https://learn.adafruit.com/digital-led-strip
+- http://www.amazon.de/LPD8806-Streifen-Strip-Stripe-IP20/dp/B00KFQN3IU/
+
 - https://learn.adafruit.com/light-painting-with-raspberry-pi/hardware
 - Power Supply! (2 m of neopixels!)
 
