@@ -17,12 +17,22 @@ import subprocess
 import sys
 
 
-PATH='/media/pi/6464-6335/DCIM/101VTECH/'
-AVI='/media/pi/6464-6335/DCIM/101VTECH/*.AVI'
+PATH='/media/pi/kamera/DCIM/101VTECH/'
+AVI='/media/pi/kamera/DCIM/101VTECH/*.AVI'
 
 
-def Reload():
+
+def Mount():
+    cp = subprocess.call(["sudo", "mount", "--read-only", "/dev/sda1", "/media/pi/kamera"])
+
+def Unmount():
+    cp = subprocess.call(["sudo", "udisks", "--unmount", "/dev/sda1"])
+    cp = subprocess.call(["sudo", "udisks", "--eject", "/dev/sda"])
+
+
+def Load():
     EmptyListbox()
+    Mount()
     FillListbox()
 
 
@@ -36,9 +46,7 @@ def Play():
 
 def Eject():
     EmptyListbox()
-    returncode = subprocess.call(["sudo", "udisks", "--unmount", "/dev/sda1"])
-    returncode = subprocess.call(["sudo", "udisks", "--unmount", "/dev/sdc1"])
-    returncode = subprocess.call(["sudo", "udisks", "--eject", "/dev/sda"])
+    Unmount()
 
 
 def FillListbox():
@@ -47,12 +55,12 @@ def FillListbox():
         (_, filename) = os.path.split(filename)
         listbox.insert(END, "%s: %s" % (filename, time.ctime(filetime)))
 
-
 def EmptyListbox():
     listbox.delete(0, END)
 
 
 def Exit():
+    Eject()
     w.quit()
     sys.exit()
 
@@ -73,7 +81,7 @@ lbfont  = tkf.Font(family='Arial', size=20)
 
 
 buttonframe  = Frame(w)
-btn_reload   = Button(buttonframe, command=Reload,   text="Reload",   font=btnfont, width=10)
+btn_reload   = Button(buttonframe, command=Load,     text="Load",     font=btnfont, width=10)
 btn_play     = Button(buttonframe, command=Play,     text="Play",     font=btnfont, width=10)
 btn_eject    = Button(buttonframe, command=Eject,    text="Eject",    font=btnfont, width=10)
 btn_exit     = Button(buttonframe, command=Exit,     text="Exit",     font=btnfont, width=10)
