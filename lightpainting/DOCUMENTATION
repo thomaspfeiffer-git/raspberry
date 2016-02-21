@@ -6,10 +6,11 @@ Examples:
 
 
 Libs & Documentation:
-- https://learn.adafruit.com/neopixels-on-raspberry-pi/software
+  current led strip:
 - https://learn.adafruit.com/light-painting-with-raspberry-pi/software
 
-
+  other led strips may use this:
+- https://learn.adafruit.com/neopixels-on-raspberry-pi/software
 
 
 Hardware:
