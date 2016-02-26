@@ -12,23 +12,26 @@ LED_COUNT = 64
  
 # Configurable values
 # filename  = "images/wh_logo_64px_blackcyan.png"
-filename  = "images/DonaldDuck.png"
+# filename  = "images/DonaldDuck.png"
+filename  = "images/minions.png"
 dev       = "/dev/spidev0.0"
  
 # Open SPI device, load image in RGB format and get dimensions:
 spidev    = file(dev, "wb")
+
 print "Loading ..."
-img       = Image.open(filename).convert("RGB")
-pixels    = img.load()
-width     = img.size[0]
-height    = img.size[1]
-print "   %dx%d pixels" % img.size
+img     = Image.open(filename).convert("RGB")
+width   = img.size[0]
+height  = img.size[1]
+print "   %dx%d pixels" % (width, height)
 
 print "Resizing ..."
 newWidth = float(img.size[0])/float(img.size[1])*LED_COUNT
 img = img.resize( (int(newWidth), LED_COUNT))
-print "   %dx%d pixels" % img.size
-
+width   = img.size[0]
+height  = img.size[1]
+pixels  = img.load()
+print "   %dx%d pixels" % (width, height)
  
 # Calculate gamma correction table.  This includes
 # LPD8806-specific conversion (7-bit color w/high bit set).
