@@ -11,9 +11,10 @@ LED_COUNT = 64
 
  
 # Configurable values
+filename = "images/testbild.png"
 # filename  = "images/wh_logo_64px_blackcyan.png"
 # filename  = "images/DonaldDuck.png"
-filename  = "images/minions.png"
+# filename  = "images/minions.png"
 dev       = "/dev/spidev0.0"
  
 # Open SPI device, load image in RGB format and get dimensions:
@@ -21,6 +22,7 @@ spidev    = file(dev, "wb")
 
 print "Loading ..."
 img     = Image.open(filename).convert("RGB")
+img     = img.rotate(180)
 width   = img.size[0]
 height  = img.size[1]
 print "   %dx%d pixels" % (width, height)
@@ -64,7 +66,7 @@ while True:
         for x in range(width):
                 spidev.write(column[x])
                 spidev.flush()
-                time.sleep(0.001)
+                time.sleep(0.1)
         time.sleep(0.5)
 
 
