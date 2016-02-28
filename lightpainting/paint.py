@@ -23,9 +23,9 @@ PICTURE_SLEEP  = 1.0
 
 # Configurable values
 # filename = "images/testbild.png"
-filename  = "images/wh_logo_64px_blackcyan.png"
-# filename  = "images/DonaldDuck.png"
-# filename  = "images/minions.png"
+filename = "images/wh_logo_64px_blackcyan.png"
+# filename = "images/DonaldDuck.png"
+# filename = "images/minions.png"
 
 
 dev = "/dev/spidev0.0"
@@ -39,14 +39,16 @@ def writeColumn(column):
 
 
 def blackColumn():
-    """method to blank all LEDs"""
+    """method to black all LEDs"""
+    print "Blacking ..."
     blackcolumn = bytearray(height * 3 + 1) # TODO: Calculate only once by using a closure
     for y in range(height):
         y3 = y * 3
-        blackcolumn[y3]     = 0
-        blackcolumn[y3 + 1] = 0
-        blackcolumn[y3 + 2] = 0
+        blackcolumn[y3]     = gamma[0]
+        blackcolumn[y3 + 1] = gamma[0]
+        blackcolumn[y3 + 2] = gamma[0]
     writeColumn(blackcolumn)
+
 
 print "Loading ..."
 img     = Image.open(filename).convert("RGB")
@@ -98,7 +100,7 @@ while True:
     for x in range(width):
         writeColumn(column[x])
         time.sleep(COLUMN_SLEEP)
-        # print "Looping %i" % x
+        print "Looping %i" % x
 
     blackColumn()
     time.sleep(PICTURE_SLEEP)
