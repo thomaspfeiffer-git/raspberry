@@ -20,15 +20,14 @@ PICTURE_SLEEP  = 1.0
 
 
 # Configurable values
-filename = "images/testbild.png"
-# filename  = "images/wh_logo_64px_blackcyan.png"
+# filename = "images/testbild.png"
+filename  = "images/wh_logo_64px_blackcyan.png"
 # filename  = "images/DonaldDuck.png"
 # filename  = "images/minions.png"
-dev       = "/dev/spidev0.0"
- 
-# Open SPI device, load image in RGB format and get dimensions:
-spidev    = file(dev, "wb")
 
+
+dev = "/dev/spidev0.0"
+spidev = file(dev, "wb")
 
 print "Loading ..."
 img     = Image.open(filename).convert("RGB")
