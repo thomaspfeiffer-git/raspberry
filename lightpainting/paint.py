@@ -9,11 +9,13 @@ import RPi.GPIO as GPIO, Image, time
 
 LED_COUNT = 64
 
-# Sleep time between columns. Has to be adjusted according speed of LED bar.
+# Sleep time between columns. 
+# Has to be adjusted according speed of LED bar.
 COLUMN_SLEEP  = 0.1
 
-# Repeat display of picture. Mainly used for testing.
-PICTURE_REPEAT = True
+# Repeat display of picture. 
+# Mainly used for testing.
+PICTURE_REPEAT = False
 
 # Sleep time between pictures.
 PICTURE_SLEEP  = 1.0
@@ -28,6 +30,23 @@ filename  = "images/wh_logo_64px_blackcyan.png"
 
 dev = "/dev/spidev0.0"
 spidev = file(dev, "wb")
+
+
+def writeColumn(column):
+    """writes a column to the led strip"""
+    spidev.write(column)
+    spidev.flush()
+
+
+def blackColumn():
+    """method to blank all LEDs"""
+    blackcolumn = bytearray(height * 3 + 1) # TODO: Calculate only once by using a closure
+    for y in range(height):
+        y3 = y * 3
+        blackcolumn[y3]     = 0
+        blackcolumn[y3 + 1] = 0
+        blackcolumn[y3 + 2] = 0
+    writeColumn(blackcolumn)
 
 print "Loading ..."
 img     = Image.open(filename).convert("RGB")
@@ -77,12 +96,15 @@ for x in range(width):
 print "Displaying ..."
 while True:
     for x in range(width):
-        spidev.write(column[x])
-        spidev.flush()
+        writeColumn(column[x])
         time.sleep(COLUMN_SLEEP)
+        # print "Looping %i" % x
+
+    blackColumn()
     time.sleep(PICTURE_SLEEP)
-    if not PICTURE_REPEAT then:
+    if not PICTURE_REPEAT:
         break
+
 
 # eof #
 
