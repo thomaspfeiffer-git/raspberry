@@ -15,9 +15,9 @@ COLUMN_SLEEP  = 0.1
 
 # Repeat display of picture. 
 # Mainly used for testing.
-PICTURE_REPEAT = False
+PICTURE_REPEAT = True
 
-# Sleep time between pictures.
+# Sleep time between pictures (if PICTURE_REPEAT == True).
 PICTURE_SLEEP  = 1.0
 
 
