@@ -213,7 +213,7 @@ class Display (threading.Thread):
     def draw (self):
 #        value = "%s     " % str(self._getadc())
         Display.i += 1
-        if Display.i >= 1024:
+        if Display.i >= 999:
             Display.i = 0
         value = "%s     " % str(Display.i)
 
