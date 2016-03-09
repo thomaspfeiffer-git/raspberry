@@ -184,6 +184,8 @@ class Lightness (threading.Thread):
 
 ###############################################################################
 class Display (threading.Thread):
+    i = 0
+
     def __init__ (self, getadc):
         threading.Thread.__init__(self)
         self._getadc = getadc
@@ -209,7 +211,12 @@ class Display (threading.Thread):
         self.__running = False      
 
     def draw (self):
-        value = "%s     " % str(self._getadc())
+#        value = "%s     " % str(self._getadc())
+        Display.i += 1
+        if Display.i >= 1024:
+            Display.i = 0
+        value = "%s     " % str(Display.i)
+
         text = self.font.render(value, True, (255, 0, 0), (255, 255, 255))
         self.screen.blit(text, (10, 10))
         pygame.display.update()
@@ -250,12 +257,12 @@ class Gesture (threading.Thread):
 def Exit():
     """stuff to be done on exit"""
     print("Exit")
-    display.stop()
-    display.join()
-    lightness.stop()
-    lightness.join()
-    gesture.stop()
-    gesture.join()
+#    display.stop()
+#    display.join()
+#    lightness.stop()
+#    lightness.join()
+#    gesture.stop()
+#    gesture.join()
     T.stop()
     pygame.quit()
     sys.exit()
@@ -272,13 +279,13 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
 
     try:
-        gesture   = Gesture(pin=26)  # BCM! cause of PWM
-        gesture.start()
+#        gesture   = Gesture(pin=26)  # BCM! cause of PWM
+#        gesture.start()
 
-        lightness = Lightness()
-        lightness.start()
+#        lightness = Lightness()
+#        lightness.start()
 
-        display = Display(lightness.getadc)
+        display = Display(None)
         display.start()
 
         T1 = Trafficlight(TL1_PIN_RED, TL1_PIN_ORANGE, TL1_PIN_GREEN)
