@@ -7,10 +7,8 @@
 """Simulates a usual traffic light (located at a usual crossroad)
    TL1: Traffic light for street #1
    TL2: Traffic light for street #2
-   Lightness of lamps is controlled by PWM using an LDR.
-   Additionally the values of the LDR are written to the display.
    Goal: Test if a Tontec display works properly when an I2C bus is used
-   as well (for an MCP23017 and a PCF8591).
+   as well (for an MCP23017)
 """
 
 import os
@@ -28,8 +26,6 @@ sys.path.append('../libs/sensors')
 
 from MCP23x17 import MCP23x17
 from MCP23017 import MCP23017
-from PCF8591  import PCF8591
-from pwm      import PWM
 
 
 TL1_PIN_RED    = 0b10000000
@@ -95,8 +91,9 @@ class Trafficlights (object):
     TIME_ORANGE =  2
 
     def __init__ (self, tl1, tl2):
-        self._tl1 = tl1
-        self._tl2 = tl2
+        self._tl1      = tl1
+        self._tl2      = tl2
+        self._device   = MCP23017(0x20, 0b00000000, 0b11000000)
         self.__running = True
 
     def _blink (self, lamp, count=5):
@@ -111,9 +108,13 @@ class Trafficlights (object):
 
     def __sleep (self, time):
         """sleeps n seconds
-           checks self.__running and exits if False"""
-        for _ in range(int(time*10.0)):
+           - pauses traffic light if sensor is active
+           - checks self.__running and exits if False"""
+        i = 0.0
+        while (i <= time*10.0):
             sleep(0.1)
+            if not self._device.read(bit=6):
+                i += 1.0
             if not self.__running:
                 break
 
@@ -154,41 +155,11 @@ class Trafficlights (object):
 
 
 ###############################################################################
-class Lightness (threading.Thread):
-    def __init__ (self):
-        threading.Thread.__init__(self)
-        self._adc = PCF8591(0x48)
-        self._pwm = PWM()
-
-        self.__running = True
-
-    def run (self):
-        while self.__running:
-            if gesture.active:
-                v = 1
-            else:
-                v = 1024 - (self._adc.read() * 4)
-                if v > 1020:
-                    v = 1020
-                # print("Value ADC: %i" % v) 
-
-            self._pwm.control(v)
-            sleep(0.25)
-
-    def stop (self):
-        self.__running = False
-
-    def getadc (self):
-        return self._adc.read()
-
-
-###############################################################################
 class Display (threading.Thread):
     i = 0
 
-    def __init__ (self, getadc):
+    def __init__ (self):
         threading.Thread.__init__(self)
-        self._getadc = getadc
 
         os.environ["SDL_FBDEV"] = "/dev/fb1" 
         os.environ['SDL_VIDEO_CENTERED'] = '1'
@@ -211,7 +182,6 @@ class Display (threading.Thread):
         self.__running = False      
 
     def draw (self):
-#        value = "%s     " % str(self._getadc())
         Display.i += 1
         if Display.i >= 999:
             Display.i = 0
@@ -223,46 +193,10 @@ class Display (threading.Thread):
 
 
 ###############################################################################
-class Gesture (threading.Thread):
-    def __init__ (self, pin):
-        threading.Thread.__init__(self)
-        self.__pin = pin
-        io.setmode(io.BCM)
-        io.setup(self.__pin, io.IN) 
-
-        self.__lock = threading.Lock()
-
-        with self.__lock:
-            self.__active = False
-
-        self.__running = True
-
-    def run (self):
-        while self.__running:
-            with self.__lock:
-                self.__active = io.input(self.__pin) == 0
-            sleep(0.25)
-
-    def stop (self):
-        self.__running = False
-
-    @property
-    def active (self):
-        with self.__lock:
-            return self.__active
-
-
-###############################################################################
 # Exit ########################################################################
 def Exit():
     """stuff to be done on exit"""
     print("Exit")
-#    display.stop()
-#    display.join()
-#    lightness.stop()
-#    lightness.join()
-#    gesture.stop()
-#    gesture.join()
     T.stop()
     pygame.quit()
     sys.exit()
@@ -279,13 +213,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
 
     try:
-#        gesture   = Gesture(pin=26)  # BCM! cause of PWM
-#        gesture.start()
-
-#        lightness = Lightness()
-#        lightness.start()
-
-        display = Display(None)
+        display = Display()
         display.start()
 
         T1 = Trafficlight(TL1_PIN_RED, TL1_PIN_ORANGE, TL1_PIN_GREEN)
