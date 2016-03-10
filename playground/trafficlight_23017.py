@@ -44,7 +44,7 @@ TL2_PIN_GREEN  = 0b00000100
 ###############################################################################
 class Lamp (object):
     """one lamp of the traffic light (typically red, orange, or green)"""
-    _device  = MCP23017(0x20)
+    _device  = MCP23017(0x20, 0b00000000, 0b11000000)
     _pattern = 0b00000000
 
     def __init__ (self, pin):
