@@ -49,6 +49,11 @@ class MCP23017 (I2C):
                 print("Retry: %i" % i)
                 continue
 
+    def output (self, bit, value):
+        port = (bit >> 3) + MCP23x17.GPIOA 
+        bit &= 7           # = always 0-7
+        # ...
+
     def read (self, bit):
         """reads bit; bit is int 0..15"""
 
