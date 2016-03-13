@@ -36,6 +36,10 @@ TL2_PIN_RED    = 0b00010000
 TL2_PIN_ORANGE = 0b00001000
 TL2_PIN_GREEN  = 0b00000100
 
+TL3_PIN_RED    = 0b00000010
+TL3_PIN_GREEN  = 0b00000001
+
+
 
 ###############################################################################
 class Lamp (object):
@@ -65,11 +69,13 @@ class Lamp (object):
 ###############################################################################
 class Trafficlight (object):
     """one traffic light built of three lamps (red, orange, green)"""
-    def __init__ (self, pin_red, pin_orange, pin_green):
+    def __init__ (self, pin_red, pin_green, pin_orange=None):
         self.red    = Lamp(pin_red)
-        self.orange = Lamp(pin_orange)
         self.green  = Lamp(pin_green)
-        self._lamps = [self.red, self.orange, self.green]
+        self._lamps = [self.red, self.green]
+        if pin_orange:
+            self.orange = Lamp(pin_orange)
+            self._lamps.append(self.orange)
 
     def all_on (self):
         """switch all lamps on (just for testing purpose)"""
@@ -90,9 +96,10 @@ class Trafficlights (object):
     TIME_GREEN  = 10
     TIME_ORANGE =  2
 
-    def __init__ (self, tl1, tl2):
-        self._tl1      = tl1
+    def __init__ (self, tl1, tl2, tl3):
+        self._tl1      = tl1  # for cars
         self._tl2      = tl2
+        self._tl3      = tl3  # for pedestrians
         self._device   = MCP23017(0x20, 0b00000000, 0b11000000)
         self.__running = True
 
@@ -118,20 +125,30 @@ class Trafficlights (object):
             if not self.__running:
                 break
 
-    def _go_red (self, trafficlight):  
-        """switches trafficlight to red"""
+    def _go_red_cars (self, trafficlight):  
+        """switches trafficlight for cars to red"""
         self._blink(trafficlight.green)
         trafficlight.orange.on()
         self.__sleep(self.TIME_ORANGE)
         trafficlight.orange.off()
         trafficlight.red.on()
 
-    def _go_green (self, trafficlight):
-        """switches trafficlight to green"""
+    def _go_red_walk (self, trafficlight):
+        """switches trafficlight for pedestrians to red"""
+        self._blink(trafficlight.green)
+        trafficlight.red.on()
+
+    def _go_green_cars (self, trafficlight):
+        """switches trafficlight for cars to green"""
         trafficlight.orange.on()
         self.__sleep(self.TIME_ORANGE)
         trafficlight.red.off()
         trafficlight.orange.off()
+        trafficlight.green.on()
+
+    def _go_green_walk (self, trafficlight):
+        """switches trafficlight for pedestrians to green"""
+        trafficlight.red.off()
         trafficlight.green.on()
 
     def run (self):
@@ -139,11 +156,13 @@ class Trafficlights (object):
            switches tl1 to red and green and 
            switches tl2 to green and red"""
         while self.__running:
-            self._go_red(self._tl1)
-            self._go_green(self._tl2)
+            self._go_red_walk(self._tl3)
+            self._go_red_cars(self._tl1)
+            self._go_green_cars(self._tl2)
             self.__sleep(self.TIME_RED)
-            self._go_red(self._tl2)
-            self._go_green(self._tl1)
+            self._go_red_cars(self._tl2)
+            self._go_green_cars(self._tl1)
+            self._go_green_walk(self._tl3)
             self.__sleep(self.TIME_GREEN)
 
         for trafficlight in (self._tl1, self._tl2):
@@ -216,9 +235,10 @@ if __name__ == '__main__':
         display = Display()
         display.start()
 
-        T1 = Trafficlight(TL1_PIN_RED, TL1_PIN_ORANGE, TL1_PIN_GREEN)
-        T2 = Trafficlight(TL2_PIN_RED, TL2_PIN_ORANGE, TL2_PIN_GREEN)
-        T = Trafficlights(T1, T2)
+        T1 = Trafficlight(TL1_PIN_RED, TL1_PIN_GREEN, TL1_PIN_ORANGE)
+        T2 = Trafficlight(TL2_PIN_RED, TL2_PIN_GREEN, TL2_PIN_ORANGE)
+        T3 = Trafficlight(TL3_PIN_RED, TL3_PIN_GREEN)
+        T = Trafficlights(T1, T2, T3)
         T.run()
 
     except KeyboardInterrupt:
