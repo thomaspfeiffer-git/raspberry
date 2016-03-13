@@ -5,8 +5,10 @@
 # (c) https://github.com/thomaspfeiffer-git 2016                              #
 ###############################################################################
 """Simulates a usual traffic light (located at a usual crossroad)
-   TL1: Traffic light for street #1
-   TL2: Traffic light for street #2
+   TL1: Traffic light for cars for street #1
+   TL2: Traffic light for cars for street #2
+   TL3: Traffic light for pedestrians street #1
+   TL4: Traffic light for pedestrians street #2
    Goal: Test if a Tontec display works properly when an I2C bus is used
    as well (for an MCP23017)
 """
@@ -40,11 +42,12 @@ TL3_PIN_RED    = 0b00000010
 TL3_PIN_GREEN  = 0b00000001
 
 
+device = MCP23017(0x20, 0b00000000, 0b11000000)
+
 
 ###############################################################################
 class Lamp (object):
     """one lamp of the traffic light (typically red, orange, or green)"""
-    _device  = MCP23017(0x20, 0b00000000, 0b11000000)
     _pattern = 0b00000000
 
     def __init__ (self, pin):
@@ -63,7 +66,7 @@ class Lamp (object):
 
     @staticmethod
     def _write():
-        Lamp._device.send(MCP23x17.OLATA, Lamp._pattern)
+        device.send(MCP23x17.OLATA, Lamp._pattern)
 
 
 ###############################################################################
@@ -100,7 +103,6 @@ class Trafficlights (object):
         self._tl1      = tl1  # for cars
         self._tl2      = tl2
         self._tl3      = tl3  # for pedestrians
-        self._device   = MCP23017(0x20, 0b00000000, 0b11000000)
         self.__running = True
 
     def _blink (self, lamp, count=5):
@@ -120,7 +122,7 @@ class Trafficlights (object):
         i = 0.0
         while (i <= time*10.0):
             sleep(0.1)
-            if not self._device.read(bit=6):
+            if not device.read(bit=6):
                 i += 1.0
             if not self.__running:
                 break
