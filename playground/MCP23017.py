@@ -32,6 +32,12 @@ class MCP23017 (I2C):
     def _BV(x):
         return 1<<x
 
+    @staticmethod
+    def _PP(bit):
+        port = (bit >> 3) + MCP23x17.GPIOA 
+        bit &= 7           # = always 0-7
+        return port, bit 
+
     def send (self, bank, pattern):
         """send pattern to bank of device"""
         # TODO: Test what happens if writing to a bank with 
@@ -50,15 +56,12 @@ class MCP23017 (I2C):
                 continue
 
     def output (self, bit, value):
-        port = (bit >> 3) + MCP23x17.GPIOA 
-        bit &= 7           # = always 0-7
+        port, bit = self._PB(bit)
         # ...
 
     def read (self, bit):
         """reads bit; bit is int 0..15"""
-
-        port = (bit >> 3) + MCP23x17.GPIOA 
-        bit &= 7           # = always 0-7
+        port, bit = self._PB(bit)
         try:
             with I2C._lock:
                 return (I2C._bus.read_byte_data(self._address, port) & self._BV(bit)) == 0
