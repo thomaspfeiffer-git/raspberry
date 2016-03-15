@@ -4,8 +4,8 @@
 # Adafruit Digital Addressable RGB LED flex strip.
 # ----> http://adafruit.com/products/306 
 
+import getopt, sys
 import RPi.GPIO as GPIO, Image, time
-
 
 LED_COUNT = 64
 
@@ -15,7 +15,7 @@ COLUMN_SLEEP  = 0.1
 
 # Repeat display of picture. 
 # Mainly used for testing.
-PICTURE_REPEAT = True
+PICTURE_REPEAT = False
 
 # Sleep time between pictures (if PICTURE_REPEAT == True).
 PICTURE_SLEEP  = 1.0
@@ -23,13 +23,39 @@ PICTURE_SLEEP  = 1.0
 
 # Configurable values
 # filename = "images/testbild.png"
-filename = "images/wh_logo_64px_blackcyan.png"
+# filename = "images/wh_logo_64px_blackcyan.png"
 # filename = "images/DonaldDuck.png"
-# filename = "images/minions.png"
+# filename = "images/Minions.png"
 
 
 dev = "/dev/spidev0.0"
 spidev = file(dev, "wb")
+
+
+def usage():
+    print sys.argv[0], "-p <picture>"
+    sys.exit()
+
+
+def readCommandLine():
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "p:")
+    except getopt.GetoptError as err:
+        # print help information and exit:
+        print str(err) # will print something like "option -a not recognized"
+        usage()
+
+    picture = None
+    for o, a in opts:
+        if o == "-p":
+            picture = a
+        else:
+            usage()
+    if not picture:
+        usage()
+
+    print "Picture: ", picture
+    return picture
 
 
 def writeColumn(column):
@@ -49,6 +75,11 @@ def blackColumn():
         blackcolumn[y3 + 2] = gamma[0]
     writeColumn(blackcolumn)
 
+
+
+#### main ####
+
+filename = readCommandLine()
 
 print "Loading ..."
 img     = Image.open(filename).convert("RGB")
@@ -103,10 +134,9 @@ while True:
         print "Looping %i" % x
 
     blackColumn()
-    time.sleep(PICTURE_SLEEP)
     if not PICTURE_REPEAT:
         break
-
+    time.sleep(PICTURE_SLEEP)
 
 # eof #
 
