@@ -8,6 +8,7 @@ import getopt, sys
 import RPi.GPIO as GPIO, Image, time
 
 LED_COUNT = 64
+DELAYTOSTART = 5.0
 
 # Sleep time between columns. 
 # Has to be adjusted according speed of LED bar.
@@ -125,13 +126,16 @@ for x in range(width):
         column[x][y3 + 2] = gamma[value[2]]
  
 
+print "Waiting for start ..."
+time.sleep(DELAYTOSTART)
+
 # Then it's a trivial matter of writing each column to the SPI port.
 print "Displaying ..."
 while True:
     for x in range(width):
         writeColumn(column[x])
         time.sleep(COLUMN_SLEEP)
-        print "Looping %i" % x
+        print "Looping %i for picture %s" % (x, s)
 
     blackColumn()
     if not PICTURE_REPEAT:
