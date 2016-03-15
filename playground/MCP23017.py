@@ -33,7 +33,7 @@ class MCP23017 (I2C):
         return 1<<x
 
     @staticmethod
-    def _PP(bit):
+    def _PB(bit):
         port = (bit >> 3) + MCP23x17.GPIOA 
         bit &= 7           # = always 0-7
         return port, bit 
