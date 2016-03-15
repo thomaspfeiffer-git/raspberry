@@ -16,7 +16,8 @@ COLUMN_SLEEP  = 0.1
 
 # Repeat display of picture. 
 # Mainly used for testing.
-PICTURE_REPEAT = False
+# PICTURE_REPEAT = False
+PICTURE_REPEAT = True
 
 # Sleep time between pictures (if PICTURE_REPEAT == True).
 PICTURE_SLEEP  = 1.0
@@ -135,7 +136,7 @@ while True:
     for x in range(width):
         writeColumn(column[x])
         time.sleep(COLUMN_SLEEP)
-        print "Looping %i for picture %s" % (x, s)
+        print "Looping %i for picture %s" % (x, filename)
 
     blackColumn()
     if not PICTURE_REPEAT:
