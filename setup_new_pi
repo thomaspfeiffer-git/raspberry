@@ -190,3 +190,11 @@ sudo apt-get remove --purge wolfram-engine libreoffice
 sudo apt-get autoremove
 
 
+
+
+WLAN-Hotspot
+============
+
+https://www.elektronik-kompendium.de/sites/raspberry-pi/2002171.htm
+
+
