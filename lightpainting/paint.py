@@ -8,16 +8,22 @@ import getopt, sys
 import RPi.GPIO as GPIO, Image, time
 
 LED_COUNT = 64
+
+
+# Wait time until first iteration starts.
+# Needed to move from camera to led strip. :-)
+# Can be set using the command line paramter -s <time>.
 DELAYTOSTART = 5.0
 
 # Sleep time between columns. 
 # Has to be adjusted according speed of LED bar.
+# Can be set using the command line parameter -c <time>.
 COLUMN_SLEEP  = 0.1
 
 # Repeat display of picture. 
 # Mainly used for testing.
 # PICTURE_REPEAT = False
-PICTURE_REPEAT = True
+PICTURE_REPEAT = False
 
 # Sleep time between pictures (if PICTURE_REPEAT == True).
 PICTURE_SLEEP  = 1.0
@@ -35,28 +41,41 @@ spidev = file(dev, "wb")
 
 
 def usage():
-    print sys.argv[0], "-p <picture>"
+    print sys.argv[0], "-p <picture> -s <time> -c <time>"
+    print "-p: path to picture in png format"
+    print "-s: delay until start in seconds"
+    print "-c: delay between columns in seconds"
     sys.exit()
 
 
 def readCommandLine():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "p:")
+        opts, args = getopt.getopt(sys.argv[1:], "p:c:")
     except getopt.GetoptError as err:
         # print help information and exit:
         print str(err) # will print something like "option -a not recognized"
         usage()
 
     picture = None
+    column_sleep = COLUMN_SLEEP
+    delaytostart = DELAYTOSTART
+
     for o, a in opts:
         if o == "-p":
             picture = a
+        elif o == "-s":
+            delaytostart = float(a)
+        elif o == "-c":
+            column_sleep = float(a) 
         else:
             usage()
     if not picture:
         usage()
 
     print "Picture: ", picture
+    print "Delay to start:", delaytostart
+    print "Column sleep: ", column_sleep
+
     return picture
 
 
@@ -128,14 +147,14 @@ for x in range(width):
  
 
 print "Waiting for start ..."
-time.sleep(DELAYTOSTART)
+time.sleep(delaytostart)
 
 # Then it's a trivial matter of writing each column to the SPI port.
 print "Displaying ..."
 while True:
     for x in range(width):
         writeColumn(column[x])
-        time.sleep(COLUMN_SLEEP)
+        time.sleep(column_sleep)
         print "Looping %i for picture %s" % (x, filename)
 
     blackColumn()
