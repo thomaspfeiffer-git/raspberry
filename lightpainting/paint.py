@@ -40,24 +40,26 @@ spidev = file(dev, "wb")
 
 
 def usage():
-    print sys.argv[0], "-p <picture> -s <time> -c <time>"
+    print sys.argv[0], "-p <picture> -s <time> -c <time> -l"
     print "-p: path to picture in png format"
     print "-s: delay until start in seconds"
     print "-c: delay between columns in seconds"
+    print "-l: looping forever"
     sys.exit()
 
 
 def readCommandLine():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "p:s:c:")
+        opts, args = getopt.getopt(sys.argv[1:], "p:s:c:l")
     except getopt.GetoptError as err:
         # print help information and exit:
         print str(err) # will print something like "option -a not recognized"
         usage()
 
     picture = None
-    delaytostart = DELAYTOSTART
-    column_sleep = COLUMN_SLEEP
+    delaytostart   = DELAYTOSTART
+    column_sleep   = COLUMN_SLEEP
+    picture_repeat = PICTURE_REPEAT    
 
     for o, a in opts:
         if o == "-p":
@@ -66,16 +68,20 @@ def readCommandLine():
             delaytostart = float(a)
         elif o == "-c":
             column_sleep = float(a) 
+        elif o == "-l":
+            picture_repeat = True
         else:
             usage()
     if not picture:
         usage()
 
-    print "Picture: ", picture
+    print "Picture:", picture
     print "Delay to start:", delaytostart
-    print "Column sleep: ", column_sleep
+    print "Column sleep:", column_sleep
+    print "Picture repeat:", picture_repeat
+    print ""
 
-    return picture, delaytostart, column_sleep
+    return picture, delaytostart, column_sleep, picture_repeat
 
 
 def writeColumn(column):
@@ -99,7 +105,7 @@ def blackColumn():
 
 #### main ####
 
-picture, delaytostart, column_sleep = readCommandLine()
+filename, delaytostart, column_sleep, picture_repeat = readCommandLine()
 
 print "Loading ..."
 img     = Image.open(filename).convert("RGB")
@@ -157,7 +163,7 @@ while True:
         print "Looping %i for picture %s" % (x, filename)
 
     blackColumn()
-    if not PICTURE_REPEAT:
+    if not picture_repeat:
         break
     time.sleep(PICTURE_SLEEP)
 
