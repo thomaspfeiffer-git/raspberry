@@ -22,7 +22,6 @@ COLUMN_SLEEP  = 0.1
 
 # Repeat display of picture. 
 # Mainly used for testing.
-# PICTURE_REPEAT = False
 PICTURE_REPEAT = False
 
 # Sleep time between pictures (if PICTURE_REPEAT == True).
@@ -50,15 +49,15 @@ def usage():
 
 def readCommandLine():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "p:c:")
+        opts, args = getopt.getopt(sys.argv[1:], "p:s:c:")
     except getopt.GetoptError as err:
         # print help information and exit:
         print str(err) # will print something like "option -a not recognized"
         usage()
 
     picture = None
-    column_sleep = COLUMN_SLEEP
     delaytostart = DELAYTOSTART
+    column_sleep = COLUMN_SLEEP
 
     for o, a in opts:
         if o == "-p":
@@ -76,7 +75,7 @@ def readCommandLine():
     print "Delay to start:", delaytostart
     print "Column sleep: ", column_sleep
 
-    return picture
+    return picture, delaytostart, column_sleep
 
 
 def writeColumn(column):
@@ -100,7 +99,7 @@ def blackColumn():
 
 #### main ####
 
-filename = readCommandLine()
+picture, delaytostart, column_sleep = readCommandLine()
 
 print "Loading ..."
 img     = Image.open(filename).convert("RGB")
