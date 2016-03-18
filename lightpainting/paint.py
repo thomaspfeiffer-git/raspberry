@@ -7,6 +7,7 @@
 import getopt 
 # import Image
 import RPi.GPIO as GPIO
+import signal
 import sys
 import time
 
@@ -118,7 +119,7 @@ def _Exit(__s, __f):
 
 ###############################################################################
 # Main ########################################################################
-def Main();
+def Main():
 
     filename, delaytostart, column_sleep, picture_repeat = readCommandLine()
     spidev = file(dev, "wb")
@@ -189,8 +190,8 @@ def Main();
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, _Exit)
 
-try:
-    Main()
+    try:
+        Main()
 
     except KeyboardInterrupt:
         Exit()
