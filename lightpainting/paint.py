@@ -5,7 +5,7 @@
 # ----> http://adafruit.com/products/306 
 
 import getopt 
-# import Image
+import Image
 import RPi.GPIO as GPIO
 import signal
 import sys
