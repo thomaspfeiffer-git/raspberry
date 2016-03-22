@@ -8,7 +8,6 @@ Different screens for Weatherstation.py
 Currently there are three screens:
 1) Living room and outside
 2) Kid's room
-3) Turtle's compound 
 """
 
 
@@ -32,8 +31,7 @@ class Screens (object):
         self.display    = display
         self.__screenid = 1
         self.__screens  = {1: self.Screen1, \
-                           2: self.Screen2, \
-                           3: self.Screen3}
+                           2: self.Screen2}
 
     @property
     def screenid (self):
@@ -88,7 +86,7 @@ class Screens (object):
                 pass
 
         ypos = self.display.drawWeatherItem(u'Draußen:', \
-                                            getvalue(allsensorvalues['ID_12']), \
+                                            getvalue(allsensorvalues['ID_03']), \
                                             getvalue(allsensorvalues['ID_04']), \
                                             getvalue(allsensorvalues['ID_05']), \
                                             CONFIG.COLORS.OUTDOOR, ypos)
@@ -108,25 +106,6 @@ class Screens (object):
                                             CONFIG.COLORS.KIDSROOM, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawPicture(CONFIG.IMAGES.PIC_KIDSROOM, 0.8, 
-                                 xpos=Display.Position.Center, ypos=ypos)
-        self.display.drawTime()
-
-
-    def Screen3 (self, allsensorvalues):
-        """turtle's compound"""
-        ypos = CONFIG.MARGIN 
-        self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
-
-        ypos = self.display.drawWeatherItem("Gehege Donut:", \
-                                            getvalue(allsensorvalues['ID_08']), \
-                                            getvalue(allsensorvalues['ID_09']), \
-                                            None,    \
-                                            CONFIG.COLORS.TURTLE, ypos)
-        ypos = self.display.drawSwitchValue(getvalue(allsensorvalues['ID_10']), \
-                                            getvalue(allsensorvalues['ID_11']), \
-                                            CONFIG.COLORS.TURTLE, ypos)
-        ypos += CONFIG.SEP_Y
-        self.display.drawPicture(CONFIG.IMAGES.PIC_TURTLE, 0.4, 
                                  xpos=Display.Position.Center, ypos=ypos)
         self.display.drawTime()
 
