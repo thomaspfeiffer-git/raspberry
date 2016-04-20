@@ -302,7 +302,7 @@ def _Exit(__s, __f):
 # Main ########################################################################
 def Main():
     """main part"""
-    bTest = False
+    bTest = True
     h = m = s = 0
     loopcounter = 0
 
@@ -357,21 +357,29 @@ def Main():
 
         if (bTest):
             # All white; 20 lights on at once.
-            if (loopcounter % 3 == 0):
-                bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]       = int(bits_red[h][bit], 2)
-            if (loopcounter % 3 == 1):
-                bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] = int(bits_green[h][bit], 2)
-            if (loopcounter % 3 == 2):
-                bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    = int(bits_blue[h][bit], 2)
+            bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]       = int(bits_red[h][bit], 2)
+            bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] |= int(bits_green[h][bit], 2)
+            bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    |= int(bits_blue[h][bit], 2)
+
+            #if (loopcounter % 3 == 0):
+            #    bits[bits_red[h][tech], bits_red[h][device], bits_red[h][bank]]       = int(bits_red[h][bit], 2)
+            #if (loopcounter % 3 == 1):
+            #    bits[bits_green[h][tech], bits_green[h][device], bits_green[h][bank]] = int(bits_green[h][bit], 2)
+            #if (loopcounter % 3 == 2):
+            #    bits[bits_blue[h][tech], bits_blue[h][device], bits_blue[h][bank]]    = int(bits_blue[h][bit], 2)
 
             j = h
             for _ in range (0, 20):
-                if (loopcounter % 3 == 0):
-                    bits[bits_red[j][tech], bits_red[j][device], bits_red[j][bank]]       |= int(bits_red[j][bit], 2)
-                if (loopcounter % 3 == 1):
-                    bits[bits_green[j][tech], bits_green[j][device], bits_green[j][bank]] |= int(bits_green[j][bit], 2)
-                if (loopcounter % 3 == 2):
-                    bits[bits_blue[j][tech], bits_blue[j][device], bits_blue[j][bank]]    |= int(bits_blue[j][bit], 2)
+                bits[bits_red[j][tech], bits_red[j][device], bits_red[j][bank]]       |= int(bits_red[j][bit], 2)
+                bits[bits_green[j][tech], bits_green[j][device], bits_green[j][bank]] |= int(bits_green[j][bit], 2)
+                bits[bits_blue[j][tech], bits_blue[j][device], bits_blue[j][bank]]    |= int(bits_blue[j][bit], 2)
+
+                #if (loopcounter % 3 == 0):
+                #    bits[bits_red[j][tech], bits_red[j][device], bits_red[j][bank]]       |= int(bits_red[j][bit], 2)
+                #if (loopcounter % 3 == 1):
+                #    bits[bits_green[j][tech], bits_green[j][device], bits_green[j][bank]] |= int(bits_green[j][bit], 2)
+                #if (loopcounter % 3 == 2):
+                #    bits[bits_blue[j][tech], bits_blue[j][device], bits_blue[j][bank]]    |= int(bits_blue[j][bit], 2)
 
                 j += 1
                 if (j >= 60):
