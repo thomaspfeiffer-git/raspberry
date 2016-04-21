@@ -302,7 +302,7 @@ def _Exit(__s, __f):
 # Main ########################################################################
 def Main():
     """main part"""
-    bTest = True
+    bTest = False
     h = m = s = 0
     loopcounter = 0
 
