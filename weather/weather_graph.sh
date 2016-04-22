@@ -2,7 +2,6 @@
 
 RRDPATH=/schild/weather/
 RRD=$RRDPATH/weather.rrd
-RRD_T=$RRDPATH/turtle.rrd
 RRD_K=$RRDPATH/weather_kidsroom.rrd
 
 
@@ -55,10 +54,6 @@ printTemp ()
     --right-axis 1:0                                         \
     DEF:temp_outdoor=$RRD:temp_outdoor:AVERAGE               \
     DEF:temp_indoor=$RRD:temp_indoor:AVERAGE                 \
-    DEF:turtle_temp4=$RRD_T:turtle_temp4:AVERAGE             \
-    DEF:turtle_temp3=$RRD_T:turtle_temp3:AVERAGE             \
-    DEF:turtle_temp2=$RRD_T:turtle_temp2:AVERAGE             \
-    DEF:turtle_temp1=$RRD_T:turtle_temp1:AVERAGE             \
     DEF:kidsroom_temp1=$RRD_K:kidsroom_temp1:AVERAGE         \
     LINE1:temp_outdoor#0000FF:"Temperatur außen          "   \
     GPRINT:temp_outdoor:LAST:"Aktuell\: %5.2lf °C"           \
@@ -74,27 +69,7 @@ printTemp ()
     GPRINT:kidsroom_temp1:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:kidsroom_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:kidsroom_temp1:MAX:"Max\: %5.2lf °C"              \
-    GPRINT:kidsroom_temp1:MIN:"Min\: %5.2lf °C\n"            \
-    LINE1:turtle_temp4#4d2600:"Temperatur Donut Erde     "   \
-    GPRINT:turtle_temp4:LAST:"Aktuell\: %5.2lf °C"           \
-    GPRINT:turtle_temp4:AVERAGE:"Mittelwert\: %5.2lf °C"     \
-    GPRINT:turtle_temp4:MAX:"Max\: %5.2lf °C"                \
-    GPRINT:turtle_temp4:MIN:"Min\: %5.2lf °C\n"              \
-    LINE1:turtle_temp3#088A08:"Temperatur Donut Gehege   "   \
-    GPRINT:turtle_temp3:LAST:"Aktuell\: %5.2lf °C"           \
-    GPRINT:turtle_temp3:AVERAGE:"Mittelwert\: %5.2lf °C"     \
-    GPRINT:turtle_temp3:MAX:"Max\: %5.2lf °C"                \
-    GPRINT:turtle_temp3:MIN:"Min\: %5.2lf °C\n"              \
-    LINE1:turtle_temp2#D7DF01:"Temperatur Donut Heizstein"   \
-    GPRINT:turtle_temp2:LAST:"Aktuell\: %5.2lf °C"           \
-    GPRINT:turtle_temp2:AVERAGE:"Mittelwert\: %5.2lf °C"     \
-    GPRINT:turtle_temp2:MAX:"Max\: %5.2lf °C"                \
-    GPRINT:turtle_temp2:MIN:"Min\: %5.2lf °C\n"              \
-    LINE1:turtle_temp1#01DF74:"Temperatur Donut außen    "   \
-    GPRINT:turtle_temp1:LAST:"Aktuell\: %5.2lf °C"           \
-    GPRINT:turtle_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"     \
-    GPRINT:turtle_temp1:MAX:"Max\: %5.2lf °C"                \
-    GPRINT:turtle_temp1:MIN:"Min\: %5.2lf °C\n"
+    GPRINT:kidsroom_temp1:MIN:"Min\: %5.2lf °C\n"
  }
 
 
@@ -114,7 +89,6 @@ printCPUTemp ()
     --right-axis 1:0                                                     \
     DEF:temp_cpu=$RRD:temp_cpu:AVERAGE                                   \
     DEF:kidsroom_tempcpu=$RRD_K:kidsroom_tempcpu:AVERAGE                 \
-    DEF:turtle_tempcpu=$RRD_T:turtle_tempcpu:AVERAGE                     \
     LINE1:temp_cpu#FF00FF:"Temperatur Raspberry Pi Wohnzimmer  "         \
     GPRINT:temp_cpu:LAST:"\t Aktuell\: %5.2lf %%"                        \
     GPRINT:temp_cpu:AVERAGE:"Mittelwert\: %5.2lf %%"                     \
@@ -124,41 +98,9 @@ printCPUTemp ()
     GPRINT:kidsroom_tempcpu:LAST:"\t Aktuell\: %5.2lf %%"                \
     GPRINT:kidsroom_tempcpu:AVERAGE:"Mittelwert\: %5.2lf %%"             \
     GPRINT:kidsroom_tempcpu:MAX:"Max\: %5.2lf %%"                        \
-    GPRINT:kidsroom_tempcpu:MIN:"Min\: %5.2lf %%\n"                      \
-    LINE1:turtle_tempcpu#088A08:"Temperatur Raspberry Pi Donut       "   \
-    GPRINT:turtle_tempcpu:LAST:"\t Aktuell\: %5.2lf %%"                  \
-    GPRINT:turtle_tempcpu:AVERAGE:"Mittelwert\: %5.2lf %%"               \
-    GPRINT:turtle_tempcpu:MAX:"Max\: %5.2lf %%"                          \
-    GPRINT:turtle_tempcpu:MIN:"Min\: %5.2lf %%\n"     
+    GPRINT:kidsroom_tempcpu:MIN:"Min\: %5.2lf %%\n" 
  }
 
-
-#######################################################################
-# printHeating()                                                      #
-# Parameter:                                                          #
-# $1 Time Range                                                       #
-# $2 Filename                                                         #
-#######################################################################
-printHeating ()
-  {
-    rrdtool graph $2                                            \
-    --title "Heizung und Beleuchtung Donut"                     \
-    --end now --start end-$1                                    \
-    -w $WIDTH -h $(($HEIGHT/2)) -a PNG                          \
-    --watermark "$WATERMARK"                                    \
-    --alt-y-grid                                                \
-    --right-axis 1:0                                            \
-    DEF:turtle_heating=$RRD_T:turtle_heating:AVERAGE            \
-    DEF:turtle_lighting=$RRD_T:turtle_lighting:AVERAGE          \
-    AREA:turtle_heating#FF0000:"Heizung Donut\t"                \
-    GPRINT:turtle_heating:LAST:"\t Aktuell\: %5.0lf"            \
-    GPRINT:turtle_heating:AVERAGE:"Mittelwert\: %5.2lf\n"       \
-    STACK:turtle_lighting#FFFF00:"Beleuchtung Donut\t"          \
-    GPRINT:turtle_lighting:LAST:"\t Aktuell\: %5.0lf"           \
-    GPRINT:turtle_lighting:AVERAGE:"Mittelwert\: %5.2lf\n"
- }
-
-#    --alt-autoscale                                             \
 
 
 #######################################################################
@@ -178,7 +120,6 @@ printHumidity ()
     DEF:humi_outdoor=$RRD:humi_outdoor:AVERAGE                 \
     DEF:humi_indoor=$RRD:humi_indoor:AVERAGE                   \
     DEF:kidsroom_humi=$RRD_K:kidsroom_humi:AVERAGE             \
-    DEF:turtle_humi=$RRD_T:turtle_humi:AVERAGE                 \
     LINE1:humi_outdoor#0000FF:"Luftfeuchtigkeit außen       "  \
     GPRINT:humi_outdoor:LAST:"\t Aktuell\: %5.2lf %%"          \
     GPRINT:humi_outdoor:AVERAGE:"Mittelwert\: %5.2lf %%"       \
@@ -193,12 +134,7 @@ printHumidity ()
     GPRINT:kidsroom_humi:LAST:"\t Aktuell\: %5.2lf %%"         \
     GPRINT:kidsroom_humi:AVERAGE:"Mittelwert\: %5.2lf %%"      \
     GPRINT:kidsroom_humi:MAX:"Max\: %5.2lf %%"                 \
-    GPRINT:kidsroom_humi:MIN:"Min\: %5.2lf %%\n"               \
-    LINE1:turtle_humi#088A08:"Luftfeuchtigkeit Donut       "   \
-    GPRINT:turtle_humi:LAST:"\t Aktuell\: %5.2lf %%"           \
-    GPRINT:turtle_humi:AVERAGE:"Mittelwert\: %5.2lf %%"        \
-    GPRINT:turtle_humi:MAX:"Max\: %5.2lf %%"                   \
-    GPRINT:turtle_humi:MIN:"Min\: %5.2lf %%\n"            
+    GPRINT:kidsroom_humi:MIN:"Min\: %5.2lf %%\n"
  }
 
 
@@ -249,10 +185,5 @@ printAirPressure "36h", "$PNG_PRES_D"
 printAirPressure "7d",  "$PNG_PRES_W"
 printAirPressure "30d", "$PNG_PRES_M"
 printAirPressure "365d", "$PNG_PRES_Y"
-
-printHeating "36h", "$PNG_HEATING_D"
-printHeating "7d", "$PNG_HEATING_W"
-printHeating "30d", "$PNG_HEATING_M"
-printHeating "365d", "$PNG_HEATING_Y"
 
 
