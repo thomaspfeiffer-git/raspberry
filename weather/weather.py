@@ -40,14 +40,15 @@ pin_sensor_indoor_bcm  = 20
 
 
 # Misc for rrdtool
-DATAFILE       = "/schild/weather/weather.rrd"
-ERROR          = -999.99
-DS_TEMPINDOOR  = "temp_indoor" 
-DS_TEMPOUTDOOR = "temp_outdoor"
-DS_HUMIINDOOR  = "humi_indoor"
-DS_HUMIOUTDOOR = "humi_outdoor"
-DS_AIRPRESSURE = "air_pressure"
-DS_TEMPCPU     = "temp_cpu"
+DATAFILE           = "/schild/weather/weather.rrd"
+ERROR              = -999.99
+DS_TEMPINDOOR      = "temp_indoor" 
+DS_TEMPOUTDOOR     = "temp_outdoor"
+DS_HUMIINDOOR      = "humi_indoor"
+DS_HUMIOUTDOOR     = "humi_outdoor"
+DS_REALTEMPOUTDOOR = "temp_3"
+DS_AIRPRESSURE     = "air_pressure"
+DS_TEMPCPU         = "temp_cpu"
 
 
 # Other global stuff
@@ -88,7 +89,7 @@ def Main():
     qvalue_temp_outdoor     = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, u'°C', Lock())
     qvalue_humi_outdoor     = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, u'% rF', Lock())
     qvalue_pressure         = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, u'hPa', Lock())
-    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TeamRealOutdoor", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, u'°C', Lock())
 
     sq.register(qvalue_temp_indoor)
     sq.register(qvalue_humi_indoor)
@@ -104,11 +105,12 @@ def Main():
     bmp085     = BMP085(qvalue_pressure)
     # th_realoutdoor = DS1820("", qvalue_temp_realoutdoor)
 
-    rrd_template    = DS_TEMPINDOOR  + ":" + \
-                      DS_TEMPOUTDOOR + ":" + \
-                      DS_HUMIINDOOR  + ":" + \
-                      DS_HUMIOUTDOOR + ":" + \
-                      DS_AIRPRESSURE + ":" + \
+    rrd_template    = DS_TEMPINDOOR      + ":" + \
+                      DS_TEMPOUTDOOR     + ":" + \
+                      DS_HUMIINDOOR      + ":" + \
+                      DS_HUMIOUTDOOR     + ":" + \
+                      DS_REALTEMPOUTDOOR + ":" + \
+                      DS_AIRPRESSURE     + ":" + \
                       DS_TEMPCPU
 
     while(True):
@@ -117,11 +119,13 @@ def Main():
         pressure                   = bmp085.read()
         temp_cpu                   = tempcpu.read()
         # temp_realoutdoor           = th_realoutdoor.read()
+        temp_realoutdoor           = 22.22
 
         rrd_data = "N:{:.2f}".format(temp_indoor)      + \
                     ":{:.2f}".format(temp_outdoor)     + \
                     ":{:.2f}".format(humi_indoor)      + \
                     ":{:.2f}".format(humi_outdoor)     + \
+                    ":{:.2f}".format(temp_realoutdoor) + \
                     ":{:.2f}".format(pressure / 100.0) + \
                     ":{:.2f}".format(temp_cpu)
 
@@ -135,6 +139,7 @@ def Main():
         Log("Luftfeuchtigkeit DHT (outdoor): {:.2f} %".format(humi_outdoor))
         Log("Temperatur DHT (indoor): {:.2f} °C".format(temp_indoor))
         Log("Luftfeuchtigkeit DHT (indoor): {:.2f} %".format(humi_indoor))
+        Log("Teamperatur ganz außen: {:.2f} %".format(temp_realoutdoor))
         Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
         Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
 
