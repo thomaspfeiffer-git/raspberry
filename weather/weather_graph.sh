@@ -66,7 +66,7 @@ printTemp ()
     GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"      \
     GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"                 \
     GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"               \
-    LINE1:temp_realoutdoor#666633:"Temperatur ganz außen   " \
+    LINE1:temp_realoutdoor#666633:"Temperatur ganz außen     " \
     GPRINT:temp_realoutdoor:LAST:"Aktuell\: %5.2lf °C"       \
     GPRINT:temp_realoutdoor:AVERAGE:"Mittelwert\: %5.2lf °C" \
     GPRINT:temp_realoutdoor:MAX:"Max\: %5.2lf °C"            \
