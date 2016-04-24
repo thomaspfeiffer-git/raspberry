@@ -33,7 +33,7 @@ from SensorValue import SensorValueLock, SensorValue
 pin_sensor_outdoor     = 40
 pin_sensor_outdoor_bcm = 21
 
-#+ Indoor ###################
+## Indoor ###################
 # DHT22/AM2302 (humidity, air pressure)
 pin_sensor_indoor      = 38
 pin_sensor_indoor_bcm  = 20
@@ -89,14 +89,14 @@ def Main():
     qvalue_temp_outdoor     = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, u'°C', Lock())
     qvalue_humi_outdoor     = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, u'% rF', Lock())
     qvalue_pressure         = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, u'hPa', Lock())
-    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, u'°C', Lock())
+#    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, u'°C', Lock())
 
     sq.register(qvalue_temp_indoor)
     sq.register(qvalue_humi_indoor)
     sq.register(qvalue_temp_outdoor)
     sq.register(qvalue_humi_outdoor)
     sq.register(qvalue_pressure)
-    sq.register(qvalue_temp_realoutdoor)
+#    sq.register(qvalue_temp_realoutdoor)
     sq.start()
 
     tempcpu = CPU()
@@ -119,7 +119,7 @@ def Main():
         pressure                   = bmp085.read()
         temp_cpu                   = tempcpu.read()
         # temp_realoutdoor           = th_realoutdoor.read()
-        temp_realoutdoor           = 22.22
+        temp_realoutdoor           = 12.34
 
         rrd_data = "N:{:.2f}".format(temp_indoor)      + \
                     ":{:.2f}".format(temp_outdoor)     + \
