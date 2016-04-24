@@ -22,6 +22,7 @@ sys.path.append('../libs/sensors')
 from BMP085 import BMP085
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
+from DS1820 import DS1820
 from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock, SensorValue
 
@@ -82,36 +83,40 @@ def Main():
        initialize the sensors
        poll the sensor in a loop and write data to rrd"""
 
-    qvalue_temp_indoor  = SensorValueLock("ID_01", "TempWohnzimmerIndoor", SensorValue.Types.Temp, u'°C', Lock())
-    qvalue_humi_indoor  = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", SensorValue.Types.Humi, u'% rF', Lock())
-    qvalue_temp_outdoor = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, u'°C', Lock())
-    qvalue_humi_outdoor = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, u'% rF', Lock())
-    qvalue_pressure     = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, u'hPa', Lock())
+    qvalue_temp_indoor      = SensorValueLock("ID_01", "TempWohnzimmerIndoor", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_humi_indoor      = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", SensorValue.Types.Humi, u'% rF', Lock())
+    qvalue_temp_outdoor     = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_humi_outdoor     = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, u'% rF', Lock())
+    qvalue_pressure         = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, u'hPa', Lock())
+    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TeamRealOutdoor", SensorValue.Types.Temp, u'°C', Lock())
 
     sq.register(qvalue_temp_indoor)
     sq.register(qvalue_humi_indoor)
     sq.register(qvalue_temp_outdoor)
     sq.register(qvalue_humi_outdoor)
     sq.register(qvalue_pressure)
+    sq.register(qvalue_temp_realoutdoor)
     sq.start()
 
     tempcpu = CPU()
     th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
     th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
     bmp085     = BMP085(qvalue_pressure)
+    # th_realoutdoor = DS1820("", qvalue_temp_realoutdoor)
+
+    rrd_template    = DS_TEMPINDOOR  + ":" + \
+                      DS_TEMPOUTDOOR + ":" + \
+                      DS_HUMIINDOOR  + ":" + \
+                      DS_HUMIOUTDOOR + ":" + \
+                      DS_AIRPRESSURE + ":" + \
+                      DS_TEMPCPU
 
     while(True):
         temp_indoor, humi_indoor   = th_indoor.read()
         temp_outdoor, humi_outdoor = th_outdoor.read()
         pressure                   = bmp085.read()
         temp_cpu                   = tempcpu.read()
-
-        rrd_template    = DS_TEMPINDOOR  + ":" + \
-                          DS_TEMPOUTDOOR + ":" + \
-                          DS_HUMIINDOOR  + ":" + \
-                          DS_HUMIOUTDOOR + ":" + \
-                          DS_AIRPRESSURE + ":" + \
-                          DS_TEMPCPU
+        # temp_realoutdoor           = th_realoutdoor.read()
 
         rrd_data = "N:{:.2f}".format(temp_indoor)      + \
                     ":{:.2f}".format(temp_outdoor)     + \
