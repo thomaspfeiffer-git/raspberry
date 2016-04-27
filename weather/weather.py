@@ -47,12 +47,10 @@ DS_TEMPOUTDOOR     = "temp_outdoor"
 DS_HUMIINDOOR      = "humi_indoor"
 DS_HUMIOUTDOOR     = "humi_outdoor"
 DS_REALTEMPOUTDOOR = "temp_3"
+DS_TEMPINDOOR2     = "temp_4"
 DS_AIRPRESSURE     = "air_pressure"
 DS_TEMPCPU         = "temp_cpu"
 
-
-# Other global stuff
-bDebug = False
 
 
 ################################################################################
@@ -73,7 +71,7 @@ def _Exit(__s, __f):
 # Log ##########################################################################
 def Log(message):
     """prints debug messages"""
-    if (bDebug):
+    if bDebug:
         print(message)
 
 
@@ -89,27 +87,29 @@ def Main():
     qvalue_temp_outdoor     = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, u'°C', Lock())
     qvalue_humi_outdoor     = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, u'% rF', Lock())
     qvalue_pressure         = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, u'hPa', Lock())
-#    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, u'°C', Lock())
 
     sq.register(qvalue_temp_indoor)
     sq.register(qvalue_humi_indoor)
     sq.register(qvalue_temp_outdoor)
     sq.register(qvalue_humi_outdoor)
     sq.register(qvalue_pressure)
-#    sq.register(qvalue_temp_realoutdoor)
+    sq.register(qvalue_temp_realoutdoor)
     sq.start()
 
-    tempcpu = CPU()
-    th_indoor  = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
-    th_outdoor = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
-    bmp085     = BMP085(qvalue_pressure)
-    # th_realoutdoor = DS1820("", qvalue_temp_realoutdoor)
+    tempcpu        = CPU()
+    th_indoor      = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
+    th_outdoor     = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
+    bmp085         = BMP085(qvalue_pressure)
+    th_realoutdoor = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qvalue_temp_realoutdoor)
+    th_indoor2     = DS1820("/sys/bus/w1/devices/28-000006dc8d42/w1_slave")
 
     rrd_template    = DS_TEMPINDOOR      + ":" + \
                       DS_TEMPOUTDOOR     + ":" + \
                       DS_HUMIINDOOR      + ":" + \
                       DS_HUMIOUTDOOR     + ":" + \
                       DS_REALTEMPOUTDOOR + ":" + \
+                      DS_TEMPINDOOR2     + ":" + \
                       DS_AIRPRESSURE     + ":" + \
                       DS_TEMPCPU
 
@@ -118,14 +118,15 @@ def Main():
         temp_outdoor, humi_outdoor = th_outdoor.read()
         pressure                   = bmp085.read()
         temp_cpu                   = tempcpu.read()
-        # temp_realoutdoor           = th_realoutdoor.read()
-        temp_realoutdoor           = 12.34
+        temp_realoutdoor           = th_realoutdoor.read()
+        temp_indoor2               = th_indoor2.read()
 
         rrd_data = "N:{:.2f}".format(temp_indoor)      + \
                     ":{:.2f}".format(temp_outdoor)     + \
                     ":{:.2f}".format(humi_indoor)      + \
                     ":{:.2f}".format(humi_outdoor)     + \
                     ":{:.2f}".format(temp_realoutdoor) + \
+                    ":{:.2f}".format(temp_indoor2)     + \
                     ":{:.2f}".format(pressure / 100.0) + \
                     ":{:.2f}".format(temp_cpu)
 
@@ -139,7 +140,8 @@ def Main():
         Log("Luftfeuchtigkeit DHT (outdoor): {:.2f} %".format(humi_outdoor))
         Log("Temperatur DHT (indoor): {:.2f} °C".format(temp_indoor))
         Log("Luftfeuchtigkeit DHT (indoor): {:.2f} %".format(humi_indoor))
-        Log("Teamperatur ganz außen: {:.2f} %".format(temp_realoutdoor))
+        Log("Temperatur ganz außen: {:.2f} °C".format(temp_realoutdoor))
+        Log("Temperatur innen 2: {:.2f} °C".format(temp_indoor2))
         Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
         Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
 
