@@ -53,24 +53,30 @@ printTemp ()
     --watermark "$WATERMARK"                                 \
     --right-axis 1:0                                         \
     DEF:temp_outdoor=$RRD:temp_outdoor:AVERAGE               \
-    DEF:temp_indoor=$RRD:temp_indoor:AVERAGE                 \
-    DEF:kidsroom_temp1=$RRD_K:kidsroom_temp1:AVERAGE         \
     DEF:temp_realoutdoor=$RRD:temp_3:AVERAGE                 \
+    DEF:temp_indoor=$RRD:temp_indoor:AVERAGE                 \
+    DEF:temp_window=$RRD:temp_4:AVERAGE                      \
+    DEF:kidsroom_temp1=$RRD_K:kidsroom_temp1:AVERAGE         \
     LINE1:temp_outdoor#0000FF:"Temperatur außen          "   \
     GPRINT:temp_outdoor:LAST:"Aktuell\: %5.2lf °C"           \
     GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C"     \
     GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"                \
     GPRINT:temp_outdoor:MIN:"Min\: %5.2lf °C\n"              \
-    LINE1:temp_indoor#FF0000:"Temperatur Wohnzimmer     "    \
-    GPRINT:temp_indoor:LAST:"Aktuell\: %5.2lf °C"            \
-    GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"      \
-    GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"                 \
-    GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"               \
     LINE1:temp_realoutdoor#666633:"Temperatur ganz außen     " \
     GPRINT:temp_realoutdoor:LAST:"Aktuell\: %5.2lf °C"       \
     GPRINT:temp_realoutdoor:AVERAGE:"Mittelwert\: %5.2lf °C" \
     GPRINT:temp_realoutdoor:MAX:"Max\: %5.2lf °C"            \
     GPRINT:temp_realoutdoor:MIN:"Min\: %5.2lf °C\n"          \
+    LINE1:temp_indoor#FF0000:"Temperatur Wohnzimmer     "    \
+    GPRINT:temp_indoor:LAST:"Aktuell\: %5.2lf °C"            \
+    GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"      \
+    GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"                 \
+    GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"               \
+    LINE1:temp_window#ff80ff:"Temperatur Fensterbrett   "    \
+    GPRINT:temp_indoor:LAST:"Aktuell\: %5.2lf °C"            \
+    GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"      \
+    GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"                 \
+    GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"               \
     LINE1:kidsroom_temp1#00ccff:"Temperatur Kinderzimmer   " \
     GPRINT:kidsroom_temp1:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:kidsroom_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"   \
