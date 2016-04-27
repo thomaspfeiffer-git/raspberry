@@ -73,10 +73,10 @@ printTemp ()
     GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"                 \
     GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"               \
     LINE1:temp_window#ff80ff:"Temperatur Fensterbrett   "    \
-    GPRINT:temp_indoor:LAST:"Aktuell\: %5.2lf °C"            \
-    GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"      \
-    GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"                 \
-    GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"               \
+    GPRINT:temp_window:LAST:"Aktuell\: %5.2lf °C"            \
+    GPRINT:temp_window:AVERAGE:"Mittelwert\: %5.2lf °C"      \
+    GPRINT:temp_window:MAX:"Max\: %5.2lf °C"                 \
+    GPRINT:temp_window:MIN:"Min\: %5.2lf °C\n"               \
     LINE1:kidsroom_temp1#00ccff:"Temperatur Kinderzimmer   " \
     GPRINT:kidsroom_temp1:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:kidsroom_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"   \
