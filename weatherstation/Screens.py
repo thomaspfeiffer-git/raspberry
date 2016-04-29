@@ -86,7 +86,7 @@ class Screens (object):
                 pass
 
         ypos = self.display.drawWeatherItem(u'Draußen:', \
-                                            getvalue(allsensorvalues['ID_03']), \
+                                            getvalue(allsensorvalues['ID_12']), \
                                             getvalue(allsensorvalues['ID_04']), \
                                             getvalue(allsensorvalues['ID_05']), \
                                             CONFIG.COLORS.OUTDOOR, ypos)
