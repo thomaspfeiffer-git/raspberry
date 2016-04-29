@@ -198,3 +198,12 @@ WLAN-Hotspot
 https://learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf
 
 
+Big Data
+========
+
+sudo apt-get install python3-numpy
+sudo apt-get install python3-scipy 
+sudo apt-get install python3-pandas
+
+
+
