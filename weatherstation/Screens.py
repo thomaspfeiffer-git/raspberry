@@ -31,7 +31,9 @@ class Screens (object):
         self.display    = display
         self.__screenid = 1
         self.__screens  = {1: self.Screen1, \
-                           2: self.Screen2}
+                           2: self.Screen2, \
+                           3: self.Screen3}
+
 
     @property
     def screenid (self):
@@ -107,6 +109,19 @@ class Screens (object):
         ypos += CONFIG.SEP_Y
         self.display.drawPicture(CONFIG.IMAGES.PIC_KIDSROOM, 0.8, 
                                  xpos=Display.Position.Center, ypos=ypos)
+        self.display.drawTime()
+
+
+    def Screen3 (self, allsensorvalues):
+        """misc sensor values"""
+        ypos = CONFIG.MARGIN 
+        self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
+
+        ypos = self.display.drawWeatherItem("Misc:", \
+                                            getvalue(allsensorvalues['ID_03']), \
+                                            getvalue(allsensorvalues['ID_13']), \
+                                            None,    \
+                                            CONFIG.COLORS.MISC, ypos)
         self.display.drawTime()
 
 # eof #
