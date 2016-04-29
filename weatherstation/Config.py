@@ -32,7 +32,7 @@ class CONFIG:
         INDOOR     = (255, 0, 0)
         OUTDOOR    = (0, 0, 255)
         KIDSROOM   = (0, 0xCC, 0xFF)
-        TURTLE     = (0x08, 0x8A, 0x08)
+        MISC       = (0x08, 0x8A, 0x08)
 
     class IMAGES:
         """definitions of images and path to images"""
