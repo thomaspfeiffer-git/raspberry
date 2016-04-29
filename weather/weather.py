@@ -88,6 +88,7 @@ def Main():
     qvalue_humi_outdoor     = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, u'% rF', Lock())
     qvalue_pressure         = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, u'hPa', Lock())
     qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_temp_indoor2     = SensorValueLock("ID_13", "TempWohnzimmerFenster", SensorValue.Types.Temp, u'°C', Lock())
 
     sq.register(qvalue_temp_indoor)
     sq.register(qvalue_humi_indoor)
@@ -95,6 +96,7 @@ def Main():
     sq.register(qvalue_humi_outdoor)
     sq.register(qvalue_pressure)
     sq.register(qvalue_temp_realoutdoor)
+    sq.register(qvalue_temp_indoor2)
     sq.start()
 
     tempcpu        = CPU()
@@ -102,7 +104,7 @@ def Main():
     th_outdoor     = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
     bmp085         = BMP085(qvalue_pressure)
     th_realoutdoor = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qvalue_temp_realoutdoor)
-    th_indoor2     = DS1820("/sys/bus/w1/devices/28-000006dc8d42/w1_slave")
+    th_indoor2     = DS1820("/sys/bus/w1/devices/28-000006dc8d42/w1_slave", qvalue_temp_indoor2)
 
     rrd_template    = DS_TEMPINDOOR      + ":" + \
                       DS_TEMPOUTDOOR     + ":" + \
