@@ -204,6 +204,6 @@ Big Data
 sudo apt-get install python3-numpy
 sudo apt-get install python3-scipy 
 sudo apt-get install python3-pandas
-sudo pip install -U scikit-learn
+sudo pip3 install scikit-learn
 
 
