@@ -112,6 +112,11 @@ sudo i2cdetect -y 1
 1-wire (DS1820)
 ---------------
 
+sudo raspi-config
+--> Advanced
+
+
+
 /boot/config.txt:
    dtoverlay=w1-gpio,gpiopin=4
 /etc/modules:
