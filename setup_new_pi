@@ -172,6 +172,10 @@ copy .git/config
     https://help.github.com/articles/changing-a-remote-s-url/
 
 
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
+
+
 RRDTool
 =======
 
