@@ -11,11 +11,8 @@ from socket import gethostname
 import sys
 import traceback
 
-
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
-
-
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
@@ -29,7 +26,32 @@ pik_k = "pik_k"
 PIs = [pik_i, pik_a, pik_k]
 
 
-# Datenstruktur fuer diverse Namen, zB in der rrd erstellen
+# Misc for rrdtool
+RRDFILE    = "/share/weather_kollerberg.rrd"
+
+DS_TEMP1 = "DS_TEMP1"
+DS_TEMP2 = "DS_TEMP2"
+DS_TCPU  = "DS_TCPU"
+DS_HUMI  = "DS_HUMI"
+DS_PRESS = "DS_PRESS"
+
+DS = { pik_i: { DS_TEMP1: 'kb_i_t1', 
+                DS_TEMP2: 'kb_i_t2',
+                DS_TCPU : 'kb_i_tcpu',
+                DS_HUMI : 'kb_i_humi',
+                DS_PRESS: 'kb_i_press' },
+       pik_a: { DS_TEMP1: 'kb_a_t1',
+                DS_TEMP2: 'kb_a_t2',
+                DS_TCPU : 'kb_a_tcpu',
+                DS_HUMI : 'kb_a_humi',
+                DS_PRESS: 'kb_a_press' },
+       pik_k: { DS_TEMP1: 'kb_k_t1',
+                DS_TEMP2: 'kb_k_t2',
+                DS_TCPU : 'kb_k_tcpu',
+                DS_HUMI : 'kb_k_humi',
+                DS_PRESS: 'kb_k_press' }
+     } 
+
 
 ###############################################################################
 # Main ########################################################################
