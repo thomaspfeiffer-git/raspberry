@@ -36,7 +36,8 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
 
 
 DHT22_AM2302_PIN = 14
-bmp85  = BMP085()
+if this_PI == pik_i:
+    bmp85  = BMP085()
 dht22  = DHT22_AM2302(DHT22_AM2302_PIN)
 ds1820 = DS1820(AddressesDS1820[this_PI])
 
