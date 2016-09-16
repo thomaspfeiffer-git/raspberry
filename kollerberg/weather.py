@@ -9,6 +9,7 @@
 import signal
 from socket import gethostname
 import sys
+from time import sleep
 import traceback
 
 sys.path.append('../libs')
@@ -36,10 +37,6 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
 
 
 DHT22_AM2302_PIN = 14
-if this_PI == pik_i:
-    bmp85  = BMP085()
-dht22  = DHT22_AM2302(DHT22_AM2302_PIN)
-ds1820 = DS1820(AddressesDS1820[this_PI])
 
 
 
@@ -77,19 +74,41 @@ DS = { pik_i: { DS_TEMP1: 'kb_i_t1',
 def main():
     """main part"""
 
-
     if this_PI not in PIs:
-        print("falscher host!")
+        print("wrong host!")
+        _exit()
 
+
+    temphumi   = DHT22_AM2302(DHT22_AM2302_PIN)
+    tempds1820 = DS1820(AddressesDS1820[this_PI])
+    tempcpu    = CPU()
     if this_PI == pik_i:
-        pressure = bmp85.read() / 100.0
-        print("BMP85: %6.2f hPa" % pressure)
+        bmp085  = BMP085()
 
-    temp22, humi22 = dht22.read()
-    tempds = ds1820.read()
+    rrd_template = DS[this_PI][DS_TEMP1] + ":" + \
+                   DS[this_PI][DS_TEMP2] + ":" + \
+                   DS[this_PI][DS_TCPU]  + ":" + \
+                   DS[this_PI][DS_HUMI]  + ":" + \
+                   DS[this_PI][DS_PRESS]
 
-    print("DHT: %3.2f °C; %2.2f %% rF" % (temp22, humi22))
-    print("DS1820: %3.2f °C" % tempds)
+    pressue = 0.0 # in case of no BMP085 available
+    while True:
+        tempds           = tempds1820.read()
+        tempcpu          = tempcpu.read()
+        tempdht, humidht = temphumi.read()
+        if this_PI == pik_i:
+            pressure = bmp085.read() / 100.0
+
+        rrd_data = "N:{:.2f}".format(tempds)     + \
+                    ":{:.2f}".format(tempdht)    + \
+                    ":{:.2f}".format(tempcpu)    + \
+                    ":{:.2f}".format(humidht)    + \
+                    ":{:.2f}".format(pressure)
+        # rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
+        print(rrd_template)
+        print(rrd_data) 
+
+        sleep(30)
 
 
 ###############################################################################
