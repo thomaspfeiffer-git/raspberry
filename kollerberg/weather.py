@@ -79,9 +79,9 @@ def main():
         _exit()
 
 
-    temphumi   = DHT22_AM2302(DHT22_AM2302_PIN)
-    tempds1820 = DS1820(AddressesDS1820[this_PI])
-    tempcpu    = CPU()
+    tempdht  = DHT22_AM2302(DHT22_AM2302_PIN)
+    tempds   = DS1820(AddressesDS1820[this_PI])
+    tempcpu  = CPU()
     if this_PI == pik_i:
         bmp085  = BMP085()
 
@@ -91,18 +91,18 @@ def main():
                    DS[this_PI][DS_HUMI]  + ":" + \
                    DS[this_PI][DS_PRESS]
 
-    pressue = 0.0 # in case of no BMP085 available
+    pressure = 0.0 # in case of no BMP085 available
     while True:
-        tempds           = tempds1820.read()
-        tempcpu          = tempcpu.read()
-        tempdht, humidht = temphumi.read()
+        temp_ds           = tempds.read()
+        temp_cpu          = tempcpu.read()
+        temp_dht, humi_dht = tempdht.read()
         if this_PI == pik_i:
             pressure = bmp085.read() / 100.0
 
-        rrd_data = "N:{:.2f}".format(tempds)     + \
-                    ":{:.2f}".format(tempdht)    + \
-                    ":{:.2f}".format(tempcpu)    + \
-                    ":{:.2f}".format(humidht)    + \
+        rrd_data = "N:{:.2f}".format(temp_ds)     + \
+                    ":{:.2f}".format(temp_dht)    + \
+                    ":{:.2f}".format(temp_cpu)    + \
+                    ":{:.2f}".format(humi_dht)    + \
                     ":{:.2f}".format(pressure)
         # rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
         print(rrd_template)
