@@ -13,11 +13,10 @@ import traceback
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
-from BMP085 import BMP085
+
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
-
 
 
 # Hosts where this app runs
@@ -25,7 +24,10 @@ pik_i = "pik_i"
 pik_a = "pik_a"
 pik_k = "pik_k"
 PIs = [pik_i, pik_a, pik_k]
+
 this_PI = gethostname()
+if this_PI == pik_i:
+    from BMP085 import BMP085
 
 
 AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w1_slave",
@@ -78,13 +80,13 @@ def main():
     if this_PI not in PIs:
         print("falscher host!")
 
+    if this_PI == pik_i:
+        pressure = bmp85.read() / 100.0
+        print("BMP85: %6.2f hPa" % pressure)
 
-    pressure = bmp85.read()
     temp22, humi22 = dht22.read()
     tempds = ds1820.read()
 
-
-    print("BMP85: %6.2f Pascal" % pressure)
     print("DHT: %3.2f °C; %2.2f %% rF" % (temp22, humi22))
     print("DS1820: %3.2f °C" % tempds)
 
