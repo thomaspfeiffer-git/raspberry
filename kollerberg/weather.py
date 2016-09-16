@@ -13,6 +13,7 @@ import traceback
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
+from BMP085 import BMP085
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
@@ -24,6 +25,21 @@ pik_i = "pik_i"
 pik_a = "pik_a"
 pik_k = "pik_k"
 PIs = [pik_i, pik_a, pik_k]
+this_PI = gethostname()
+
+
+AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w1_slave",
+                    pik_a: "/sys/bus/w1/devices/w1_bus_master1/28-000006dd6ac1/w1_slave",
+                    pik_k: "" }
+
+
+DHT22_AM2302_PIN = 14
+bmp85  = BMP085()
+dht22  = DHT22_AM2302(DHT22_AM2302_PIN)
+ds1820 = DS1820(AddressesDS1820[this_PI])
+
+
+
 
 
 # Misc for rrdtool
@@ -58,21 +74,25 @@ DS = { pik_i: { DS_TEMP1: 'kb_i_t1',
 def main():
     """main part"""
 
-    this_PI = gethostname()
 
     if this_PI not in PIs:
         print("falscher host!")
 
 
+    pressure = bmp85.read()
+    temp22, humi22 = dht22.read()
+    tempds = ds1820.read()
+
+
+    print("BMP85: %6.2f Pascal" % pressure)
+    print("DHT: %3.2f °C; %2.2f %% rF" % (temp22, humi22))
+    print("DS1820: %3.2f °C" % tempds)
 
 
 ###############################################################################
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
-    fridge.cleanup()
-    reedcontact.stop()
-    reedcontact.join()
     sys.exit()
 
 def __exit(__s, __f):
