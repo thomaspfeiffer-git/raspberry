@@ -61,27 +61,27 @@ printTemp ()
     DEF:kb_i_t1=$RRD_KB:kb_i_t1:AVERAGE                      \
     DEF:kb_a_t1=$RRD_KB:kb_a_t1:AVERAGE                      \
     DEF:kb_k_t1=$RRD_KB:kb_k_t1:AVERAGE                      \
-    LINE1:temp_outdoor#0000FF:"Temperatur Wien außen          "   \
+    LINE1:temp_outdoor#0000FF:"Temperatur Wien außen         "   \
     GPRINT:temp_outdoor:LAST:"Aktuell\: %5.2lf °C"           \
     GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C"     \
     GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"                \
     GPRINT:temp_outdoor:MIN:"Min\: %5.2lf °C\n"              \
-    LINE1:temp_realoutdoor#666633:"Temperatur Wien ganz außen     " \
+    LINE1:temp_realoutdoor#666633:"Temperatur Wien ganz außen    " \
     GPRINT:temp_realoutdoor:LAST:"Aktuell\: %5.2lf °C"       \
     GPRINT:temp_realoutdoor:AVERAGE:"Mittelwert\: %5.2lf °C" \
     GPRINT:temp_realoutdoor:MAX:"Max\: %5.2lf °C"            \
     GPRINT:temp_realoutdoor:MIN:"Min\: %5.2lf °C\n"          \
-    LINE1:temp_indoor#FF0000:"Temperatur Wohnzimmer     "    \
+    LINE1:temp_indoor#FF0000:"Temperatur Wohnzimmer         "    \
     GPRINT:temp_indoor:LAST:"Aktuell\: %5.2lf °C"            \
     GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"      \
     GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"                 \
     GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"               \
-    LINE1:temp_window#ff80ff:"Temperatur Fensterbrett   "    \
+    LINE1:temp_window#ff80ff:"Temperatur Fensterbrett       "    \
     GPRINT:temp_window:LAST:"Aktuell\: %5.2lf °C"            \
     GPRINT:temp_window:AVERAGE:"Mittelwert\: %5.2lf °C"      \
     GPRINT:temp_window:MAX:"Max\: %5.2lf °C"                 \
     GPRINT:temp_window:MIN:"Min\: %5.2lf °C\n"               \
-    LINE1:kidsroom_temp1#00ccff:"Temperatur Kinderzimmer   " \
+    LINE1:kidsroom_temp1#00ccff:"Temperatur Kinderzimmer       " \
     GPRINT:kidsroom_temp1:LAST:"Aktuell\: %5.2lf °C"         \
     GPRINT:kidsroom_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:kidsroom_temp1:MAX:"Max\: %5.2lf °C"              \
@@ -172,27 +172,27 @@ printHumidity ()
     DEF:kb_i_humi=$RRD_KB:kb_i_humi:AVERAGE                    \
     DEF:kb_a_humi=$RRD_KB:kb_a_humi:AVERAGE                    \
     DEF:kb_k_humi=$RRD_KB:kb_k_humi:AVERAGE                    \
-    LINE1:humi_outdoor#0000FF:"Luftfeuchtigkeit Wien außen  "  \
+    LINE1:humi_outdoor#0000FF:"Luftfeuchtigkeit Wien außen       "  \
     GPRINT:humi_outdoor:LAST:"\t Aktuell\: %5.2lf %%"          \
     GPRINT:humi_outdoor:AVERAGE:"Mittelwert\: %5.2lf %%"       \
     GPRINT:humi_outdoor:MAX:"Max\: %5.2lf %%"                  \
     GPRINT:humi_outdoor:MIN:"Min\: %5.2lf %%\n"                \
-    LINE1:humi_indoor#FF0000:"Luftfeuchtigkeit Wohnzimmer  "   \
+    LINE1:humi_indoor#FF0000:"Luftfeuchtigkeit Wohnzimmer       "   \
     GPRINT:humi_indoor:LAST:"\t Aktuell\: %5.2lf %%"           \
     GPRINT:humi_indoor:AVERAGE:"Mittelwert\: %5.2lf %%"        \
     GPRINT:humi_indoor:MAX:"Max\: %5.2lf %%"                   \
     GPRINT:humi_indoor:MIN:"Min\: %5.2lf %%\n"                 \
-    LINE1:kidsroom_humi#00ccff:"Luftfeuchtigkeit Kinderzimmer" \
+    LINE1:kidsroom_humi#00ccff:"Luftfeuchtigkeit Kinderzimmer     " \
     GPRINT:kidsroom_humi:LAST:"\t Aktuell\: %5.2lf %%"         \
     GPRINT:kidsroom_humi:AVERAGE:"Mittelwert\: %5.2lf %%"      \
     GPRINT:kidsroom_humi:MAX:"Max\: %5.2lf %%"                 \
     GPRINT:kidsroom_humi:MIN:"Min\: %5.2lf %%\n"               \
-    LINE1:kb_i_humi#40FF00:"Luftfeuchtigkeit Kollerberg innen" \
+    LINE1:kb_i_humi#40FF00:"Luftfeuchtigkeit Kollerberg innen " \
     GPRINT:kb_i_humi:LAST:"\t Aktuell\: %5.2lf %%"             \
     GPRINT:kb_i_humi:AVERAGE:"Mittelwert\: %5.2lf %%"          \
     GPRINT:kb_i_humi:MAX:"Max\: %5.2lf %%"                     \
     GPRINT:kb_i_humi:MIN:"Min\: %5.2lf %%\n"                   \
-    LINE1:kb_a_humi#009900:"Luftfeuchtigkeit Kollerberg außen" \
+    LINE1:kb_a_humi#009900:"Luftfeuchtigkeit Kollerberg außen " \
     GPRINT:kb_a_humi:LAST:"\t Aktuell\: %5.2lf %%"             \
     GPRINT:kb_a_humi:AVERAGE:"Mittelwert\: %5.2lf %%"          \
     GPRINT:kb_a_humi:MAX:"Max\: %5.2lf %%"                     \
