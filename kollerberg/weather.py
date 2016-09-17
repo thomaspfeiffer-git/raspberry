@@ -102,7 +102,7 @@ def main():
                    DS[this_PI][DS_HUMI]  + ":" + \
                    DS[this_PI][DS_PRESS]
 
-    pressure = 0.0 # in case of no BMP085 available
+    pressure = 1013.25 # in case of no BMP085 available
     while True:
         temp_ds           = tempds.read()
         temp_cpu          = tempcpu.read()
