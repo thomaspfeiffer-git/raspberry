@@ -41,7 +41,8 @@ chmod 0777 /share
 
 add /share to /etc/exports
 
-sudo exportfs
+sudo /etc/init.d/nfs-kernel-server restart
+sudo exportfs -rav
 
 
 
