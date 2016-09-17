@@ -115,7 +115,7 @@ def main():
                     ":{:.2f}".format(temp_cpu)    + \
                     ":{:.2f}".format(humi_dht)    + \
                     ":{:.2f}".format(pressure)
-        # rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
+        # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
         # no rrd needed here; rrd is done at schild.smtp.at
         # rrd in this file is just for documentation
         print(rrd_template)
