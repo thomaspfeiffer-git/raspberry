@@ -74,11 +74,11 @@ DATAFILES = { pik_i: "/share/kb_i_weather.data",
 ###############################################################################
 # writeData ###################################################################
 def writeData(rrd_data):
-    """write various data to a file which is transferred to schild.smtp.at with crontab"""
+    """write weather data to a file which is transferred to schild.smtp.at"""
     with open(DATAFILES[this_PI], 'w') as f:
         ts = time()
-        f.write(datetime.datetime.fromtimestamp(ts).strftime("%Y%m%d%H%M%S:") + str(ts) + ":" + rrd_data)
-
+        f.write(datetime.datetime.fromtimestamp(ts).strftime("%Y%m%d%H%M%S:") + \
+                str(ts) + ":" + rrd_data)
 
 
 ###############################################################################
