@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 #############################################################################
-# hibernation.py                                                            #
+# weather.py                                                                #
 # (c) https://github.com/thomaspfeiffer-git 2016                            #
 #############################################################################
 """Weather station at our summer cottage"""
