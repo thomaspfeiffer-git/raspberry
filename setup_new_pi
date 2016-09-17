@@ -30,6 +30,21 @@ server:
   exportfs -r
 
 
+NFS-Server running on a Pi:
+---------------------------
+
+http://www.htpcguides.com/configure-nfs-server-and-nfs-client-raspberry-pi/
+
+sudo apt-get install nfs-common nfs-server -y
+mkdir /share
+chmod 0777 /share
+
+add /share to /etc/exports
+
+sudo exportfs
+
+
+
 Misc
 ====
 
