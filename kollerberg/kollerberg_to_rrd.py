@@ -14,10 +14,10 @@ pik_a = "pik_a"
 pik_k = "pik_k"
 PIs = [pik_i, pik_a, pik_k]
 
-DATAFILES = { pik_i: "kb_i_weather.data",
-              pik_a: "kb_a_weather.data",
-              pik_k: "kb_k_weather.data" }
-RRDFILE    = "weather_kollerberg.rrd"
+DATAFILES = { pik_i: "/schild/weather/kb_i_weather.data",
+              pik_a: "/schild/weather/kb_a_weather.data",
+              pik_k: "/schild/weather/kb_k_weather.data" }
+RRDFILE    = "/schild/weather/weather_kollerberg.rrd"
 
 DS_TEMP1 = "DS_TEMP1"
 DS_TEMP2 = "DS_TEMP2"
