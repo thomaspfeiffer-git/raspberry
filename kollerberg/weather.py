@@ -35,7 +35,7 @@ if this_PI == pik_i:   # BMP085 installed only at pik_i
 
 AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w1_slave",
                     pik_a: "/sys/bus/w1/devices/w1_bus_master1/28-000006dd6ac1/w1_slave",
-                    pik_k: "" }
+                    pik_k: "/sys/bus/w1/devices/w1_bus_master1/28-000006de535b/w1_slave" }
 
 DHT22_AM2302_PIN = 14  # Pin 8
 
