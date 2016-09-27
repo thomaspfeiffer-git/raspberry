@@ -37,7 +37,7 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
                     pik_a: "/sys/bus/w1/devices/w1_bus_master1/28-000006dd6ac1/w1_slave",
                     pik_k: "" }
 
-DHT22_AM2302_PIN = 14
+DHT22_AM2302_PIN = 14  # Pin 8
 
 
 # Misc for rrdtool
@@ -104,8 +104,8 @@ def main():
 
     pressure = 1013.25 # in case of no BMP085 available
     while True:
-        temp_ds           = tempds.read()
-        temp_cpu          = tempcpu.read()
+        temp_ds            = tempds.read()
+        temp_cpu           = tempcpu.read()
         temp_dht, humi_dht = tempdht.read()
         if this_PI == pik_i:
             pressure = bmp085.read() / 100.0
