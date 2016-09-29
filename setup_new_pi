@@ -49,8 +49,6 @@ sudo exportfs -rav
 Misc
 ====
 
-
-
 sudo apt-get install vim  
 
 # ~/.vimrc
@@ -61,7 +59,6 @@ set expandtab
 
 Libs:
 =====
-
 
 wiringPi
 --------
