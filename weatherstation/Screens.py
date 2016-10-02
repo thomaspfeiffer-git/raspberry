@@ -33,7 +33,8 @@ class Screens (object):
         self.__screens  = {1: self.Screen1, \
                            2: self.Screen2, \
                            3: self.Screen3, \
-                           4: self.Screen4}
+                           4: self.Screen4, \
+                           5: self.Screen5}
 
 
     @property
@@ -65,7 +66,8 @@ class Screens (object):
         ypos = self.display.drawWeatherItem("Wohnzimmer:", \
                                             getvalue(allsensorvalues['ID_01']), \
                                             getvalue(allsensorvalues['ID_02']), \
-                                            None,  \
+                                            None,                               \
+                                            None,                               \
                                             CONFIG.COLORS.INDOOR, ypos)
         ypos += CONFIG.SEP_Y
 
@@ -92,6 +94,7 @@ class Screens (object):
                                             getvalue(allsensorvalues['ID_12']), \
                                             getvalue(allsensorvalues['ID_04']), \
                                             getvalue(allsensorvalues['ID_05']), \
+                                            None,                               \
                                             CONFIG.COLORS.OUTDOOR, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawTime()
@@ -105,7 +108,8 @@ class Screens (object):
         ypos = self.display.drawWeatherItem("Kinderzimmer:", \
                                             getvalue(allsensorvalues['ID_06']), \
                                             getvalue(allsensorvalues['ID_07']), \
-                                            None,    \
+                                            None,                               \
+                                            None,                               \
                                             CONFIG.COLORS.KIDSROOM, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawPicture(CONFIG.IMAGES.PIC_KIDSROOM, 0.8, 
@@ -114,14 +118,15 @@ class Screens (object):
 
 
     def Screen3 (self, allsensorvalues):
-        """Kollerberg"""
+        """Kollerberg outside"""
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        ypos = self.display.drawWeatherItem("Kollerberg:", \
+        ypos = self.display.drawWeatherItem(u'Kollerberg (außen):', \
                                             getvalue(allsensorvalues['ID_24']), \
                                             getvalue(allsensorvalues['ID_25']), \
                                             getvalue(allsensorvalues['ID_23']), \
+                                            None,                               \
                                             CONFIG.COLORS.COTTAGE, ypos)
         ypos += CONFIG.SEP_Y
         self.display.drawPicture(CONFIG.IMAGES.PIC_COTTAGE, 0.8, 
@@ -130,6 +135,21 @@ class Screens (object):
 
 
     def Screen4 (self, allsensorvalues):
+        """Kollerberg inside"""
+        ypos = CONFIG.MARGIN 
+        self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
+
+        ypos = self.display.drawWeatherItem("Kollerberg (innen):", \
+                                            getvalue(allsensorvalues['ID_21']), \
+                                            getvalue(allsensorvalues['ID_22']), \
+                                            getvalue(allsensorvalues['ID_26']), \
+                                            getvalue(allsensorvalues['ID_27']), \
+                                            CONFIG.COLORS.COTTAGE, ypos)
+        ypos += CONFIG.SEP_Y
+        self.display.drawTime()
+
+
+    def Screen5 (self, allsensorvalues):
         """misc sensor values"""
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
@@ -137,6 +157,7 @@ class Screens (object):
         ypos = self.display.drawWeatherItem("Misc:", \
                                             getvalue(allsensorvalues['ID_03']), \
                                             getvalue(allsensorvalues['ID_13']), \
+                                            None,    \
                                             None,    \
                                             CONFIG.COLORS.MISC, ypos)
         self.display.drawTime()
