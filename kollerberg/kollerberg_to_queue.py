@@ -19,7 +19,6 @@ from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock, SensorValue
 
 
-
 pik_i = "pik_i"
 pik_a = "pik_a"
 pik_k = "pik_k"
@@ -30,7 +29,6 @@ DATAFILES = { pik_i: "/schild/weather/kb_i_weather.data",
               pik_k: "/schild/weather/kb_k_weather.data" }
 
 
-
 def getDataFromFile (filename):
     with open(filename, 'r') as f:
         return f.read().split(':')
@@ -39,50 +37,40 @@ def getDataFromFile (filename):
 ################################################################################
 # Main #########################################################################
 def Main():
-    qv_kb_i_t = SensorValueLock("ID_2?", "Temp KB indoor", SensorValue.Types.Temp, u'°C', Lock())
-    qv_kb_i_h = SensorValueLock("ID_2?", "Humi KB indoor", SensorValue.Types.Humi, u'% rF', Lock())
-    qv_kb_p   = SensorValueLock("ID_2?", "Pressure KB",    SensorValue.Types.Pressure, u'hPa', Lock())
+    qv_kb_i_t = SensorValueLock("ID_21", "Temp KB indoor", SensorValue.Types.Temp, u'°C', Lock())
+    qv_kb_i_h = SensorValueLock("ID_22", "Humi KB indoor", SensorValue.Types.Humi, u'% rF', Lock())
+    qv_kb_p   = SensorValueLock("ID_23", "Pressure KB",    SensorValue.Types.Pressure, u'hPa', Lock())
 
-    qv_kb_a_t = SensorValueLock("ID_2?", "Temp KB outdoor", SensorValue.Types.Temp, u'°C', Lock())
-    qv_kb_a_h = SensorValueLock("ID_2?", "Humi KB outdoor", SensorValue.Types.Humi, u'% rF', Lock())
+    qv_kb_a_t = SensorValueLock("ID_24", "Temp KB outdoor", SensorValue.Types.Temp, u'°C', Lock())
+    qv_kb_a_h = SensorValueLock("ID_25", "Humi KB outdoor", SensorValue.Types.Humi, u'% rF', Lock())
 
-    qv_kb_k_t = SensorValueLock("ID_2?", "Temp KB basement", SensorValue.Types.Temp, u'°C', Lock())
-    qv_kb_k_h = SensorValueLock("ID_2?", "Humi KB basement", SensorValue.Types.Humi, u'% rF', Lock())
+    qv_kb_k_t = SensorValueLock("ID_26", "Temp KB basement", SensorValue.Types.Temp, u'°C', Lock())
+    qv_kb_k_h = SensorValueLock("ID_27", "Humi KB basement", SensorValue.Types.Humi, u'% rF', Lock())
 
-
-    sq.register(qvalue_temp)
-    sq.register(qvalue_humi)
+    sq.register(qv_kb_i_t)
+    sq.register(qv_kb_i_h)
+    sq.register(qv_kb_p)
+    sq.register(qv_kb_a_t)
+    sq.register(qv_kb_a_h)
+    sq.register(qv_kb_k_t)
+    sq.register(qv_kb_k_h)
     sq.start()
 
-
     while True:
-        # read data from files:
-        #   ID_21: temp outdoor
-        #   ID_22: humi outdoor
-        #   ID_23: air pressure
-        #   ID_24: temp indoor
-        #   ID_25: humi indoor
-        #   ID_26: temp basement
-        #   ID_27: humi basement
-
-        # write data into queue
-
         data = getDataFromFile(DATAFILES[pik_i])
-        kb_i_t = data[3]
-        kb_i_h = data[6]
-        kb_i_p = data[7]
+        qv_kb_i_t.value = data[3]
+        qv_kb_i_h.value = data[6]
+        qv_kb_p.value   = data[7]
 
         data = getDataFromFile(DATAFILES[pik_a])
-        kb_a_t = data[3]
-        kb_a_h = data[6]
+        qv_kb_a_t.value = data[3]
+        qv_kb_a_h.value = data[6]
 
         data = getDataFromFile(DATAFILES[pik_k])
-        kb_k_t = data[3]
-        kb_k_h = data[6]
-
+        qv_kb_k_t.value = data[3]
+        qv_kb_k_h.value = data[6]
 
         sleep(60)
-
 
 
 ################################################################################
