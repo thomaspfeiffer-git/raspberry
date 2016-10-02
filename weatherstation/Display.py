@@ -61,7 +61,7 @@ class Display (object):
         return ypos
 
 
-    def drawWeatherItem (self, room, value1, value2, value3, color, ypos):
+    def drawWeatherItem (self, room, value1, value2, value3, value4, color, ypos):
         """prints all weather data of one screen section"""
         ypos = self.drawSeperatorLine(ypos)
         ypos = self.drawItem(room, self.font_tiny, CONFIG.COLORS.DESC, ypos)
@@ -71,6 +71,8 @@ class Display (object):
             ypos = self.drawItem(value2, self.font, color, ypos)
         if value3 is not None:
             ypos = self.drawItem(value3, self.font, color, ypos)
+        if value4 is not None:
+            ypos = self.drawItem(value4, self.font, color, ypos)
         return ypos
 
 
