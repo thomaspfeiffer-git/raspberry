@@ -58,23 +58,23 @@ def Main():
 
     while True:
         data = getDataFromFile(DATAFILES[pik_i])
-        qv_kb_i_t.value = data[3]
-        qv_kb_i_h.value = data[6]
-        qv_kb_p.value   = data[7]
+        qv_kb_i_t.value = "%.1f" % (float(data[3]))  # convert from nn,nn to nn,n
+        qv_kb_i_h.value = "%.1f" % (float(data[6]))
+        qv_kb_p.value   = "%.1f" % (float(data[7]))
 
         data = getDataFromFile(DATAFILES[pik_a])
-        qv_kb_a_t.value = data[3]
-        qv_kb_a_h.value = data[6]
+        qv_kb_a_t.value = "%.1f" % (float(data[3]))
+        qv_kb_a_h.value = "%.1f" % (float(data[6]))
 
         data = getDataFromFile(DATAFILES[pik_k])
-        qv_kb_k_t.value = data[3]
-        qv_kb_k_h.value = data[6]
+        qv_kb_k_t.value = "%.1f" % (float(data[3]))
+        qv_kb_k_h.value = "%.1f" % (float(data[6]))
 
         sleep(60)
 
 
 ################################################################################
-# Exit ########################################################################
+# Exit #########################################################################
 def Exit():
     """cleanup stuff"""
     sq.stop()
