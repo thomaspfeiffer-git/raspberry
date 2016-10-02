@@ -60,6 +60,13 @@ class AllSensorValues (dict):
         self['ID_11'] = None
         self['ID_12'] = None
         self['ID_13'] = None
+        self['ID_21'] = None
+        self['ID_22'] = None
+        self['ID_23'] = None
+        self['ID_24'] = None
+        self['ID_25'] = None
+        self['ID_26'] = None
+        self['ID_27'] = None
 
     def readfromqueue (self):
         """polls the queue for new sensor values (only one at a time)"""
