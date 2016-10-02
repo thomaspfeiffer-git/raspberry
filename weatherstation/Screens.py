@@ -32,7 +32,8 @@ class Screens (object):
         self.__screenid = 1
         self.__screens  = {1: self.Screen1, \
                            2: self.Screen2, \
-                           3: self.Screen3}
+                           3: self.Screen3, \
+                           4: self.Screen4}
 
 
     @property
@@ -113,6 +114,22 @@ class Screens (object):
 
 
     def Screen3 (self, allsensorvalues):
+        """Kollerberg"""
+        ypos = CONFIG.MARGIN 
+        self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
+
+        ypos = self.display.drawWeatherItem("Kollerberg:", \
+                                            getvalue(allsensorvalues['ID_24']), \
+                                            getvalue(allsensorvalues['ID_25']), \
+                                            getvalue(allsensorvalues['ID_23']), \
+                                            CONFIG.COLORS.COTTAGE, ypos)
+        ypos += CONFIG.SEP_Y
+        self.display.drawPicture(CONFIG.IMAGES.PIC_COTTAGE, 0.8, 
+                                 xpos=Display.Position.Center, ypos=ypos)
+        self.display.drawTime()
+
+
+    def Screen4 (self, allsensorvalues):
         """misc sensor values"""
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
