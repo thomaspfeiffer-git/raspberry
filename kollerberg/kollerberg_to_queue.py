@@ -17,7 +17,19 @@ import traceback
 ################################################################################
 # Main #########################################################################
 def Main():
-    print "Main"
+    while True:
+        # read data from files:
+        #   ID_21: temp outdoor
+        #   ID_22: humi outdoor
+        #   ID_23: air pressure
+        #   ID_24: temp indoor
+        #   ID_25: humi indoor
+        #   ID_26: temp basement
+        #   ID_27: humi basement
+
+        # write data into queue
+
+        sleep 60
 
 
 
@@ -53,3 +65,4 @@ if __name__ == '__main__':
         pass
 
 # eof #
+
