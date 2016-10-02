@@ -142,7 +142,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
             except KeyboardInterrupt:
                 Log("ctrl-c")
                 raise
-            except Queue.Full:
+            except queue.Full:
                 Log("Queue full")
             except:
                 Log("Cannot write to queue: %s %s" % \
