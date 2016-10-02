@@ -8,6 +8,8 @@ Different screens for Weatherstation.py
 Currently there are three screens:
 1) Living room and outside
 2) Kid's room
+3) Cottage outside
+4) Cottage inside
 """
 
 
