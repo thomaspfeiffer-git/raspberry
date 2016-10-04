@@ -7,7 +7,6 @@
 # (c) https://github.com/thomaspfeiffer-git 2016                              #
 ###############################################################################
 
-
 import signal
 import sys
 from threading import Lock
@@ -71,7 +70,7 @@ def Main():
             qv_kb_k_t.value = "%.1f" % (float(data[3]))
             qv_kb_k_h.value = "%.1f" % (float(data[6]))
         except IndexError:  # access to data files is not synchronized,
-            pass            # thus data can be an empty array.
+            pass            # thus data[] can be an empty array.
 
         sleep(60)
 
