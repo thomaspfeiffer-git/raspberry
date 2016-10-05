@@ -69,8 +69,8 @@ def Main():
             data = getDataFromFile(DATAFILES[pik_k])
             qv_kb_k_t.value = "%.1f" % (float(data[3]))
             qv_kb_k_h.value = "%.1f" % (float(data[6]))
-        except IndexError:  # access to data files is not synchronized,
-            pass            # thus data[] can be an empty array.
+        except IndexError, ValueError:  # access to data files is not synchronized,
+            pass                        # thus data[] can be an empty array.
 
         sleep(60)
 
