@@ -123,7 +123,7 @@ printCPUTemp ()
     DEF:kb_i_tcpu=$RRD_KB:kb_i_tcpu:AVERAGE                              \
     DEF:kb_a_tcpu=$RRD_KB:kb_a_tcpu:AVERAGE                              \
     DEF:kb_k_tcpu=$RRD_KB:kb_k_tcpu:AVERAGE                              \
-    LINE1:temp_cpu#FF00FF:"Temperatur Raspberry Pi Wohnzimmer       "    \
+    LINE1:temp_cpu#FF0000:"Temperatur Raspberry Pi Wohnzimmer       "    \
     GPRINT:temp_cpu:LAST:"\t Aktuell\: %5.2lf °C"                        \
     GPRINT:temp_cpu:AVERAGE:"Mittelwert\: %5.2lf °C"                     \
     GPRINT:temp_cpu:MAX:"Max\: %5.2lf °C"                                \
