@@ -171,7 +171,6 @@ GIT
 
 https://help.github.com/articles/generating-ssh-keys/#platform-linux
 
-
 sudo apt-get install git
 git clone https://github.com/thomaspfeiffer-git/raspberry
 
