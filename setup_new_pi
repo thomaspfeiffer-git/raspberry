@@ -41,6 +41,7 @@ chmod 0777 /share
 
 add /share to /etc/exports
 
+# seems to be necessary at pik_i after reboot
 sudo /etc/init.d/nfs-kernel-server restart
 sudo exportfs -rav
 
