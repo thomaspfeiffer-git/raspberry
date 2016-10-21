@@ -9,29 +9,34 @@
 import sys
 
 import Adafruit_BMP085
+from i2c import I2C
 
-# maybe necessary:
-#     import numpy
-#     for i in range(0,10):
-#         p.append(sensor.readPressure())
-#     p.sort()
-#     p_avg = np.mean(p[int(len(p)/3):int(len(p)/3)*2])
-# or check useability of class Measurements
 
-class BMP085 (object):
+
+class BMP085 (I2C):
     """class for handling the air pressure sensor BMP085"""
-    def __init__ (self, qvalue=None):
+    def __init__ (self, qvalue=None, lock=None):
+        if sys.version_info >= (3,0):
+            super().__init__(lock)
+        else:
+            super(BMP085, self).__init__(lock)
+
         self.__bmp    = Adafruit_BMP085.BMP085(0x77, 2) 
         self.__qvalue = qvalue
 
     def read (self):
         """read sensor and return measured value"""
-        value = self.__bmp.readPressure()
+        with I2C.lock:
+            value = self.__bmp.readPressure()
 
-        if self.__qvalue is not None:
-            self.__qvalue.value = "%.1f" % (value/100.0)
+        except (IOError, OSError):
+            print(localtime()[3:6], "error reading/writing i2c bus")
 
-        return value
+        finally:
+            if self.__qvalue is not None:
+                self.__qvalue.value = "%.1f" % (value/100.0)
+
+            return value
 
 # eof #
 
