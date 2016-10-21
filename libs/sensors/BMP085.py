@@ -26,17 +26,18 @@ class BMP085 (I2C):
 
     def read (self):
         """read sensor and return measured value"""
-        with I2C.lock:
-            value = self.__bmp.readPressure()
+        with I2C._lock:
+            try:
+                value = self.__bmp.readPressure()
 
-        except (IOError, OSError):
-            print(localtime()[3:6], "error reading/writing i2c bus")
+            except (IOError, OSError):
+                print(localtime()[3:6], "error reading/writing i2c bus")
 
-        finally:
-            if self.__qvalue is not None:
-                self.__qvalue.value = "%.1f" % (value/100.0)
+            finally:
+                if self.__qvalue is not None:
+                    self.__qvalue.value = "%.1f" % (value/100.0)
 
-            return value
+                return value
 
 # eof #
 
