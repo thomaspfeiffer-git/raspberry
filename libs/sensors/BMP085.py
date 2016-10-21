@@ -8,7 +8,7 @@
 
 import sys
 
-import Adafruit.Adafruit_BMP085
+from Adafruit import Adafruit_BMP085
 from i2c import I2C
 
 
