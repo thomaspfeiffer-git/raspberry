@@ -8,6 +8,7 @@
 
 
 import sys
+from time import sleep, strftime
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
@@ -15,9 +16,12 @@ sys.path.append('../libs/sensors')
 import BMP085
 
 
-bmp085 = BMP085.BMP085()   # todo: Lock; evtl als BMP180?
+bmp085 = BMP085.BMP085()
 
+while True:
+     print(strftime("%H:%M:%S"))
+     print("Sensor | Größe | Messwert | Einheit |")
+     print("BMP180 | Druck | %.1f     | hPa     |" % (bmp085.read()/100.0) )
+     print("")
 
-print "BMP180, Druck: %.1f hPa" % (bmp085.read()/100.0) 
-
-
+     sleep(10)
