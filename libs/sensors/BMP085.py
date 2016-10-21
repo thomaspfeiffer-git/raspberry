@@ -8,7 +8,7 @@
 
 import sys
 
-import Adafruit_BMP085
+import Adafruit.Adafruit_BMP085
 from i2c import I2C
 
 
@@ -21,14 +21,15 @@ class BMP085 (I2C):
         else:
             super(BMP085, self).__init__(lock)
 
-        self.__bmp    = Adafruit_BMP085.BMP085(0x77, 2) 
+        self.__bmp    = Adafruit_BMP085.BMP085() 
         self.__qvalue = qvalue
 
     def read (self):
         """read sensor and return measured value"""
+        value = -1
         with I2C._lock:
             try:
-                value = self.__bmp.readPressure()
+                value = self.__bmp.read_pressure()
 
             except (IOError, OSError):
                 print(localtime()[3:6], "error reading/writing i2c bus")
