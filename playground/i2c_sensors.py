@@ -13,15 +13,16 @@ from time import sleep, strftime
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
-import BMP085
+import BMP180
 
 
-bmp085 = BMP085.BMP085()
+bmp180 = BMP180.BMP180()
 
 while True:
      print(strftime("%H:%M:%S"))
      print("Sensor | Größe | Messwert | Einheit |")
-     print("BMP180 | Druck | %.1f     | hPa     |" % (bmp085.read()/100.0) )
+     print("BMP180 | Druck | %.1f     | hPa     |" % (bmp180.read_pressure()/100.0))
+     print("BMP180 | Temp  | %.1f     | °C      |" % (bmp180.read_temperature()))
      print("")
 
      sleep(10)
