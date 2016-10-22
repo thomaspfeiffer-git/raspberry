@@ -21,8 +21,8 @@ bmp180 = BMP180.BMP180()
 while True:
      print(strftime("%H:%M:%S"))
      print("Sensor | Größe | Messwert | Einheit |")
-     print("BMP180 | Druck | %.1f     | hPa     |" % (bmp180.read_pressure()/100.0))
-     print("BMP180 | Temp  | %.1f     | °C      |" % (bmp180.read_temperature()))
+     print("BMP180 | Druck | %.2f     | hPa     |" % (bmp180.read_pressure()/100.0))
+     print("BMP180 | Temp  | %.2f     | °C      |" % (bmp180.read_temperature()))
      print("")
 
      sleep(10)
