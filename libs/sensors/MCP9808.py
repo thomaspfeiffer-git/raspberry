@@ -34,7 +34,7 @@ class MCP9808 (I2C):
         self.__lastvalue = 0
 
 
-    def read (self)
+    def read_temperature (self)
         with I2C._lock:
             try:
                 t = I2C._bus.read_word_data(self._address, MCP9808_REG_TEMP)
