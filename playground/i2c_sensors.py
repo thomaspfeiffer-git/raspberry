@@ -14,15 +14,18 @@ sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
 import BMP180
+import MCP9808
 
-bmp180 = BMP180.BMP180()
+bmp180  = BMP180.BMP180()
+mcp9808 = MCP9808.MCP9808()
 
 
 while True:
      print(strftime("%H:%M:%S"))
-     print("Sensor | Größe | Messwert | Einheit |")
-     print("BMP180 | Druck | {:>8.2f} | hPa     |".format(bmp180.read_pressure()/100.0))
-     print("BMP180 | Temp  | {:>8.2f} | °C      |".format(bmp180.read_temperature()))
+     print("Sensor  | Größe | Messwert | Einheit |")
+     print("BMP180  | Druck | {:>8.2f} | hPa     |".format(bmp180.read_pressure()/100.0))
+     print("BMP180  | Temp  | {:>8.2f} | °C      |".format(bmp180.read_temperature()))
+#     print("MCP9808 | Temp  | {:>8.2f} | °C      |".format(mcp9808.read_temperature()))
      print("")
 
      sleep(10)
