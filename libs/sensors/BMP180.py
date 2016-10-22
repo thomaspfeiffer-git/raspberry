@@ -21,7 +21,7 @@ class BMP180 (I2C):
         else:
             super(BMP180, self).__init__(lock)
 
-        self.__bmp    = Adafruit_BMP085.BMP085() 
+        self.__bmp    = Adafruit_BMP085.BMP085(mode=Adafruit_BMP085.BMP085_ULTRAHIGHRES) 
         self.__qvalue = qvalue
 
     def read_pressure (self):
