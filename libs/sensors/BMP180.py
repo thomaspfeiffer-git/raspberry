@@ -40,7 +40,7 @@ class BMP180 (I2C):
 
                 return value
 
-    def read_emperature (self):
+    def read_temperature (self):
         """read temperature and return measured value"""
         value = -1
         with I2C._lock:
