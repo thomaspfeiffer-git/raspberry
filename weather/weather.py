@@ -19,7 +19,7 @@ import traceback
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
-from BMP085 import BMP085
+from BMP180 import BMP180
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from DS1820 import DS1820
@@ -102,7 +102,7 @@ def Main():
     tempcpu        = CPU()
     th_indoor      = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
     th_outdoor     = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
-    bmp085         = BMP085(qvalue_pressure)
+    bmp180         = BMP180(qvalue_pressure)
     th_realoutdoor = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qvalue_temp_realoutdoor)
     th_indoor2     = DS1820("/sys/bus/w1/devices/28-000006dc8d42/w1_slave", qvalue_temp_indoor2)
 
@@ -118,7 +118,7 @@ def Main():
     while(True):
         temp_indoor, humi_indoor   = th_indoor.read()
         temp_outdoor, humi_outdoor = th_outdoor.read()
-        pressure                   = bmp085.read()
+        pressure                   = bmp180.read_pressure()
         temp_cpu                   = tempcpu.read()
         temp_realoutdoor           = th_realoutdoor.read()
         temp_indoor2               = th_indoor2.read()
