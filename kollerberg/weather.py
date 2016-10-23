@@ -29,8 +29,8 @@ pik_k = "pik_k"
 PIs = [pik_i, pik_a, pik_k]
 this_PI = gethostname()
 
-if this_PI == pik_i:   # BMP085 installed only at pik_i
-    from BMP085 import BMP085
+if this_PI == pik_i:   # BMP180 installed only at pik_i
+    from BMP180 import BMP180
 
 
 AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w1_slave",
@@ -94,7 +94,7 @@ def main():
     tempds  = DS1820(AddressesDS1820[this_PI])
     tempcpu = CPU()
     if this_PI == pik_i:
-        bmp085 = BMP085()
+        bmp180 = BMP180()
 
     rrd_template = DS[this_PI][DS_TEMP1] + ":" + \
                    DS[this_PI][DS_TEMP2] + ":" + \
@@ -102,13 +102,13 @@ def main():
                    DS[this_PI][DS_HUMI]  + ":" + \
                    DS[this_PI][DS_PRESS]
 
-    pressure = 1013.25 # in case of no BMP085 available
+    pressure = 1013.25 # in case of no BMP180 available
     while True:
         temp_ds            = tempds.read()
         temp_cpu           = tempcpu.read()
         temp_dht, humi_dht = tempdht.read()
         if this_PI == pik_i:
-            pressure = bmp085.read() / 100.0
+            pressure = bmp180.read_pressure() / 100.0
 
         rrd_data = "N:{:.2f}".format(temp_ds)     + \
                     ":{:.2f}".format(temp_dht)    + \
