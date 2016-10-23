@@ -33,6 +33,8 @@ class MCP9808 (I2C):
         self.__qvalue    = qvalue
         self.__lastvalue = 0
 
+        self.set_resolution(0x03) # Set resolution to 0.0625. #
+
 
     def read_temperature (self):
         with I2C._lock:
@@ -60,8 +62,13 @@ class MCP9808 (I2C):
                 return self.__lastvalue
 
 
-    def setResolution (self, resolution):
-        pass
+    def set_resolution (self, resolution):
+        with I2C._lock:
+            try:
+                I2C._bus.write_byte_data(self._address, MCP9808_REG_RESOLUTION, resolution)
+
+            except (IOError, OSError):
+                print(localtime()[3:6], "error reading/writing i2c bus")
 
 # eof #
 
