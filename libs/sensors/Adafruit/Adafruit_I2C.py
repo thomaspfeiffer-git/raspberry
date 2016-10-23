@@ -22,7 +22,7 @@
 import logging
 import subprocess
 
-import Adafruit_GPIO_Platform as Platform
+from Adafruit import Adafruit_GPIO_Platform as Platform
 
 
 def reverseByteOrder(data):
@@ -93,7 +93,7 @@ class Device(object):
         self._address = address
         if i2c_interface is None:
             # Use pure python I2C interface if none is specified.
-            import Adafruit_PureIO_smbus
+            from Adafruit import Adafruit_PureIO_smbus
             self._bus = Adafruit_PureIO_smbus.SMBus(busnum)
         else:
             # Otherwise use the provided class to create an smbus interface.
