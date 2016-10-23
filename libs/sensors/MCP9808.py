@@ -52,7 +52,7 @@ class MCP9808 (I2C):
                 self.__lastvalue = temp
 
             except (IOError, OSError):
-                print(localtime()[3:6], "error reading/writing i2c bus")
+                print(localtime()[3:6], "error reading/writing i2c bus in MCP9808.read_temperature")
 
             finally:
                 if self.__qvalue is not None:
@@ -68,7 +68,7 @@ class MCP9808 (I2C):
                 I2C._bus.write_byte_data(self._address, MCP9808_REG_RESOLUTION, resolution)
 
             except (IOError, OSError):
-                print(localtime()[3:6], "error reading/writing i2c bus")
+                print(localtime()[3:6], "error reading/writing i2c bus in MCP9808.set_resolution()")
 
 # eof #
 
