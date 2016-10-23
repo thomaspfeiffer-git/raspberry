@@ -24,6 +24,7 @@ class BMP180 (I2C):
         self.__bmp    = Adafruit_BMP085.BMP085(mode=Adafruit_BMP085.BMP085_ULTRAHIGHRES) 
         self.__qvalue = qvalue
 
+
     def read_pressure (self):
         """read pressure and return measured value"""
         value = -1
@@ -32,13 +33,14 @@ class BMP180 (I2C):
                 value = self.__bmp.read_pressure()
 
             except (IOError, OSError):
-                print(localtime()[3:6], "error reading/writing i2c bus")
+                print(localtime()[3:6], "error reading/writing i2c bus in read_pressue()")
 
             finally:
                 if self.__qvalue is not None:
                     self.__qvalue.value = "%.1f" % (value/100.0)
 
                 return value
+
 
     def read_temperature (self):
         """read temperature and return measured value"""
@@ -48,7 +50,7 @@ class BMP180 (I2C):
                 value = self.__bmp.read_temperature()
     
             except (IOError, OSError):
-                print(localtime()[3:6], "error reading/writing i2c bus")
+                print(localtime()[3:6], "error reading/writing i2c bus in read_temperature()")
 
             finally:
                 return value
