@@ -20,6 +20,8 @@ MCP9808_ADDR           = 0x18
 MCP9808_REG_TEMP       = 0x05
 MCP9808_REG_RESOLUTION = 0x08
 
+MCP9808_REG_MANUF_ID           = 0x06
+MCP9808_REG_DEVICE_ID          = 0x07
 
 
 class MCP9808 (I2C):
@@ -41,13 +43,10 @@ class MCP9808 (I2C):
             try:
                 t = I2C._bus.read_word_data(self._address, MCP9808_REG_TEMP)
 
-                # Scale and convert to signed value.
-                upperByte = t & 0x0F00
-                lowerByte = t & 0x00FF
+                t = ((t << 8) & 0xFF00) + (t >> 8)
+                temp = (t & 0x0FFF) / 16.0
                 if t & 0x1000:
-                    temp = (((upperByte >> 8) * 16) + (lowerByte / 16.0)) * (-1)
-                else:
-                    temp = ((upperByte >> 8) * 16) + (lowerByte / 16.0)
+                    temp -= 256.0
 
                 self.__lastvalue = temp
 
