@@ -31,7 +31,7 @@ class MCP9808 (I2C):
         else:
             super(MCP9808, self).__init__(lock)
 
-        self._address    = MCP9808_ADDR
+        self._address    = address
         self.__qvalue    = qvalue
         self.__lastvalue = 0
 
