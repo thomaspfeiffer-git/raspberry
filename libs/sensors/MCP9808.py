@@ -15,7 +15,7 @@ from time import localtime
 from i2c import I2C
 
 
-MCP9808_ADDR           = 0x18
+MCP9808_BASE_ADDR           = 0x18
 
 MCP9808_REG_TEMP       = 0x05
 MCP9808_REG_RESOLUTION = 0x08
@@ -25,7 +25,7 @@ MCP9808_REG_DEVICE_ID          = 0x07
 
 
 class MCP9808 (I2C):
-    def __init__ (self, qvalue=None, lock=None):
+    def __init__ (self, address=MCP9808_BASE_ADDR, qvalue=None, lock=None):
         if sys.version_info >= (3,0):
             super().__init__(lock)
         else:
