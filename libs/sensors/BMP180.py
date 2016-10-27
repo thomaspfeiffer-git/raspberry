@@ -4,7 +4,7 @@
 # Communication with BMP180                                                   #
 # (c) https://github.com/thomaspfeiffer-git 2016                              #
 ###############################################################################
-"""provides a class for handling the air pressure sensor BMP085"""
+"""provides a class for handling the air pressure sensor BMP180"""
 
 import sys
 
@@ -27,33 +27,29 @@ class BMP180 (I2C):
 
     def read_pressure (self):
         """read pressure and return measured value"""
-        value = -1
         with I2C._lock:
             try:
                 value = self.__bmp.read_pressure()
+                if self.__qvalue is not None:
+                    self.__qvalue.value = "%.1f" % (value/100.0)
 
             except (IOError, OSError):
                 print(localtime()[3:6], "error reading/writing i2c bus in BMP180.read_pressue()")
 
-            finally:
-                if self.__qvalue is not None:
-                    self.__qvalue.value = "%.1f" % (value/100.0)
-
-                return value
+        return None
 
 
     def read_temperature (self):
         """read temperature and return measured value"""
-        value = -1
         with I2C._lock:
             try:
                 value = self.__bmp.read_temperature()
+                return value
     
             except (IOError, OSError):
                 print(localtime()[3:6], "error reading/writing i2c bus in BMP180.read_temperature()")
 
-            finally:
-                return value
+        return None
 
 # eof #
 
