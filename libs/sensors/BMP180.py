@@ -12,7 +12,6 @@ from Adafruit import Adafruit_BMP085
 from i2c import I2C
 
 
-
 class BMP180 (I2C):
     """class for handling the air pressure sensor BMP085"""
     def __init__ (self, qvalue=None, lock=None):
