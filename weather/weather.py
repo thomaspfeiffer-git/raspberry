@@ -115,13 +115,22 @@ def Main():
                       DS_AIRPRESSURE     + ":" + \
                       DS_TEMPCPU
 
+
+    # Default values for startup
+    temp_indoor, humi_indoor   = (-99.99, -99.99)
+    temp_outdoor, humi_outdoor = (0.00, 0.00)
+    pressure                   = (0.00)
+    temp_cpu                   = (-99.99)
+    temp_realoutdoor           = (-99.99) 
+    temp_indoor2               = (-99.99) 
+
     while(True):
-        temp_indoor, humi_indoor   = th_indoor.read()
-        temp_outdoor, humi_outdoor = th_outdoor.read()
-        pressure                   = bmp180.read_pressure()
-        temp_cpu                   = tempcpu.read()
-        temp_realoutdoor           = th_realoutdoor.read()
-        temp_indoor2               = th_indoor2.read()
+        temp_indoor, humi_indoor   = tuple([ list(th_indoor.read())[i] or list((temp_indoor, humi_indoor))[i] for i in range(2) ])
+        temp_outdoor, humi_outdoor = tuple([ list(th_outdoor.read())[i] or list((temp_outdoor, humi_outdoor))[i] for i in range(2) ])
+        pressure                   = bmp180.read_pressure() or pressure
+        temp_cpu                   = tempcpu.read() or temp_cpu
+        temp_realoutdoor           = th_realoutdoor.read() or temp_realoutdoor
+        temp_indoor2               = th_indoor2.read() or temp_indoor2
 
         rrd_data = "N:{:.2f}".format(temp_indoor)      + \
                     ":{:.2f}".format(temp_outdoor)     + \
