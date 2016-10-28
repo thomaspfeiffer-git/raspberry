@@ -33,10 +33,10 @@ class BME280 (I2C):
                 value = self.__bme.read_pressure()
                 if self.__qvalue_pressure is not None:
                     self.__qvalue_pressure.value = "%.1f" % (value/100.0)
+                return value
 
             except (IOError, OSError):
                 print(localtime()[3:6], "error reading/writing i2c bus in BME280.read_pressue()")
-                return value
 
         return None
 
