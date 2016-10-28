@@ -31,6 +31,7 @@ class BMP180 (I2C):
                 value = self.__bmp.read_pressure()
                 if self.__qvalue is not None:
                     self.__qvalue.value = "%.1f" % (value/100.0)
+                return value
 
             except (IOError, OSError):
                 print(localtime()[3:6], "error reading/writing i2c bus in BMP180.read_pressue()")
