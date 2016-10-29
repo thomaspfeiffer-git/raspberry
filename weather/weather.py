@@ -156,8 +156,6 @@ def Main():
         Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
         Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
 
-        sleep(30)
-
 
 ################################################################################
 if __name__ == '__main__':
