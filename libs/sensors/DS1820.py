@@ -38,13 +38,16 @@ class DS1820:
             sum += value
             no_reads += 1
 
-      sum = sum/no_reads
+      if no_reads == 0:
+          return None
+      else:
+          sum = sum/no_reads
 
-      if self.__qvalue is not None:
-          value = "%.1f" % (sum)
-          self.__qvalue.value = value
+          if self.__qvalue is not None:
+              value = "%.1f" % (sum)
+              self.__qvalue.value = value
 
-      return sum
+          return sum
 
 ### eof ###
 
