@@ -13,7 +13,6 @@ import rrdtool
 import signal
 import sys
 from threading import Lock
-from time import sleep
 import traceback
 
 
@@ -155,8 +154,6 @@ def Main():
         Log("Temperatur innen 2: {:.2f} °C".format(temp_indoor2))
         Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
         Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
-
-        sleep(10)
 
 
 ################################################################################
