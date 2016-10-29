@@ -36,7 +36,7 @@ class DS1820:
       no_reads = 0
       for i in range(3):
          value = self.__read_sensor()
-         print "DS1820, try ", i, ":", value
+         print "DS1820, try", i, ":", value
          if value:
             sum += value
             no_reads += 1
@@ -45,7 +45,7 @@ class DS1820:
           return None
       else:
           sum = sum/no_reads
-          print "DS1820, sum ", i, ":", sum
+          print "DS1820, sum", ":", sum
 
           if self.__qvalue is not None:
               value = "%.1f" % (sum)
