@@ -33,8 +33,8 @@ class DS1820:
        value = self.__read_sensor()
        if value is not None:
            if self.__qvalue is not None:
-               value = "%.1f" % (sum)
-               self.__qvalue.value = value
+               qvalue = "%.1f" % (value)
+               self.__qvalue.value = qvalue
        return value
 
 ### eof ###
