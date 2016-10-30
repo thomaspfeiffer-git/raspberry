@@ -13,6 +13,7 @@ import rrdtool
 import signal
 import sys
 from threading import Lock
+import time
 import traceback
 
 
@@ -131,6 +132,8 @@ def Main():
         temp_realoutdoor           = th_realoutdoor.read() or temp_realoutdoor
         temp_indoor2               = th_indoor2.read() or temp_indoor2
 
+        print "DS1820 outdoor: ", time.strftime("%x %X"), "---", temp_realoutdoor
+
         rrd_data = "N:{:.2f}".format(temp_indoor)      + \
                     ":{:.2f}".format(temp_outdoor)     + \
                     ":{:.2f}".format(humi_indoor)      + \
@@ -141,6 +144,7 @@ def Main():
                     ":{:.2f}".format(temp_cpu)
 
         rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
+        print rrd_data
    
         Log(rrd_template)
         Log(rrd_data)
