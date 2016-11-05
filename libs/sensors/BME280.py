@@ -45,7 +45,7 @@ class BME280 (I2C):
         """read temperature and return measured value"""
         with I2C._lock:
             try:
-                value = self.__bmp.read_temperature()
+                value = self.__bme.read_temperature()
                 if self.__qvalue_pressure is not None:
                     self.__qvalue_pressure.value = "%.1f" % (value)
                 return value
@@ -60,7 +60,7 @@ class BME280 (I2C):
         """read humidity and return measured value"""
         with I2C._lock:
             try:
-                value = self.__bmp.read_humidity()
+                value = self.__bme.read_humidity()
                 if self.__qvalue_humidity is not None:
                     self.__qvalue_humidity.value = "%.1f" % (value)
                 return value
