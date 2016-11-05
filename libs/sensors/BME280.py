@@ -23,7 +23,7 @@ class BME280 (I2C):
         self.__bme             = Adafruit_BME280.BME280()
         self.__qvalue_pressure = qvalue_pressure
         self.__qvalue_temp     = qvalue_temp    
-        self.__qvalue_humi     = qvalue_humi    
+        self.__qvalue_humidity = qvalue_humi    
 
 
     def read_pressure (self):
