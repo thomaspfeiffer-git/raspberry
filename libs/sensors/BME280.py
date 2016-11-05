@@ -14,7 +14,7 @@ from i2c import I2C
 
 class BME280 (I2C):
     """class for handling the air pressure sensor BME280"""
-    def __init__ (self, qvalue_pressure=None, qvalue_temp=None, qvalue_humi=None lock=None):
+    def __init__ (self, qvalue_pressure=None, qvalue_temp=None, qvalue_humi=None, lock=None):
         if sys.version_info >= (3,0):
             super().__init__(lock)
         else:
