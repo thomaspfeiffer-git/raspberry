@@ -11,7 +11,7 @@ from threading import Lock
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
-from Adafruit import Adafruit_GPIO_Platform
+from Adafruit import Adafruit_GPIO_Platform as AGPIO
 
 
 class I2C (object):
@@ -20,7 +20,7 @@ class I2C (object):
     
     def __init__ (self, lock=None):
         if I2C._bus is None:
-            I2C._bus  = smbus.SMBus(Adafruit_GPIO_Platform.platform_detect())
+            I2C._bus  = smbus.SMBus(AGPIO.platform_detect())
 
         if I2C._lock is None:
             if lock is None:
