@@ -6,8 +6,10 @@
 """provides a single instance for an i2c bus"""
 
 import smbus
+import sys
 from threading import Lock
 
+sys.path.append('libs/sensors')
 from Adafruit import Adafruit_GPIO_Platform
 
 
