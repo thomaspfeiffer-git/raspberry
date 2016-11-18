@@ -8,13 +8,16 @@
 import smbus
 from threading import Lock
 
+from Adafruit import Adafruit_GPIO_Platform
+
+
 class I2C (object):
     _bus  = None
     _lock = None
     
     def __init__ (self, lock=None):
         if I2C._bus is None:
-            I2C._bus  = smbus.SMBus(1)
+            I2C._bus  = smbus.SMBus(Adafruit_GPIO_Platform.platform_detect())
 
         if I2C._lock is None:
             if lock is None:
