@@ -37,7 +37,7 @@ while True:
      mcp9808_2_temp     = mcp9808_2.read_temperature()
       
      print(strftime("%H:%M:%S"))
-     print("Values: {:.2f}:{:.2f}:{:.2f}:{:.2f}:{:.2f}:{:.2f}:{:.2f}".format(bmp180_pressure, bmp180_tempera    ture, bme280_pressure, bme280_temperature, bme280_humidity, mcp9808_1_temp, mcp9808_2_temp))
+     print("Values: {:.2f}:{:.2f}:{:.2f}:{:.2f}:{:.2f}:{:.2f}:{:.2f}".format(bmp180_pressure, bmp180_temperature, bme280_pressure, bme280_temperature, bme280_humidity, mcp9808_1_temp, mcp9808_2_temp))
      print("Sensor     | Größe | Messwert | Einheit |")
      print("BMP180     | Druck | {:>8.2f} | hPa     |".format(bmp180_pressure))
      print("BMP180     | Temp  | {:>8.2f} | °C      |".format(bmp180_temperature))
