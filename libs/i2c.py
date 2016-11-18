@@ -11,8 +11,8 @@ from threading import Lock
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
+sys.path.append('../libs/sensors/Adafruit')
 from Adafruit import Adafruit_GPIO_Platform as AGPIO
-
 
 class I2C (object):
     _bus  = None
