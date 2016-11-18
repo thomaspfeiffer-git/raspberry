@@ -9,7 +9,8 @@ import smbus
 import sys
 from threading import Lock
 
-sys.path.append('libs/sensors')
+sys.path.append('../libs')
+sys.path.append('../libs/sensors')
 from Adafruit import Adafruit_GPIO_Platform
 
 
