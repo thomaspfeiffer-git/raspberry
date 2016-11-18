@@ -28,15 +28,23 @@ mcp9808_2 = MCP9808.MCP9808(address=MCP9808_2_ADDR)
 
 
 while True:
-     print(strftime("%H:%M:%S"))
+     bmp180_pressure    = bmp180.read_pressure()/100.0
+     bmp180_temperature = bmp180.read_temperature()
+     bme280_pressure    = bme280.read_pressure()/100.0
+     bme280_temperature = bme280.read_temperature()
+     bme280_humidity    = bme280.read_humidity()
+     mcp9808_1_temp     = mcp9808_1.read_temperature()
+     mcp9808_2_temp     = mcp9808_2.read_temperature()
+      
+     print("{}: {}".format(strftime("%H:%M:%S")), ":".join((bmp180_pressure, bmp180_temperature, bme280_pressure, bme280_temperature, bme280_humidity, mcp9808_1_temp, mcp9808_2_temp))
      print("Sensor     | Größe | Messwert | Einheit |")
-     print("BMP180     | Druck | {:>8.2f} | hPa     |".format(bmp180.read_pressure()/100.0))
-     print("BMP180     | Temp  | {:>8.2f} | °C      |".format(bmp180.read_temperature()))
-     print("BME280     | Druck | {:>8.2f} | hPa     |".format(bme280.read_pressure()/100.0))
-     print("BME280     | Temp  | {:>8.2f} | °C      |".format(bme280.read_temperature()))
-     print("BME280     | Humi  | {:>8.2f} | % rF    |".format(bme280.read_humidity()))
-     print("MCP9808 #1 | Temp  | {:>8.2f} | °C      |".format(mcp9808_1.read_temperature()))
-     print("MCP9808 #2 | Temp  | {:>8.2f} | °C      |".format(mcp9808_2.read_temperature()))
+     print("BMP180     | Druck | {:>8.2f} | hPa     |".format(bmp180_pressure))
+     print("BMP180     | Temp  | {:>8.2f} | °C      |".format(bmp180_temperature))
+     print("BME280     | Druck | {:>8.2f} | hPa     |".format(bme280_pressure))
+     print("BME280     | Temp  | {:>8.2f} | °C      |".format(bme280_temperature))
+     print("BME280     | Humi  | {:>8.2f} | % rF    |".format(bme280_humidity))
+     print("MCP9808 #1 | Temp  | {:>8.2f} | °C      |".format(mcp9808_1_temp))
+     print("MCP9808 #2 | Temp  | {:>8.2f} | °C      |".format(mcp9808_2_temp))
      print("")
 
      sleep(10)
