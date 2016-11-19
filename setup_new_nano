@@ -47,5 +47,10 @@ fdisk -l Armbian_5.24_Nanopiair_Debian_jessie_3.4.113.img
 mount -o loop,offset=1048576 Armbian_5.24_Nanopiair_Debian_jessie_3.4.113.img armbian
 
 
+Things that did not work:
+
+1) not all i2c devices detected correctly (no hw issue, ubuntu works fine)
+2) ssh connection often paused
+
 
 
