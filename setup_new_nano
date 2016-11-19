@@ -8,10 +8,10 @@ http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO_Air
 
 # Basic setup
 dpkg-reconfigure tzdata
+usermod -aG sudo fa 
 
 
-
-# Instal packets
+# Install packets
 #---------------
 apt-get install vim  
 apt-get install git
