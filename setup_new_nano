@@ -1,9 +1,13 @@
+#############################################################################
 # Ubuntu
+#############################################################################
 
 Basic setup based on:
 http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO_Air
 
 
+# Instal packets
+#---------------
 apt-get install vim  
 apt-get install git
 apt-get install man
@@ -16,8 +20,16 @@ apt-get install i2c-tools
 apt-get install python-smbus
 
 
+# Turn off freaky blue led:
+echo 0 >/sys/class/leds/blue_led/brightness
 
+
+
+
+
+#############################################################################
 # Armbian
+#############################################################################
 
 Basic setup based on:
 https://docs.armbian.com/User-Guide_Getting-Started/
