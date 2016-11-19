@@ -1,0 +1,31 @@
+# Ubuntu
+
+Basic setup based on:
+http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO_Air
+
+
+apt-get install vim  
+apt-get install git
+apt-get install man
+
+apt-get install nfs-common
+schild.smtp.at:/exports/share/pi        /schild nfs vers=2,rsize=8192,wsize=8192,timeo=14,intr 0 0 
+
+
+apt-get install i2c-tools
+apt-get install python-smbus
+
+
+
+# Armbian
+
+Basic setup based on:
+https://docs.armbian.com/User-Guide_Getting-Started/
+
+mkdir armbian
+fdisk -l Armbian_5.24_Nanopiair_Debian_jessie_3.4.113.img 
+mount -o loop,offset=1048576 Armbian_5.24_Nanopiair_Debian_jessie_3.4.113.img armbian
+
+
+
+
