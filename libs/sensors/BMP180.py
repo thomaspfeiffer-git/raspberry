@@ -6,6 +6,7 @@
 ###############################################################################
 """provides a class for handling the air pressure sensor BMP180"""
 
+from time import localtime
 import sys
 
 from Adafruit import Adafruit_BMP085

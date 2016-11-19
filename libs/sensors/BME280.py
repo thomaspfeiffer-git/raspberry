@@ -6,6 +6,7 @@
 ###############################################################################
 """provides a class for handling sensor BME280"""
 
+from time import localtime
 import sys
 
 from Adafruit import Adafruit_BME280
