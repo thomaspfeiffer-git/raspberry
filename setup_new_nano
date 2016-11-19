@@ -49,6 +49,14 @@ http://dietpi.com/phpbb/viewtopic.php?f=8&t=63&p=218#p218
 Software:
 http://dietpi.com/phpbb/viewtopic.php?f=8&t=5#p5
 
+Getting started:
+http://dietpi.com/phpbb/viewtopic.php?f=8&t=9#p9
+
+
+fdisk -l DietPi_v127_NanoPiNEO-armv7-Jessie.img 
+mount -v -o loop,offset=68157440 DietPi_v127_NanoPiNEO-armv7-Jessie.img dietpi/
+
+
 
 ############################################################################
 # Armbian
