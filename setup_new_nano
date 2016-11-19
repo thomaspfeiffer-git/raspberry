@@ -19,10 +19,15 @@ schild.smtp.at:/exports/share/pi        /schild nfs vers=2,rsize=8192,wsize=8192
 apt-get install i2c-tools
 apt-get install python-smbus
 
+# add user fa to group i2c
+usermod -aG i2c fa
+
 
 # Turn off freaky blue led:
 echo 0 >/sys/class/leds/blue_led/brightness
 
+# Change event to sd card access
+echo "mmc1" > trigger
 
 
 
