@@ -1,6 +1,6 @@
-#############################################################################
+############################################################################
 # Ubuntu
-#############################################################################
+############################################################################
 
 Basic setup based on:
 http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO_Air
@@ -23,6 +23,7 @@ schild.smtp.at:/exports/share/pi        /schild nfs vers=2,rsize=8192,wsize=8192
 
 apt-get install i2c-tools
 apt-get install python-smbus
+apt-get install rrdtool python-rrdtool
 
 # add user fa to group i2c
 usermod -aG i2c fa
@@ -36,10 +37,22 @@ echo "mmc1" > trigger
 
 
 
+############################################################################
+# DietPi
+############################################################################
 
-#############################################################################
+http://www.friendlyarm.com/Forum/viewtopic.php?f=49&t=230
+
+Config:
+http://dietpi.com/phpbb/viewtopic.php?f=8&t=63&p=218#p218
+
+Software:
+http://dietpi.com/phpbb/viewtopic.php?f=8&t=5#p5
+
+
+############################################################################
 # Armbian
-#############################################################################
+############################################################################
 
 Basic setup based on:
 https://docs.armbian.com/User-Guide_Getting-Started/
