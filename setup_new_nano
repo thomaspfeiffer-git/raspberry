@@ -6,6 +6,11 @@ Basic setup based on:
 http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO_Air
 
 
+# Basic setup
+dpkg-reconfigure tzdata
+
+
+
 # Instal packets
 #---------------
 apt-get install vim  
