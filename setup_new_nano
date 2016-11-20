@@ -33,7 +33,10 @@ usermod -aG i2c fa
 echo 0 >/sys/class/leds/blue_led/brightness
 
 # Change event to sd card access
-echo "mmc1" > trigger
+# in /etc/rc.local
+echo "mmc1" > /sys/class/leds/blue_led/trigger
+
+
 
 
 
