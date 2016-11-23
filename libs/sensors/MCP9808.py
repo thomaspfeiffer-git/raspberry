@@ -15,13 +15,13 @@ from time import localtime
 from i2c import I2C
 
 
-MCP9808_BASE_ADDR           = 0x18
+MCP9808_BASE_ADDR      = 0x18
 
 MCP9808_REG_TEMP       = 0x05
 MCP9808_REG_RESOLUTION = 0x08
 
-MCP9808_REG_MANUF_ID           = 0x06
-MCP9808_REG_DEVICE_ID          = 0x07
+MCP9808_REG_MANUF_ID   = 0x06
+MCP9808_REG_DEVICE_ID  = 0x07
 
 
 class MCP9808 (I2C):
