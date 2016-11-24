@@ -52,6 +52,10 @@ echo 0 >/sys/class/leds/blue_led/brightness
 echo "mmc1" > /sys/class/leds/blue_led/trigger
 
 
+# setup 1-wire (draft)
+modprobe w1-gpio-board gpio=203
+modprobe w1_gpio
+
 
 
 
