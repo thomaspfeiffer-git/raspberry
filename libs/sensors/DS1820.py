@@ -24,7 +24,7 @@ class DS1820:
                   return float(m.group(2)) / 1000.0
 
       except IOError as e:
-         print time.strftime("%x %X"), "Error reading", self.__id, ": ", e
+         print(time.strftime("%x %X"), "Error reading", self.__id, ": ", e)
 
       return None
 
