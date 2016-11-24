@@ -15,12 +15,14 @@ sys.path.append('../libs/sensors')
 
 import BME280    # air pressure, temperature, humidity
 import BMP180    # air pressure, temperature
+import DS1820    # temperature
 import HTU21DF   # temperature, humidity
 import MCP9808   # temperature
 
 bmp180  = BMP180.BMP180()
 bme280  = BME280.BME280()
 
+ds1820  = DS1820.DS1820("/sys/bus/w1/devices/28-000006b50d05/w1_slave")
 htu21df = HTU21DF.HTU21DF()
 
 MCP9808_1_ADDR = 0x18
@@ -35,6 +37,7 @@ while True:
      bme280_pressure     = bme280.read_pressure()/100.0
      bme280_temperature  = bme280.read_temperature()
      bme280_humidity     = bme280.read_humidity()
+     ds1820_temperature  = ds1820.read()
      htu21df_temperature = htu21df.read_temperature()
      htu21df_humidity    = htu21df.read_humidity()
      mcp9808_1_temp      = mcp9808_1.read_temperature()
@@ -48,6 +51,7 @@ while True:
      print("BME280     | Druck | {:>8.2f} | hPa     |".format(bme280_pressure))
      print("BME280     | Temp  | {:>8.2f} | C       |".format(bme280_temperature))
      print("BME280     | Humi  | {:>8.2f} | % rF    |".format(bme280_humidity))
+     print("DS1820     | Temp  | {:>8.2f} | C       |".format(ds1820_temperature))
      print("HTU21DF    | Temp  | {:>8.2f} | C       |".format(htu21df_temperature))
      print("HTU21DF    | Humi  | {:>8.2f} | % rF    |".format(htu21df_humidity))
      print("MCP9808 #1 | Temp  | {:>8.2f} | C       |".format(mcp9808_1_temp))
