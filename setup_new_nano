@@ -9,7 +9,12 @@
 screen /dev/ttyUSB0 115200
 
 
-
+# GPIO
+echo 203 > /sys/class/gpio/export
+echo out > /sys/class/gpio/gpio203/direction
+echo 1 > /sys/class/gpio/gpio203/value 
+echo 0 > /sys/class/gpio/gpio203/value 
+echo 1 > /sys/class/gpio/gpio203/value 
 
 
 
@@ -53,6 +58,8 @@ echo "mmc1" > /sys/class/leds/blue_led/trigger
 
 
 # setup 1-wire (draft)
+
+
 modprobe w1-gpio-board gpio=203
 modprobe w1_gpio
 
