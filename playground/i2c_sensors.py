@@ -37,26 +37,37 @@ while True:
      bme280_pressure     = bme280.read_pressure()/100.0
      bme280_temperature  = bme280.read_temperature()
      bme280_humidity     = bme280.read_humidity()
-     ds1820_temperature  = ds1820.read()
+     # ds1820_temperature  = ds1820.read()
+     ds1820_temperature  = -99.99
      htu21df_temperature = htu21df.read_temperature()
      htu21df_humidity    = htu21df.read_humidity()
      mcp9808_1_temp      = mcp9808_1.read_temperature()
      mcp9808_2_temp      = mcp9808_2.read_temperature()
      
-     # print("{:.2f}:{:.2f}:{:.2f}:{:.2f}:{:.2f}:{:.2f}:{:.2f}".format(bmp180_pressure, bmp180_temperature, bme280_pressure, bme280_temperature, bme280_humidity, mcp9808_1_temp, mcp9808_2_temp))
+     values = ":".join("{:.2f}".format(d) for d in [bmp180_pressure,     \
+                                                    bme280_pressure,     \
+                                                    bme280_humidity,     \
+                                                    htu21df_humidity,    \
+                                                    bmp180_temperature,  \
+                                                    bme280_temperature,  \
+                                                    htu21df_temperature, \
+                                                    mcp9808_1_temp,      \
+                                                    mcp9808_2_temp,      \
+                                                    ds1820_temperature])
+     print(values)
 
-#     print(u'Sensor     | Größ | Messwert | Einheit ')
-     print("BMP180     | Druck | {:>8.2f} | hPa     |".format(bmp180_pressure))
-     print("BMP180     | Temp  | {:>8.2f} | C       |".format(bmp180_temperature))
-     print("BME280     | Druck | {:>8.2f} | hPa     |".format(bme280_pressure))
-     print("BME280     | Temp  | {:>8.2f} | C       |".format(bme280_temperature))
-     print("BME280     | Humi  | {:>8.2f} | % rF    |".format(bme280_humidity))
-     print("DS1820     | Temp  | {:>8.2f} | C       |".format(ds1820_temperature))
-     print("HTU21DF    | Temp  | {:>8.2f} | C       |".format(htu21df_temperature))
-     print("HTU21DF    | Humi  | {:>8.2f} | % rF    |".format(htu21df_humidity))
-     print("MCP9808 #1 | Temp  | {:>8.2f} | C       |".format(mcp9808_1_temp))
-     print("MCP9808 #2 | Temp  | {:>8.2f} | C       |".format(mcp9808_2_temp))
-     print("")
+
+#     print("BMP180     | Druck | {:>8.2f} | hPa     |".format(bmp180_pressure))
+#     print("BME280     | Druck | {:>8.2f} | hPa     |".format(bme280_pressure))
+#     print("BME280     | Humi  | {:>8.2f} | % rF    |".format(bme280_humidity))
+#     print("HTU21DF    | Humi  | {:>8.2f} | % rF    |".format(htu21df_humidity))
+#     print("BMP180     | Temp  | {:>8.2f} | C       |".format(bmp180_temperature))
+#     print("BME280     | Temp  | {:>8.2f} | C       |".format(bme280_temperature))
+#     print("HTU21DF    | Temp  | {:>8.2f} | C       |".format(htu21df_temperature))
+#     print("MCP9808 #1 | Temp  | {:>8.2f} | C       |".format(mcp9808_1_temp))
+#     print("MCP9808 #2 | Temp  | {:>8.2f} | C       |".format(mcp9808_2_temp))
+#     print("DS1820     | Temp  | {:>8.2f} | C       |".format(ds1820_temperature))
+#     print("")
 
      sleep(1)
 
