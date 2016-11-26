@@ -123,4 +123,26 @@ Things that did not work:
 2) ssh connection often paused
 
 
+# 1-wire
+apt-get install pkg-config
+apt-get install libusb-1.0-0-dev
+git clone git://github.com/linux-sunxi/sunxi-tools.git
+cd sunxi-tools
+make
+ln -s sunxi-tools/bin2fex 
+ln -s sunxi-tools/fex2bin 
+
+cat /etc/modules  # uncomment these lines
+   gpio-sunxi
+   w1-sunxi
+   w1-gpio
+   w1-therm
+
+
+
+
+https://forum.armbian.com/index.php/topic/2503-nanopi-neo-1-wire/
+
+
+
 
