@@ -59,6 +59,9 @@ echo "mmc1" > /sys/class/leds/blue_led/trigger
 
 # setup 1-wire (draft)
 
+# seems pretty useless
+# apt-get install libusb-1.0-0-dev
+# modprobe gpio_sunxi
 
 modprobe w1-gpio-board gpio=203
 modprobe w1_gpio
