@@ -17,6 +17,13 @@ echo 0 > /sys/class/gpio/gpio203/value
 echo 1 > /sys/class/gpio/gpio203/value 
 
 
+# python installer
+sudo apt-get install python-pip
+sudo apt-get install python3-pip
+
+# python imaging
+sudo apt-get install python-imaging
+
 
 
 ############################################################################
