@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 ###############################################################################
 # i2c_sensors.py                                                              #
@@ -10,6 +10,10 @@
 import sys
 from time import sleep, strftime
 
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
@@ -18,6 +22,9 @@ import BMP180    # air pressure, temperature
 import DS1820    # temperature
 import HTU21DF   # temperature, humidity
 import MCP9808   # temperature
+
+import SSD1306   # display
+
 
 bmp180  = BMP180.BMP180()
 bme280  = BME280.BME280()
@@ -30,6 +37,23 @@ MCP9808_2_ADDR = 0x19
 mcp9808_1 = MCP9808.MCP9808(address=MCP9808_1_ADDR)
 mcp9808_2 = MCP9808.MCP9808(address=MCP9808_2_ADDR)
 
+display = SSD1306.SSD1306()
+
+
+display.begin()
+display.clear()
+display.display()
+
+width = display.width
+height = display.height
+image = Image.new('1', (width, height))
+draw = ImageDraw.Draw(image)
+font = ImageFont.load_default()
+
+xpos = 4
+ypos = height
+velocity = 1
+_, textheight = draw.textsize("Text", font=font)
 
 while True:
      bmp180_pressure     = bmp180.read_pressure()/100.0
@@ -54,8 +78,18 @@ while True:
                                                     mcp9808_1_temp,      \
                                                     mcp9808_2_temp,      \
                                                     ds1820_temperature])
-     print(values)
+     print(strftime("%X:"), values)
 
+     draw.rectangle((0,0,width,height), outline=0, fill=255)
+     y = ypos
+     draw.text((xpos, y), "Druck: {:>8.2f} hPa".format(bmp180_pressure), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(bme280_humidity), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Temp: {:>8.2f} C".format(bme280_temperature), font=font, fill=0)
+
+     display.image(image)
+     display.display()
 
 #     print("BMP180     | Druck | {:>8.2f} | hPa     |".format(bmp180_pressure))
 #     print("BME280     | Druck | {:>8.2f} | hPa     |".format(bme280_pressure))
@@ -71,6 +105,9 @@ while True:
 
      sleep(1)
 
+     ypos = ypos - velocity
+     if ypos < -3 * textheight:
+         ypos = height
 
 # eof #
 

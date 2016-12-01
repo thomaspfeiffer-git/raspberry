@@ -7,7 +7,7 @@ from PIL import Image
 # from PIL import ImageDraw
 # from PIL import ImageFont
 
-from ssd1306 import SSD1306
+import SSD1306
 
 
 disp = SSD1306()
@@ -18,11 +18,6 @@ disp.begin()
 # Clear display.
 disp.clear()
 disp.display()
-
-# Create blank image for drawing.
-# Make sure to create image with mode '1' for 1-bit color.
-width = disp.width
-height = disp.height
 
 
 while True:
