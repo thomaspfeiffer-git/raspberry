@@ -1,5 +1,8 @@
-#!/usr/bin/python3
-
+# -*- coding: utf-8 -*-
+###############################################################################
+# TSL2561.py                                                                  #
+# under construction
+###############################################################################
 
 
 
@@ -368,7 +371,10 @@ class TSL2561(I2C):
         '''Read sensor data, convert it to LUX and return it'''
         broadband, ir = self._get_luminosity()
 
-        return self._calculate_lux(broadband, ir)
+        try:
+            return self._calculate_lux(broadband, ir)
+        except:
+            return 20000   ###########
 
 
 
