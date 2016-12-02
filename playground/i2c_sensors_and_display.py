@@ -22,6 +22,7 @@ import BMP180    # air pressure, temperature
 import DS1820    # temperature
 import HTU21DF   # temperature, humidity
 import MCP9808   # temperature
+import TSL2561   # luminosity
 
 import SSD1306   # display
 
@@ -36,6 +37,7 @@ MCP9808_1_ADDR = 0x18
 MCP9808_2_ADDR = 0x19
 mcp9808_1 = MCP9808.MCP9808(address=MCP9808_1_ADDR)
 mcp9808_2 = MCP9808.MCP9808(address=MCP9808_2_ADDR)
+tsl2561   = TSL2561.TSL2561()
 
 display = SSD1306.SSD1306()
 
@@ -51,9 +53,10 @@ draw = ImageDraw.Draw(image)
 font = ImageFont.load_default()
 
 xpos = 4
-ypos = height
+ypos = height / 2
 velocity = 1
 _, textheight = draw.textsize("Text", font=font)
+
 
 while True:
      bmp180_pressure     = bmp180.read_pressure()/100.0
@@ -67,6 +70,7 @@ while True:
      htu21df_humidity    = htu21df.read_humidity()
      mcp9808_1_temp      = mcp9808_1.read_temperature()
      mcp9808_2_temp      = mcp9808_2.read_temperature()
+     tsl2561_luminosity  = tsl2561.lux()
      
      values = ":".join("{:.2f}".format(d) for d in [bmp180_pressure,     \
                                                     bme280_pressure,     \
@@ -77,7 +81,8 @@ while True:
                                                     htu21df_temperature, \
                                                     mcp9808_1_temp,      \
                                                     mcp9808_2_temp,      \
-                                                    ds1820_temperature])
+                                                    ds1820_temperature,  \
+                                                    tsl2561_luminosity])
      print(strftime("%X:"), values)
 
      draw.rectangle((0,0,width,height), outline=0, fill=255)
@@ -87,7 +92,19 @@ while True:
      draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(bme280_humidity), font=font, fill=0)
      y += textheight
      draw.text((xpos, y), "Temp: {:>8.2f} C".format(bme280_temperature), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(tsl2561_luminosity), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Druck: {:>8.2f} hPa".format(bmp180_pressure), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(bme280_humidity), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Temp: {:>8.2f} C".format(bme280_temperature), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(tsl2561_luminosity), font=font, fill=0)
 
+     l = tsl2561_luminosity if tsl2561_luminosity <= 255 else 255
+     display.set_contrast(l)
      display.image(image)
      display.display()
 
@@ -101,13 +118,14 @@ while True:
 #     print("MCP9808 #1 | Temp  | {:>8.2f} | C       |".format(mcp9808_1_temp))
 #     print("MCP9808 #2 | Temp  | {:>8.2f} | C       |".format(mcp9808_2_temp))
 #     print("DS1820     | Temp  | {:>8.2f} | C       |".format(ds1820_temperature))
+#     print("TLS2561    | Hell  | {:>8.2f} | C       |".format(tsl2561_luminosity))
 #     print("")
 
      sleep(1)
 
      ypos = ypos - velocity
-     if ypos < -3 * textheight:
-         ypos = height
+     if ypos < -4 * textheight:
+         ypos = height / 2
 
 # eof #
 
