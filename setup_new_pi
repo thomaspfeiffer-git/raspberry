@@ -60,6 +60,21 @@ set number
 set expandtab
 
 
+
+
+# python installer
+sudo apt-get install python-pip
+sudo apt-get install python3-pip
+
+# python2 imaging
+sudo apt-get install python-imaging
+
+# python3 imaging
+sudo pip3 install Pillow
+
+
+
+
 Libs:
 =====
 
