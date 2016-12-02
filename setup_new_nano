@@ -21,8 +21,11 @@ echo 1 > /sys/class/gpio/gpio203/value
 sudo apt-get install python-pip
 sudo apt-get install python3-pip
 
-# python imaging
+# python2 imaging
 sudo apt-get install python-imaging
+
+# python3 imaging
+sudo pip3 install Pillow
 
 
 
