@@ -25,6 +25,9 @@ class BME280 (I2C):
         self.__qvalue_pressure = qvalue_pressure
         self.__qvalue_temp     = qvalue_temp    
         self.__qvalue_humidity = qvalue_humi    
+        self.__lastvalues      = {'pressure': 0,
+                                  'temperature': 0,
+                                  'humidity': 0}
 
 
     def read_pressure (self):
@@ -32,12 +35,15 @@ class BME280 (I2C):
         with I2C._lock:
             try:
                 value = self.__bme.read_pressure()
+                self.__lastvalues['pressure'] = value
                 if self.__qvalue_pressure is not None:
                     self.__qvalue_pressure.value = "%.1f" % (value/100.0)
-                return value
 
             except (IOError, OSError):
                 print(localtime()[3:6], "error reading/writing i2c bus in BME280.read_pressue()")
+
+            finally:
+                return self.__lastvalues['pressure']
 
         return None
 
@@ -47,12 +53,15 @@ class BME280 (I2C):
         with I2C._lock:
             try:
                 value = self.__bme.read_temperature()
+                self.__lastvalues['temperature'] = value
                 if self.__qvalue_pressure is not None:
                     self.__qvalue_pressure.value = "%.1f" % (value)
-                return value
     
             except (IOError, OSError):
                 print(localtime()[3:6], "error reading/writing i2c bus in BME280.read_temperature()")
+
+            finally:
+                return self.__lastvalues['temperature']
 
         return None
 
@@ -62,12 +71,15 @@ class BME280 (I2C):
         with I2C._lock:
             try:
                 value = self.__bme.read_humidity()
+                self.__lastvalues['humidity'] = value
                 if self.__qvalue_humidity is not None:
                     self.__qvalue_humidity.value = "%.1f" % (value)
-                return value
     
             except (IOError, OSError):
                 print(localtime()[3:6], "error reading/writing i2c bus in BME280.read_humidity()")
+
+            finally:
+                return self.__lastvalues['humidity']
 
         return None
 
