@@ -56,16 +56,16 @@ update-locale LANG=en_US.UTF-8
 
 # Install packets
 #---------------
-apt-get install vim  
-apt-get install git
-apt-get install man
+apt-get install vim -y
+apt-get install git -y
+apt-get install man -y
 
-apt-get install nfs-common
+apt-get install nfs-common -y
 schild.smtp.at:/exports/share/pi        /schild nfs comment=systemd.automount,_netdev,auto,vers=2,rsize=8192,wsize=8192,timeo=14,intr 0 0 
 
-apt-get install i2c-tools
-apt-get install python-smbus
-apt-get install rrdtool python-rrdtool
+apt-get install i2c-tools -y
+apt-get install python-smbus -y
+apt-get install rrdtool python-rrdtool -y
 
 # add user fa to group i2c
 usermod -aG i2c fa
