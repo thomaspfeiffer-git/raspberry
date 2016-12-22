@@ -37,6 +37,12 @@ Basic setup based on:
 http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO_Air
 
 
+# WiFi
+etc/network/interfaces
+etc/wpa_supplicant/wpa_supplicant.conf
+# keep mount -v -o loop in mind
+
+
 # Basic setup
 dpkg-reconfigure tzdata
 usermod -aG sudo fa 
