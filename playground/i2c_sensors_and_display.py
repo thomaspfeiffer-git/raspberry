@@ -53,7 +53,8 @@ draw = ImageDraw.Draw(image)
 font = ImageFont.load_default()
 
 xpos = 4
-ypos = height / 2
+# ypos = height / 2
+ypos = 4
 velocity = 1
 _, textheight = draw.textsize("Text", font=font)
 
@@ -87,13 +88,7 @@ while True:
 
      draw.rectangle((0,0,width,height), outline=0, fill=255)
      y = ypos
-     draw.text((xpos, y), "Druck: {:>8.2f} hPa".format(bmp180_pressure), font=font, fill=0)
-     y += textheight
-     draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(bme280_humidity), font=font, fill=0)
-     y += textheight
-     draw.text((xpos, y), "Temp: {:>8.2f} C".format(bme280_temperature), font=font, fill=0)
-     y += textheight
-     draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(tsl2561_luminosity), font=font, fill=0)
+     draw.text((xpos, y), "Zeit: {}".format(strftime("%X")), font=font, fill=0)
      y += textheight
      draw.text((xpos, y), "Druck: {:>8.2f} hPa".format(bmp180_pressure), font=font, fill=0)
      y += textheight
@@ -104,9 +99,9 @@ while True:
      draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(tsl2561_luminosity), font=font, fill=0)
 
      l = tsl2561_luminosity if tsl2561_luminosity <= 255 else 255
-     display.set_contrast(l)
-     display.image(image)
-     display.display()
+#     display.set_contrast(l)
+#     display.image(image)
+#     display.display()
 
 #     print("BMP180     | Druck | {:>8.2f} | hPa     |".format(bmp180_pressure))
 #     print("BME280     | Druck | {:>8.2f} | hPa     |".format(bme280_pressure))
@@ -123,9 +118,9 @@ while True:
 
      sleep(1)
 
-     ypos = ypos - velocity
-     if ypos < -4 * textheight:
-         ypos = height / 2
+#     ypos = ypos - velocity
+#     if ypos < -4 * textheight:
+#         ypos = height / 2
 
 # eof #
 
