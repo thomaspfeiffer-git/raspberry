@@ -94,13 +94,8 @@ modprobe w1_gpio
 # -----------------------------------------------
 # setup emmc
 
-1) Prepare basic image
+1) Prepare basic image (using mount -o loop)
    . wifi
-   . basic setup from above (timezone, sudoers, i18n)
-   . /etc/fstab
-     /dev/mmcblk0p1     /boot   vfat    defaults                0       2
-     /dev/mmcblk0p2  /       ext4    defaults,noatime        0       1
-     and local NFS share
  
 2) copy image to nfs share
 3) copy image to sd card
