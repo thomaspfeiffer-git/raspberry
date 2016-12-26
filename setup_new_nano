@@ -76,7 +76,8 @@ echo 0 >/sys/class/leds/blue_led/brightness
 
 # Change event to sd card access
 # in /etc/rc.local
-echo "mmc1" > /sys/class/leds/blue_led/trigger
+echo "mmc0" > /sys/class/leds/blue_led/trigger   # sd card
+echo "mmc1" > /sys/class/leds/blue_led/trigger   # emmc
 
 
 # setup 1-wire (draft)
@@ -89,6 +90,25 @@ modprobe w1-gpio-board gpio=203
 modprobe w1_gpio
 
 
+
+# -----------------------------------------------
+# setup emmc
+
+1) Prepare basic image
+   . wifi
+   . basic setup from above (timezone, sudoers, i18n)
+   . /etc/fstab
+     /dev/mmcblk0p1     /boot   vfat    defaults                0       2
+     /dev/mmcblk0p2  /       ext4    defaults,noatime        0       1
+     and local NFS share
+ 
+2) copy image to nfs share
+3) copy image to sd card
+4) start from sd card
+5) dd if=image of=/dev/mmcblk1 bs=10M
+   where <image> is located in the nfs share.
+
+... partly not working; some apt-get install seems to set / to read only.
 
 
 ############################################################################
