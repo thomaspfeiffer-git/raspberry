@@ -107,8 +107,7 @@ modprobe w1_gpio
 4) start from sd card
 5) dd if=image of=/dev/mmcblk1 bs=10M
    where <image> is located in the nfs share.
-
-... partly not working; some apt-get install seems to set / to read only.
+   !!! image size must be _smaller_ than size of emmc !!!
 
 
 ############################################################################
