@@ -90,6 +90,12 @@ modprobe w1-gpio-board gpio=203
 modprobe w1_gpio
 
 
+# /etc/modprobe
+
+w1-gpio-board gpio=203
+w1_gpio
+
+
 
 # -----------------------------------------------
 # setup emmc
