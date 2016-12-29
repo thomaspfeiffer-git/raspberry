@@ -11,7 +11,7 @@
 
 import array
 import sys
-from time import localtime, sleep
+from time import strftime, sleep
 
 from i2c import I2C
 
@@ -33,9 +33,10 @@ class HTU21DF (I2C):
         else:
             super(HTU21DF, self).__init__(lock)
 
-        self._address    = address
-        self.__qvalue    = qvalue
-        self.__lastvalue = 0
+        self._address     = address
+        self.__qvalue     = qvalue
+        self.__lastvalues = {'temperature': 0,
+                             'humidity': 0}
         self.reset()
 
 
@@ -43,6 +44,7 @@ class HTU21DF (I2C):
         with I2C._lock:
             I2C._bus.write_byte(self._address, HTU21DF_RESET)
         sleep(0.1)
+
 
     def _read (self, register):
         with I2C._lock:
@@ -54,21 +56,34 @@ class HTU21DF (I2C):
 
 
     def read_temperature (self):
-        # try: ================================================
-        buf = array.array('B', self._read(HTU21DF_READTEMP))
-        t = (buf[0] * 256.0) + buf[1]
-        t = ((t / 65536.0) * 175.72 ) - 46.85
-        return t
+        try:
+            buf = array.array('B', self._read(HTU21DF_READTEMP))
+            t = (buf[0] * 256.0) + buf[1]
+            t = ((t / 65536.0) * 175.72 ) - 46.85
+            self.__lastvalues['temperature'] = t
+
+        except (IOError, OSError):
+            print(strftime("%Y%m%d %X:"), "error reading/writing i2c bus in HTU21DF.read_temperature()")
+
+        finally:
+            return self.__lastvalues['temperature']
 
 
     def read_humidity (self):
         t = self.read_temperature()
-        # try: ================================================
-        buf = array.array('B', self._read(HTU21DF_READHUMI))
-        h = (buf[0] * 256.0) + buf[1]
-        h = ((h / 65536.0) * 125 ) - 6 
-        h = h + (25 - t) * -0.15
-        return h
+
+        try:
+            buf = array.array('B', self._read(HTU21DF_READHUMI))
+            h = (buf[0] * 256.0) + buf[1]
+            h = ((h / 65536.0) * 125 ) - 6 
+            h = h + (25 - t) * -0.15
+            self.__lastvalues['humidity'] = h
+
+        except (IOError, OSError):
+            print(strftime("%Y%m%d %X:"), "error reading/writing i2c bus in HTU21DF.read_humidity()")
+
+        finally:
+            return self.__lastvalues['humidity']
 
 # eof #
 
