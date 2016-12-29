@@ -23,7 +23,7 @@ while True:
 
      values = ":".join("{:.2f}".format(d) for d in [htu21df_humidity,    \
                                                     htu21df_temperature])
-     print(strftime("%X:"), values)
+     print(strftime("%Y%m%d %X:"), values)
      # print("HTU21DF    | Humi  | {:>8.2f} | % rF    |".format(htu21df_humidity))
      # print("HTU21DF    | Temp  | {:>8.2f} | C       |".format(htu21df_temperature))
 
