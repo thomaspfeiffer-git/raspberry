@@ -30,7 +30,7 @@ import SSD1306   # display
 bmp180  = BMP180.BMP180()
 bme280  = BME280.BME280()
 
-ds1820  = DS1820.DS1820("/sys/bus/w1/devices/28-000006b50d05/w1_slave")
+ds1820  = DS1820.DS1820("/sys/bus/w1/devices/28-000006b67845/w1_slave")
 htu21df = HTU21DF.HTU21DF()
 
 MCP9808_1_ADDR = 0x18
@@ -65,8 +65,7 @@ while True:
      bme280_pressure     = bme280.read_pressure()/100.0
      bme280_temperature  = bme280.read_temperature()
      bme280_humidity     = bme280.read_humidity()
-     # ds1820_temperature  = ds1820.read()
-     ds1820_temperature  = -99.99
+     ds1820_temperature  = ds1820.read()
      htu21df_temperature = htu21df.read_temperature()
      htu21df_humidity    = htu21df.read_humidity()
      mcp9808_1_temp      = mcp9808_1.read_temperature()
