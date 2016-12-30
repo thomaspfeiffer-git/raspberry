@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 ###############################################################################
-# i2c_sensors.py                                                              #
+# i2c_sensors_and_display.py                                                  #
 # (c) https://github.com/thomaspfeiffer-git 2016                              #
 ###############################################################################
-"""Tests various i2c sensors"""
+"""Tests various i2c sensors and an i2c display"""
 
 
 import sys
@@ -83,7 +83,7 @@ while True:
                                                     mcp9808_2_temp,      \
                                                     ds1820_temperature,  \
                                                     tsl2561_luminosity])
-     print(strftime("%X:"), values)
+     print(strftime("%Y%m%d %X:"), values)
 
      draw.rectangle((0,0,width,height), outline=0, fill=255)
      y = ypos
@@ -97,7 +97,7 @@ while True:
      y += textheight
      draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(tsl2561_luminosity), font=font, fill=0)
 
-     l = tsl2561_luminosity if tsl2561_luminosity <= 255 else 255
+#     l = tsl2561_luminosity if tsl2561_luminosity <= 255 else 255
 #     display.set_contrast(l)
 #     display.image(image)
 #     display.display()
