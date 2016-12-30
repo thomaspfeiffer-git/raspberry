@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+sudo modprobe w1-gpio-board gpio=203
+sudo modprobe w1_gpio
+
+cd $( dirname $(readlink -f $0) )
+./consume_cpu_time.py &
+
