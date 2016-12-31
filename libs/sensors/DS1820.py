@@ -10,8 +10,9 @@ import time
 
 class DS1820:
    def __init__ (self, id, qvalue=None):
-      self.__id     = id
-      self.__qvalue = qvalue
+      self.__id        = id
+      self.__qvalue    = qvalue
+      self.__lastvalue = 0
    
    def __read_sensor (self):
       try:
@@ -21,13 +22,13 @@ class DS1820:
                line = f.readline()
                m = re.match(r"([0-9a-f]{2} ){9}t=([+-]?[0-9]+)", line)
                if m:
-                  return float(m.group(2)) / 1000.0
+                  self.__lastvalue = float(m.group(2)) / 1000.0
 
       except IOError as e:
          print(time.strftime("%x %X"), "Error reading", self.__id, ": ", e)
 
-      return None
-
+      finally:
+         return self.__lastvalue
 
    def read (self):
        value = self.__read_sensor()
