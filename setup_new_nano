@@ -29,6 +29,16 @@ sudo pip3 install Pillow
 
 
 
+# setting (reducing) cpu freq
+
+cd /sys/devices/system/cpu/cpu0/cpufreq
+sudo bash
+echo "600000" > scaling_max_freq
+
+
+
+
+
 ############################################################################
 # Ubuntu
 ############################################################################
