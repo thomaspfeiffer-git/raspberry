@@ -26,6 +26,8 @@ import TSL2561   # luminosity
 
 import SSD1306   # display
 
+import CPU
+
 
 bmp180  = BMP180.BMP180()
 bme280  = BME280.BME280()
@@ -40,6 +42,8 @@ mcp9808_2 = MCP9808.MCP9808(address=MCP9808_2_ADDR)
 tsl2561   = TSL2561.TSL2561()
 
 display = SSD1306.SSD1306()
+
+cpu     = CPU.CPU()
 
 
 display.begin()
@@ -71,6 +75,7 @@ while True:
      mcp9808_1_temp      = mcp9808_1.read_temperature()
      mcp9808_2_temp      = mcp9808_2.read_temperature()
      tsl2561_luminosity  = tsl2561.lux()
+     cpu_temp            = cpu.read_temperature()
      
      values = ":".join("{:.2f}".format(d) for d in [bmp180_pressure,     \
                                                     bme280_pressure,     \
@@ -82,7 +87,8 @@ while True:
                                                     mcp9808_1_temp,      \
                                                     mcp9808_2_temp,      \
                                                     ds1820_temperature,  \
-                                                    tsl2561_luminosity])
+                                                    tsl2561_luminosity,  \
+                                                    cpu_temp])
      print(strftime("%Y%m%d %X:"), values)
 
      draw.rectangle((0,0,width,height), outline=0, fill=255)
@@ -113,6 +119,7 @@ while True:
 #     print("MCP9808 #2 | Temp  | {:>8.2f} | C       |".format(mcp9808_2_temp))
 #     print("DS1820     | Temp  | {:>8.2f} | C       |".format(ds1820_temperature))
 #     print("TLS2561    | Hell  | {:>8.2f} | C       |".format(tsl2561_luminosity))
+#     TODO: add cpu_temp
 #     print("")
 
      sleep(1)
