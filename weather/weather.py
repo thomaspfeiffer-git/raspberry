@@ -128,7 +128,7 @@ def Main():
         temp_indoor, humi_indoor   = tuple([ list(th_indoor.read())[i] or list((temp_indoor, humi_indoor))[i] for i in range(2) ])
         temp_outdoor, humi_outdoor = tuple([ list(th_outdoor.read())[i] or list((temp_outdoor, humi_outdoor))[i] for i in range(2) ])
         pressure                   = bmp180.read_pressure() or pressure
-        temp_cpu                   = tempcpu.read() or temp_cpu
+        temp_cpu                   = tempcpu.read_temperature() or temp_cpu
         temp_realoutdoor           = th_realoutdoor.read() or temp_realoutdoor
         temp_indoor2               = th_indoor2.read() or temp_indoor2
 

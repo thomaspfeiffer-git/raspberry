@@ -105,7 +105,7 @@ def main():
     pressure = 1013.25 # in case of no BMP180 available
     while True:
         temp_ds            = tempds.read()
-        temp_cpu           = tempcpu.read()
+        temp_cpu           = tempcpu.read_temperature()
         temp_dht, humi_dht = tempdht.read()
         if this_PI == pik_i:
             pressure = bmp180.read_pressure() / 100.0

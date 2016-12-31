@@ -64,7 +64,7 @@ def main():
         _temp, _humi = temphumi.read()
         measurements[DS_TEMP1].append(_temp)
         measurements[DS_HUMI].append(_humi)
-        measurements[DS_TEMPCPU].append(temp_cpu.read())
+        measurements[DS_TEMPCPU].append(temp_cpu.read_temperature())
         measurements[DS_TEMP2].append(0)   # empty, for later useage
 
         rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
