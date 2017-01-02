@@ -91,19 +91,27 @@ echo "mmc1" > /sys/class/leds/blue_led/trigger   # emmc
 
 
 # setup 1-wire (draft)
+# see http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=393
+# for more information and workarounds
 
-# seems pretty useless
-# apt-get install libusb-1.0-0-dev
-# modprobe gpio_sunxi
-
+# Shell
 modprobe w1-gpio-board gpio=203
-modprobe w1_gpio
+modprobe w1-gpio
 
 
-# /etc/modules
+##### autostart ###
 
-w1-gpio-board gpio=203
+### /etc/modprobe.d/matrix-blacklist.conf --> remove some blacklistings
+# blacklist matrix_gpio_int
+# blacklist w1-gpio
+# blacklist w1-gpio-board
+
+### /etc/modules
+w1-gpio-board
 w1_gpio
+
+### /etc/modprobe.d/w1-gpio-board_options.conf
+options w1-gpio-board gpio=203
 
 
 
