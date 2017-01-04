@@ -184,6 +184,23 @@ Things that did not work:
 https://forum.armbian.com/index.php/topic/2503-nanopi-neo-1-wire/
 https://docs.armbian.com/Hardware_Allwinner/  # howto update the fex file
 
+[gpio_para]
+gpio_used = 0
+gpio_num = 19
+# gpio_pin_1 = port:PA06<1><default><default><0>
+gpio_pin_2 = port:PA13<1><default><default><0>
+gpio_pin_3 = port:PA14<1><default><default><0>
+
+
+[w1_para]
+w1_used = 1
+gpio = 6     # <==== old: 20, new: 6
+
+
+
+
+
+# --- bin2fex, fex2bin ---
 apt-get install pkg-config
 apt-get install libusb-1.0-0-dev
 git clone git://github.com/linux-sunxi/sunxi-tools.git
