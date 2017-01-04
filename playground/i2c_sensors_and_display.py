@@ -122,7 +122,7 @@ while True:
 #     TODO: add cpu_temp
 #     print("")
 
-     sleep(1)
+     sleep(60)
 
 #     ypos = ypos - velocity
 #     if ypos < -4 * textheight:
