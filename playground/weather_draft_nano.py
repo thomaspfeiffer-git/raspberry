@@ -43,7 +43,7 @@ while True:
                                                     cpu_temp])
      print(strftime("%Y%m%d %X:"), values)
 
-     sleep(1)
+     sleep(60)
 
 # eof #
 
