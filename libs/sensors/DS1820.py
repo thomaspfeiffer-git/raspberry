@@ -61,15 +61,15 @@ class DS1820:
 
    def read (self):
        if self.__platform == Platform.BEAGLEBONE_BLACK: 
-           self.__consume_cpu = Consume_CPU()
-           self.__consume_cpu.start()
+           consume_cpu = Consume_CPU()
+           consume_cpu.start()
    
                # after starting the cpu consuming task, it takes a couple of
                # seconds until the 1-wire device appears in /sys/bus/w1/devices/.
            time.sleep(10)
            value = self.__read_sensor()
-           self.__consume_cpu.stop()
-           self.__consume_cpu.join()
+           consume_cpu.stop()
+           consume_cpu.join()
        else:
            value = self.__read_sensor()
 
