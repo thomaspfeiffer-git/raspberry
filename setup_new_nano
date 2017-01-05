@@ -150,6 +150,30 @@ fdisk -l DietPi_v127_NanoPiNEO-armv7-Jessie.img
 mount -v -o loop,offset=68157440 DietPi_v127_NanoPiNEO-armv7-Jessie.img dietpi/
 
 
+#### i2c (draft, does not work so far) ### 
+
+/boot/config.txt when mounted image or /DietPi/config.txt when running
+#-------i2c-------------
+dtparam=i2c_arm=on
+dtparam=i2c1=on
+dtoverlay=i2c-rtc,ds3231
+
+/DietPi/dietpi/func/dietpi-set_hardware i2c enable
+
+
+##### 1-wire (draft, does not work so far) ####
+
+/DietPi/config.txt
+#-----------w1------------
+dtoverlay=w1-gpio-pullup,gpiopin=203,extpullup=1
+
+modprobe w1-gpio
+modprobe w1-therm
+
+
+
+
+
 
 ############################################################################
 # Armbian
