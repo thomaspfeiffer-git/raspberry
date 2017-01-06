@@ -8,6 +8,9 @@
 """(runs on a Raspberry Pi as well :-) )"""
 
 
+
+import rrdtool
+import signal
 import sys
 from time import sleep, strftime
 
@@ -31,33 +34,74 @@ htu21df  = HTU21DF.HTU21DF()
 cpu      = CPU.CPU()
 
 
-while True:
-     bme280_pressure     = bme280.read_pressure()/100.0
-     bme280_temperature  = bme280.read_temperature()
-     bme280_humidity     = bme280.read_humidity()
-     if platform == Platform.NANOPI:
-         ds1820_1.consume_cpu_start()
-     ds1820_1_temperature = ds1820_1.read_temperature()
-     ds1820_2_temperature = ds1820_2.read_temperature()
-     ds1820_3_temperature = ds1820_3.read_temperature()
-     if platform == Platform.NANOPI:
-         ds1820_1.consume_cpu_stop()
-     htu21df_temperature = htu21df.read_temperature()
-     htu21df_humidity    = htu21df.read_humidity()
-     cpu_temp            = cpu.read_temperature()
-     
-     values = ":".join("{:.2f}".format(d) for d in [bme280_pressure,      \
-                                                    bme280_humidity,      \
-                                                    htu21df_humidity,     \
-                                                    bme280_temperature,   \
-                                                    htu21df_temperature,  \
-                                                    ds1820_1_temperature, \
-                                                    ds1820_2_temperature, \
-                                                    ds1820_3_temperature, \
-                                                    cpu_temp])
-     print(strftime("%Y%m%d %X:"), values)
 
-     sleep(60)
+###############################################################################
+# Main ########################################################################
+def main():
+    """main part"""
+
+    while True:
+        bme280_pressure     = bme280.read_pressure()/100.0
+        bme280_temperature  = bme280.read_temperature()
+        bme280_humidity     = bme280.read_humidity()
+        if platform == Platform.NANOPI:
+            ds1820_1.consume_cpu_start()
+        ds1820_1_temperature = ds1820_1.read_temperature()
+        ds1820_2_temperature = ds1820_2.read_temperature()
+        ds1820_3_temperature = ds1820_3.read_temperature()
+        if platform == Platform.NANOPI:
+            ds1820_1.consume_cpu_stop()
+        htu21df_temperature = htu21df.read_temperature()
+        htu21df_humidity    = htu21df.read_humidity()
+        cpu_temp            = cpu.read_temperature()
+     
+        values = ":".join("{:.2f}".format(d) for d in [bme280_pressure,      \
+                                                       bme280_humidity,      \
+                                                       htu21df_humidity,     \
+                                                       bme280_temperature,   \
+                                                       htu21df_temperature,  \
+                                                       ds1820_1_temperature, \
+                                                       ds1820_2_temperature, \
+                                                       ds1820_3_temperature, \
+                                                       cpu_temp])
+        print(strftime("%Y%m%d %X:"), values)
+   
+        sleep(60)
+
+
+###############################################################################
+# Exit ########################################################################
+def _exit():
+    """cleanup stuff"""
+    sys.exit()
+
+def __exit(__s, __f):
+    """cleanup stuff used for signal handler"""
+    _exit()
+
+
+
+###############################################################################
+###############################################################################
+if __name__ == '__main__':
+    signal.signal(signal.SIGTERM, __exit)
+
+    try:
+        main()
+
+    except KeyboardInterrupt:
+        _exit()
+
+    except SystemExit:              # Done in signal handler (method _exit()) #
+        pass
+
+    except:
+        print(traceback.print_exc())
+        _exit()
+
+    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
+        pass
+
 
 # eof #
 
