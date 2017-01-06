@@ -48,7 +48,7 @@ def get_default_bus():
         else:
             # Revision 2 Pi uses I2C bus 1.
             return 1
-    elif plat == Platform.NANOPI
+    elif plat == Platform.NANOPI:
         return 0 
     else:
         raise RuntimeError('Could not determine default I2C bus for platform.')
