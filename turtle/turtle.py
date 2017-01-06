@@ -108,9 +108,9 @@ def main():
                    DS_LIGHTING
                      
     while (True):
-        measurements[DS_TEMP1].append(temp1.read())
-        measurements[DS_TEMP2].append(temp2.read())
-        measurements[DS_TEMP4].append(temp4.read())
+        measurements[DS_TEMP1].append(temp1.read_temperature())
+        measurements[DS_TEMP2].append(temp2.read_temperature())
+        measurements[DS_TEMP4].append(temp4.read_temperature())
         _temp3, _humi = temphumi.read()
         measurements[DS_TEMP3].append(_temp3)
         measurements[DS_HUMI].append(_humi)

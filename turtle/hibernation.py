@@ -88,7 +88,7 @@ def main():
                    DS_OPEN
 
     while (True):
-        measurements[DS_TEMP1].append(temp_fridge.read())
+        measurements[DS_TEMP1].append(temp_fridge.read_temperature())
         measurements[DS_TEMPCPU].append(temp_cpu.read())
 
         _temp, _humi = temphumi.read()
