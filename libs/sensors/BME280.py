@@ -6,7 +6,7 @@
 ###############################################################################
 """provides a class for handling sensor BME280"""
 
-from time import localtime
+from time import strftime
 import sys
 
 from Adafruit import Adafruit_BME280
@@ -40,7 +40,7 @@ class BME280 (I2C):
                     self.__qvalue_pressure.value = "%.1f" % (value/100.0)
 
             except (IOError, OSError):
-                print(localtime()[3:6], "error reading/writing i2c bus in BME280.read_pressue()")
+                print(strftime("%Y%m%d %X:"), "error reading/writing i2c bus in BME280.read_pressue()")
 
             finally:
                 return self.__lastvalues['pressure']
@@ -54,11 +54,11 @@ class BME280 (I2C):
             try:
                 value = self.__bme.read_temperature()
                 self.__lastvalues['temperature'] = value
-                if self.__qvalue_pressure is not None:
-                    self.__qvalue_pressure.value = "%.1f" % (value)
+                if self.__qvalue_temp is not None:
+                    self.__qvalue_temp.value = "%.1f" % (value)
     
             except (IOError, OSError):
-                print(localtime()[3:6], "error reading/writing i2c bus in BME280.read_temperature()")
+                print(strftime("%Y%m%d %X:"), "error reading/writing i2c bus in BME280.read_temperature()")
 
             finally:
                 return self.__lastvalues['temperature']
@@ -76,7 +76,7 @@ class BME280 (I2C):
                     self.__qvalue_humidity.value = "%.1f" % (value)
     
             except (IOError, OSError):
-                print(localtime()[3:6], "error reading/writing i2c bus in BME280.read_humidity()")
+                print(strftime("%Y%m%d %X:"), "error reading/writing i2c bus in BME280.read_humidity()")
 
             finally:
                 return self.__lastvalues['humidity']
