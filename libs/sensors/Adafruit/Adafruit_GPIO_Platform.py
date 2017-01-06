@@ -22,14 +22,14 @@ import platform
 import re
 
 # Platform identification constants.
-UNKNOWN          = 0
-RASPBERRY_PI     = 1
-BEAGLEBONE_BLACK = 2
-MINNOWBOARD      = 3
+UNKNOWN      = 0
+RASPBERRY_PI = 1
+NANOPI       = 2
+MINNOWBOARD  = 3
 
 def platform_detect():
     """Detect if running on the Raspberry Pi or Beaglebone Black and return the
-    platform type.  Will return RASPBERRY_PI, BEAGLEBONE_BLACK, or UNKNOWN."""
+    platform type.  Will return RASPBERRY_PI, NANOPI, or UNKNOWN."""
     # Handle Raspberry Pi
     pi = pi_version()
     if pi is not None:
@@ -40,11 +40,11 @@ def platform_detect():
     # the platform.
     plat = platform.platform()
     if plat.lower().find('armv7l-with-debian') > -1:
-        return BEAGLEBONE_BLACK
+        return NANOPI
     elif plat.lower().find('armv7l-with-ubuntu') > -1:
-        return BEAGLEBONE_BLACK
+        return NANOPI
     elif plat.lower().find('armv7l-with-glibc2.4') > -1:
-        return BEAGLEBONE_BLACK
+        return NANOPI
         
     # Handle Minnowboard
     # Assumption is that mraa is installed

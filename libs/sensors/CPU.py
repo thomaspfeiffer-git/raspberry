@@ -31,7 +31,7 @@ class CPU:
         plat = Platform.platform_detect()
         if plat == Platform.RASPBERRY_PI:
             return self.__raspberryPi()
-        elif plat == Platform.BEAGLEBONE_BLACK:
+        elif plat == Platform.NANOPI:
             return self.__nanoPi()
         else:
             return None

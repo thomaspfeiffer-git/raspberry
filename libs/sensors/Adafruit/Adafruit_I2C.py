@@ -48,9 +48,8 @@ def get_default_bus():
         else:
             # Revision 2 Pi uses I2C bus 1.
             return 1
-    elif plat == Platform.BEAGLEBONE_BLACK:
-        # Beaglebone Black has multiple I2C buses, default to 1 (P9_19 and P9_20).
-        return 0 ### TODO: detect nano pi air neo properly. TP, 2016-11-18
+    elif plat == Platform.NANOPI
+        return 0 
     else:
         raise RuntimeError('Could not determine default I2C bus for platform.')
 

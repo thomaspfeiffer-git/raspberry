@@ -35,12 +35,12 @@ while True:
      bme280_pressure     = bme280.read_pressure()/100.0
      bme280_temperature  = bme280.read_temperature()
      bme280_humidity     = bme280.read_humidity()
-     if platform == Platform.BEAGLEBONE_BLACK: 
+     if platform == Platform.NANOPI:
          ds1820_1.consume_cpu_start()
      ds1820_1_temperature = ds1820_1.read_temperature()
      ds1820_2_temperature = ds1820_2.read_temperature()
      ds1820_3_temperature = ds1820_3.read_temperature()
-     if platform == Platform.BEAGLEBONE_BLACK: 
+     if platform == Platform.NANOPI:
          ds1820_1.consume_cpu_stop()
      htu21df_temperature = htu21df.read_temperature()
      htu21df_humidity    = htu21df.read_humidity()
