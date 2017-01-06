@@ -17,6 +17,9 @@ from PIL import ImageFont
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
+from Adafruit import Adafruit_GPIO_Platform as Platform
+platform = Platform.platform_detect()
+
 import BME280    # air pressure, temperature, humidity
 import BMP180    # air pressure, temperature
 import DS1820    # temperature
@@ -69,7 +72,11 @@ while True:
      bme280_pressure     = bme280.read_pressure()/100.0
      bme280_temperature  = bme280.read_temperature()
      bme280_humidity     = bme280.read_humidity()
-     ds1820_temperature  = ds1820.read()
+     if platform == Platform.BEAGLEBONE_BLACK: 
+         ds1820_1.consume_cpu_start()
+     ds1820_temperature  = ds1820.read_temperature()
+     if platform == Platform.BEAGLEBONE_BLACK: 
+         ds1820_1.consume_cpu_stop()
      htu21df_temperature = htu21df.read_temperature()
      htu21df_humidity    = htu21df.read_humidity()
      mcp9808_1_temp      = mcp9808_1.read_temperature()
