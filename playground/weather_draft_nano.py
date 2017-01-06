@@ -73,12 +73,13 @@ def main():
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
+    if platform == Platform.NANOPI:
+        ds1820_1.consume_cpu_stop()
     sys.exit()
 
 def __exit(__s, __f):
     """cleanup stuff used for signal handler"""
     _exit()
-
 
 
 ###############################################################################
@@ -101,7 +102,6 @@ if __name__ == '__main__':
 
     finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
         pass
-
 
 # eof #
 
