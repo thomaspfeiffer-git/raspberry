@@ -201,6 +201,12 @@ Things that did not work:
 2) ssh connection often paused
 
 
+
+# i2c
+
+https://forum.armbian.com/index.php/topic/1580-nanopi-neo-air/page-15, post #426
+
+
 # 1-wire 
 # does not run out of the box with Armbian_5.24_Nanopiair_Debian_jessie_3.4.113.img
 # so some nerve-racking manual stuff is necessary.
