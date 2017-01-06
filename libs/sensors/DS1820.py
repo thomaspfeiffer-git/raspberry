@@ -10,8 +10,6 @@ import time
 import sys
 import threading
 
-sys.path.append('../libs/sensors/Adafruit')
-from Adafruit import Adafruit_GPIO_Platform as Platform
 
 class Consume_CPU (threading.Thread):
     """cause of some timing issues of the kernel implementation
@@ -41,7 +39,6 @@ class DS1820:
        self.__id          = id
        self.__qvalue      = qvalue
        self.__lastvalue   = 0
-       self.__platform    = Platform.platform_detect()
    
    def __read_sensor (self):
        try:
@@ -59,19 +56,22 @@ class DS1820:
        finally:
            return self.__lastvalue
 
-   def read (self):
-       if self.__platform == Platform.BEAGLEBONE_BLACK: 
-           consume_cpu = Consume_CPU()
-           consume_cpu.start()
-   
-               # after starting the cpu consuming task, it takes a couple of
-               # seconds until the 1-wire device appears in /sys/bus/w1/devices/.
-           time.sleep(10)
-           value = self.__read_sensor()
-           consume_cpu.stop()
-           consume_cpu.join()
-       else:
-           value = self.__read_sensor()
+   def consume_cpu_start (self):
+       self.__consume_cpu = Consume_CPU()
+       self.__consume_cpu.start()
+
+           # after starting the cpu consuming task, it takes a couple of
+           # seconds until the 1-wire device appears in /sys/bus/w1/devices/.
+       time.sleep(10)
+
+
+   def consume_cpu_stop (self):
+       self.__consume_cpu.stop()
+       self.__consume_cpu.join()
+
+
+   def read_temperature (self):
+       value = self.__read_sensor()
 
        if value is not None:
            if self.__qvalue is not None:
