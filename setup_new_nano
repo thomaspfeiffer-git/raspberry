@@ -75,7 +75,11 @@ schild.smtp.at:/exports/share/pi        /schild nfs comment=systemd.automount,_n
 
 apt-get install i2c-tools -y
 apt-get install python-smbus -y
+
 apt-get install rrdtool python-rrdtool -y
+git clone https://github.com/commx/python-rrdtool
+cd python-rrdtool
+sudo pip3 install rrdtool
 
 # add user fa to group i2c
 usermod -aG i2c fa
