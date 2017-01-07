@@ -51,6 +51,7 @@ Misc
 ====
 
 sudo apt-get install debian-goodies
+sudo apt-get install screen
 
 sudo apt-get install vim  
 
