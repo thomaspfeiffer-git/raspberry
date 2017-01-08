@@ -2,7 +2,7 @@
 ##############################################################################
 # CPU.py                                                                     #
 # Encapsulates CPU temp stuff                                                #
-# (c) https://github.com/thomaspfeiffer-git 2015, 2016                       #
+# (c) https://github.com/thomaspfeiffer-git 2015, 2016, 2017                 #
 ##############################################################################
 """encapsulates CPU temp stuff"""
 
@@ -17,11 +17,10 @@ class CPU:
     def __init__(self):
         pass
 
-
     def __raspberryPi (self):
         res = subprocess.check_output(["vcgencmd", "measure_temp"])
+        res = res.decode()
         return float(res.replace("temp=","").replace("'C\n",""))
-
 
     def __nanoPi (self):
         with open('/sys/class/thermal/thermal_zone0/temp', 'r') as f:
