@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # i2c_sensors_and_display.py                                                  #
-# (c) https://github.com/thomaspfeiffer-git 2016                              #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
 ###############################################################################
 """Tests various i2c sensors and an i2c display"""
-
 
 import sys
 from time import sleep, strftime
