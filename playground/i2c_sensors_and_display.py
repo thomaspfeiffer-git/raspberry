@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 ###############################################################################
 # i2c_sensors_and_display.py                                                  #
@@ -10,9 +10,9 @@
 import sys
 from time import sleep, strftime
 
-# from PIL import Image
-# from PIL import ImageDraw
-# from PIL import ImageFont
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
@@ -49,21 +49,21 @@ display = SSD1306.SSD1306()
 cpu     = CPU.CPU()
 
 
-# display.begin()
-# display.clear()
-# display.display()
+display.begin()
+display.clear()
+display.display()
 
-# width = display.width
-# height = display.height
-# image = Image.new('1', (width, height))
-# draw = ImageDraw.Draw(image)
-# font = ImageFont.load_default()
+width = display.width
+height = display.height
+image = Image.new('1', (width, height))
+draw = ImageDraw.Draw(image)
+font = ImageFont.load_default()
 
-# xpos = 4
+xpos = 4
 ## ypos = height / 2
-# ypos = 4
-# velocity = 1
-# _, textheight = draw.textsize("Text", font=font)
+ypos = 4
+velocity = 1
+_, textheight = draw.textsize("Text", font=font)
 
 
 while True:
@@ -98,40 +98,40 @@ while True:
                                                     cpu_temp])
      print(strftime("%Y%m%d %X:"), values)
 
-#     draw.rectangle((0,0,width,height), outline=0, fill=255)
-#     y = ypos
-#     draw.text((xpos, y), "Zeit: {}".format(strftime("%X")), font=font, fill=0)
-#     y += textheight
-#     draw.text((xpos, y), "Druck: {:>8.2f} hPa".format(bmp180_pressure), font=font, fill=0)
-#     y += textheight
-#     draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(bme280_humidity), font=font, fill=0)
-#     y += textheight
-#     draw.text((xpos, y), "Temp: {:>8.2f} C".format(bme280_temperature), font=font, fill=0)
-#     y += textheight
-#     draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(tsl2561_luminosity), font=font, fill=0)
+     draw.rectangle((0,0,width,height), outline=0, fill=255)
+     y = ypos
+     draw.text((xpos, y), "Zeit: {}".format(strftime("%X")), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Druck: {:>8.2f} hPa".format(bmp180_pressure), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(bme280_humidity), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Temp: {:>8.2f} C".format(bme280_temperature), font=font, fill=0)
+     y += textheight
+     draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(tsl2561_luminosity), font=font, fill=0)
 
-#     l = tsl2561_luminosity if tsl2561_luminosity <= 255 else 255
-#     display.set_contrast(l)
-#     display.image(image)
-#     display.display()
+     l = tsl2561_luminosity if tsl2561_luminosity <= 255 else 255
+     display.set_contrast(l)
+     display.image(image)
+     display.display()
 
-#     print("BMP180     | Druck | {:>8.2f} | hPa     |".format(bmp180_pressure))
-#     print("BME280     | Druck | {:>8.2f} | hPa     |".format(bme280_pressure))
-#     print("BME280     | Humi  | {:>8.2f} | % rF    |".format(bme280_humidity))
-#     print("HTU21DF    | Humi  | {:>8.2f} | % rF    |".format(htu21df_humidity))
-#     print("BMP180     | Temp  | {:>8.2f} | C       |".format(bmp180_temperature))
-#     print("BME280     | Temp  | {:>8.2f} | C       |".format(bme280_temperature))
-#     print("HTU21DF    | Temp  | {:>8.2f} | C       |".format(htu21df_temperature))
-#     print("MCP9808 #1 | Temp  | {:>8.2f} | C       |".format(mcp9808_1_temp))
-#     print("MCP9808 #2 | Temp  | {:>8.2f} | C       |".format(mcp9808_2_temp))
-#     print("DS1820     | Temp  | {:>8.2f} | C       |".format(ds1820_temperature))
-#     print("TLS2561    | Hell  | {:>8.2f} | C       |".format(tsl2561_luminosity))
+     print("BMP180     | Druck | {:>8.2f} | hPa     |".format(bmp180_pressure))
+     print("BME280     | Druck | {:>8.2f} | hPa     |".format(bme280_pressure))
+     print("BME280     | Humi  | {:>8.2f} | % rF    |".format(bme280_humidity))
+     print("HTU21DF    | Humi  | {:>8.2f} | % rF    |".format(htu21df_humidity))
+     print("BMP180     | Temp  | {:>8.2f} | C       |".format(bmp180_temperature))
+     print("BME280     | Temp  | {:>8.2f} | C       |".format(bme280_temperature))
+     print("HTU21DF    | Temp  | {:>8.2f} | C       |".format(htu21df_temperature))
+     print("MCP9808 #1 | Temp  | {:>8.2f} | C       |".format(mcp9808_1_temp))
+     print("MCP9808 #2 | Temp  | {:>8.2f} | C       |".format(mcp9808_2_temp))
+     print("DS1820     | Temp  | {:>8.2f} | C       |".format(ds1820_temperature))
+     print("TLS2561    | Hell  | {:>8.2f} | C       |".format(tsl2561_luminosity))
 #     TODO: add cpu_temp
-#     print("")
+     print("")
 
-     sleep(60)
+     # sleep(1)
 
-#     ypos = ypos - velocity
+#    ypos = ypos - velocity
 #     if ypos < -4 * textheight:
 #         ypos = height / 2
 
