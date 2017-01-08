@@ -17,6 +17,22 @@
 # https://github.com/rm-hull/ssd1306 (fonts!)
 
 
+
+# TODO:
+# try/catch at write_i2c
+# 
+# Traceback (most recent call last):
+#  File "./i2c_sensors_and_display.py", line 115, in <module>
+#    display.display()
+#  File "../libs/SSD1306.py", line 134, in display
+#    I2C._bus.write_i2c_block_data(self._address, control, self.__buffer[i:i+16])
+#  File "../libs/sensors/Adafruit/Adafruit_PureIO_smbus.py", line 274, in write_i2c_block_data
+#    self._device.write(data)
+# OSError: [Errno 5] Input/output error
+
+
+
+
 import sys
 sys.path.append('../libs')
 from i2c import I2C
