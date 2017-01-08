@@ -71,6 +71,7 @@ sudo apt-get install python3-pip
 sudo apt-get install python-imaging
 
 # python3 imaging
+sudo apt-get install libjpeg8-dev
 sudo pip3 install Pillow
 
 
