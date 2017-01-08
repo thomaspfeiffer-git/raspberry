@@ -10,9 +10,9 @@
 import sys
 from time import sleep, strftime
 
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
+# from PIL import Image
+# from PIL import ImageDraw
+# from PIL import ImageFont
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
@@ -49,21 +49,21 @@ display = SSD1306.SSD1306()
 cpu     = CPU.CPU()
 
 
-display.begin()
-display.clear()
-display.display()
+# display.begin()
+# display.clear()
+# display.display()
 
-width = display.width
-height = display.height
-image = Image.new('1', (width, height))
-draw = ImageDraw.Draw(image)
-font = ImageFont.load_default()
+# width = display.width
+# height = display.height
+# image = Image.new('1', (width, height))
+# draw = ImageDraw.Draw(image)
+# font = ImageFont.load_default()
 
-xpos = 4
-# ypos = height / 2
-ypos = 4
-velocity = 1
-_, textheight = draw.textsize("Text", font=font)
+# xpos = 4
+## ypos = height / 2
+# ypos = 4
+# velocity = 1
+# _, textheight = draw.textsize("Text", font=font)
 
 
 while True:
@@ -73,10 +73,10 @@ while True:
      bme280_temperature  = bme280.read_temperature()
      bme280_humidity     = bme280.read_humidity()
      if platform == Platform.NANOPI:
-         ds1820_1.consume_cpu_start()
+         ds1820.consume_cpu_start()
      ds1820_temperature  = ds1820.read_temperature()
      if platform == Platform.NANOPI:
-         ds1820_1.consume_cpu_stop()
+         ds1820.consume_cpu_stop()
      htu21df_temperature = htu21df.read_temperature()
      htu21df_humidity    = htu21df.read_humidity()
      mcp9808_1_temp      = mcp9808_1.read_temperature()
@@ -98,17 +98,17 @@ while True:
                                                     cpu_temp])
      print(strftime("%Y%m%d %X:"), values)
 
-     draw.rectangle((0,0,width,height), outline=0, fill=255)
-     y = ypos
-     draw.text((xpos, y), "Zeit: {}".format(strftime("%X")), font=font, fill=0)
-     y += textheight
-     draw.text((xpos, y), "Druck: {:>8.2f} hPa".format(bmp180_pressure), font=font, fill=0)
-     y += textheight
-     draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(bme280_humidity), font=font, fill=0)
-     y += textheight
-     draw.text((xpos, y), "Temp: {:>8.2f} C".format(bme280_temperature), font=font, fill=0)
-     y += textheight
-     draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(tsl2561_luminosity), font=font, fill=0)
+#     draw.rectangle((0,0,width,height), outline=0, fill=255)
+#     y = ypos
+#     draw.text((xpos, y), "Zeit: {}".format(strftime("%X")), font=font, fill=0)
+#     y += textheight
+#     draw.text((xpos, y), "Druck: {:>8.2f} hPa".format(bmp180_pressure), font=font, fill=0)
+#     y += textheight
+#     draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(bme280_humidity), font=font, fill=0)
+#     y += textheight
+#     draw.text((xpos, y), "Temp: {:>8.2f} C".format(bme280_temperature), font=font, fill=0)
+#     y += textheight
+#     draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(tsl2561_luminosity), font=font, fill=0)
 
 #     l = tsl2561_luminosity if tsl2561_luminosity <= 255 else 255
 #     display.set_contrast(l)
