@@ -2,7 +2,7 @@
 ###############################################################################
 # ssd1306.py                                                                  #
 # Control of OLED Display SSD1306 (128 x 64)                                  #
-# (c) https://github.com/thomaspfeiffer-git 2016                              #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
 ###############################################################################
 """provides a class for handling the oled display SSD1306 (128 x 64)"""
 
@@ -15,22 +15,6 @@
 # Additional information:
 # https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=105635
 # https://github.com/rm-hull/ssd1306 (fonts!)
-
-
-
-# TODO:
-# try/catch at write_i2c
-# 
-# Traceback (most recent call last):
-#  File "./i2c_sensors_and_display.py", line 115, in <module>
-#    display.display()
-#  File "../libs/SSD1306.py", line 134, in display
-#    I2C._bus.write_i2c_block_data(self._address, control, self.__buffer[i:i+16])
-#  File "../libs/sensors/Adafruit/Adafruit_PureIO_smbus.py", line 274, in write_i2c_block_data
-#    self._device.write(data)
-# OSError: [Errno 5] Input/output error
-
-
 
 
 import sys
@@ -144,10 +128,17 @@ class SSD1306 (I2C):
         self.__command(self.width-1)   # Column end address.
         self.__command(SSD1306.PAGEADDR)
         self.__command(0)              # Page start address. (0 = reset)
-        self.__command(self.__pages-1)  # Page end address.
+        self.__command(self.__pages-1) # Page end address.
+        control = 0x40   # Co = 0, DC = 0
         for i in range(0, len(self.__buffer), 16):
-            control = 0x40   # Co = 0, DC = 0
-            I2C._bus.write_i2c_block_data(self._address, control, self.__buffer[i:i+16])
+            try:
+                I2C._bus.write_i2c_block_data(self._address, control, self.__buffer[i:i+16])
+            except (IOError, OSError):
+                # continue with next line on exception.
+                # this might lead to some broken images but will kind
+                # of self repair with the next call of display().
+                # maybe TODO: full new display()
+                print(strftime("%Y%m%d %X:"), "error writing i2c bus in SSD1306.display(), displaying line", i)
 
 
     def image (self, image):
