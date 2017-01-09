@@ -125,7 +125,7 @@ while True:
      print("MCP9808 #2 | Temp  | {:>8.2f} | C       |".format(mcp9808_2_temp))
      print("DS1820     | Temp  | {:>8.2f} | C       |".format(ds1820_temperature))
      print("TLS2561    | Hell  | {:>8.2f} | C       |".format(tsl2561_luminosity))
-#     TODO: add cpu_temp
+     print("CPU        | Temo  | {:>8.2f} | C       |".format(cpu_temp))
      print("")
 
      # sleep(1)
