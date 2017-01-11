@@ -17,6 +17,7 @@
 # https://github.com/rm-hull/ssd1306 (fonts!)
 
 
+from time import sleep
 import sys
 sys.path.append('../libs')
 from i2c import I2C
@@ -103,15 +104,26 @@ class SSD1306 (I2C):
 
     def __command (self, c):
         """Send command byte to display."""
+        retry = 0
+        max_retries = 5
         control = 0x00   # Co = 0, DC = 0
-        I2C._bus.write_byte_data(self._address, control, c)
 
+        while retry < max_retries:
+            try:
+                I2C._bus.write_byte_data(self._address, control, c)
+            except (IOError, OSError):
+                print(strftime("%Y%m%d %X:"), "error writing i2c bus in SSD1306.__command()i; retry #", retry)
+                sleep(0.5)
+                retry += 1
+        if retry >= max_retries:
+            sys.exit()
+                
 
-    def __data (self, c):
-        """Send byte of data to display."""
-        # I2C write.
-        control = 0x40   # Co = 0, DC = 0
-        I2C._bus.write_byte_data(self._address, control, c)
+#    def __data (self, c):
+#        """Send byte of data to display."""
+#        # I2C write.
+#        control = 0x40   # Co = 0, DC = 0
+#        I2C._bus.write_byte_data(self._address, control, c)
 
 
     def begin (self):
