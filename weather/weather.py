@@ -1,47 +1,39 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#############################################################################
-# weather.py                                                                #
-# Monitor temperature, humidity, and air pressure in our living room        #
-# and outside.                                                              #
-# (c) https://github.com/thomaspfeiffer-git 2015, 2016                      #
-#############################################################################
-"""Monitor temperature, humidity, and air pressure"""
+###############################################################################
+# weather.py                                                                  #
+# Monitors temperature, humidity, and air pressure in our living room         #
+# and outside.                                                                #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
+###############################################################################
+"""this new version runs on a NanoPi NEO Air"""
+"""(runs on a Raspberry Pi as well :-) )"""
 
 
 import rrdtool
 import signal
 import sys
 from threading import Lock
-import time
+from time import sleep, strftime
 import traceback
-
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
-from BMP180 import BMP180
-from CPU import CPU
-from DHT22_AM2302 import DHT22_AM2302
-from DS1820 import DS1820
+
+from Adafruit import Adafruit_GPIO_Platform as Platform
+platform = Platform.platform_detect()
+
+import BME280    # air pressure, temperature, humidity; indoor
+import DS1820    # temperature
+import HTU21DF   # temperature, humidity; outdoor
+import CPU
+
 from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock, SensorValue
 
 
-## Sensors ##################
-#+ Outdoor ##################
-# DHT22/AM2302 (humidity, air pressure)
-pin_sensor_outdoor     = 40
-pin_sensor_outdoor_bcm = 21
-
-## Indoor ###################
-# DHT22/AM2302 (humidity, air pressure)
-pin_sensor_indoor      = 38
-pin_sensor_indoor_bcm  = 20
-
-
 # Misc for rrdtool
 DATAFILE           = "/schild/weather/weather.rrd"
-ERROR              = -999.99
 DS_TEMPINDOOR      = "temp_indoor" 
 DS_TEMPOUTDOOR     = "temp_outdoor"
 DS_HUMIINDOOR      = "humi_indoor"
@@ -53,34 +45,11 @@ DS_TEMPCPU         = "temp_cpu"
 
 
 
-################################################################################
-# Exit ########################################################################
-def Exit():
-    """cleanup stuff"""
-    Log('Cleaning up ...')
-    sq.stop()
-    sq.join()
-    sys.exit()
 
-def _Exit(__s, __f):
-    """cleanup stuff used for signal handler"""
-    Exit()
-
-
-################################################################################
-# Log ##########################################################################
-def Log(message):
-    """prints debug messages"""
-    if bDebug:
-        print(message)
-
-
-################################################################################
-# Main #########################################################################
-def Main():
-    """initialize lots of sensor values for the sensor value queue
-       initialize the sensors
-       poll the sensor in a loop and write data to rrd"""
+###############################################################################
+# Main ########################################################################
+def main():
+    """main part"""
 
     qvalue_temp_indoor      = SensorValueLock("ID_01", "TempWohnzimmerIndoor", SensorValue.Types.Temp, u'°C', Lock())
     qvalue_humi_indoor      = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", SensorValue.Types.Humi, u'% rF', Lock())
@@ -99,12 +68,14 @@ def Main():
     sq.register(qvalue_temp_indoor2)
     sq.start()
 
-    tempcpu        = CPU()
-    th_indoor      = DHT22_AM2302(pin_sensor_indoor_bcm, qvalue_temp_indoor, qvalue_humi_indoor)
-    th_outdoor     = DHT22_AM2302(pin_sensor_outdoor_bcm, qvalue_temp_outdoor, qvalue_humi_outdoor)
-    bmp180         = BMP180(qvalue_pressure)
-    th_realoutdoor = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qvalue_temp_realoutdoor)
-    th_indoor2     = DS1820("/sys/bus/w1/devices/28-000006dc8d42/w1_slave", qvalue_temp_indoor2)
+    bme280   = BME280.BME280(qvalue_pressure=qvalue_pressure, \
+                             qvalue_temp=qvalue_temp_indoor,  \
+                             qvalue_humi=qvalue_humi_indoor)
+    global ds1820_1
+    ds1820_1 = DS1820.DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qvalue_temp_realoutdoor)
+    ds1820_2 = DS1820.DS1820("/sys/bus/w1/devices/28-000006dc8d42/w1_slave", qvalue_temp_indoor2)
+    htu21df  = HTU21DF.HTU21DF(qvalue_temp=qvalue_temp_outdoor, qvalue_humi=qvalue_humi_outdoor)
+    cpu      = CPU.CPU()
 
     rrd_template    = DS_TEMPINDOOR      + ":" + \
                       DS_TEMPOUTDOOR     + ":" + \
@@ -116,70 +87,75 @@ def Main():
                       DS_TEMPCPU
 
 
-    # Default values for startup
-    temp_indoor, humi_indoor   = (-99.99, -99.99)
-    temp_outdoor, humi_outdoor = (0.00, 0.00)
-    pressure                   = (0.00)
-    temp_cpu                   = (-99.99)
-    temp_realoutdoor           = (-99.99) 
-    temp_indoor2               = (-99.99) 
-
-    while(True):
-        temp_indoor, humi_indoor   = tuple([ list(th_indoor.read())[i] or list((temp_indoor, humi_indoor))[i] for i in range(2) ])
-        temp_outdoor, humi_outdoor = tuple([ list(th_outdoor.read())[i] or list((temp_outdoor, humi_outdoor))[i] for i in range(2) ])
-        pressure                   = bmp180.read_pressure() or pressure
-        temp_cpu                   = tempcpu.read_temperature() or temp_cpu
-        temp_realoutdoor           = th_realoutdoor.read_temperature() or temp_realoutdoor
-        temp_indoor2               = th_indoor2.read_temperature() or temp_indoor2
-
-        print "DS1820 outdoor: ", time.strftime("%x %X"), "---", temp_realoutdoor
-
-        rrd_data = "N:{:.2f}".format(temp_indoor)      + \
-                    ":{:.2f}".format(temp_outdoor)     + \
-                    ":{:.2f}".format(humi_indoor)      + \
-                    ":{:.2f}".format(humi_outdoor)     + \
-                    ":{:.2f}".format(temp_realoutdoor) + \
-                    ":{:.2f}".format(temp_indoor2)     + \
-                    ":{:.2f}".format(pressure / 100.0) + \
-                    ":{:.2f}".format(temp_cpu)
-
+    while True:
+        bme280_pressure     = bme280.read_pressure()/100.0   # indoor #
+        bme280_temperature  = bme280.read_temperature()
+        bme280_humidity     = bme280.read_humidity()
+        if platform == Platform.NANOPI:
+            ds1820_1.consume_cpu_start()
+        ds1820_1_temperature = ds1820_1.read_temperature()
+        ds1820_2_temperature = ds1820_2.read_temperature()
+        if platform == Platform.NANOPI:
+            ds1820_1.consume_cpu_stop()
+        htu21df_temperature = htu21df.read_temperature()     # outdoor #
+        htu21df_humidity    = htu21df.read_humidity()
+        cpu_temp            = cpu.read_temperature()
+     
+        rrd_data = "N:" + \
+                   ":".join("{:.2f}".format(d) for d in [bme280_temperature,   \
+                                                         htu21df_temperature,  \
+                                                         bme280_humidity,      \
+                                                         htu21df_humidity,     \
+                                                         ds1820_1_temperature, \
+                                                         ds1820_2_temperature, \
+                                                         bme280_temperature,   \
+                                                         cpu_temp])
+                                                          
+        print(strftime("%Y%m%d %X:"), rrd_data)
         rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
-        print rrd_data
    
-        Log(rrd_template)
-        Log(rrd_data)
-
-        Log("CPU Temperatur: {:.2f} °C".format(temp_cpu))
-        Log("Temperatur DHT (outdoor): {:.2f} °C".format(temp_outdoor))
-        Log("Luftfeuchtigkeit DHT (outdoor): {:.2f} %".format(humi_outdoor))
-        Log("Temperatur DHT (indoor): {:.2f} °C".format(temp_indoor))
-        Log("Luftfeuchtigkeit DHT (indoor): {:.2f} %".format(humi_indoor))
-        Log("Temperatur ganz außen: {:.2f} °C".format(temp_realoutdoor))
-        Log("Temperatur innen 2: {:.2f} °C".format(temp_indoor2))
-        Log("Temperatur BMP: {:.2f} °C".format(temp_indoor))
-        Log("Luftdruck BMP: {:.2f} hPa".format(pressure / 100.0))
+        sleep(45)
 
 
-################################################################################
+###############################################################################
+# Exit ########################################################################
+def _exit():
+    """cleanup stuff"""
+    print("in _exit()")
+    sq.stop()
+    sq.join()
+    if platform == Platform.NANOPI:
+        print("calling ds1820_1.consume_cpu_stop()")
+        ds1820_1.consume_cpu_stop()
+    sys.exit()
+
+def __exit(__s, __f):
+    """cleanup stuff used for signal handler"""
+    print("in __exit()")
+    _exit()
+
+
+###############################################################################
+###############################################################################
 if __name__ == '__main__':
-    signal.signal(signal.SIGTERM, _Exit)
-    bDebug = True if (len(sys.argv) > 1) and (sys.argv[1] in ['-v', '-V']) \
-             else False
+    signal.signal(signal.SIGTERM, __exit)
 
     try:
+        ds1820_1 = None
         sq = SensorQueueClient_write()
-        Main()
+        main()
 
     except KeyboardInterrupt:
-        Exit()
+        _exit()
 
-    except SystemExit:                 # Done in signal handler (method _Exit()) #
+    except SystemExit:              # Done in signal handler (method _exit()) #
         pass
 
     except:
         print(traceback.print_exc())
+        _exit()
 
-    finally:
+    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
         pass
 
 # eof #
