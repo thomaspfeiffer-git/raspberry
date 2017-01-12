@@ -108,9 +108,10 @@ def main():
                                                          htu21df_humidity,     \
                                                          ds1820_1_temperature, \
                                                          ds1820_2_temperature, \
-                                                         bme280_temperature,   \
+                                                         bme280_pressure,   \
                                                          cpu_temp])
                                                           
+        print(rrd_template)
         print(strftime("%Y%m%d %X:"), rrd_data)
         rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
    
