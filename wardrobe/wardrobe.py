@@ -105,7 +105,6 @@ class Sensor (threading.Thread):
         self.__running = False
 
 
-
 ###############################################################################
 # Actor #######################################################################
 class Actor (object):
@@ -149,7 +148,7 @@ class Control (threading.Thread):
                 self.__actor.on()
             else:
                 self.__actor.off()
-            sleep(0.2)
+            sleep(0.1)
 
         self.__actor.off() # Turn light off on exit.
 
