@@ -118,14 +118,13 @@ class Actor (I2C):
         self.__lightness = 0
 
     def on (self):
-        if self.__lightness > 0:
-            self.__lightness -= 1
+        if self.__lightness < 1024:
+            self.__lightness += 1
         print("Actor: set to on (lightness: {})".format(self.__lightness))
 
-
     def off (self):
-        if self.__lightness < 1024
-            self.__lightness += 1
+        if self.__lightness > 0:
+            self.__lightness -= 1
         print("Actor: set to off (lightness: {})".format(self.__lightness))
 
 
