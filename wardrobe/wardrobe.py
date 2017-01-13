@@ -115,12 +115,18 @@ class Actor (I2C):
         self.__pwm_id = pwm_id
         # Future:
         # self.pwm = PWM(pwm_id)
+        self.__lightness = 0
 
     def on (self):
-        print("Actor: set to on")
+        if self.__lightness > 0:
+            self.__lightness -= 1
+        print("Actor: set to on (lightness: {})".format(self.__lightness))
+
 
     def off (self):
-        print("Actor: set to off")
+        if self.__lightness < 1024
+            self.__lightness += 1
+        print("Actor: set to off (lightness: {})".format(self.__lightness))
 
 
 ###############################################################################
