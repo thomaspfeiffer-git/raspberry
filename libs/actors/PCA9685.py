@@ -34,6 +34,7 @@ class PCA9685 (I2C):
         self._address = address
         if PCA9685._first:   # reset on first init
             self.all_reset()
+            self.set_freq(500)
             PCA9685._first = False
 
     def __read (self, reg):
