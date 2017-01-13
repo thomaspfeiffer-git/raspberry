@@ -63,7 +63,7 @@ class HTU21DF (I2C):
             t = ((t / 65536.0) * 175.72 ) - 46.85
             self.__lastvalues['temperature'] = t
             if self.__qvalue_temp is not None:
-                self.__qvalue_temp.value = "%.1f" % (value)
+                self.__qvalue_temp.value = "%.1f" % (t)
 
         except (IOError, OSError):
             print(strftime("%Y%m%d %X:"), "error reading/writing i2c bus in HTU21DF.read_temperature()")
@@ -82,7 +82,7 @@ class HTU21DF (I2C):
             h = h + (25 - t) * -0.15
             self.__lastvalues['humidity'] = h
             if self.__qvalue_humidity is not None:
-                self.__qvalue_humidity.value = "%.1f" % (value)
+                self.__qvalue_humidity.value = "%.1f" % (h)
 
         except (IOError, OSError):
             print(strftime("%Y%m%d %X:"), "error reading/writing i2c bus in HTU21DF.read_humidity()")
