@@ -82,35 +82,13 @@ Libs:
 
 wiringPi
 --------
-
 https://github.com/WiringPi/WiringPi-Python/blob/master/README.md
 
 
-legacy
-------
-
-http://raspi.tv/how-to-install-wiringpi2-for-python-on-the-raspberry-pi
-
-sudo apt-get install python-dev python-pip
-sudo pip install wiringpi2
-
-
-wiringPi for Python3:
-
-https://gist.github.com/bhargavrpatel/0d76562d0b9e9c13557f
-
-# Install python3-dev and python3-setuptools
-sudo apt-get install build-essential python3-dev python3-setuptools \
-                     python3-numpy python3-scipy \
-                     libatlas-dev libatlas3gf-base
-                     
-
-# Install wiringpi itself
-git clone git://git.drogon.net/wiringPi && cd wiringPi && sudo ./build && cd ..
-
-# Install wiringpi2 for Python3
-git clone https://github.com/Gadgetoid/WiringPi2-Python.git && cd WiringPi2-Python && sudo python3 setup.py install && cd .. 
-
+RPi.GPIO
+--------
+https://sourceforge.net/p/raspberry-gpio-python/wiki/BasicUsage/
+https://sourceforge.net/p/raspberry-gpio-python/wiki/install/
 
 
 
