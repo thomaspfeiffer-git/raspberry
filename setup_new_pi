@@ -83,6 +83,12 @@ Libs:
 wiringPi
 --------
 
+https://github.com/WiringPi/WiringPi-Python/blob/master/README.md
+
+
+legacy
+------
+
 http://raspi.tv/how-to-install-wiringpi2-for-python-on-the-raspberry-pi
 
 sudo apt-get install python-dev python-pip
@@ -90,7 +96,6 @@ sudo pip install wiringpi2
 
 
 wiringPi for Python3:
----------------------
 
 https://gist.github.com/bhargavrpatel/0d76562d0b9e9c13557f
 
