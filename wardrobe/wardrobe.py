@@ -108,7 +108,7 @@ class Sensor (threading.Thread):
 
 ###############################################################################
 # Actor #######################################################################
-class Actor (I2C):
+class Actor (object):
     """turns light on and off (via PWM)"""
 
     def __init__ (self, pwm_id):
