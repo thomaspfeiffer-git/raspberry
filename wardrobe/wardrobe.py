@@ -7,6 +7,7 @@
 """controls lighting of my wardrobe"""
 
 from enum import Enum
+import RPi.GPIO as io
 import signal
 import sys
 from time import sleep
@@ -22,6 +23,15 @@ from i2c import I2C
 # #3        | pin 35  | pin 36   | bottom drawer (opt.)
 # #4        | pin 37  | pin 38   | top area (opt.)
 
+Sensor1_Pin = 15   # phys pin id
+Sensor2_Pin = 31
+Sensor3_Pin = 35
+Sensor4_Pin = 37
+
+
+
+# gpio -1 mode 15 in
+# gpio -1 read 15
 
 
 # Lib: libs/pwm.py
@@ -36,11 +46,13 @@ from i2c import I2C
 # http://raspberrypihobbyist.blogspot.co.at/2014/11/debouncing-gpio-input.html
 
 
-class Switch(Enum):
+class Switch (Enum):
     OFF = 0
     ON  = 1
 
 
+###############################################################################
+# Lightness ###################################################################
 class Lightness (threading.Thread):
     """read lightness value from sensor"""
     """provide lightness value in getter method"""
@@ -60,6 +72,8 @@ class Lightness (threading.Thread):
         self.__running = False
 
 
+###############################################################################
+# Sensor ######################################################################
 class Sensor (threading.Thread):
     """reads value of switch using GPIO"""
 
@@ -68,6 +82,10 @@ class Sensor (threading.Thread):
         self.__pin   = pin
         self.__lock  = threading.Lock()
         self.__value = Switch.OFF
+
+        io.setmode(io.BOARD)
+        io.setup(self.__pin, io.IN)
+        io.setup(self.__pin, io.IN, pull_up_down=io.PUD_UP)
 
         self.__running = True
 
@@ -78,31 +96,35 @@ class Sensor (threading.Thread):
 
     def run (self):
         while self.__running:
+            v = Switch.OFF if io.input(self.__pin) == 0 else Switch.ON
+            with self.__lock:
+                self.__value = v
             sleep(0.1) 
-            # TODO: read gpio, maybe debouncing necessary
-
 
     def stop (self):
         self.__running = False
 
 
 
+###############################################################################
+# Actor #######################################################################
 class Actor (I2C):
     """turns light on and off (via PWM)"""
 
     def __init__ (self, pwm_id):
         self.__pwm_id = pwm_id
         # Future:
-        self.pwm = PWM(pwm_id)
+        # self.pwm = PWM(pwm_id)
 
     def on (self):
-        pass
+        print("Actor: set to on")
 
     def off (self):
-        pass
+        print("Actor: set to off")
 
 
-
+###############################################################################
+# Control #####################################################################
 class Control (threading.Thread):
     """detects an open door and switches light on"""
 
@@ -159,7 +181,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, __exit)
 
     try:
-        c1 = Control(0, 0)
+        c1 = Control(Sensor1_Pin, 0)
         main()
 
     except KeyboardInterrupt:
