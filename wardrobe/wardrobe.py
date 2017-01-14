@@ -146,6 +146,10 @@ class Actor (object):
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
         print("Actor: set to off (lightness: {})".format(self.__lightness))
 
+    def immediate_off (self):
+        self.__lightness = PWM.MIN
+        self.off()
+
 
 ###############################################################################
 # Control #####################################################################
@@ -170,7 +174,7 @@ class Control (threading.Thread):
                 self.__actor.off()
             sleep(0.02)
 
-        self.__actor.off() # Turn light off on exit.
+        self.__actor.immediate_off() # Turn light off on exit.
 
     def stop (self):
         self.__running = False
