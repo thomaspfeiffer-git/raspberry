@@ -39,7 +39,7 @@ class PCA9685 (I2C):
     def __init__ (self, address=PCA9685_ADDRESS, frequency=500, lock=None):
         super().__init__(lock)
 
-        self._address = address
+        self.__address = address
         if PCA9685._first:   # reset on first init
             self.all_reset()
             self.set_freq(frequency)
@@ -56,17 +56,17 @@ class PCA9685 (I2C):
 
     def __sleep (self):
         """Send the controller to sleep"""
-        self.__write(MODE1, self.__read(MODE1) | (1 << SLEEP))
+        self.__write(self.MODE1, self.__read(self.MODE1) | (1 << self.SLEEP))
 
     def __wake (self):
         """Wake up the controller"""
-        self.__write(MODE1, self.__read(MODE1) & (255 - (1 << SLEEP)))
+        self.__write(self.MODE1, self.__read(self.MODE1) & (255 - (1 << self.SLEEP)))
         time.sleep(0.005)  # wait for oscillator
 
     def all_reset (self):
         # self.set_all_pwm(0, 0)
-        self.__write(MODE1, ALLCALL)
-        self.__write(MODE2, OUTDRV)
+        self.__write(self.MODE1, self.ALLCALL)
+        self.__write(self.MODE2, self.OUTDRV)
         time.sleep(0.005)  # wait for oscillator
         self.__wake()
 
@@ -78,15 +78,15 @@ class PCA9685 (I2C):
         prescale = int(round(prescaleval))
 
         self.__sleep()
-        self.__write(PRE_SCALE, prescale)
+        self.__write(self.PRE_SCALE, prescale)
         self.__wake()
 
     def set_pwm (self, channel, on, off):
         print("PWM: set on/off to {}/{}".format(on, off))
-        self.__write(LED0_ON_L+4*channel, on & 0xFF)
-        self.__write(LED0_ON_H+4*channel, on >> 8)
-        self.__write(LED0_OFF_L+4*channel, off & 0xFF)
-        self.__write(LED0_OFF_H+4*channel, off >> 8)
+        self.__write(self.LED0_ON_L+4*channel, on & 0xFF)
+        self.__write(self.LED0_ON_H+4*channel, on >> 8)
+        self.__write(self.LED0_OFF_L+4*channel, off & 0xFF)
+        self.__write(self.LED0_OFF_H+4*channel, off >> 8)
 
 # eof #
 
