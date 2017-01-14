@@ -21,8 +21,8 @@ from PIL import ImageFont
 
 sys.path.append("../libs/")
 from i2c import I2C
-from actors.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
-from actors.SSD1306 import SSD1306
+from actuator.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
+from actuator.SSD1306 import SSD1306
 from sensors.HTU21DF import HTU21DF
 from sensors.TSL2561 import TSL2561 
 
@@ -42,10 +42,10 @@ Sensor2_Pin = 31
 Sensor3_Pin = 35
 Sensor4_Pin = 37
 
-Actor1_ID   = 0
-Actor2_ID   = 1
-Actor3_ID   = 2
-Actor4_ID   = 3
+Actuator1_ID   = 0
+Actuator2_ID   = 1
+Actuator3_ID   = 2
+Actuator4_ID   = 3
 
 
 # I2C._lock() works on a very low level, so an additional locking
@@ -136,8 +136,8 @@ class PWM (PCA9685):
 
 
 ###############################################################################
-# Actor #######################################################################
-class Actor (object):
+# Actuator ####################################################################
+class Actuator (object):
     """turns light on and off (via PWM)"""
 
     def __init__ (self, pwm_id):
@@ -171,7 +171,7 @@ class Actor (object):
 
         self._adjust_lightness()
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
-        # print("Actor: set to on (lightness: {})".format(self.__lightness))
+        # print("Actuator: set to on (lightness: {})".format(self.__lightness))
 
     def off (self):
         """door closed"""
@@ -179,7 +179,7 @@ class Actor (object):
         if self.__lightness < PWM.MIN:
             self.__lightness = PWM.MIN
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
-        # print("Actor: set to off (lightness: {})".format(self.__lightness))
+        # print("Actuator: set to off (lightness: {})".format(self.__lightness))
 
     def immediate_off (self):
         """called on program exit"""
@@ -192,10 +192,10 @@ class Actor (object):
 class Control (threading.Thread):
     """detects an open door and switches light on"""
 
-    def __init__ (self, sensor_id, actor_id):
+    def __init__ (self, sensor_id, actuator_id):
         threading.Thread.__init__(self)
-        self.__sensor = Sensor(sensor_id)
-        self.__actor  = Actor(actor_id)
+        self.__sensor   = Sensor(sensor_id)
+        self.__actuator = Actuator(actuator_id)
 
         self.__sensor.start()
 
@@ -205,12 +205,12 @@ class Control (threading.Thread):
         while self.__running:
             switch = self.__sensor.value
             if switch == Switch.ON:
-                self.__actor.on()
+                self.__actuator.on()
             else:
-                self.__actor.off()
+                self.__actuator.off()
             sleep(0.02)
 
-        self.__actor.immediate_off() # Turn light off on exit.
+        self.__actuator.immediate_off() # Turn light off on exit.
 
     def stop (self):
         self.__running = False
@@ -290,9 +290,9 @@ if __name__ == '__main__':
     try:
         lightness = Lightness()
         controls  = []
-        controls.append(Control(Sensor1_Pin, Actor1_ID))
-        # controls.append(Control(Sensor2_Pin, Actor2_ID))
-        # controls.append(Control(Sensor3_Pin, Actor3_ID))
+        controls.append(Control(Sensor1_Pin, Actuator1_ID))
+        # controls.append(Control(Sensor2_Pin, Actuator2_ID))
+        # controls.append(Control(Sensor3_Pin, Actuator3_ID))
         main()
 
     except KeyboardInterrupt:
