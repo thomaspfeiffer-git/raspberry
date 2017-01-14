@@ -130,7 +130,7 @@ class Actor (object):
     def __init__ (self, pwm_id):
         self.pwm = PWM(pwm_id)
         self.__lightness = 0
-        self.__stepsize = 100
+        self.__stepsize = 40
 
     def on (self):
         self.__lightness += self.__stepsize
@@ -168,7 +168,7 @@ class Control (threading.Thread):
                 self.__actor.on()
             else:
                 self.__actor.off()
-            sleep(0.1)
+            sleep(0.02)
 
         self.__actor.off() # Turn light off on exit.
 
