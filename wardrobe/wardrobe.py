@@ -48,6 +48,8 @@ Actor3_ID   = 2
 Actor4_ID   = 3
 
 
+# I2C._lock() works on a very low level, so an additional locking
+# is needed (which makes I2C._lock() quite redundant unfortunately.
 central_i2c_lock = threading.Lock()
 
 
@@ -169,7 +171,7 @@ class Actor (object):
         self._adjust_lightness()
         with central_i2c_lock:
             self.pwm.set_pwm(PWM.MAX-self.__lightness)
-        print("Actor: set to on (lightness: {})".format(self.__lightness))
+        # print("Actor: set to on (lightness: {})".format(self.__lightness))
 
     def off (self):
         """door closed"""
