@@ -10,14 +10,24 @@ from enum import Enum
 import RPi.GPIO as io
 import signal
 import sys
-from time import sleep
+from time import sleep, strftime
 import threading
 import traceback
 
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+
+
+
+
 sys.path.append("../libs/")
 from i2c import I2C
-from actors.PCA9685 import PCA9685
+from actors.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
+from actors.SSD1306 import SSD1306
+from sensors.HTU21DF import HTU21DF
 from sensors.TSL2561 import TSL2561 
+
 
 
 # sensor id | gpio-in | gpio-out | usage |
@@ -117,7 +127,7 @@ class Sensor (threading.Thread):
 # PWM #########################################################################
 class PWM (PCA9685):
     def __init__ (self, channel):
-        super().__init__()
+        super().__init__(address=PCA9685_BASE_ADDRESS+1)
         self.__channel = channel
 
     def set_pwm (self, on):
@@ -146,14 +156,14 @@ class Actor (object):
         if self.__lightness > PWM.MAX:
             self.__lightness = PWM.MAX
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
-        print("Actor: set to on (lightness: {})".format(self.__lightness))
+        # print("Actor: set to on (lightness: {})".format(self.__lightness))
 
     def off (self):
         self.__lightness -= self.__stepsize
         if self.__lightness < PWM.MIN:
             self.__lightness = PWM.MIN
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
-        print("Actor: set to off (lightness: {})".format(self.__lightness))
+        # print("Actor: set to off (lightness: {})".format(self.__lightness))
 
     def immediate_off (self):
         self.__lightness = PWM.MIN
@@ -193,10 +203,45 @@ class Control (threading.Thread):
 ###############################################################################
 # Main ########################################################################
 def main ():
+    display = SSD1306()
+    htu21df = HTU21DF()
+
+    display.begin()
+    display.clear()
+    display.display()
+    display.set_contrast(255)
+
+    width = display.width
+    height = display.height
+    image = Image.new('1', (width, height))
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default()
+
+    xpos = 4
+    ypos = 4
+    _, textheight = draw.textsize("Text", font=font)
+
     lightness.start()
     c1.start()
     while True:
-        sleep(0.1)
+        htu21df_temperature = htu21df.read_temperature()
+        htu21df_humidity    = htu21df.read_humidity()
+        print("Temp: {}".format(htu21df_temperature))
+
+        draw.rectangle((0,0,width,height), outline=0, fill=255)
+        y = ypos
+        draw.text((xpos, y), "Zeit: {}".format(strftime("%X")), font=font, fill=0)
+        y += textheight
+        draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(htu21df_humidity), font=font, fill=0)
+        y += textheight
+        draw.text((xpos, y), "Temp: {:>8.2f} C".format(htu21df_temperature), font=font, fill=0)
+        y += textheight
+        draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(lightness.value), font=font, fill=0)
+
+        display.image(image)
+        display.display()
+
+        sleep(1)
 
 
 ###############################################################################

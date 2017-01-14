@@ -13,7 +13,7 @@
 from i2c import I2C
 import time
 
-PCA9685_ADDRESS = 0x40
+PCA9685_BASE_ADDRESS = 0x40 # caution: interferes with HTU21DF_BASE_ADDR
 
 class PCA9685 (I2C):
     # Registers:
@@ -36,7 +36,7 @@ class PCA9685 (I2C):
 
     _first = True
 
-    def __init__ (self, address=PCA9685_ADDRESS, frequency=250, lock=None):
+    def __init__ (self, address=PCA9685_BASE_ADDRESS, frequency=250, lock=None):
         super().__init__(lock)
 
         self.__address = address

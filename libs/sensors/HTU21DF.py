@@ -16,7 +16,7 @@ from time import strftime, sleep
 from i2c import I2C
 
 
-HTU21DF_BASE_ADDR = 0x40
+HTU21DF_BASE_ADDR = 0x40 # caution: interferes with PCA9685_BASE_ADDRESS
 
 # HTU21D-F Commands
 HTU21DF_READTEMP = 0xE3
