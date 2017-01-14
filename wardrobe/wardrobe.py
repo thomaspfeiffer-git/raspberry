@@ -30,6 +30,10 @@ Sensor2_Pin = 31
 Sensor3_Pin = 35
 Sensor4_Pin = 37
 
+Actor1_ID   = 0
+Actor2_ID   = 1
+Actor3_ID   = 2
+Actor4_ID   = 3
 
 # gpio -1 mode 15 in
 # gpio -1 read 15
@@ -172,7 +176,6 @@ def main ():
         sleep(0.1)
 
 
-
 ###############################################################################
 # Exit ########################################################################
 def _exit():
@@ -192,7 +195,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, __exit)
 
     try:
-        c1 = Control(Sensor1_Pin, 0)
+        c1 = Control(Sensor1_Pin, Actor1_ID)
         main()
 
     except KeyboardInterrupt:
