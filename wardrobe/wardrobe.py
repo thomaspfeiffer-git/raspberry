@@ -19,8 +19,6 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 
-
-
 sys.path.append("../libs/")
 from i2c import I2C
 from actors.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
@@ -144,7 +142,21 @@ class Actor (object):
         self.__lightness = 0
         self.__stepsize = 40
 
+    def _adjust_lightness (self):
+        """adjust lightness value:
+           - not greater than PWM.MAX
+           - aligned to lightness measured by TSL2561"""
+
+        max_lightness = (lightness.value+1) * 200
+
+        if self.__lightness > max_lightness:
+            self.__lightness = max_lightness
+
+        if self.__lightness > PWM.MAX:
+            self.__lightness = PWM.MAX
+
     def on (self):
+        """door opened; lightness increases smoothly"""
         if self.__lightness < int(PWM.MAX / 4):
             self.__lightness += int(self.__stepsize/4)
         elif self.__lightness < int(PWM.MAX / 3):
@@ -153,12 +165,13 @@ class Actor (object):
             self.__lightness += int(self.__stepsize/2)
         else:
             self.__lightness += self.__stepsize
-        if self.__lightness > PWM.MAX:
-            self.__lightness = PWM.MAX
+
+        self._adjust_lightness()
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
         # print("Actor: set to on (lightness: {})".format(self.__lightness))
 
     def off (self):
+        """door closed"""
         self.__lightness -= self.__stepsize
         if self.__lightness < PWM.MIN:
             self.__lightness = PWM.MIN
@@ -166,6 +179,7 @@ class Actor (object):
         # print("Actor: set to off (lightness: {})".format(self.__lightness))
 
     def immediate_off (self):
+        """called on program exit"""
         self.__lightness = PWM.MIN
         self.off()
 
@@ -223,10 +237,10 @@ def main ():
 
     lightness.start()
     c1.start()
+
     while True:
         htu21df_temperature = htu21df.read_temperature()
         htu21df_humidity    = htu21df.read_humidity()
-        print("Temp: {}".format(htu21df_temperature))
 
         draw.rectangle((0,0,width,height), outline=0, fill=255)
         y = ypos
