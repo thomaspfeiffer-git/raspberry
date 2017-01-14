@@ -26,19 +26,23 @@ class PCA9685 (I2C):
     # Bits:
     SLEEP     = 0x10
 
+    MAX       = 4095
+    MIN       = 0
+
     _first = True
 
-    def __init__ (self, address=PCA9685_ADDRESS, lock=None):
+    def __init__ (self, address=PCA9685_ADDRESS, frequency=500, lock=None):
         super().__init__(lock)
 
         self._address = address
         if PCA9685._first:   # reset on first init
             self.all_reset()
-            self.set_freq(500)
+            self.set_freq(frequency)
             PCA9685._first = False
 
     def __read (self, reg):
-        return I2C._bus.read_byte_data(self.__address, reg)
+        with I2C._lock:
+            return I2C._bus.read_byte_data(self.__address, reg)
 
     def __write (self, reg, value):
         """Write raw byte value to the specified register"""
@@ -60,7 +64,7 @@ class PCA9685 (I2C):
         pass
 
     def set_pwm (self, channel, on, off):
-        pass
+        print("PWM: set on to {}".format(on))
 
 # eof #
 
