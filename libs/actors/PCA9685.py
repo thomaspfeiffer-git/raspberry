@@ -10,12 +10,10 @@
 # https://github.com/adafruit/Adafruit_Python_PCA9685/blob/master/Adafruit_PCA9685/PCA9685.py
 # https://github.com/voidpp/PCA9685-driver/blob/master/pca9685_driver/device.py
 
-
 from i2c import I2C
-
+import time
 
 PCA9685_ADDRESS = 0x40
-
 
 class PCA9685 (I2C):
     # Registers:
@@ -23,8 +21,15 @@ class PCA9685 (I2C):
     MODE2     = 0x01
     PRE_SCALE = 0xFE
 
+    LED0_ON_L          = 0x06
+    LED0_ON_H          = 0x07
+    LED0_OFF_L         = 0x08
+    LED0_OFF_H         = 0x09
+
     # Bits:
     SLEEP     = 0x10
+    ALLCALL   = 0x01
+    OUTDRV    = 0x04
 
     MAX       = 4095
     MIN       = 0
@@ -56,15 +61,32 @@ class PCA9685 (I2C):
     def __wake (self):
         """Wake up the controller"""
         self.__write(MODE1, self.__read(MODE1) & (255 - (1 << SLEEP)))
+        time.sleep(0.005)  # wait for oscillator
 
     def all_reset (self):
-        pass
+        # self.set_all_pwm(0, 0)
+        self.__write(MODE1, ALLCALL)
+        self.__write(MODE2, OUTDRV)
+        time.sleep(0.005)  # wait for oscillator
+        self.__wake()
 
     def set_freq (self, freq_hz):
-        pass
+        prescaleval = 25000000.0    # 25MHz
+        prescaleval /= 4096.0       # 12-bit
+        prescaleval /= float(freq_hz)
+        prescaleval -= 1.0
+        prescale = int(round(prescaleval))
+
+        self.__sleep()
+        self.__write(PRE_SCALE, prescale)
+        self.__wake()
 
     def set_pwm (self, channel, on, off):
-        print("PWM: set on to {}".format(on))
+        print("PWM: set on/off to {}/{}".format(on, off))
+        self.__write(LED0_ON_L+4*channel, on & 0xFF)
+        self.__write(LED0_ON_H+4*channel, on >> 8)
+        self.__write(LED0_OFF_L+4*channel, off & 0xFF)
+        self.__write(LED0_OFF_H+4*channel, off >> 8)
 
 # eof #
 
