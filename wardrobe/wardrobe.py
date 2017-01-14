@@ -133,7 +133,14 @@ class Actor (object):
         self.__stepsize = 40
 
     def on (self):
-        self.__lightness += self.__stepsize
+        if self.__lightness < int(PWM.MAX / 4):
+            self.__lightness += int(self.__stepsize/4)
+        elif self.__lightness < int(PWM.MAX / 3):
+            self.__lightness += int(self.__stepsize/3)
+        elif self.__lightness < int(PWM.MAX / 2):
+            self.__lightness += int(self.__stepsize/2)
+        else:
+            self.__lightness += self.__stepsize
         if self.__lightness > PWM.MAX:
             self.__lightness = PWM.MAX
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
