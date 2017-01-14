@@ -232,7 +232,8 @@ def main ():
     _, textheight = draw.textsize("Text", font=font)
 
     lightness.start()
-    c1.start()
+    for c in controls:
+        c.start()
 
     while True:
         htu21df_temperature = htu21df.read_temperature()
@@ -258,8 +259,10 @@ def main ():
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
-    c1.stop()
-    c1.join()
+    for c in controls:
+        c.stop()
+        c.join()
+
     lightness.stop()
     lightness.join()
     sys.exit()
@@ -276,7 +279,10 @@ if __name__ == '__main__':
 
     try:
         lightness = Lightness()
-        c1 = Control(Sensor1_Pin, Actor1_ID)
+        controls = []
+        controls.append(Control(Sensor1_Pin, Actor1_ID))
+        # controls.append(Control(Sensor2_Pin, Actor2_ID))
+        # controls.append(Control(Sensor3_Pin, Actor3_ID))
         main()
 
     except KeyboardInterrupt:
