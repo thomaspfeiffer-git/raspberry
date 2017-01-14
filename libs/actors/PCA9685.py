@@ -36,7 +36,7 @@ class PCA9685 (I2C):
 
     _first = True
 
-    def __init__ (self, address=PCA9685_ADDRESS, frequency=500, lock=None):
+    def __init__ (self, address=PCA9685_ADDRESS, frequency=250, lock=None):
         super().__init__(lock)
 
         self.__address = address
