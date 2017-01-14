@@ -10,8 +10,8 @@ from enum import Enum
 import RPi.GPIO as io
 import signal
 import sys
-from time import sleep, strftime
 import threading
+from time import sleep, strftime
 import traceback
 
 from PIL import Image
@@ -27,12 +27,15 @@ from sensors.HTU21DF import HTU21DF
 from sensors.TSL2561 import TSL2561 
 
 
-
-# sensor id | gpio-in | gpio-out | usage |
-# #1        | pin 15  | pin 16   | main area
-# #2        | pin 31  | pin 32   | top drawer
-# #3        | pin 35  | pin 36   | bottom drawer (opt.)
-# #4        | pin 37  | pin 38   | top area (opt.)
+# sensor id | gpio-in | usage |
+# #1        | pin 15  | main area
+# #2        | pin 31  | top drawer
+# #3        | pin 35  | bottom drawer (opt.)
+# #4        | pin 37  | top area (opt.)
+#
+# debouncing:
+# https://www.raspberrypi.org/forums/viewtopic.php?t=137484&p=913137
+# http://raspberrypihobbyist.blogspot.co.at/2014/11/debouncing-gpio-input.html
 
 Sensor1_Pin = 15   # phys pin id
 Sensor2_Pin = 31
@@ -43,13 +46,6 @@ Actor1_ID   = 0
 Actor2_ID   = 1
 Actor3_ID   = 2
 Actor4_ID   = 3
-
-# gpio -1 mode 15 in
-# gpio -1 read 15
-
-# debouncing:
-# https://www.raspberrypi.org/forums/viewtopic.php?t=137484&p=913137
-# http://raspberrypihobbyist.blogspot.co.at/2014/11/debouncing-gpio-input.html
 
 
 class Switch (Enum):
