@@ -62,6 +62,7 @@ class Lightness (threading.Thread):
         self.__value   = 0
         self.__running = True
 
+    @property
     def value (self):
         with self.__lock:
             return self.__value
@@ -69,7 +70,6 @@ class Lightness (threading.Thread):
     def run (self):
         while self.__running:
             v = self.__tsl2561.lux()
-            print("Lightness: {} lux".format(v))
             with self.__lock:
                 self.__value = v
             sleep(1)
