@@ -49,7 +49,7 @@ Actor4_ID   = 3
 
 
 # I2C._lock() works on a very low level, so an additional locking
-# is needed (which makes I2C._lock() quite redundant unfortunately.
+# is needed (which makes I2C._lock() quite redundant unfortunately).
 central_i2c_lock = threading.Lock()
 
 
@@ -131,7 +131,8 @@ class PWM (PCA9685):
         self.__channel = channel
 
     def set_pwm (self, on):
-        super().set_pwm(self.__channel, on, self.MAX)
+        with central_i2c_lock:
+            super().set_pwm(self.__channel, on, self.MAX)
 
 
 ###############################################################################
@@ -169,8 +170,7 @@ class Actor (object):
             self.__lightness += self.__stepsize
 
         self._adjust_lightness()
-        with central_i2c_lock:
-            self.pwm.set_pwm(PWM.MAX-self.__lightness)
+        self.pwm.set_pwm(PWM.MAX-self.__lightness)
         # print("Actor: set to on (lightness: {})".format(self.__lightness))
 
     def off (self):
@@ -178,8 +178,7 @@ class Actor (object):
         self.__lightness -= self.__stepsize
         if self.__lightness < PWM.MIN:
             self.__lightness = PWM.MIN
-        with central_i2c_lock:
-            self.pwm.set_pwm(PWM.MAX-self.__lightness)
+        self.pwm.set_pwm(PWM.MAX-self.__lightness)
         # print("Actor: set to off (lightness: {})".format(self.__lightness))
 
     def immediate_off (self):
