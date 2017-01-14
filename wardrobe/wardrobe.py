@@ -48,6 +48,9 @@ Actor3_ID   = 2
 Actor4_ID   = 3
 
 
+central_i2c_lock = threading.Lock()
+
+
 class Switch (Enum):
     OFF = 0
     ON  = 1
@@ -74,7 +77,8 @@ class Lightness (threading.Thread):
 
     def run (self):
         while self.__running:
-            v = self.__tsl2561.lux()
+            with central_i2c_lock:
+                v = self.__tsl2561.lux()
             with self.__lock:
                 self.__value = v
             sleep(1)
@@ -163,15 +167,17 @@ class Actor (object):
             self.__lightness += self.__stepsize
 
         self._adjust_lightness()
-        self.pwm.set_pwm(PWM.MAX-self.__lightness)
-        # print("Actor: set to on (lightness: {})".format(self.__lightness))
+        with central_i2c_lock:
+            self.pwm.set_pwm(PWM.MAX-self.__lightness)
+        print("Actor: set to on (lightness: {})".format(self.__lightness))
 
     def off (self):
         """door closed"""
         self.__lightness -= self.__stepsize
         if self.__lightness < PWM.MIN:
             self.__lightness = PWM.MIN
-        self.pwm.set_pwm(PWM.MAX-self.__lightness)
+        with central_i2c_lock:
+            self.pwm.set_pwm(PWM.MAX-self.__lightness)
         # print("Actor: set to off (lightness: {})".format(self.__lightness))
 
     def immediate_off (self):
@@ -216,10 +222,11 @@ def main ():
     display = SSD1306()
     htu21df = HTU21DF()
 
-    display.begin()
-    display.clear()
-    display.display()
-    display.set_contrast(255)
+    with central_i2c_lock:
+        display.begin()
+        display.clear()
+        display.display()
+        display.set_contrast(255)
 
     width = display.width
     height = display.height
@@ -236,8 +243,9 @@ def main ():
         c.start()
 
     while True:
-        htu21df_temperature = htu21df.read_temperature()
-        htu21df_humidity    = htu21df.read_humidity()
+        with central_i2c_lock:
+            htu21df_temperature = htu21df.read_temperature()
+            htu21df_humidity    = htu21df.read_humidity()
 
         draw.rectangle((0,0,width,height), outline=0, fill=255)
         y = ypos
@@ -249,8 +257,9 @@ def main ():
         y += textheight
         draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(lightness.value), font=font, fill=0)
 
-        display.image(image)
-        display.display()
+        with central_i2c_lock:
+            display.image(image)
+            display.display()
 
         sleep(1)
 
@@ -279,7 +288,7 @@ if __name__ == '__main__':
 
     try:
         lightness = Lightness()
-        controls = []
+        controls  = []
         controls.append(Control(Sensor1_Pin, Actor1_ID))
         # controls.append(Control(Sensor2_Pin, Actor2_ID))
         # controls.append(Control(Sensor3_Pin, Actor3_ID))
