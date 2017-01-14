@@ -21,8 +21,8 @@ from PIL import ImageFont
 
 sys.path.append("../libs/")
 from i2c import I2C
-from actuator.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
-from actuator.SSD1306 import SSD1306
+from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
+from actuators.SSD1306 import SSD1306
 from sensors.HTU21DF import HTU21DF
 from sensors.TSL2561 import TSL2561 
 
