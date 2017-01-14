@@ -16,6 +16,8 @@ import traceback
 
 sys.path.append("../libs/")
 from i2c import I2C
+from actors.PCA9685 import PCA9685
+
 
 # sensor id | gpio-in | gpio-out | usage |
 # #1        | pin 15  | pin 16   | main area
@@ -29,17 +31,8 @@ Sensor3_Pin = 35
 Sensor4_Pin = 37
 
 
-
 # gpio -1 mode 15 in
 # gpio -1 read 15
-
-
-# Lib: libs/pwm.py
-# pin 12
-
-# turtle/Reedcontact.py as example
-# attention: has some logic for debouncing which causes a delay of 10 s
-# until an opened door is recognized
 
 # debouncing:
 # https://www.raspberrypi.org/forums/viewtopic.php?t=137484&p=913137
@@ -106,24 +99,38 @@ class Sensor (threading.Thread):
 
 
 ###############################################################################
+# PWM #########################################################################
+class PWM (PCA9685):
+    def __init__ (self, channel):
+        super().__init__()
+        self.__channel = channel
+
+    def set_pwm (self, on):
+        super().set_pwm(self.__channel, on, self.MAX)
+
+
+###############################################################################
 # Actor #######################################################################
 class Actor (object):
     """turns light on and off (via PWM)"""
 
     def __init__ (self, pwm_id):
-        self.__pwm_id = pwm_id
-        # Future:
-        # self.pwm = PWM(pwm_id)
+        self.pwm = PWM(pwm_id)
         self.__lightness = 0
+        self.__stepsize = 100
 
     def on (self):
-        if self.__lightness < 1024:
-            self.__lightness += 1
+        self.__lightness += self.__stepsize
+        if self.__lightness > PWM.MAX:
+            self.__lightness = PWM.MAX
+        self.pwm.set_pwm(PWM.MAX-self.__lightness)
         print("Actor: set to on (lightness: {})".format(self.__lightness))
 
     def off (self):
-        if self.__lightness > 0:
-            self.__lightness -= 1
+        self.__lightness -= self.__stepsize
+        if self.__lightness < PWM.MIN:
+            self.__lightness = PWM.MIN
+        self.pwm.set_pwm(PWM.MAX-self.__lightness)
         print("Actor: set to off (lightness: {})".format(self.__lightness))
 
 
