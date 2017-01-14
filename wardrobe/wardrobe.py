@@ -55,9 +55,10 @@ class Lightness (threading.Thread):
     """read lightness value from sensor"""
     """provide lightness value in getter method"""
 
+    __lock = threading.Lock()
+
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.__lock    = threading.Lock()
         self.__tsl2561 = TSL2561()
         self.__value   = 0
         self.__running = True
@@ -83,10 +84,11 @@ class Lightness (threading.Thread):
 class Sensor (threading.Thread):
     """reads value of switch using GPIO"""
 
+    __lock  = threading.Lock()
+
     def __init__ (self, pin):
         threading.Thread.__init__(self)
         self.__pin   = pin
-        self.__lock  = threading.Lock()
         self.__value = Switch.OFF
 
         io.setmode(io.BOARD)
