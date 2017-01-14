@@ -17,6 +17,7 @@ import traceback
 sys.path.append("../libs/")
 from i2c import I2C
 from actors.PCA9685 import PCA9685
+from sensors.TSL2561 import TSL2561 
 
 
 # sensor id | gpio-in | gpio-out | usage |
@@ -56,14 +57,22 @@ class Lightness (threading.Thread):
 
     def __init__ (self):
         threading.Thread.__init__(self)
+        self.__lock    = threading.Lock()
+        self.__tsl2561 = TSL2561()
+        self.__value   = 0
         self.__running = True
 
     def value (self):
-        pass
+        with self.__lock:
+            return self.__value
 
     def run (self):
         while self.__running:
-            pass
+            v = self.__tsl2561.lux()
+            print("Lightness: {} lux".format(v))
+            with self.__lock:
+                self.__value = v
+            sleep(1)
 
     def stop (self):
         self.__running = False
@@ -171,6 +180,7 @@ class Control (threading.Thread):
 ###############################################################################
 # Main ########################################################################
 def main ():
+    lightness.start()
     c1.start()
     while True:
         sleep(0.1)
@@ -182,6 +192,8 @@ def _exit():
     """cleanup stuff"""
     c1.stop()
     c1.join()
+    lightness.stop()
+    lightness.join()
     sys.exit()
 
 def __exit(__s, __f):
@@ -195,6 +207,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGTERM, __exit)
 
     try:
+        lightness = Lightness()
         c1 = Control(Sensor1_Pin, Actor1_ID)
         main()
 
