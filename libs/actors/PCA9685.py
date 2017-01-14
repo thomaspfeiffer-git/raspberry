@@ -82,7 +82,7 @@ class PCA9685 (I2C):
         self.__wake()
 
     def set_pwm (self, channel, on, off):
-        print("PWM: set on/off to {}/{}".format(on, off))
+        # print("PWM: set on/off to {}/{}".format(on, off))
         self.__write(self.LED0_ON_L+4*channel, on & 0xFF)
         self.__write(self.LED0_ON_H+4*channel, on >> 8)
         self.__write(self.LED0_OFF_L+4*channel, off & 0xFF)
