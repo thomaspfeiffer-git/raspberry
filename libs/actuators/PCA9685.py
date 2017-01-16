@@ -39,6 +39,9 @@ class PCA9685 (I2C):
     def __init__ (self, address=PCA9685_BASE_ADDRESS, frequency=250, lock=None):
         super().__init__(lock)
 
+        self.__lastvalue_on = None
+        self.__lastvalue_off = None
+
         self.__address = address
         if PCA9685._first:   # reset on first init
             self.all_reset()
@@ -82,11 +85,13 @@ class PCA9685 (I2C):
         self.__wake()
 
     def set_pwm (self, channel, on, off):
-        # print("PWM: set on/off to {}/{}".format(on, off))
-        self.__write(self.LED0_ON_L+4*channel, on & 0xFF)
-        self.__write(self.LED0_ON_H+4*channel, on >> 8)
-        self.__write(self.LED0_OFF_L+4*channel, off & 0xFF)
-        self.__write(self.LED0_OFF_H+4*channel, off >> 8)
+        if self.__lastvalue_on != on or self.__lastvalue_off != off:
+            self.__lastvalue_on  = on
+            self.__lastvalue_off = off
+            self.__write(self.LED0_ON_L+4*channel, on & 0xFF)
+            self.__write(self.LED0_ON_H+4*channel, on >> 8)
+            self.__write(self.LED0_OFF_L+4*channel, off & 0xFF)
+            self.__write(self.LED0_OFF_H+4*channel, off >> 8)
 
 # eof #
 
