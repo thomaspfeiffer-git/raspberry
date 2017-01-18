@@ -215,6 +215,7 @@ class Control (threading.Thread):
     def stop (self):
         self.__running = False
         self.__sensor.stop()
+        self.__sensor.join()
 
 
 ###############################################################################
