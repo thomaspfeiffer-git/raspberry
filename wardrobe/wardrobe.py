@@ -257,7 +257,7 @@ if __name__ == '__main__':
         controls  = []
         controls.append(Control(Sensor1_Pin, Actuator1_ID))
         # controls.append(Control(Sensor2_Pin, Actuator2_ID))
-        # controls.append(Control(Sensor3_Pin, Actuator3_ID))
+        controls.append(Control(Sensor3_Pin, Actuator3_ID))
         main()
 
     except KeyboardInterrupt:
