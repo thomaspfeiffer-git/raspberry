@@ -14,10 +14,6 @@ import threading
 from time import sleep, strftime
 import traceback
 
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-
 
 sys.path.append("../libs/")
 from i2c import I2C
@@ -221,25 +217,7 @@ class Control (threading.Thread):
 ###############################################################################
 # Main ########################################################################
 def main ():
-    display = SSD1306()
     htu21df = HTU21DF()
-
-    with central_i2c_lock:
-        display.begin()
-        display.clear()
-        display.display()
-        display.set_contrast(255)
-
-    width = display.width
-    height = display.height
-    image = Image.new('1', (width, height))
-    draw = ImageDraw.Draw(image)
-    font = ImageFont.load_default()
-
-    xpos = 4
-    ypos = 4
-    _, textheight = draw.textsize("Text", font=font)
-
     lightness.start()
     for c in controls:
         c.start()
@@ -248,21 +226,7 @@ def main ():
         with central_i2c_lock:
             htu21df_temperature = htu21df.read_temperature()
             htu21df_humidity    = htu21df.read_humidity()
-
-        draw.rectangle((0,0,width,height), outline=0, fill=255)
-        y = ypos
-        draw.text((xpos, y), "Zeit: {}".format(strftime("%X")), font=font, fill=0)
-        y += textheight
-        draw.text((xpos, y), "Luftf.: {:>6.2f} % rF".format(htu21df_humidity), font=font, fill=0)
-        y += textheight
-        draw.text((xpos, y), "Temp: {:>8.2f} C".format(htu21df_temperature), font=font, fill=0)
-        y += textheight
-        draw.text((xpos, y), "Hell.: {:>8.2f} lux".format(lightness.value), font=font, fill=0)
-
-        with central_i2c_lock:
-            display.image(image)
-            display.display()
-
+        print("Temp: {}, Humi: {}".format(htu21df_temperature, htu21df_humidity))
         sleep(1)
 
 
