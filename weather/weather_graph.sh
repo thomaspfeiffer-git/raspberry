@@ -43,8 +43,6 @@ HEIGHT=160
 WATERMARK=`date  "+%e. %B %Y, %H:%M:%S"`
 
 
-
-
 #######################################################################
 # Parameter:                                                          #
 # $1 Time Range                                                       #
@@ -111,7 +109,7 @@ printTemp ()
     GPRINT:kb_k_t1:LAST:"Aktuell\: %5.2lf °C"                \
     GPRINT:kb_k_t1:AVERAGE:"Mittelwert\: %5.2lf °C"          \
     GPRINT:kb_k_t1:MAX:"Max\: %5.2lf °C"                     \
-    GPRINT:kb_k_t1:MIN:"Min\: %5.2lf °C\n"      
+    GPRINT:kb_k_t1:MIN:"Min\: %5.2lf °C\n"                   &
  }
 
 
@@ -124,7 +122,7 @@ printTemp ()
 printCPUTemp ()
   {
     rrdtool graph $2                                                     \
-    --title "Temperatur Pis [°C]"                                         \
+    --title "Temperatur Pis [°C]"                                        \
     --end now --start end-$1                                             \
     -w $WIDTH -h $HEIGHT -a PNG                                          \
     --watermark "$WATERMARK"                                             \
@@ -145,11 +143,11 @@ printCPUTemp ()
     GPRINT:kidsroom_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"             \
     GPRINT:kidsroom_tempcpu:MAX:"Max\: %5.2lf °C"                        \
     GPRINT:kidsroom_tempcpu:MIN:"Min\: %5.2lf °C\n"                      \
-    LINE1:wr_tempcpu#ffcc00:"Temperatur Raspberry Pi Kleiderkasten    " \
-    GPRINT:wr_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                \
-    GPRINT:wr_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"             \
-    GPRINT:wr_tempcpu:MAX:"Max\: %5.2lf °C"                        \
-    GPRINT:wr_tempcpu:MIN:"Min\: %5.2lf °C\n"                      \
+    LINE1:wr_tempcpu#ffcc00:"Temperatur Raspberry Pi Kleiderkasten    "  \
+    GPRINT:wr_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
+    GPRINT:wr_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
+    GPRINT:wr_tempcpu:MAX:"Max\: %5.2lf °C"                              \
+    GPRINT:wr_tempcpu:MIN:"Min\: %5.2lf °C\n"                            \
     LINE1:kb_i_tcpu#40FF00:"Temperatur Raspberry Pi Kollerberg innen "   \
     GPRINT:kb_i_tcpu:LAST:"\t Aktuell\: %5.2lf °C"                       \
     GPRINT:kb_i_tcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                    \
@@ -164,9 +162,8 @@ printCPUTemp ()
     GPRINT:kb_k_tcpu:LAST:"\t Aktuell\: %5.2lf °C"                       \
     GPRINT:kb_k_tcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                    \
     GPRINT:kb_k_tcpu:MAX:"Max\: %5.2lf °C"                               \
-    GPRINT:kb_k_tcpu:MIN:"Min\: %5.2lf °C\n" 
+    GPRINT:kb_k_tcpu:MIN:"Min\: %5.2lf °C\n"                             &
  }
-
 
 
 #######################################################################
@@ -224,7 +221,7 @@ printHumidity ()
     GPRINT:kb_k_humi:LAST:"\t Aktuell\: %5.2lf %%"             \
     GPRINT:kb_k_humi:AVERAGE:"Mittelwert\: %5.2lf %%"          \
     GPRINT:kb_k_humi:MAX:"Max\: %5.2lf %%"                     \
-    GPRINT:kb_k_humi:MIN:"Min\: %5.2lf %%\n"
+    GPRINT:kb_k_humi:MIN:"Min\: %5.2lf %%\n"                   &
  }
 
 
@@ -257,10 +254,8 @@ printAirPressure ()
     GPRINT:kb_i_press:LAST:"\t Aktuell\: %5.2lf hPa"     \
     GPRINT:kb_i_press:AVERAGE:"Mittelwert\: %5.2lf hPa"  \
     GPRINT:kb_i_press:MAX:"Max\: %5.2lf hPa"             \
-    GPRINT:kb_i_press:MIN:"Min\: %5.2lf hPa\n"
+    GPRINT:kb_i_press:MIN:"Min\: %5.2lf hPa\n"           &
  }
-
-
 
 
 #######################################################################
@@ -287,11 +282,16 @@ printWardrobe()
     GPRINT:wr_open1:AVERAGE:"Mittelwert\: %5.2lf\n"      \
     STACK:wr_open3#ffff00:"Lade offen           "        \
     GPRINT:wr_open3:LAST:"\t Aktuell\: %5.0lf"           \
-    GPRINT:wr_open3:AVERAGE:"Mittelwert\: %5.2lf\n"
+    GPRINT:wr_open3:AVERAGE:"Mittelwert\: %5.2lf\n"      &
  }
 
 
-
+#######################################################################
+# printLightness()                                                    #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
 printLightness()
   {
     rrdtool graph $2                                        \
@@ -310,10 +310,12 @@ printLightness()
     GPRINT:wr_lightness:LAST:"\t Aktuell\: %5.2lf lux"      \
     GPRINT:wr_lightness:AVERAGE:"Mittelwert\: %5.2lf lux"   \
     GPRINT:wr_lightness:MAX:"Max\: %5.2lf lux"              \
-    GPRINT:wr_lightness:MIN:"Min\: %5.2lf lux\n"              
+    GPRINT:wr_lightness:MIN:"Min\: %5.2lf lux\n"            &
  }
 
 
+#######################################################################
+# main ################################################################
 printTemp "36h", "$PNG_TEMP_D"
 printTemp "7d",  "$PNG_TEMP_W"
 printTemp "30d", "$PNG_TEMP_M"
