@@ -8,10 +8,11 @@
 
 from enum import Enum
 import RPi.GPIO as io
+import rrdtool
 import signal
 import sys
 import threading
-from time import sleep, strftime
+from time import sleep, strftime, time
 import traceback
 
 
@@ -19,6 +20,7 @@ sys.path.append("../libs/")
 from i2c import I2C
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
 from actuators.SSD1306 import SSD1306
+from sensors.CPU import CPU
 from sensors.HTU21DF import HTU21DF
 from sensors.TSL2561 import TSL2561 
 
@@ -44,6 +46,19 @@ Actuator3_ID   = 2
 Actuator4_ID   = 3
 
 
+# Misc for rrdtool
+RRDFILE      = "wardrobe.rrd"
+DS_TEMP1     = "wardrobe_temp1"
+DS_TEMPCPU   = "wardrobe_tempcpu"
+DS_TEMP2     = "wardrobe_temp2"
+DS_HUMI      = "wardrobe_humi"
+DS_LIGHTNESS = "wardrobe_lightness"
+DS_OPEN1     = "wardrobe_open1"
+DS_OPEN2     = "wardrobe_open2"
+DS_OPEN3     = "wardrobe_open3"
+DS_OPEN4     = "wardrobe_open4"
+
+
 # I2C._lock() works on a very low level, so an additional locking
 # is needed (which makes I2C._lock() quite redundant unfortunately).
 central_i2c_lock = threading.Lock()
@@ -60,10 +75,9 @@ class Lightness (threading.Thread):
     """read lightness value from sensor"""
     """provide lightness value in getter method"""
 
-    __lock = threading.Lock()
-
     def __init__ (self):
         threading.Thread.__init__(self)
+        self.__lock = threading.Lock()
         self.__tsl2561 = TSL2561()
         self.__value   = 0
         self.__running = True
@@ -90,10 +104,9 @@ class Lightness (threading.Thread):
 class Sensor (threading.Thread):
     """reads value of switch using GPIO"""
 
-    __lock  = threading.Lock()
-
     def __init__ (self, pin):
         threading.Thread.__init__(self)
+        self.__lock  = threading.Lock()
         self.__pin   = pin
         self.__value = Switch.OFF
 
@@ -190,17 +203,43 @@ class Control (threading.Thread):
 
     def __init__ (self, sensor_id, actuator_id):
         threading.Thread.__init__(self)
+        self.__lock     = threading.Lock()
         self.__sensor   = Sensor(sensor_id)
         self.__actuator = Actuator(actuator_id)
 
+        self.__timestretched = time()
+        self.__stretchperiod = 100
+
+        self.__switch = Switch.OFF
         self.__sensor.start()
 
         self.__running = True
 
+    def switchvalue_stretched (self):
+        """enlarge interval of being "on"; otherwise if door is opened
+           for a short period of time only, it would not be seen in RRD"""
+        if (time() <= self.__timestretched):
+            return 1
+        else:
+            return 0
+
+    @property
+    def switchvalue (self):
+        with self.__lock:
+            return self.__switch    
+
+    @switchvalue.setter
+    def switchvalue (self, value):
+        if self.switchvalue == Switch.OFF and value == Switch.ON:
+            self.__timestretched = time() + self.__stretchperiod
+        with self.__lock:
+            self.__switch = value    
+
     def run (self):
         while self.__running:
-            switch = self.__sensor.value
-            if switch == Switch.ON:
+            self.switchvalue = self.__sensor.value
+
+            if self.switchvalue == Switch.ON:
                 self.__actuator.on()
             else:
                 self.__actuator.off()
@@ -217,17 +256,40 @@ class Control (threading.Thread):
 ###############################################################################
 # Main ########################################################################
 def main ():
+    cpu     = CPU()
     htu21df = HTU21DF()
     lightness.start()
     for c in controls:
         c.start()
 
+    rrd_template = DS_TEMP1     + ":" + \
+                   DS_TEMPCPU   + ":" + \
+                   DS_TEMP2     + ":" + \
+                   DS_HUMI      + ":" + \
+                   DS_LIGHTNESS + ":" + \
+                   DS_OPEN1     + ":" + \
+                   DS_OPEN2     + ":" + \
+                   DS_OPEN3     + ":" + \
+                   DS_OPEN4     + ":"
+
     while True:
         with central_i2c_lock:
             htu21df_temperature = htu21df.read_temperature()
             htu21df_humidity    = htu21df.read_humidity()
-        print("Temp: {}, Humi: {}".format(htu21df_temperature, htu21df_humidity))
-        sleep(1)
+
+        rrd_data = "N:{:.2f}".format(htu21df_temperature)    + \
+                    ":{:.2f}".format(cpu.read_temperature()) + \
+                    ":{:.2f}".format(99.99)                  + \
+                    ":{:.2f}".format(htu21df_humidity)       + \
+                    ":{:.2f}".format(lightness.value)        + \
+                    ":{:}".format(controls[0].switchvalue_stretched())        + \
+                    ":{}".format(0)                          + \
+                    ":{:}".format(controls[1].switchvalue_stretched())        + \
+                    ":{}".format(0)
+        print(strftime("%Y%m%d %X:"), rrd_data)
+        # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+
+        sleep(50)
 
 
 ###############################################################################
