@@ -218,7 +218,7 @@ class Control (threading.Thread):
     def switchvalue_stretched (self):
         """enlarge interval of being "on"; otherwise if door is opened
            for a short period of time only, it would not be seen in RRD"""
-        if (time() <= self.__timestretched):
+        if time() <= self.__timestretched:
             return 1
         else:
             return 0
