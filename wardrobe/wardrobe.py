@@ -230,7 +230,8 @@ class Control (threading.Thread):
 
     @switchvalue.setter
     def switchvalue (self, value):
-        if self.switchvalue == Switch.OFF and value == Switch.ON:
+        if (self.switchvalue == Switch.OFF and value == Switch.ON) \
+            or self.switchvalue == Switch.ON:
             self.__timestretched = time() + self.__stretchperiod
         with self.__lock:
             self.__switch = value    
