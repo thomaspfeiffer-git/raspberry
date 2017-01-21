@@ -4,6 +4,7 @@ RRDPATH=/schild/weather/
 RRD=$RRDPATH/weather.rrd
 RRD_K=$RRDPATH/weather_kidsroom.rrd
 RRD_KB=$RRDPATH/weather_kollerberg.rrd
+RRD_WR=$RRDPATH/wardrobe.rrd
 
 
 PNG_TEMP_D=$RRDPATH/weather_temp_d.png
@@ -58,6 +59,7 @@ printTemp ()
     DEF:temp_indoor=$RRD:temp_indoor:AVERAGE                 \
     DEF:temp_window=$RRD:temp_4:AVERAGE                      \
     DEF:kidsroom_temp1=$RRD_K:kidsroom_temp1:AVERAGE         \
+    DEF:wr_temp1=$RRD_WR:wr_temp1:AVERAGE                    \
     DEF:kb_i_t1=$RRD_KB:kb_i_t1:AVERAGE                      \
     DEF:kb_a_t1=$RRD_KB:kb_a_t1:AVERAGE                      \
     DEF:kb_k_t1=$RRD_KB:kb_k_t1:AVERAGE                      \
@@ -86,6 +88,11 @@ printTemp ()
     GPRINT:kidsroom_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"   \
     GPRINT:kidsroom_temp1:MAX:"Max\: %5.2lf °C"              \
     GPRINT:kidsroom_temp1:MIN:"Min\: %5.2lf °C\n"            \
+    LINE1:wr_temp1#ffcc00:"Temperatur Kleiderkasten      "   \
+    GPRINT:wr_temp1:LAST:"Aktuell\: %5.2lf °C"               \
+    GPRINT:wr_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"         \
+    GPRINT:wr_temp1:MAX:"Max\: %5.2lf °C"                    \
+    GPRINT:wr_temp1:MIN:"Min\: %5.2lf °C\n"                  \
     LINE1:kb_i_t1#40FF00:"Temperatur Kollerberg innen   "    \
     GPRINT:kb_i_t1:LAST:"Aktuell\: %5.2lf °C"                \
     GPRINT:kb_i_t1:AVERAGE:"Mittelwert\: %5.2lf °C"          \
@@ -100,7 +107,7 @@ printTemp ()
     GPRINT:kb_k_t1:LAST:"Aktuell\: %5.2lf °C"                \
     GPRINT:kb_k_t1:AVERAGE:"Mittelwert\: %5.2lf °C"          \
     GPRINT:kb_k_t1:MAX:"Max\: %5.2lf °C"                     \
-    GPRINT:kb_k_t1:MIN:"Min\: %5.2lf °C\n"
+    GPRINT:kb_k_t1:MIN:"Min\: %5.2lf °C\n"      
  }
 
 
@@ -113,17 +120,18 @@ printTemp ()
 printCPUTemp ()
   {
     rrdtool graph $2                                                     \
-    --title "Temperatur Raspberry Pi [°C]"                               \
+    --title "Temperatur Pis [°C]"                                         \
     --end now --start end-$1                                             \
     -w $WIDTH -h $HEIGHT -a PNG                                          \
     --watermark "$WATERMARK"                                             \
     --right-axis 1:0                                                     \
     DEF:temp_cpu=$RRD:temp_cpu:AVERAGE                                   \
     DEF:kidsroom_tempcpu=$RRD_K:kidsroom_tempcpu:AVERAGE                 \
+    DEF:wr_tempcpu=$RRD_WR:wr_tempcpu:AVERAGE                            \
     DEF:kb_i_tcpu=$RRD_KB:kb_i_tcpu:AVERAGE                              \
     DEF:kb_a_tcpu=$RRD_KB:kb_a_tcpu:AVERAGE                              \
     DEF:kb_k_tcpu=$RRD_KB:kb_k_tcpu:AVERAGE                              \
-    LINE1:temp_cpu#FF0000:"Temperatur Raspberry Pi Wohnzimmer       "    \
+    LINE1:temp_cpu#FF0000:"Temperatur NanoPi NEO Air Wohnzimmer     "    \
     GPRINT:temp_cpu:LAST:"\t Aktuell\: %5.2lf °C"                        \
     GPRINT:temp_cpu:AVERAGE:"Mittelwert\: %5.2lf °C"                     \
     GPRINT:temp_cpu:MAX:"Max\: %5.2lf °C"                                \
@@ -133,6 +141,11 @@ printCPUTemp ()
     GPRINT:kidsroom_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"             \
     GPRINT:kidsroom_tempcpu:MAX:"Max\: %5.2lf °C"                        \
     GPRINT:kidsroom_tempcpu:MIN:"Min\: %5.2lf °C\n"                      \
+    LINE1:wr_tempcpu#ffcc00:"Temperatur Raspberry Pi Kleiderkasten    " \
+    GPRINT:wr_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                \
+    GPRINT:wr_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"             \
+    GPRINT:wr_tempcpu:MAX:"Max\: %5.2lf °C"                        \
+    GPRINT:wr_tempcpu:MIN:"Min\: %5.2lf °C\n"                      \
     LINE1:kb_i_tcpu#40FF00:"Temperatur Raspberry Pi Kollerberg innen "   \
     GPRINT:kb_i_tcpu:LAST:"\t Aktuell\: %5.2lf °C"                       \
     GPRINT:kb_i_tcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                    \
@@ -169,6 +182,7 @@ printHumidity ()
     DEF:humi_outdoor=$RRD:humi_outdoor:AVERAGE                 \
     DEF:humi_indoor=$RRD:humi_indoor:AVERAGE                   \
     DEF:kidsroom_humi=$RRD_K:kidsroom_humi:AVERAGE             \
+    DEF:wr_humi=$RRD_WR:wr_humi:AVERAGE                        \
     DEF:kb_i_humi=$RRD_KB:kb_i_humi:AVERAGE                    \
     DEF:kb_a_humi=$RRD_KB:kb_a_humi:AVERAGE                    \
     DEF:kb_k_humi=$RRD_KB:kb_k_humi:AVERAGE                    \
@@ -187,6 +201,11 @@ printHumidity ()
     GPRINT:kidsroom_humi:AVERAGE:"Mittelwert\: %5.2lf %%"      \
     GPRINT:kidsroom_humi:MAX:"Max\: %5.2lf %%"                 \
     GPRINT:kidsroom_humi:MIN:"Min\: %5.2lf %%\n"               \
+    LINE1:wr_humi#ffcc00:"Luftfeuchtigkeit Kleiderkasten    "  \
+    GPRINT:wr_humi:LAST:"\t Aktuell\: %5.2lf %%"               \
+    GPRINT:wr_humi:AVERAGE:"Mittelwert\: %5.2lf %%"            \
+    GPRINT:wr_humi:MAX:"Max\: %5.2lf %%"                       \
+    GPRINT:wr_humi:MIN:"Min\: %5.2lf %%\n"                     \
     LINE1:kb_i_humi#40FF00:"Luftfeuchtigkeit Kollerberg innen " \
     GPRINT:kb_i_humi:LAST:"\t Aktuell\: %5.2lf %%"             \
     GPRINT:kb_i_humi:AVERAGE:"Mittelwert\: %5.2lf %%"          \
