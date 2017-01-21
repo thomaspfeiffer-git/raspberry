@@ -47,16 +47,16 @@ Actuator4_ID   = 3
 
 
 # Misc for rrdtool
-RRDFILE      = "wardrobe.rrd"
-DS_TEMP1     = "wardrobe_temp1"
-DS_TEMPCPU   = "wardrobe_tempcpu"
-DS_TEMP2     = "wardrobe_temp2"
-DS_HUMI      = "wardrobe_humi"
-DS_LIGHTNESS = "wardrobe_lightness"
-DS_OPEN1     = "wardrobe_open1"
-DS_OPEN2     = "wardrobe_open2"
-DS_OPEN3     = "wardrobe_open3"
-DS_OPEN4     = "wardrobe_open4"
+RRDFILE      = "/schild/weather/wardrobe.rrd"
+DS_TEMP1     = "wr_temp1"
+DS_TEMPCPU   = "wr_tempcpu"
+DS_TEMP2     = "wr_temp2"
+DS_HUMI      = "wr_humi"
+DS_LIGHTNESS = "wr_lightness"
+DS_OPEN1     = "wr_open1"
+DS_OPEN2     = "wr_open2"
+DS_OPEN3     = "wr_open3"
+DS_OPEN4     = "wr_open4"
 
 
 # I2C._lock() works on a very low level, so an additional locking
@@ -270,7 +270,7 @@ def main ():
                    DS_OPEN1     + ":" + \
                    DS_OPEN2     + ":" + \
                    DS_OPEN3     + ":" + \
-                   DS_OPEN4     + ":"
+                   DS_OPEN4
 
     while True:
         with central_i2c_lock:
@@ -287,7 +287,7 @@ def main ():
                     ":{:}".format(controls[1].switchvalue_stretched())        + \
                     ":{}".format(0)
         print(strftime("%Y%m%d %X:"), rrd_data)
-        # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+        rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
         sleep(50)
 

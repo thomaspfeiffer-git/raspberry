@@ -8,12 +8,12 @@
 HEARTBEAT=90
 
 
-rrdtool create /schild/wardrobe.rrd --step 60 \
+rrdtool create /schild/weather/wardrobe.rrd --step 60 \
 DS:wr_temp1:GAUGE:$HEARTBEAT:-40:80 \
 DS:wr_tempcpu:GAUGE:$HEARTBEAT:-40:80 \
 DS:wr_temp2:GAUGE:$HEARTBEAT:-40:80 \
 DS:wr_humi:GAUGE:$HEARTBEAT:0:100 \
-DS:wr_lightness:GAUGE:$HEARTBEAT:0:20000
+DS:wr_lightness:GAUGE:$HEARTBEAT:0:20000 \
 DS:wr_open1:GAUGE:$HEARTBEAT:0:1 \
 DS:wr_open2:GAUGE:$HEARTBEAT:0:1 \
 DS:wr_open3:GAUGE:$HEARTBEAT:0:1 \
