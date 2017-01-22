@@ -131,6 +131,7 @@ options w1-gpio-board gpio=203
 5) dd if=image of=/dev/mmcblk1 bs=10M
    where <image> is located in the nfs share.
    !!! image size must be _smaller_ than size of emmc !!!
+6) sudo fs_resize
 
 
 ############################################################################
