@@ -4,7 +4,7 @@
 # (c) https://github.com/thomaspfeiffer-git 2016                               #
 ################################################################################
 
-import time, datetime
+from time import time, strftime, localtime
 
 class SensorValue (object):
     def __init__ (self, v_id, name, kind):
@@ -21,7 +21,7 @@ class SensorValue (object):
     @value.setter
     def value (self, v):
         self.__value     = v
-        self.__timestamp = time.time()
+        self.__timestamp = time()
 
     def getID (self):
         return self.__v_id
@@ -32,9 +32,7 @@ class SensorValue (object):
                "Kind:      %s" % self.__kind      + "\n" + \
                "Value:     %s" % self.__value     + "\n" + \
                "Timestamp: %s" % self.__timestamp + "\n" + \
-               "Timestamp: %s" % "timestamp"
-               # "Timestamp: %s" % datetime.datetime.fromtimestamp(self.__timestamp).strftime('%Y-%m-%d %H:%M:%S')
-
+               "Timestamp: {}".format(strftime("%Y%m%d %X",localtime(self.__timestamp)))
 
 class SensorValueLock (object):
     def __init__ (self, v_id, name, kind, lock):
