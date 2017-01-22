@@ -14,7 +14,7 @@ from SensorValue import SensorValue, SensorValueLock
 
 def Log (logstr):
     """improved log output"""
-    print strftime("%Y%m%d %H:%M:%S", localtime()), logstr
+    print(strftime("%Y%m%d %H:%M:%S", localtime()), logstr)
 
 
 class Sensor (object):   # eg DS1820

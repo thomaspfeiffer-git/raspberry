@@ -32,7 +32,8 @@ class SensorValue (object):
                "Kind:      %s" % self.__kind      + "\n" + \
                "Value:     %s" % self.__value     + "\n" + \
                "Timestamp: %s" % self.__timestamp + "\n" + \
-               "Timestamp: %s" % datetime.datetime.fromtimestamp(self.__timestamp).strftime('%Y-%m-%d %H:%M:%S')
+               "Timestamp: %s" % "timestamp"
+               # "Timestamp: %s" % datetime.datetime.fromtimestamp(self.__timestamp).strftime('%Y-%m-%d %H:%M:%S')
 
 
 class SensorValueLock (object):
