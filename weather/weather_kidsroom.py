@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #############################################################################
 # weather_kidsroom.py                                                       #
@@ -40,8 +40,8 @@ DS_HUMI    = "kidsroom_humi"
 # Main ########################################################################
 def main():
     """main part"""
-    qvalue_temp = SensorValueLock("ID_06", "TempKinderzimmer", SensorValue.Types.Temp, u'°C', Lock())
-    qvalue_humi = SensorValueLock("ID_07", "HumiKinderzimmer", SensorValue.Types.Humi, u'% rF', Lock())
+    qvalue_temp = SensorValueLock("ID_06", "TempKinderzimmer", SensorValue.Types.Temp, "°C", Lock())
+    qvalue_humi = SensorValueLock("ID_07", "HumiKinderzimmer", SensorValue.Types.Humi, "% rF", Lock())
     sq.register(qvalue_temp)
     sq.register(qvalue_humi)
     sq.start()
