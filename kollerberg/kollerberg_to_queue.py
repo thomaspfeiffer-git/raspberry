@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 ###############################################################################
 # kollerberg_to_queue.py                                                      #
 # Copies data from Kollerberg's data files to the queue used for the local    #
 # weather station.                                                            #
-# (c) https://github.com/thomaspfeiffer-git 2016                              #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
 ###############################################################################
 
 import signal
@@ -36,15 +36,15 @@ def getDataFromFile (filename):
 ################################################################################
 # Main #########################################################################
 def Main():
-    qv_kb_i_t = SensorValueLock("ID_21", "Temp KB indoor", SensorValue.Types.Temp, u'°C', Lock())
-    qv_kb_i_h = SensorValueLock("ID_22", "Humi KB indoor", SensorValue.Types.Humi, u'% rF', Lock())
-    qv_kb_p   = SensorValueLock("ID_23", "Pressure KB",    SensorValue.Types.Pressure, u'hPa', Lock())
+    qv_kb_i_t = SensorValueLock("ID_21", "Temp KB indoor", SensorValue.Types.Temp, "°C", Lock())
+    qv_kb_i_h = SensorValueLock("ID_22", "Humi KB indoor", SensorValue.Types.Humi, "% rF", Lock())
+    qv_kb_p   = SensorValueLock("ID_23", "Pressure KB",    SensorValue.Types.Pressure, "hPa", Lock())
 
-    qv_kb_a_t = SensorValueLock("ID_24", "Temp KB outdoor", SensorValue.Types.Temp, u'°C', Lock())
-    qv_kb_a_h = SensorValueLock("ID_25", "Humi KB outdoor", SensorValue.Types.Humi, u'% rF', Lock())
+    qv_kb_a_t = SensorValueLock("ID_24", "Temp KB outdoor", SensorValue.Types.Temp, "°C", Lock())
+    qv_kb_a_h = SensorValueLock("ID_25", "Humi KB outdoor", SensorValue.Types.Humi, "% rF", Lock())
 
-    qv_kb_k_t = SensorValueLock("ID_26", "Temp KB basement", SensorValue.Types.Temp, u'°C', Lock())
-    qv_kb_k_h = SensorValueLock("ID_27", "Humi KB basement", SensorValue.Types.Humi, u'% rF', Lock())
+    qv_kb_k_t = SensorValueLock("ID_26", "Temp KB basement", SensorValue.Types.Temp, "°C", Lock())
+    qv_kb_k_h = SensorValueLock("ID_27", "Humi KB basement", SensorValue.Types.Humi, "% rF", Lock())
 
     sq.register(qv_kb_i_t)
     sq.register(qv_kb_i_h)
@@ -58,19 +58,22 @@ def Main():
     while True:
         try:
             data = getDataFromFile(DATAFILES[pik_i])
+            print("pik_i", data)
             qv_kb_i_t.value = "%.1f" % (float(data[3]))  # convert from nn,nn to nn,n
             qv_kb_i_h.value = "%.1f" % (float(data[6]))
             qv_kb_p.value   = "%.1f" % (float(data[7]))
 
             data = getDataFromFile(DATAFILES[pik_a])
+            print("pik_a", data)
             qv_kb_a_t.value = "%.1f" % (float(data[3]))
             qv_kb_a_h.value = "%.1f" % (float(data[6]))
 
             data = getDataFromFile(DATAFILES[pik_k])
+            print("pik_k", data)
             qv_kb_k_t.value = "%.1f" % (float(data[3]))
             qv_kb_k_h.value = "%.1f" % (float(data[6]))
-        except IndexError, ValueError:  # access to data files is not synchronized,
-            pass                        # thus data[] can be an empty array.
+        except (IndexError, ValueError):  # access to data files is not synchronized,
+            pass                          # thus data[] can be an empty array.
 
         sleep(60)
 
