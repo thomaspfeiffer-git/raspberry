@@ -31,7 +31,7 @@ class SensorValue (object):
     def value (self):
         """returns the measured value as string including unit of
            measurement; eg: "13,4 °C" (please note the decimal coma here)"""
-        if (self.timestamp + 300.0 < time.time()):
+        if (self.timestamp + 300.0 < time()):
             return "n/a"  # data is older than 5 minutes
         else:
             if (self.type_ == SensorValue.Types.Switch):
@@ -45,7 +45,7 @@ class SensorValue (object):
            please note the decimal coma here"""
         _value = _value.replace('.', ',')
         self.__value     = _value
-        self.__timestamp = time.time()
+        self.__timestamp = time()
 
     @property
     def valuenumber (self):
