@@ -5,7 +5,7 @@
 ################################################################################
 """controls PWM output of Raspberry Pi"""
 
-import wiringpi2 as wipi
+import wiringpi as wipi
 
 class PWM (object):
     BRIGHT = 0        # Warning: Bright and Dark depends on the hardware 

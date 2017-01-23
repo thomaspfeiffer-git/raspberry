@@ -2,14 +2,15 @@
 ################################################################################
 # SensorValue.py                                                               #
 # Class providing various data of sensors                                      #
-# (c) https://github.com/thomaspfeiffer-git 2016                               #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017                         #
 ################################################################################
 """provides classes for:
    SensorValue: measured values including a timestamp of all weather sensors
    SensorValueLock: Wraps SensorValue read and write access with a Lock.
 """
 
-import time, datetime
+from time import time, strftime, localtime
+
 
 class SensorValue (object):
     """contains various data of measured values"""
@@ -78,7 +79,7 @@ class SensorValue (object):
                "Value:     %s" % self.value     + "\n" + \
                "Unit:      %s" % self.unit      + "\n" + \
                "Timestamp: %s" % self.timestamp + "\n" + \
-               "Timestamp: %s" % datetime.datetime.fromtimestamp(self.timestamp).strftime('%Y-%m-%d %H:%M:%S')
+               "Timestamp: {}".format(strftime("%Y%m%d %X",localtime(self.__timestamp)))
 
 
 class SensorValueLock (object):

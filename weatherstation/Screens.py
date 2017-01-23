@@ -92,7 +92,7 @@ class Screens (object):
             except ValueError:
                 pass
 
-        ypos = self.display.drawWeatherItem(u'Draußen:', \
+        ypos = self.display.drawWeatherItem("Draußen:", \
                                             getvalue(allsensorvalues['ID_12']), \
                                             getvalue(allsensorvalues['ID_04']), \
                                             getvalue(allsensorvalues['ID_05']), \
@@ -124,7 +124,7 @@ class Screens (object):
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        ypos = self.display.drawWeatherItem(u'Kollerberg (außen):', \
+        ypos = self.display.drawWeatherItem("Kollerberg (außen):", \
                                             getvalue(allsensorvalues['ID_24']), \
                                             getvalue(allsensorvalues['ID_25']), \
                                             getvalue(allsensorvalues['ID_23']), \

@@ -35,6 +35,7 @@ class SensorQueueConfig (object):  # TODO: make constructor
     AUTHKEY    = "finster war's, der mond schien helle".encode('latin1')
     RETRYDELAY = 60
     SENDDELAY  = 60
+    SERIALIZER = "pickle"
 
 
 class QueueManager(BaseManager): 
@@ -46,7 +47,8 @@ class SensorQueueServer (object):
         self.__queue = queue.Queue()
         QueueManager.register('get_queue', callable=lambda:self.__queue)
         manager = QueueManager(address=('', SensorQueueConfig.PORT), \
-                               authkey=SensorQueueConfig.AUTHKEY)
+                               authkey=SensorQueueConfig.AUTHKEY,    \
+                               serializer=SensorQueueConfig.SERIALIZER)
         self.__server = manager.get_server()
 
     def start (self):
@@ -70,8 +72,9 @@ class SensorQueueClient (object):
 
         QueueManager.register('get_queue')
         self.__manager = QueueManager(address=(SensorQueueConfig.HOSTNAME, \
-                                               SensorQueueConfig.PORT), \
-                                      authkey=SensorQueueConfig.AUTHKEY)
+                                               SensorQueueConfig.PORT),    \
+                                      authkey=SensorQueueConfig.AUTHKEY,   \
+                                      serializer=SensorQueueConfig.SERIALIZER)
         self.connect()
 
     def connect (self):
