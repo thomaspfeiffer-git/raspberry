@@ -29,6 +29,7 @@ from sensors.TSL2561 import TSL2561
 # #1        | pin 15  | main area
 # #2        | pin 31  | top drawer
 # #3        | pin 35  | button for full lightness
+# #4        | pin 37  | unused
 #
 # debouncing:
 # https://www.raspberrypi.org/forums/viewtopic.php?t=137484&p=913137
