@@ -8,8 +8,8 @@
 """Monitor temperature and humidity in our kid's room."""
 
 import datetime
-import rrdtool
 import signal
+import subprocess
 import sys
 from threading import Lock
 from time import strftime, localtime, sleep, time
@@ -67,12 +67,19 @@ def main():
         measurements[DS_TEMPCPU].append(temp_cpu.read_temperature())
         measurements[DS_TEMP2].append(0)   # empty, for later useage
 
-        rrd_data     = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
-                        ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
-                        ":{:.2f}".format(measurements[DS_TEMP2].last()) + \
-                        ":{:.2f}".format(measurements[DS_HUMI].last())
-        print(strftime("%H:%M:%S", localtime()), rrd_data)
-        rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+        rrd_data = "N:{:.2f}".format(measurements[DS_TEMP1].last()) + \
+                    ":{:.2f}".format(measurements[DS_TEMPCPU].last()) + \
+                    ":{:.2f}".format(measurements[DS_TEMP2].last()) + \
+                    ":{:.2f}".format(measurements[DS_HUMI].last())
+        # print(strftime("%H:%M:%S", localtime()), rrd_data)
+        # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+
+        # python rrdtool seems not to work here; the pi needs a proper reinstall.
+        # as a workaround, i just call the os for rrd update
+        # rrd = "/usr/bin/rrdtool update {} --template {} {}".format(RRDFILE, rrd_template, rrd_data)
+        rrd = ["/usr/bin/rrdtool", "update", RRDFILE, "--template", rrd_template, rrd_data]
+        print(rrd)
+        subprocess.call(rrd)
 
         sleep(35)
 
