@@ -28,8 +28,7 @@ from sensors.TSL2561 import TSL2561
 # sensor id | gpio-in | usage |
 # #1        | pin 15  | main area
 # #2        | pin 31  | top drawer
-# #3        | pin 35  | bottom drawer (opt.)
-# #4        | pin 37  | top area (opt.)
+# #3        | pin 35  | button for full lightness
 #
 # debouncing:
 # https://www.raspberrypi.org/forums/viewtopic.php?t=137484&p=913137
@@ -154,7 +153,18 @@ class Actuator (object):
         self.__lightness = 0
         self.__stepsize = 40
 
-    def _adjust_lightness (self):
+    def adjust_lightness_on (self):
+        """door opened; lightness increases smoothly"""
+        if self.__lightness < int(PWM.MAX / 4):
+            self.__lightness += int(self.__stepsize/4)
+        elif self.__lightness < int(PWM.MAX / 3):
+            self.__lightness += int(self.__stepsize/3)
+        elif self.__lightness < int(PWM.MAX / 2):
+            self.__lightness += int(self.__stepsize/2)
+        else:
+            self.__lightness += self.__stepsize
+
+    def limit_lightness (self):
         """adjust lightness value:
            - not greater than PWM.MAX
            - aligned to lightness measured by TSL2561"""
@@ -167,20 +177,15 @@ class Actuator (object):
         if self.__lightness > PWM.MAX:
             self.__lightness = PWM.MAX
 
-    def on (self):
-        """door opened; lightness increases smoothly"""
-        if self.__lightness < int(PWM.MAX / 4):
-            self.__lightness += int(self.__stepsize/4)
-        elif self.__lightness < int(PWM.MAX / 3):
-            self.__lightness += int(self.__stepsize/3)
-        elif self.__lightness < int(PWM.MAX / 2):
-            self.__lightness += int(self.__stepsize/2)
-        else:
-            self.__lightness += self.__stepsize
+        if controls['button'].switchvalue_stretched() == 1:
+            print("Actuator: set lightness to PWM.MAX")
+            self.__lightness = PWM.MAX
 
-        self._adjust_lightness()
+    def on (self):
+        """door opened"""
+        self.adjust_lightness_on()
+        self.limit_lightness()
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
-        # print("Actuator: set to on (lightness: {})".format(self.__lightness))
 
     def off (self):
         """door closed"""
@@ -188,7 +193,6 @@ class Actuator (object):
         if self.__lightness < PWM.MIN:
             self.__lightness = PWM.MIN
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
-        # print("Actuator: set to off (lightness: {})".format(self.__lightness))
 
     def immediate_off (self):
         """called on program exit"""
@@ -203,22 +207,25 @@ class Control (threading.Thread):
 
     def __init__ (self, sensor_id, actuator_id):
         threading.Thread.__init__(self)
-        self.__lock     = threading.Lock()
-        self.__sensor   = Sensor(sensor_id)
-        self.__actuator = Actuator(actuator_id)
+        self.__lock    = threading.Lock()
+        self._sensor   = Sensor(sensor_id)
+        self._actuator = Actuator(actuator_id)
+        self._actuator.off()
 
-        self.__timestretched = time()
-        self.__stretchperiod = 100
+        self._timestretched = time()
+        self._stretchperiod = 100
 
         self.__switch = Switch.OFF
-        self.__sensor.start()
+        self._sensor.start()
 
-        self.__running = True
+        self._running = True
 
     def switchvalue_stretched (self):
-        """enlarge interval of being "on"; otherwise if door is opened
-           for a short period of time only, it would not be seen in RRD"""
-        if time() <= self.__timestretched:
+        """Enlarge interval of being "on"; otherwise if door is opened
+           for a short period of time only, it would not be seen in RRD.
+           In case of Control_Button (derived from Control), this method
+           indicates full lightness."""
+        if time() <= self._timestretched:
             return 1
         else:
             return 0
@@ -232,26 +239,41 @@ class Control (threading.Thread):
     def switchvalue (self, value):
         if (self.switchvalue == Switch.OFF and value == Switch.ON) \
             or self.switchvalue == Switch.ON:
-            self.__timestretched = time() + self.__stretchperiod
+            self._timestretched = time() + self._stretchperiod
         with self.__lock:
             self.__switch = value    
 
     def run (self):
-        while self.__running:
-            self.switchvalue = self.__sensor.value
+        while self._running:
+            self.switchvalue = self._sensor.value
 
             if self.switchvalue == Switch.ON:
-                self.__actuator.on()
+                self._actuator.on()
             else:
-                self.__actuator.off()
+                self._actuator.off()
             sleep(0.02)
 
-        self.__actuator.immediate_off() # Turn light off on exit.
+        self._actuator.immediate_off() # Turn light off on exit.
 
     def stop (self):
-        self.__running = False
-        self.__sensor.stop()
-        self.__sensor.join()
+        self._running = False
+        self._sensor.stop()
+        self._sensor.join()
+
+
+###############################################################################
+# Control_Button ##############################################################
+class Control_Button (Control):
+    def __init__ (self, sensor_id, actuator_id):
+        super().__init__(sensor_id, actuator_id)
+        self._stretchperiod = 60
+
+    def run (self):
+        """no actuator for this sensor/button"""
+        while self._running:
+            # self.switchvalue = self._sensor.value
+            self.switchvalue = Switch.OFF # temporarely permanentely switched off
+            sleep(0.02)
 
 
 ###############################################################################
@@ -260,7 +282,7 @@ def main ():
     cpu     = CPU()
     htu21df = HTU21DF()
     lightness.start()
-    for c in controls:
+    for _, c in controls.items():
         c.start()
 
     rrd_template = DS_TEMP1     + ":" + \
@@ -283,9 +305,9 @@ def main ():
                     ":{:.2f}".format(99.99)                  + \
                     ":{:.2f}".format(htu21df_humidity)       + \
                     ":{:.2f}".format(lightness.value)        + \
-                    ":{:}".format(controls[0].switchvalue_stretched())        + \
                     ":{}".format(0)                          + \
-                    ":{:}".format(controls[1].switchvalue_stretched())        + \
+                    ":{}".format(0)                          + \
+                    ":{:}".format(controls['drawer'].switchvalue_stretched()) + \
                     ":{}".format(0)
         print(strftime("%Y%m%d %X:"), rrd_data)
         rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
@@ -297,7 +319,7 @@ def main ():
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
-    for c in controls:
+    for _, c in controls.items():
         c.stop()
         c.join()
 
@@ -317,10 +339,11 @@ if __name__ == '__main__':
 
     try:
         lightness = Lightness()
-        controls  = []
-        controls.append(Control(Sensor1_Pin, Actuator1_ID))
-        # controls.append(Control(Sensor2_Pin, Actuator2_ID))
-        controls.append(Control(Sensor3_Pin, Actuator3_ID))
+        controls  = {
+                    # 'doors':  Control(Sensor1_Pin, Actuator1_ID),
+                    'drawer': Control(Sensor2_Pin, Actuator2_ID),
+                    'button': Control_Button(Sensor3_Pin, Actuator3_ID)
+                    }
         main()
 
     except KeyboardInterrupt:
