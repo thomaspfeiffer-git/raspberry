@@ -6,6 +6,8 @@
 # (c) https://github.com/thomaspfeiffer-git 2015, 2016                      #
 #############################################################################
 """Monitor temperature and humidity in our kid's room."""
+# Start with:
+# nohup sudo ./weather_kidsroom.py > /dev/null &
 
 import datetime
 import signal
