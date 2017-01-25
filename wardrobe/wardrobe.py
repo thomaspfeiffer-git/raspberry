@@ -168,7 +168,8 @@ class Actuator (object):
     def limit_lightness (self):
         """adjust lightness value:
            - not greater than PWM.MAX
-           - aligned to lightness measured by TSL2561"""
+           - aligned to lightness measured by TSL2561
+           - set to max lightness if button was pressed"""
 
         max_lightness = (lightness.value+1) * 200
 
@@ -179,7 +180,6 @@ class Actuator (object):
             self.__lightness = PWM.MAX
 
         if controls['button'].switchvalue_stretched() == 1:
-            print("Actuator: set lightness to PWM.MAX")
             self.__lightness = PWM.MAX
 
     def on (self):
@@ -270,10 +270,9 @@ class Control_Button (Control):
         self._stretchperiod = 60
 
     def run (self):
-        """no actuator for this sensor/button"""
+        self._actuator.on()  # constant actuator output
         while self._running:
-            # self.switchvalue = self._sensor.value
-            self.switchvalue = Switch.OFF # temporarely permanentely switched off
+            self.switchvalue = self._sensor.value
             sleep(0.02)
 
 
@@ -283,7 +282,7 @@ def main ():
     cpu     = CPU()
     htu21df = HTU21DF()
     lightness.start()
-    for _, c in controls.items():
+    for c in controls.values():
         c.start()
 
     rrd_template = DS_TEMP1     + ":" + \
@@ -306,9 +305,9 @@ def main ():
                     ":{:.2f}".format(99.99)                  + \
                     ":{:.2f}".format(htu21df_humidity)       + \
                     ":{:.2f}".format(lightness.value)        + \
+                    ":{}".format(controls['doors'].switchvalue_stretched())  + \
                     ":{}".format(0)                          + \
-                    ":{}".format(0)                          + \
-                    ":{:}".format(controls['drawer'].switchvalue_stretched()) + \
+                    ":{}".format(controls['drawer'].switchvalue_stretched()) + \
                     ":{}".format(0)
         print(strftime("%Y%m%d %X:"), rrd_data)
         rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
@@ -320,7 +319,7 @@ def main ():
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
-    for _, c in controls.items():
+    for c in controls.values():
         c.stop()
         c.join()
 
@@ -341,7 +340,7 @@ if __name__ == '__main__':
     try:
         lightness = Lightness()
         controls  = {
-                    # 'doors':  Control(Sensor1_Pin, Actuator1_ID),
+                    'doors':  Control(Sensor1_Pin, Actuator1_ID),
                     'drawer': Control(Sensor2_Pin, Actuator2_ID),
                     'button': Control_Button(Sensor3_Pin, Actuator3_ID)
                     }
