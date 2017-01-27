@@ -189,15 +189,18 @@ class Actuator (object):
            - not greater than PWM.MAX
            - set to max lightness if button was pressed"""
 
-        max_lightness = (lightness.value+1) * 200
+        max_lightness = (lightness.value+1) * 50
         if self.__lightness > max_lightness:
             self.__lightness = max_lightness
 
         if self.__lightness > PWM.MAX:
             self.__lightness = PWM.MAX
 
-        if controls['button'].switchvalue_stretched() == 1:
-            self.__lightness = PWM.MAX
+        try:  # controls might not be initialized at first run
+            if controls['button'].switchvalue_stretched() == 1:
+                self.__lightness = PWM.MAX
+        except (NameError):
+            pass
 
     def on (self):
         """door opened"""
@@ -210,6 +213,7 @@ class Actuator (object):
         """door closed"""
         self.smooth.decrease()
         self.__lightness = self.smooth.lightness
+        self.adjust_lightness()
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
 
     def immediate_off (self):
