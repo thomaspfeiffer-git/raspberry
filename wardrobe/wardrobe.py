@@ -7,7 +7,7 @@
 """controls lighting of my wardrobe"""
 
 from enum import Enum
-from math import pi, sin
+from math import pi, sin, asin
 import RPi.GPIO as io
 import rrdtool
 import signal
@@ -169,7 +169,11 @@ class Smooth (object):
 
     @property
     def lightness (self):
-        return sin(self.__counter) * self.__pwmmax + self.__pwmmax     
+        return sin(self.__counter) * self.__pwmmax + self.__pwmmax
+
+    @lightness.setter
+    def lightness (self, value):
+        self.__counter = asin((value - self.__pwmmax) / self.__pwmmax)
 
 
 ###############################################################################
@@ -196,15 +200,22 @@ class Actuator (object):
         if self.__lightness > PWM.MAX:
             self.__lightness = PWM.MAX
 
-        try:  # controls might not be initialized at first run
-            if controls['button'].switchvalue_stretched() == 1:
-                self.__lightness = PWM.MAX
-        except (NameError):
-            pass
+#        try:  # controls might not be initialized at first run
+#            if controls['button'].switchvalue_stretched() == 1:
+#                self.__lightness = PWM.MAX
+#        except (NameError):
+#            pass
 
-    def on (self):
+        if controls['button'].switchvalue_stretched() == 1:
+            self.__lightness = PWM.MAX
+
+    def on (self, lightnessvalue=0):
         """door opened"""
-        self.smooth.increase()
+        if lightnessvalue == 0:
+            self.smooth.increase()
+        else:
+            self.smooth.lightness = lightnessvalue
+
         self.__lightness = self.smooth.lightness
         self.adjust_lightness()
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
@@ -213,7 +224,7 @@ class Actuator (object):
         """door closed"""
         self.smooth.decrease()
         self.__lightness = self.smooth.lightness
-        self.adjust_lightness()
+        # self.adjust_lightness()
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
 
     def immediate_off (self):
@@ -291,7 +302,7 @@ class Control_Button (Control):
         self._stretchperiod = 60
 
     def run (self):
-        self._actuator.on()  # constant actuator output
+        self._actuator.on(lightnessvalue=PWM.MAX)  # constant actuator output
         while self._running:
             self.switchvalue = self._sensor.value
             sleep(0.02)
