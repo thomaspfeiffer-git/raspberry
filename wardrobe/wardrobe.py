@@ -41,10 +41,10 @@ Sensor2_Pin = 31
 Sensor3_Pin = 35
 Sensor4_Pin = 37
 
-Actuator1_ID   = 0
-Actuator2_ID   = 1
-Actuator3_ID   = 2
-Actuator4_ID   = 3
+Actuator1_ID = 0
+Actuator2_ID = 1
+Actuator3_ID = 2
+Actuator4_ID = 3
 
 
 # Misc for rrdtool
@@ -78,7 +78,7 @@ class Lightness (threading.Thread):
 
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.__lock = threading.Lock()
+        self.__lock    = threading.Lock()
         self.__tsl2561 = TSL2561()
         self.__value   = 0
         self.__running = True
@@ -368,9 +368,9 @@ if __name__ == '__main__':
     try:
         lightness = Lightness()
         controls  = {
-                    'doors':  Control(Sensor1_Pin, Actuator1_ID),
-                    'drawer': Control(Sensor2_Pin, Actuator2_ID),
-                    'button': Control_Button(Sensor3_Pin, Actuator3_ID)
+                     'doors':  Control(Sensor1_Pin, Actuator1_ID),
+                     'drawer': Control(Sensor2_Pin, Actuator2_ID),
+                     'button': Control_Button(Sensor3_Pin, Actuator3_ID)
                     }
         main()
 
