@@ -185,29 +185,27 @@ class Actuator (object):
         self.pwm    = PWM(pwm_id)
         self.smooth = Smooth()
 
-        self.__lightness = 0
-
-    def adjust_lightness (self):
+    def adjust_lightness (self, off=False):
         """adjust lightness value:
            - aligned to lightness measured by TSL2561
            - not greater than PWM.MAX
            - set to max lightness if button was pressed"""
 
         max_lightness = (lightness.value+1) * 50
-        if self.__lightness > max_lightness:
-            self.__lightness = max_lightness
+        if self.smooth.lightness > max_lightness:
+            self.smooth.lightness = max_lightness
 
-        if self.__lightness > PWM.MAX:
-            self.__lightness = PWM.MAX
+        if self.smooth.lightness > PWM.MAX:
+            self.smooth.lightness = PWM.MAX
 
-#        try:  # controls might not be initialized at first run
-#            if controls['button'].switchvalue_stretched() == 1:
-#                self.__lightness = PWM.MAX
-#        except (NameError):
-#            pass
-
-        if controls['button'].switchvalue_stretched() == 1:
-            self.__lightness = PWM.MAX
+        try: 
+            if not off:  # when switching off, 
+                         # lightness is supposed to normal level
+                         # (means: no lightness overule on off).
+                if controls['button'].switchvalue_stretched() == 1:
+                    self.smooth.lightness = PWM.MAX
+        except (NameError):
+            pass
 
     def on (self, lightnessvalue=0):
         """door opened"""
@@ -216,21 +214,19 @@ class Actuator (object):
         else:
             self.smooth.lightness = lightnessvalue
 
-        self.__lightness = self.smooth.lightness
         self.adjust_lightness()
-        self.pwm.set_pwm(PWM.MAX-self.__lightness)
+        self.pwm.set_pwm(PWM.MAX-self.smooth.lightness)
 
     def off (self):
         """door closed"""
         self.smooth.decrease()
-        self.__lightness = self.smooth.lightness
-        # self.adjust_lightness()
-        self.pwm.set_pwm(PWM.MAX-self.__lightness)
+        self.adjust_lightness(off=True)
+        self.pwm.set_pwm(PWM.MAX-self.smooth.lightness)
 
     def immediate_off (self):
         """called on program exit"""
-        self.__lightness = PWM.MIN
-        self.pwm.set_pwm(PWM.MAX-self.__lightness)
+        self.smooth.lightness = PWM.MIN
+        self.pwm.set_pwm(PWM.MAX-self.smooth.lightness)
 
 
 ###############################################################################
