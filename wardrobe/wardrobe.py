@@ -7,6 +7,7 @@
 """controls lighting of my wardrobe"""
 
 from enum import Enum
+from math import pi, sin
 import RPi.GPIO as io
 import rrdtool
 import signal
@@ -141,7 +142,34 @@ class PWM (PCA9685):
 
     def set_pwm (self, on):
         with central_i2c_lock:
-            super().set_pwm(self.__channel, on, self.MAX)
+            super().set_pwm(self.__channel, int(on), self.MAX)
+
+
+###############################################################################
+# Smooth ######################################################################
+class Smooth (object):
+    """smoothes lights on/off following a sinus curve"""
+
+    def __init__ (self, stepsize=0.01):
+        self.__pwmmax     = PWM.MAX / 2.0
+        self.__countermax = pi / 2.0
+        self.__countermin = -self.__countermax
+        self.__counter    = self.__countermin
+        self.__stepsize   = stepsize
+
+    def increase (self):
+        self.__counter += self.__stepsize
+        if self.__counter > self.__countermax:
+            self.__counter = self.__countermax
+
+    def decrease (self):
+        self.__counter -= self.__stepsize
+        if self.__counter < self.__countermin:
+            self.__counter = self.__countermin
+
+    @property
+    def lightness (self):
+        return sin(self.__counter) * self.__pwmmax + self.__pwmmax     
 
 
 ###############################################################################
@@ -150,29 +178,18 @@ class Actuator (object):
     """turns light on and off (via PWM)"""
 
     def __init__ (self, pwm_id):
-        self.pwm = PWM(pwm_id)
+        self.pwm    = PWM(pwm_id)
+        self.smooth = Smooth()
+
         self.__lightness = 0
-        self.__stepsize = 40
 
-    def adjust_lightness_on (self):
-        """door opened; lightness increases smoothly"""
-        if self.__lightness < int(PWM.MAX / 4):
-            self.__lightness += int(self.__stepsize/4)
-        elif self.__lightness < int(PWM.MAX / 3):
-            self.__lightness += int(self.__stepsize/3)
-        elif self.__lightness < int(PWM.MAX / 2):
-            self.__lightness += int(self.__stepsize/2)
-        else:
-            self.__lightness += self.__stepsize
-
-    def limit_lightness (self):
+    def adjust_lightness (self):
         """adjust lightness value:
-           - not greater than PWM.MAX
            - aligned to lightness measured by TSL2561
+           - not greater than PWM.MAX
            - set to max lightness if button was pressed"""
 
         max_lightness = (lightness.value+1) * 200
-
         if self.__lightness > max_lightness:
             self.__lightness = max_lightness
 
@@ -184,21 +201,21 @@ class Actuator (object):
 
     def on (self):
         """door opened"""
-        self.adjust_lightness_on()
-        self.limit_lightness()
+        self.smooth.increase()
+        self.__lightness = self.smooth.lightness
+        self.adjust_lightness()
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
 
     def off (self):
         """door closed"""
-        self.__lightness -= self.__stepsize
-        if self.__lightness < PWM.MIN:
-            self.__lightness = PWM.MIN
+        self.smooth.decrease()
+        self.__lightness = self.smooth.lightness
         self.pwm.set_pwm(PWM.MAX-self.__lightness)
 
     def immediate_off (self):
         """called on program exit"""
         self.__lightness = PWM.MIN
-        self.off()
+        self.pwm.set_pwm(PWM.MAX-self.__lightness)
 
 
 ###############################################################################
