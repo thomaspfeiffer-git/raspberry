@@ -142,7 +142,7 @@ class PWM (PCA9685):
 
     def set_pwm (self, on):
         with central_i2c_lock:
-            super().set_pwm(self.__channel, int(on), self.MAX)
+            super().set_pwm(self.__channel, self.MAX-int(on), self.MAX)
 
 
 ###############################################################################
@@ -215,18 +215,18 @@ class Actuator (object):
             self.smooth.lightness = lightnessvalue
 
         self.adjust_lightness()
-        self.pwm.set_pwm(PWM.MAX-self.smooth.lightness)
+        self.pwm.set_pwm(self.smooth.lightness)
 
     def off (self):
         """door closed"""
         self.smooth.decrease()
         self.adjust_lightness(off=True)
-        self.pwm.set_pwm(PWM.MAX-self.smooth.lightness)
+        self.pwm.set_pwm(self.smooth.lightness)
 
     def immediate_off (self):
         """called on program exit"""
         self.smooth.lightness = PWM.MIN
-        self.pwm.set_pwm(PWM.MAX-self.smooth.lightness)
+        self.pwm.set_pwm(self.smooth.lightness)
 
 
 ###############################################################################
