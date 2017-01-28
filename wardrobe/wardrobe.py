@@ -198,14 +198,10 @@ class Actuator (object):
         if self.smooth.lightness > PWM.MAX:
             self.smooth.lightness = PWM.MAX
 
-        try: 
-            if not off:  # when switching off, 
-                         # lightness is supposed to normal level
-                         # (means: no lightness overule on off).
-                if controls['button'].switchvalue_stretched() == 1:
-                    self.smooth.lightness = PWM.MAX
-        except (NameError):
-            pass
+        if not off:    # when switching off, lightness is supposed to 
+                       # normal level (means: no lightness overule).
+            if controls['button'].switchvalue_stretched() == 1:
+                self.smooth.lightness = PWM.MAX
 
     def on (self, lightnessvalue=0):
         """door opened"""
@@ -239,7 +235,7 @@ class Control (threading.Thread):
         self.__lock    = threading.Lock()
         self._sensor   = Sensor(sensor_id)
         self._actuator = Actuator(actuator_id)
-        self._actuator.off()
+        self._actuator.immediate_off()
 
         self._timestretched = time()
         self._stretchperiod = 100
@@ -293,13 +289,15 @@ class Control (threading.Thread):
 ###############################################################################
 # Control_Button ##############################################################
 class Control_Button (Control):
+    """pressing a button switches light on for 60 s with full lightness"""
+
     def __init__ (self, sensor_id, actuator_id):
         super().__init__(sensor_id, actuator_id)
         self._stretchperiod = 60
 
     def run (self):
         self._actuator.on(lightnessvalue=PWM.MAX)  # constant actuator output
-        while self._running:
+        while self._running:                       # for blue led in button
             self.switchvalue = self._sensor.value
             sleep(0.02)
 
