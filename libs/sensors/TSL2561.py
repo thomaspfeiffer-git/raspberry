@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # TSL2561.py                                                                  #
-# under construction
+# under construction                                                          #
+# TODO: try for i2c access                                                    #
 ###############################################################################
 
 
-
+# Taken from and slightly modified:
 # https://github.com/seanbechhofer/raspberrypi/blob/master/python/TSL2561.py
 
 
@@ -105,11 +106,14 @@ TSL2561_GAIN_16X = 0x10   # 16x gain
 
 
 class TSL2561(I2C):
-    def __init__ (self, lock=None):
+    def __init__ (self, qvalue=None, lock=None):
         if sys.version_info >= (3,0):
             super().__init__(lock)
         else:
             super(TSL2561, self).__init__(lock)
+
+        self.__qvalue = qvalue
+        self.__lastvalue = 0
 
         self.address = TSL2561_ADDR_FLOAT
     
@@ -372,12 +376,14 @@ class TSL2561(I2C):
         broadband, ir = self._get_luminosity()
 
         try:
-            return self._calculate_lux(broadband, ir)
+            v = self._calculate_lux(broadband, ir)
+            self.__lastvalue = v
+            if self.__qvalue is not None:
+                self.__qvalue.value = "%.1f" % (v)
         except:
-            return 20000   ###########
-
-
-
+            print(strftime("%Y%m%d %X:"), "error getting lux in TSL2561.lux()") 
+        finally:
+            return self.__lastvalue
 
 # eof #
 
