@@ -1,0 +1,55 @@
+wardrobe.py
+===========
+
+
+
+
+class Lightness (threading.Thread)
+----------------------------------
+
+
+
+
+class Sensor (threading.Thread)
+------------------------------
+
+
+
+
+class PWM (PCA9685)
+-------------------
+
+
+
+
+class Smooth (object)
+---------------------
+
+
+
+
+class Actuator (object)
+-----------------------
+
+
+
+class Control (threading.Thread)
+--------------------------------
+
+
+
+class Control_Button (Control)
+------------------------------
+
+
+
+
+main
+----
+
+
+
+
+
+
+
