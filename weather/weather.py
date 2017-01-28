@@ -51,13 +51,13 @@ DS_TEMPCPU         = "temp_cpu"
 def main():
     """main part"""
 
-    qvalue_temp_indoor      = SensorValueLock("ID_01", "TempWohnzimmerIndoor", SensorValue.Types.Temp, u'°C', Lock())
-    qvalue_humi_indoor      = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", SensorValue.Types.Humi, u'% rF', Lock())
-    qvalue_temp_outdoor     = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, u'°C', Lock())
-    qvalue_humi_outdoor     = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, u'% rF', Lock())
-    qvalue_pressure         = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, u'hPa', Lock())
-    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, u'°C', Lock())
-    qvalue_temp_indoor2     = SensorValueLock("ID_13", "TempWohnzimmerFenster", SensorValue.Types.Temp, u'°C', Lock())
+    qvalue_temp_indoor      = SensorValueLock("ID_01", "TempWohnzimmerIndoor", SensorValue.Types.Temp, "°C", Lock())
+    qvalue_humi_indoor      = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", SensorValue.Types.Humi, "% rF", Lock())
+    qvalue_temp_outdoor     = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, "°C", Lock())
+    qvalue_humi_outdoor     = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, "% rF", Lock())
+    qvalue_pressure         = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, "hPa", Lock())
+    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, "°C", Lock())
+    qvalue_temp_indoor2     = SensorValueLock("ID_13", "TempWohnzimmerFenster", SensorValue.Types.Temp, "°C", Lock())
 
     sq.register(qvalue_temp_indoor)
     sq.register(qvalue_humi_indoor)
