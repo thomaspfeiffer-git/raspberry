@@ -20,7 +20,7 @@ Used hardware
 - 1 PCA9685 (16 channel 12 bit PWM servo driver, I2C)
 - 1 TSL2561 (light-to-digital converter, I2C)
 - 1 HTU21DF (digital relative humidity sensor with temperature output, I2C)
-- 3 NPN darlington transistors
+- 3 TIP121 (NPN darlington transistors)
 - 3 LED strips: https://www.amazon.de/gp/product/B01H1I42RA
 - various resistors and capacitors
 
