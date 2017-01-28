@@ -1,55 +1,66 @@
 wardrobe.py
 ===========
 
+Some very clever hard- and software brings light into my wardrobe. :-)
+Features:
+- lightness of LED strip depends on outside brightness
+- currently two independent sensors and two independent LED strips
+- one button to set lightness to max level
+- on/off is smoothed following a sinus curve
 
 
+Used hardware
+-------------
 
-class Lightness (threading.Thread)
-----------------------------------
-
-
-
-
-class Sensor (threading.Thread)
-------------------------------
-
-
-
-
-class PWM (PCA9685)
--------------------
-
+- 1 old Lenovo laptop power supply (65 W, 19 V)
+- 2 step down DC DC converters (19 V --> 12 V; 19 V --> 5 V)
+- 1 Raspberry Pi
+- 1 button: https://www.amazon.de/gp/product/B01463I4M2
+- 3 reed contacts: https://www.amazon.de/gp/product/B000ZGI1Y6
+- 1 PCA9685 (16 channel 12 bit PWM servo driver, I2C)
+- 1 TSL2561 (light-to-digital converter, I2C)
+- 1 HTU21DF (digital relative humidity sensor with temperature output, I2C)
+- 3 NPN darlington transistors
+- 3 LED strips: https://www.amazon.de/gp/product/B01H1I42RA
+- various resistors and capacitors
 
 
+Classes
+-------
 
-class Smooth (object)
----------------------
-
-
-
-
-class Actuator (object)
------------------------
+class Lightness (threading.Thread):
+  Lightness of the LED inside the wardrabe depends on the outside brightness. 
+  It's not necessary to have fill lightness at night.
 
 
-
-class Control (threading.Thread)
---------------------------------
-
+class Sensor (threading.Thread):
+  Reeds the door openers (reed contacts).
 
 
-class Control_Button (Control)
-------------------------------
+class PWM (PCA9685):
+  Controls the PCA9685 device.
 
 
+class Smooth (object):
+  Lightness increases and decreases following a sinus curve.
 
 
-main
-----
+class Actuator (object):
+  Switches the LED strip on and off (using some smoothness).
 
 
+class Control (threading.Thread):
+  Reads the sensor and switches on/off the corresponding LED strip.
 
 
+class Control_Button (Control):
+  A click on one special button sets the LED strip to full lightness for 60 seconds.
 
 
+main:
+  Starts all controls (doors, drawer, and button). Reads sensors and writes data to
+  an rrd database. Additionally all data is sent to my SenserQueue for my wheather
+  station (https://github.com/thomaspfeiffer-git/raspberry/tree/master/weatherstation).
+
+# eof #
 
