@@ -354,10 +354,10 @@ def _exit():
         c.stop()
         c.join()
 
-    lightness.stop()
-    lightness.join()
     sq.stop()
     sq.join()
+    lightness.stop()
+    lightness.join()
     sys.exit()
 
 def __exit(__s, __f):
