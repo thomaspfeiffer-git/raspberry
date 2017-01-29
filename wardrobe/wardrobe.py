@@ -25,6 +25,10 @@ from sensors.CPU import CPU
 from sensors.HTU21DF import HTU21DF
 from sensors.TSL2561 import TSL2561 
 
+from SensorQueue import SensorQueueClient_write
+from SensorValue import SensorValueLock, SensorValue
+
+
 
 # sensor id | gpio-in | usage |
 # #1        | pin 15  | main area
@@ -76,10 +80,10 @@ class Lightness (threading.Thread):
     """read lightness value from sensor"""
     """provide lightness value in getter method"""
 
-    def __init__ (self):
+    def __init__ (self, qv=None):
         threading.Thread.__init__(self)
         self.__lock    = threading.Lock()
-        self.__tsl2561 = TSL2561()
+        self.__tsl2561 = TSL2561(qvalue=qv)
         self.__value   = 0
         self.__running = True
 
@@ -305,8 +309,9 @@ class Control_Button (Control):
 ###############################################################################
 # Main ########################################################################
 def main ():
+
     cpu     = CPU()
-    htu21df = HTU21DF()
+    htu21df = HTU21DF(qvalue_temp=qv_temp_wardrobe, qvalue_humi=qv_humi_wardrobe)
     lightness.start()
     for c in controls.values():
         c.start()
@@ -351,6 +356,8 @@ def _exit():
 
     lightness.stop()
     lightness.join()
+    sq.stop()
+    sq.join()
     sys.exit()
 
 def __exit(__s, __f):
@@ -363,8 +370,18 @@ def __exit(__s, __f):
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, __exit)
 
+    qv_temp_wardrobe  = SensorValueLock("ID_21", "TempWardrobe",  SensorValue.Types.Temp, "°C", threading.Lock())
+    qv_humi_wardrobe  = SensorValueLock("ID_22", "HumiWardrobe",  SensorValue.Types.Humi, "% rF", threading.Lock())
+    qv_light_wardrobe = SensorValueLock("ID_23", "LightWardrobe", SensorValue.Types.Light, "lux", threading.Lock())
+
     try:
-        lightness = Lightness()
+        sq = SensorQueueClient_write()
+        sq.register(qv_temp_wardrobe)
+        sq.register(qv_humi_wardrobe)
+        sq.register(qv_light_wardrobe)
+        sq.start()
+
+        lightness = Lightness(qv=qv_light_wardrobe)
         controls  = {
                      'doors':  Control(Sensor1_Pin, Actuator1_ID),
                      'drawer': Control(Sensor2_Pin, Actuator2_ID),
