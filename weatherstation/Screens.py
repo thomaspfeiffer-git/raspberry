@@ -172,9 +172,9 @@ class Screens (object):
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
         ypos = self.display.drawWeatherItem("Schlafzimmerkasten", \
-                                            getvalue(allsensorvalues['ID_21']), \
-                                            getvalue(allsensorvalues['ID_22']), \
-                                            getvalue(allsensorvalues['ID_23']), \
+                                            getvalue(allsensorvalues['ID_31']), \
+                                            getvalue(allsensorvalues['ID_32']), \
+                                            getvalue(allsensorvalues['ID_33']), \
                                             None,    \
                                             CONFIG.COLORS.MISC, ypos)
         self.display.drawTime()
