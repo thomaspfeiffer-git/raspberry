@@ -370,9 +370,9 @@ def __exit(__s, __f):
 if __name__ == '__main__':
     signal.signal(signal.SIGTERM, __exit)
 
-    qv_temp_wardrobe  = SensorValueLock("ID_21", "TempWardrobe",  SensorValue.Types.Temp, "°C", threading.Lock())
-    qv_humi_wardrobe  = SensorValueLock("ID_22", "HumiWardrobe",  SensorValue.Types.Humi, "% rF", threading.Lock())
-    qv_light_wardrobe = SensorValueLock("ID_23", "LightWardrobe", SensorValue.Types.Light, "lux", threading.Lock())
+    qv_temp_wardrobe  = SensorValueLock("ID_31", "TempWardrobe",  SensorValue.Types.Temp, "°C", threading.Lock())
+    qv_humi_wardrobe  = SensorValueLock("ID_32", "HumiWardrobe",  SensorValue.Types.Humi, "% rF", threading.Lock())
+    qv_light_wardrobe = SensorValueLock("ID_33", "LightWardrobe", SensorValue.Types.Light, "lux", threading.Lock())
 
     try:
         sq = SensorQueueClient_write()
