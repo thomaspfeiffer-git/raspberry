@@ -36,7 +36,8 @@ class Screens (object):
                            2: self.Screen2, \
                            3: self.Screen3, \
                            4: self.Screen4, \
-                           5: self.Screen5}
+                           5: self.Screen5, \
+                           6: self.Screen6}
 
 
     @property
@@ -160,6 +161,20 @@ class Screens (object):
                                             getvalue(allsensorvalues['ID_03']), \
                                             getvalue(allsensorvalues['ID_13']), \
                                             None,    \
+                                            None,    \
+                                            CONFIG.COLORS.MISC, ypos)
+        self.display.drawTime()
+
+
+    def Screen6 (self, allsensorvalues):
+        """Wardrobe"""
+        ypos = CONFIG.MARGIN 
+        self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
+
+        ypos = self.display.drawWeatherItem("Schlafzimmerkasten", \
+                                            getvalue(allsensorvalues['ID_21']), \
+                                            getvalue(allsensorvalues['ID_22']), \
+                                            getvalue(allsensorvalues['ID_23']), \
                                             None,    \
                                             CONFIG.COLORS.MISC, ypos)
         self.display.drawTime()
