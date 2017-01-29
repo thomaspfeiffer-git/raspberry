@@ -34,6 +34,7 @@ class CONFIG:
         KIDSROOM   = (0, 0xCC, 0xFF)
         COTTAGE    = (0x08, 0x8A, 0x08)
         MISC       = (0x08, 0x8A, 0x08)
+        WARDROBE   = (0xFF, 0xCC, 0x00)
 
     class IMAGES:
         """definitions of images and path to images"""

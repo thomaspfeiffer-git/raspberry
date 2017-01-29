@@ -152,7 +152,7 @@ class Screens (object):
         self.display.drawTime()
 
 
-    def Screen5 (self, allsensorvalues):
+    def Screen6 (self, allsensorvalues):
         """misc sensor values"""
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
@@ -166,17 +166,17 @@ class Screens (object):
         self.display.drawTime()
 
 
-    def Screen6 (self, allsensorvalues):
+    def Screen5 (self, allsensorvalues):
         """Wardrobe"""
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        ypos = self.display.drawWeatherItem("Schlafzimmerkasten", \
+        ypos = self.display.drawWeatherItem("Schlafzimmerkasten:", \
                                             getvalue(allsensorvalues['ID_31']), \
                                             getvalue(allsensorvalues['ID_32']), \
                                             getvalue(allsensorvalues['ID_33']), \
                                             None,    \
-                                            CONFIG.COLORS.MISC, ypos)
+                                            CONFIG.COLORS.WARDROBE, ypos)
         self.display.drawTime()
 
 # eof #
