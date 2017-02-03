@@ -92,10 +92,7 @@ class Control_Strip (threading.Thread):
         threading.Thread.__init__(self)
         self._strip = LED_Strip()
         self._strip.begin()
-
         self.__flags = {Flags.running: True, Flags.pattern_changed: False}
-        # self.__running = [True]  # pass by reference in self.__pattern()
-        # self.__pattern_changed = [False]
 
     @property
     def brightness (self):
@@ -109,19 +106,15 @@ class Control_Strip (threading.Thread):
 
     def set_pattern (self, pattern):
         self.__pattern = pattern
-        # self.__pattern_changed[0] = True
         self.__flags[Flags.pattern_changed] = True
 
     def run (self):
-        # self.__pattern_changed[0] = False
         self.__flags[Flags.pattern_changed] = False
         while self.__flags[Flags.running]:
             self.__pattern(self._strip, self.__flags)
             self.__flags[Flags.pattern_changed] = False
-            # self.__pattern_changed[0] = False
        
     def stop (self):
-        # self.__running[0] = False
         self.__flags[Flags.running] = False
 
 
@@ -164,11 +157,37 @@ def pattern_black (strip, flags):
     static_pattern_wait(flags)
 
 
+def pattern_rainbow (strip, flags):
+    def wheel (pos):
+        if pos < 85:
+            return Color(pos * 3, 255 - pos * 3, 0)
+        elif pos < 170:
+            pos -= 85
+            return Color(255 - pos * 3, 0, pos * 3)
+        else:
+            pos -= 170
+            return Color(0, pos * 3, 255 - pos * 3)
+
+    while flags[Flags.running] and not flags[Flags.pattern_changed]:
+        for j in range(256):
+            color = wheel(j)
+            for i in range(strip.num_pixels()):
+                strip.set_pixel_color(i, color)
+            strip.show()
+
+            if not flags[Flags.running] or flags[Flags.pattern_changed]:
+                break
+
+            for s in range(500):    # interruptible sleep  
+                while flags[Flags.running] and not flags[Flags.pattern_changed]:
+                    sleep(0.01)
+
+
 ############################################################################
 # Flask stuff ##############################################################
 @app.route('/')
 def hello_world():
-    return 'Hello, World!'
+    return "http://pia:5000/color/red"
 
 
 @app.route('/on')
@@ -179,7 +198,6 @@ def light_on ():
 @app.route('/off')
 def light_off ():
     c.set_pattern(pattern_black)
-
 
 @app.route('/color/red')
 def set_color_red ():
@@ -211,10 +229,15 @@ def set_color_aqua ():
     c.set_pattern(pattern_aqua)
     return "color set"
 
-
 @app.route('/colorrgb/<string:color>')
 def set_color_rgb (color):
     return "Farbe RGB: {}".format(color)
+
+
+@app.route('/rainbow')
+def rainbow ():
+    c.set_pattern(pattern_rainbow)
+    return "rainbow"
 
 
 @app.route('/lightness')
@@ -225,19 +248,11 @@ def lightness ():
 ############################################################################
 ### main ###
 ### if __name__ == 'main': ÄÄÄÄÄÄÄÄ oder so?
+# TODO: signal etc
 
 c = Control_Strip()
 c.set_pattern(pattern_red)
 c.start()
-# sleep(5)
-# c.set_pattern(pattern_green)
-# sleep(5)
-# c.set_pattern(pattern_blue)
-# sleep(5)
-# c.set_pattern(pattern_white)
-# sleep(5)
-# c.set_pattern(pattern_black)
-# sleep(5)
 # c.stop()
 
 
