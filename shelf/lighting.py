@@ -22,6 +22,7 @@
 # sudo pip3 install Flask
 
 
+from enum import Enum
 from neopixel import *
 import sys
 import threading
@@ -29,8 +30,6 @@ from time import sleep
 
 from flask import Flask
 app = Flask(__name__)
-
-
 
 
 ############################################################################
@@ -80,6 +79,12 @@ class LED_Strip (object):
         pass
 
 
+
+class Flags (Enum):
+    running = 0
+    pattern_changed = 1
+
+
 ############################################################################
 # Control_Strip ############################################################
 class Control_Strip (threading.Thread):
@@ -88,8 +93,9 @@ class Control_Strip (threading.Thread):
         self._strip = LED_Strip()
         self._strip.begin()
 
-        self.__running = [True]  # pass by reference in self.__pattern()
-        self.__pattern_changed = [False]
+        self.__flags = {Flags.running: True, Flags.pattern_changed: False}
+        # self.__running = [True]  # pass by reference in self.__pattern()
+        # self.__pattern_changed = [False]
 
     @property
     def brightness (self):
@@ -103,59 +109,59 @@ class Control_Strip (threading.Thread):
 
     def set_pattern (self, pattern):
         self.__pattern = pattern
-        self.__pattern_changed[0] = True
+        # self.__pattern_changed[0] = True
+        self.__flags[Flags.pattern_changed] = True
 
     def run (self):
-        self.__pattern_changed[0] = False
-        while self.__running[0]:
-            self.__pattern(self._strip, self.__running, self.__pattern_changed)
-            self.__pattern_changed[0] = False
+        # self.__pattern_changed[0] = False
+        self.__flags[Flags.pattern_changed] = False
+        while self.__flags[Flags.running]:
+            self.__pattern(self._strip, self.__flags)
+            self.__flags[Flags.pattern_changed] = False
+            # self.__pattern_changed[0] = False
        
     def stop (self):
-        self.__running[0] = False
+        # self.__running[0] = False
+        self.__flags[Flags.running] = False
 
 
 ############################################################################
 # Patterns for LED Strip ###################################################
-def pattern_red (strip, running, pattern_changed):
+def static_pattern_wait (flags):
+    while flags[Flags.running] and not flags[Flags.pattern_changed]:
+        sleep(0.05) 
+
+def pattern_red (strip, flags):
     strip.set_color(0xFF0000)
-    while running[0] and pattern_changed[0] == False:
-        sleep(1) 
+    static_pattern_wait(flags)
 
-def pattern_green (strip, running, pattern_changed):
+def pattern_green (strip, flags):
     strip.set_color(0x00FF00)
-    while running[0] and pattern_changed[0] == False:
-        sleep(1) 
+    static_pattern_wait(flags)
 
-def pattern_blue (strip, running, pattern_changed):
+def pattern_blue (strip, flags):
     strip.set_color(0x0000FF)
-    while running[0] and pattern_changed[0] == False:
-        sleep(1) 
+    static_pattern_wait(flags)
 
-def pattern_yellow (strip, running, pattern_changed):
+def pattern_yellow (strip, flags):
     strip.set_color(0xFFFF00)
-    while running[0] and pattern_changed[0] == False:
-        sleep(1) 
+    static_pattern_wait(flags)
 
-def pattern_fuchsia (strip, running, pattern_changed):
+def pattern_fuchsia (strip, flags):
     strip.set_color(0xFF00FF)
-    while running[0] and pattern_changed[0] == False:
-        sleep(1) 
+    static_pattern_wait(flags)
 
-def pattern_aqua (strip, running, pattern_changed):
+def pattern_aqua (strip, flags):
     strip.set_color(0x00FFFF)
-    while running[0] and pattern_changed[0] == False:
-        sleep(1) 
+    static_pattern_wait(flags)
 
-def pattern_white (strip, running, pattern_changed):
+def pattern_white (strip, flags):
     strip.set_color(0xFFFFFF)
-    while running[0] and pattern_changed[0] == False:
-        sleep(1) 
+    static_pattern_wait(flags)
 
-def pattern_black (strip, running, pattern_changed):
+def pattern_black (strip, flags):
     strip.set_color(0x000000)
-    while running[0] and pattern_changed[0] == False:
-        sleep(1) 
+    static_pattern_wait(flags)
 
 
 ############################################################################
