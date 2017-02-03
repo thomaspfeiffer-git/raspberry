@@ -1,4 +1,10 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
+############################################################################
+# lighting.py                                                              #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
+############################################################################
+"""control lighting of our shelf"""
 
 
 ### usage ###
@@ -8,6 +14,8 @@
 
 
 # sudo PYTHONPATH=".:build/lib.linux-armv7l-2.7" python tp/strandtest.py &
+
+
 
 ### setup ###
 # http://flask.pocoo.org/docs/0.12/
@@ -60,7 +68,6 @@ class LED_Strip (object):
         return self._strip.numPixels()
 
     def set_color (self, color):
-        print("Control_Strip.set_color(): {}".format(color))
         for i in range(self.num_pixels()):
             self.set_pixel_color(i, color)
         self.show()
@@ -68,8 +75,7 @@ class LED_Strip (object):
     def begin (self):
         self.end()
         self._strip = Adafruit_NeoPixel(self.COUNT, self.PIN, self.FREQ_HZ, \
-                                        self.DMA, self.INVERT, \
-                                        self.__brightness)
+                                        self.DMA, self.INVERT, self.__brightness)
         self._strip.begin()
 
     def show (self):
@@ -79,7 +85,7 @@ class LED_Strip (object):
         pass
 
 
-
+############################################################################
 class Flags (Enum):
     running = 0
     pattern_changed = 1
@@ -254,7 +260,7 @@ c = Control_Strip()
 c.set_pattern(pattern_red)
 c.start()
 # c.stop()
-
+# c.join()
 
 # eof #
 
