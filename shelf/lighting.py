@@ -202,9 +202,12 @@ def light_off ():
 
 @app.route('/color/<color>')
 def set_color (color):
-    color = Colors[color].value    # TODO: Check if color is in Color
-    c.set_pattern(method=pattern_color, color=color)
-    return "color set"
+    if color in Colors.__members__.keys():
+        color = Colors[color].value 
+        c.set_pattern(method=pattern_color, color=color)
+        return "color set"
+    else:
+        return "unknown color"
 
 
 @app.route('/colorrgb/<string:color>')
