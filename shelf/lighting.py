@@ -50,6 +50,36 @@ app = Flask(__name__)
 
 
 ############################################################################
+class Flags (Enum):
+    running = 0
+    pattern_changed = 1
+
+############################################################################
+# Colors = {
+#    """html color codes"""
+#    red:     0xFF0000
+#    green:   0x00FF00
+#    blue:    0x0000FF
+#    yellow:  0xFFFF00
+#    fuchsia: 0xFF00FF
+#    aqua:    0x00FFFF
+#    white:   0xFFFFFF
+#    black:   0x000000
+#}
+
+class Colors (Enum):
+    """html color codes"""
+    red     = 0xFF0000
+    green   = 0x00FF00
+    blue    = 0x0000FF
+    yellow  = 0xFFFF00
+    fuchsia = 0xFF00FF
+    aqua    = 0x00FFFF
+    white   = 0xFFFFFF
+    black   = 0x000000
+
+
+############################################################################
 # LED_Strip ################################################################
 class LED_Strip (object):
     COUNT      = 288     # Number of LED pixels.
@@ -94,11 +124,6 @@ class LED_Strip (object):
         pass
 
 
-############################################################################
-class Flags (Enum):
-    running = 0
-    pattern_changed = 1
-
 
 ############################################################################
 # Control_Strip ############################################################
@@ -136,41 +161,10 @@ class Control_Strip (threading.Thread):
 
 ############################################################################
 # Patterns for LED Strip ###################################################
-def static_pattern_wait (flags):
+def pattern_color (strip, flags, kwargs):
+    strip.set_color(kwargs['color'])  # TODO: use constant instead of magic string
     while flags[Flags.running] and not flags[Flags.pattern_changed]:
         sleep(0.05) 
-
-def pattern_red (strip, flags, kwargs):
-    strip.set_color(0xFF0000)
-    static_pattern_wait(flags)
-
-def pattern_green (strip, flags, kwargs):
-    strip.set_color(0x00FF00)
-    static_pattern_wait(flags)
-
-def pattern_blue (strip, flags, kwargs):
-    strip.set_color(0x0000FF)
-    static_pattern_wait(flags)
-
-def pattern_yellow (strip, flags, kwargs):
-    strip.set_color(0xFFFF00)
-    static_pattern_wait(flags)
-
-def pattern_fuchsia (strip, flags, kwargs):
-    strip.set_color(0xFF00FF)
-    static_pattern_wait(flags)
-
-def pattern_aqua (strip, flags, kwargs):
-    strip.set_color(0x00FFFF)
-    static_pattern_wait(flags)
-
-def pattern_white (strip, flags, kwargs):
-    strip.set_color(0xFFFFFF)
-    static_pattern_wait(flags)
-
-def pattern_black (strip, flags, kwargs):
-    strip.set_color(0x000000)
-    static_pattern_wait(flags)
 
 
 def pattern_rainbow (strip, flags, kwargs):
@@ -184,7 +178,7 @@ def pattern_rainbow (strip, flags, kwargs):
             pos -= 170
             return Color(0, pos * 3, 255 - pos * 3)
 
-    delay = int(kwargs['delay']) # TODO: constant instant of magic string
+    delay = int(kwargs['delay']) # TODO: constant instead of magic string
     
     while flags[Flags.running] and not flags[Flags.pattern_changed]:
         for j in range(256):
@@ -204,7 +198,7 @@ def pattern_rainbow (strip, flags, kwargs):
 ############################################################################
 # Flask stuff ##############################################################
 @app.route('/')
-def hello_world():
+def help():
     return "http://pia:5000/color/red"
 
 
@@ -215,37 +209,15 @@ def light_on ():
 
 @app.route('/off')
 def light_off ():
-    c.set_pattern(method=pattern_black)
+    c.set_pattern(method=pattern_color, color=Colors.black)
 
-@app.route('/color/red')
-def set_color_red ():
-    c.set_pattern(method=pattern_red)
+
+@app.route('/color/<color>')
+def set_color (color):
+    color = Colors[color].value    # TODO: Check if color is in Color
+    c.set_pattern(method=pattern_color, color=color)
     return "color set"
 
-@app.route('/color/green')
-def set_color_green ():
-    c.set_pattern(method=pattern_green)
-    return "color set"
-
-@app.route('/color/blue')
-def set_color_blue ():
-    c.set_pattern(method=pattern_blue)
-    return "color set"
-
-@app.route('/color/yellow')
-def set_color_yellow ():
-    c.set_pattern(method=pattern_yellow)
-    return "color set"
-
-@app.route('/color/fuchsia')
-def set_color_fuchsia ():
-    c.set_pattern(method=pattern_fuchsia)
-    return "color set"
-
-@app.route('/color/aqua')
-def set_color_aqua ():
-    c.set_pattern(method=pattern_aqua)
-    return "color set"
 
 @app.route('/colorrgb/<string:color>')
 def set_color_rgb (color):
@@ -270,7 +242,7 @@ def lightness ():
 # TODO: signal etc
 
 c = Control_Strip()
-c.set_pattern(pattern_red)
+c.set_pattern(method=pattern_color, color=Colors.red.value)
 c.start()
 # c.stop()
 # c.join()
