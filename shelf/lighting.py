@@ -191,12 +191,13 @@ def help():
 
 @app.route('/on')
 def light_on ():
-    pass
+    return "not implemented yet"
 
 
 @app.route('/off')
 def light_off ():
-    c.set_pattern(method=pattern_color, color=Colors.black)
+    c.set_pattern(method=pattern_color, color=Colors.black.value)
+    return "set off"
 
 
 @app.route('/color/<color>')
@@ -220,7 +221,7 @@ def rainbow ():
 
 @app.route('/lightness')
 def lightness ():
-    pass
+    return "not implemented yet"
 
 
 ############################################################################
