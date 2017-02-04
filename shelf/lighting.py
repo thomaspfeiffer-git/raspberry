@@ -45,7 +45,7 @@ import sys
 import threading
 from time import sleep
 
-from flask import Flask, request
+from flask import Flask, render_template, request
 app = Flask(__name__)
 
 
@@ -53,19 +53,6 @@ app = Flask(__name__)
 class Flags (Enum):
     running = 0
     pattern_changed = 1
-
-############################################################################
-# Colors = {
-#    """html color codes"""
-#    red:     0xFF0000
-#    green:   0x00FF00
-#    blue:    0x0000FF
-#    yellow:  0xFFFF00
-#    fuchsia: 0xFF00FF
-#    aqua:    0x00FFFF
-#    white:   0xFFFFFF
-#    black:   0x000000
-#}
 
 class Colors (Enum):
     """html color codes"""
@@ -178,7 +165,7 @@ def pattern_rainbow (strip, flags, kwargs):
             pos -= 170
             return Color(0, pos * 3, 255 - pos * 3)
 
-    delay = int(kwargs['delay']) # TODO: constant instead of magic string
+    delay = kwargs['delay'] # TODO: constant instead of magic string
     
     while flags[Flags.running] and not flags[Flags.pattern_changed]:
         for j in range(256):
@@ -199,7 +186,7 @@ def pattern_rainbow (strip, flags, kwargs):
 # Flask stuff ##############################################################
 @app.route('/')
 def help():
-    return "http://pia:5000/color/red"
+    return render_template('documentation.html')
 
 
 @app.route('/on')
@@ -226,7 +213,7 @@ def set_color_rgb (color):
 
 @app.route('/rainbow')
 def rainbow ():
-    delay = request.args.get('delay', '5000')  # delay in milliseconds
+    delay = int(request.args.get('delay', '5000'))  # delay in milliseconds
     c.set_pattern(method=pattern_rainbow, delay=delay)
     return "rainbow, delay: {}".format(delay)
 
