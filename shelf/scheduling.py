@@ -5,7 +5,7 @@
 ############################################################################
 """implements two classes for scheduling:
    - Time: provides just hour and minute
-   - Timer: schedules an event (basically to switch of the LED strip
+   - Timer: schedules an event (basically to switch off the LED strip)
 """
 
 
