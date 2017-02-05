@@ -3,7 +3,10 @@
 # scheduling.py                                                            #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
 ############################################################################
-"""implements a threaded scheduler and a Time object for scheduling"""
+"""implements two classes for scheduling:
+   - Time: provides just hour and minute
+   - Timer: schedules an event (basically to switch of the LED strip
+"""
 
 
 from datetime import datetime
