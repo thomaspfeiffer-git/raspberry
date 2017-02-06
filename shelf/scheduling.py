@@ -5,7 +5,7 @@
 ############################################################################
 """implements two classes for scheduling:
    - Time: provides a class with hour and minute only
-   - Scheduling: tailore-made scheduler
+   - Scheduling: tailor-made scheduler
 """
 
 from datetime import datetime
