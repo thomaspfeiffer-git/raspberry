@@ -4,15 +4,13 @@
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
 ############################################################################
 """implements two classes for scheduling:
-   - Time: provides just hour and minute
-   - Scheduling:
+   - Time: provides a class with hour and minute only
+   - Scheduling: tailore-made scheduler
 """
-
 
 from datetime import datetime
 import threading
-from time import sleep
-
+import time
 
 ############################################################################
 # Time #####################################################################
@@ -57,7 +55,9 @@ class Time (object):
 ############################################################################
 # Scheduling ###############################################################
 class Scheduling (threading.Thread):
-    """ TODO """
+    """ tailor-made scheduler with dedicated functions for switching
+        the LEDs on and off at specific times.
+    """
     def __init__ (self):
         threading.Thread.__init__(self)
         self._on      = None
@@ -88,9 +88,6 @@ class Scheduling (threading.Thread):
                 if now.hour   == self._on.hour and \
                    now.minute == self._on.minute:
                     if not setting_on:
-                        # examples:
-                        # c.set_pattern(method=pattern_color, color=Colors.red.value)
-                        # c.set_pattern(method=pattern_rainbow, delay=5000)
                         self._method_on(**self._kwargs_on)
                         setting_on = True
                         if not self._daily:  # set _on to None if event is
@@ -109,11 +106,10 @@ class Scheduling (threading.Thread):
                 else:
                     setting_off = False
 
-            sleep(0.1)
+            time.sleep(0.1)
 
     def stop (self):
         self._running = False
-
 
 # eof #
 
