@@ -5,19 +5,19 @@
 ############################################################################
 """implements two classes for scheduling:
    - Time: provides just hour and minute
-   - Timer: schedules an event (basically to switch off the LED strip)
+   - Scheduling:
 """
 
 
 from datetime import datetime
-import sched
-from time import sleep
 import threading
+from time import sleep
 
 
 ############################################################################
 # Time #####################################################################
 class Time (object):
+    """represents time with hours and minutes only"""
     def __init__ (self, hour=None, minute=None, string=None):
         if string:
             h, m = string.split(':')
@@ -55,37 +55,65 @@ class Time (object):
 
 
 ############################################################################
-# Timer ####################################################################
-class Timer (threading.Thread):
-    def __init__ (self, delayfunc):
+# Scheduling ###############################################################
+class Scheduling (threading.Thread):
+    """ TODO """
+    def __init__ (self):
         threading.Thread.__init__(self)
-        self._event     = None
-        self._scheduler = sched.scheduler()
-        self._delayfunc = delayfunc
-        self._running   = True
-        self._setevent  = False
-        
-    def set (self, delay):
-        self.cancel()
-        self._delay = delay
-        self._setevent = True
+        self._on      = None
+        self._off     = None
+        self._daily   = None
+        self._running = True
 
-    def cancel (self):
-        if self._event:
-            self._scheduler.cancel(self._event)
+    def set_timings (self, on, off, daily=False):
+        self._on     = on
+        self._off    = off
+        self._daily  = daily
+
+    def set_method_on (self, method, **kwargs):
+        self._method_on = method
+        self._kwargs_on = kwargs
+
+    def set_method_off (self, method, **kwargs):
+        self._method_off = method
+        self._kwargs_off = kwargs
 
     def run (self):
+        setting_on  = False  # call set_pattern() only once
+        setting_off = False
+
         while self._running:
-            sleep(0.01)
-            if self._setevent:
-                self._setevent = False
-                self._event = self._scheduler.enter(self._delay, 1, self._delayfunc)
-                self._scheduler.run()
-                self._event = None # clear _event after event has expired
+            now = datetime.now()
+            if self._on:
+                if now.hour   == self._on.hour and \
+                   now.minute == self._on.minute:
+                    if not setting_on:
+                        # examples:
+                        # c.set_pattern(method=pattern_color, color=Colors.red.value)
+                        # c.set_pattern(method=pattern_rainbow, delay=5000)
+                        self._method_on(**self._kwargs_on)
+                        setting_on = True
+                        if not self._daily:  # set _on to None if event is
+                            self._on = None  # scheduled only once.
+                else:
+                    setting_on = False
+                                                # on has to be done before off
+            if self._off and (not self._on or self._daily): 
+                if now.hour   == self._off.hour and \
+                   now.minute == self._off.minute:
+                    if not setting_off:
+                        self._method_off(**self._kwargs_off)
+                        setting_off = True
+                        if not self._daily:
+                            self._off = None
+                else:
+                    setting_off = False
+
+            sleep(0.1)
 
     def stop (self):
         self._running = False
-        self.cancel()
+
 
 # eof #
 
