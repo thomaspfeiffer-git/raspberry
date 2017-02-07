@@ -77,10 +77,10 @@ class Scheduling_Params (object):
            -daily: daily schedule; default == False
            -permanent: always on; default == False
         """
-        time_on   = request.args.get('on', DEFAULT_ACTIVATE_TIME)
-        time_off  = request.args.get('off', DEFAULT_DEACTIVATE_TIME)
-        daily     = request.args.get('daily', 'false')
-        permanent = request.args.get('permanent', 'false')
+        time_on   = request_args.get('on', DEFAULT_ACTIVATE_TIME)
+        time_off  = request_args.get('off', DEFAULT_DEACTIVATE_TIME)
+        daily     = request_args.get('daily', 'false')
+        permanent = request_args.get('permanent', 'false')
 
         try:
             self.time_on   = Time() if time_on == DEFAULT_ACTIVATE_TIME else \
