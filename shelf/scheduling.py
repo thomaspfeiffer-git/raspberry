@@ -3,14 +3,20 @@
 # scheduling.py                                                            #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
 ############################################################################
-"""implements two classes for scheduling:
+"""implements classes for scheduling:
    - Time: provides a class with hour and minute only
+   - Scheduling_Params: read params from request
    - Scheduling: tailor-made scheduler
 """
 
 from datetime import datetime
 import threading
 import time
+
+
+DEFAULT_ACTIVATE_TIME   = "--:--"   # = now()
+DEFAULT_DEACTIVATE_TIME = "22:30"
+
 
 ############################################################################
 # Time #####################################################################
@@ -52,7 +58,6 @@ class Time (object):
         return "{:d}:{:02d}".format(self.hour, self.minute)
 
 
-
 ############################################################################
 # Scheduling_Params ########################################################
 class Scheduling_Params (object):
@@ -76,6 +81,11 @@ class Scheduling_Params (object):
         self.time_off  = Time(string=time_off)
         self.daily     = False if daily == 'false' else True
         self.permanent = False if permanent = 'false' else True
+
+    def __str__ (self):
+        retstr = "time on: {}; time off: {}; daily: {}; permanent: {}"
+        return retstr.format(self.time_on, self.time_off, \
+                             self.daily, self.permanent)
 
 
 ############################################################################
