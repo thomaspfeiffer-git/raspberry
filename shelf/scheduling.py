@@ -62,7 +62,13 @@ class Time (object):
 # Scheduling_Params ########################################################
 class Scheduling_Params (object):
     def __init__ (self):
-        pass
+        self.reset()
+
+    def reset (self):
+        self.time_on   = None
+        self.time_off  = None
+        self.daily     = False
+        self.permanent = False
 
     def get_scheduling_params (self, request_args):
         """reads parameters from request string:
@@ -76,11 +82,17 @@ class Scheduling_Params (object):
         daily     = request.args.get('daily', 'false')
         permanent = request.args.get('permanent', 'false')
 
-        self.time_on   = Time() if time_on == DEFAULT_ACTIVATE_TIME else \
-                         Time(string=time_on)
-        self.time_off  = Time(string=time_off)
-        self.daily     = False if daily == 'false' else True
-        self.permanent = False if permanent = 'false' else True
+        try:
+            self.time_on   = Time() if time_on == DEFAULT_ACTIVATE_TIME else \
+                             Time(string=time_on)
+            self.time_off  = Time(string=time_off)
+            self.daily     = False if daily == 'false' else True
+            self.permanent = False if permanent = 'false' else True
+        except ValueError:
+            self.reset()
+            return False
+        else:
+            return True
 
     def __str__ (self):
         retstr = "time on: {}; time off: {}; daily: {}; permanent: {}"
