@@ -87,7 +87,7 @@ class Scheduling_Params (object):
                              Time(string=time_on)
             self.time_off  = Time(string=time_off)
             self.daily     = False if daily == 'false' else True
-            self.permanent = False if permanent = 'false' else True
+            self.permanent = False if permanent == 'false' else True
         except ValueError:
             self.reset()
             return False
@@ -106,12 +106,12 @@ class Scheduling (threading.Thread):
     """ tailor-made scheduler with dedicated functions for switching
         the LEDs on and off at specific times.
     """
-    def __init__ (self):
+    def __init__ (self, scheduling_params=None):
         threading.Thread.__init__(self)
-        self._sp = None
+        self._sp = scheduling_params if scheduling_params else Scheduling_Params()
         self._running = True
 
-    def set_timings (self, scheduling_params)
+    def set_timings (self, scheduling_params):
         self._sp = scheduling_params
 
     def set_method_on (self, method, **kwargs):
