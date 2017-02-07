@@ -116,18 +116,21 @@ class Scheduling (threading.Thread):
 
         while self._running:
             now = datetime.now()
-            if self._sp.time_on:
-                if now.hour   == self._sp.time_on.hour and \
-                   now.minute == self._sp.time_on.minute:
+            if self._sp.permanent or self._sp.time_on:
+                if self._sp.permanent or \
+                   (now.hour   == self._sp.time_on.hour and \
+                    now.minute == self._sp.time_on.minute):
                     if not setting_on:
                         self._method_on(**self._kwargs_on)
                         setting_on = True
-                        if not self._sp.time_daily:  # set _on to None if event is
-                            self._sp.time_on = None  # scheduled only once.
+                        # set time_on to None if event is scheduled only once.
+                        if not self._sp.time_daily:
+                            self._sp.time_on = None
                 else:
                     setting_on = False
                                                 # on has to be done before off
-            if self._sp.time_off and (not self._sp.time_on or self._sp.time_daily): 
+            if not self._sp.permanent and self._sp.time_off and \
+               (not self._sp.time_on or self._sp.time_daily):
                 if now.hour   == self._sp.time_off.hour and \
                    now.minute == self._sp.time_off.minute:
                     if not setting_off:
