@@ -113,6 +113,8 @@ class Scheduling (threading.Thread):
 
     def set_timings (self, scheduling_params):
         self._sp = scheduling_params
+        self.__setting_on  = False
+        self.__setting_off = False
 
     def set_method_on (self, method, **kwargs):
         self._method_on = method
@@ -123,8 +125,36 @@ class Scheduling (threading.Thread):
         self._kwargs_off = kwargs
 
     def run (self):
-        setting_on  = False  # call set_pattern() only once
-        setting_off = False
+        self.__setting_on  = False  # call set_pattern() only once
+        self.__setting_off = False
+
+
+        """
+        if permanent:
+            if not setting_on:
+                method_on
+                setting_on = True
+        else:
+            if time_on and now() == time_on:
+                if not setting_on:
+                    method_on
+                    setting_on = True
+                    if not daily:
+                        time_on = None
+            else:
+                setting_on = False
+
+        if not permanent:
+            if time_off and now() == time_off:   # do _not_ take care of on() before off()
+                if not setting_off:
+                    method_off
+                    setting_off = True
+                    if not daily:
+                        time_off = None
+            else:
+                setting_off = False
+        """
+
 
         while self._running:
             now = datetime.now()
@@ -132,26 +162,26 @@ class Scheduling (threading.Thread):
                 if self._sp.permanent or \
                    (now.hour   == self._sp.time_on.hour and \
                     now.minute == self._sp.time_on.minute):
-                    if not setting_on:
+                    if not self.__setting_on:
                         self._method_on(**self._kwargs_on)
-                        setting_on = True
+                        self.__setting_on = True
                         # set time_on to None if event is scheduled only once.
-                        if not self._sp.time_daily:
+                        if not self._sp.daily:
                             self._sp.time_on = None
                 else:
-                    setting_on = False
+                    self.__setting_on = False
                                                 # on has to be done before off
             if not self._sp.permanent and self._sp.time_off and \
-               (not self._sp.time_on or self._sp.time_daily):
+               (not self._sp.time_on or self._sp.daily):
                 if now.hour   == self._sp.time_off.hour and \
                    now.minute == self._sp.time_off.minute:
-                    if not setting_off:
+                    if not self.__setting_off:
                         self._method_off(**self._kwargs_off)
-                        setting_off = True
-                        if not self._sp.time_daily:
+                        self.__setting_off = True
+                        if not self._sp.daily:
                             self._sp.time_off = None
                 else:
-                    setting_off = False
+                    self.__setting_off = False
 
             time.sleep(0.1)
 
