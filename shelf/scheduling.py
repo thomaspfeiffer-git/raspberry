@@ -52,6 +52,32 @@ class Time (object):
         return "{:d}:{:02d}".format(self.hour, self.minute)
 
 
+
+############################################################################
+# Scheduling_Params ########################################################
+class Scheduling_Params (object):
+    def __init__ (self):
+        pass
+
+    def get_scheduling_params (self, request_args):
+        """reads parameters from request string:
+           -on:    when to switch on the LEDs; default == now()
+           -off:   when to switch off the LEDs; default == DEFAULT_DEACTIVATE_TIME
+           -daily: daily schedule; default == False
+           -permanent: always on; default == False
+        """
+        time_on   = request.args.get('on', DEFAULT_ACTIVATE_TIME)
+        time_off  = request.args.get('off', DEFAULT_DEACTIVATE_TIME)
+        daily     = request.args.get('daily', 'false')
+        permanent = request.args.get('permanent', 'false')
+
+        self.time_on   = Time() if time_on == DEFAULT_ACTIVATE_TIME else \
+                         Time(string=time_on)
+        self.time_off  = Time(string=time_off)
+        self.daily     = False if daily == 'false' else True
+        self.permanent = False if permanent = 'false' else True
+
+
 ############################################################################
 # Scheduling ###############################################################
 class Scheduling (threading.Thread):
@@ -60,15 +86,11 @@ class Scheduling (threading.Thread):
     """
     def __init__ (self):
         threading.Thread.__init__(self)
-        self._on      = None
-        self._off     = None
-        self._daily   = None
+        self._sp = None
         self._running = True
 
-    def set_timings (self, on, off, daily=False):
-        self._on     = on
-        self._off    = off
-        self._daily  = daily
+    def set_timings (self, scheduling_params)
+        self._sp = scheduling_params
 
     def set_method_on (self, method, **kwargs):
         self._method_on = method
@@ -84,25 +106,25 @@ class Scheduling (threading.Thread):
 
         while self._running:
             now = datetime.now()
-            if self._on:
-                if now.hour   == self._on.hour and \
-                   now.minute == self._on.minute:
+            if self._sp.time_on:
+                if now.hour   == self._sp.time_on.hour and \
+                   now.minute == self._sp.time_on.minute:
                     if not setting_on:
                         self._method_on(**self._kwargs_on)
                         setting_on = True
-                        if not self._daily:  # set _on to None if event is
-                            self._on = None  # scheduled only once.
+                        if not self._sp.time_daily:  # set _on to None if event is
+                            self._sp.time_on = None  # scheduled only once.
                 else:
                     setting_on = False
                                                 # on has to be done before off
-            if self._off and (not self._on or self._daily): 
-                if now.hour   == self._off.hour and \
-                   now.minute == self._off.minute:
+            if self._sp.time_off and (not self._sp.time_on or self._sp.time_daily): 
+                if now.hour   == self._sp.time_off.hour and \
+                   now.minute == self._sp.time_off.minute:
                     if not setting_off:
                         self._method_off(**self._kwargs_off)
                         setting_off = True
-                        if not self._daily:
-                            self._off = None
+                        if not self._sp.time_daily:
+                            self._sp.time_off = None
                 else:
                     setting_off = False
 
