@@ -15,16 +15,6 @@
 
 # sudo PYTHONPATH=".:build/lib.linux-armv7l-2.7" python tp/strandtest.py &
 
-# >>> from flask import Markup
-# >>> Markup('<strong>Hello %s!</strong>') % '<blink>hacker</blink>'
-# Markup(u'<strong>Hello &lt;blink&gt;hacker&lt;/blink&gt;!</strong>')
-# >>> Markup.escape('<blink>hacker</blink>')
-# Markup(u'&lt;blink&gt;hacker&lt;/blink&gt;')
-# >>> Markup('<em>Marked up</em> &raquo; HTML').striptags()
-# u'Marked up \xbb HTML'
-
-
-
 
 ### setup ###
 # http://flask.pocoo.org/docs/0.12/
@@ -47,6 +37,8 @@ from time import sleep
 
 from flask import Flask, render_template, request
 app = Flask(__name__)
+
+from scheduling import Scheduling, Scheduling_Params
 
 
 ############################################################################
@@ -111,7 +103,6 @@ class LED_Strip (object):
         pass
 
 
-
 ############################################################################
 # Control_Strip ############################################################
 class Control_Strip (threading.Thread):
@@ -139,7 +130,7 @@ class Control_Strip (threading.Thread):
     def run (self):
         self.__flags[Flags.pattern_changed] = False
         while self.__flags[Flags.running]:
-            self.__pattern(self._strip, self.__flags, self.__kwargs)
+            self.__pattern(self._strip, self.__flags, **self.__kwargs)
             self.__flags[Flags.pattern_changed] = False
        
     def stop (self):
@@ -189,37 +180,48 @@ def help():
     return render_template('documentation.html')
 
 
-@app.route('/on')
-def light_on ():
-    return "not implemented yet"
-
-
 @app.route('/off')
-def light_off ():
+def light_off (scheduler_off=True):
+    """Switches the LEDs off. When explicitely called by the scheduler,
+       scheduler_off shall be set to False to not cancel the scheduling."""
     c.set_pattern(method=pattern_color, color=Colors.black.value)
+    if scheduler_off:
+        pass
+        # TODO: scheduler.cancel()
     return "set off"
 
 
 @app.route('/color/<color>')
 def set_color (color):
+    """sets LEDs to a static color"""
+    error_code = ""
     if color in Colors.__members__.keys():
-        color = Colors[color].value 
-        c.set_pattern(method=pattern_color, color=color)
-        return "color set"
+        if not scheduling_params.get_scheduling_params(request.args):
+            error_code = "format error!\n"
+        else:
+            scheduler.set_timings(scheduling_params)
+            scheduler.set_method_on(c.set_pattern, method=pattern_color, \
+                                                   color=Colors[color].value)
+            error_code = "color set to {}; {}".format(color, scheduling_params)
     else:
-        return "unknown color"
-
-
-@app.route('/colorrgb/<string:color>')
-def set_color_rgb (color):
-    return "Farbe RGB: {}".format(color)
+        error_code = "unknown color"
+    return error_code
 
 
 @app.route('/rainbow')
 def rainbow ():
+    """sets LEDs to rainbow colors; 
+       color is changed every <delay> milliseconds"""
+    error_code = ""
     delay = int(request.args.get('delay', '5000'))  # delay in milliseconds
-    c.set_pattern(method=pattern_rainbow, delay=delay)
-    return "rainbow, delay: {}".format(delay)
+    if not scheduling_params.get_scheduling_params(request.args):
+        error_code = "format error!\n"
+    else:
+        scheduler.set_timings(scheduling_params)
+        scheduler.set_method_on(c.set_pattern, method=pattern_rainbow, \
+                                               delay=delay)
+        error_code = "rainbow set; delay: {}; {}".format(delay,scheduling_params)
+    return error_code
 
 
 @app.route('/lightness')
@@ -234,7 +236,19 @@ def lightness ():
 
 c = Control_Strip()
 c.set_pattern(method=pattern_color, color=Colors.red.value)
+
+scheduling_params = Scheduling_Params()
+
+scheduler = Scheduling()
+scheduler.set_method_on(c.set_pattern, method=pattern_color, color=Colors.yellow.value)
+scheduler.set_method_off(light_off, scheduler_off=False)
+
+scheduler.start()
 c.start()
+
+# scheduler.stop()
+# scheduler.join()
+
 # c.stop()
 # c.join()
 
