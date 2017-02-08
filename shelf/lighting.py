@@ -61,11 +61,11 @@ class Colors (Enum):
 ############################################################################
 # LED_Strip ################################################################
 class LED_Strip (object):
-    COUNT      = 288     # Number of LED pixels.
-    PIN        = 18      # GPIO pin connected to the pixels (must support PWM!).
-    FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
-    DMA        = 5       # DMA channel to use for generating signal (try 5)
-    BRIGHTNESS = 20      # Set to 0 for darkest and 255 for brightest
+    COUNT      = 288-13-13   # Number of LED pixels.
+    PIN        = 18          # GPIO pin connected to the pixels (must support PWM!).
+    FREQ_HZ    = 800000      # LED signal frequency in hertz (usually 800khz)
+    DMA        = 5           # DMA channel to use for generating signal (try 5)
+    BRIGHTNESS = 15          # Set to 0 for darkest and 255 for brightest
     INVERT     = False  
 
     def __init__ (self):
