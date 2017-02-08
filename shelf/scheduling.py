@@ -121,7 +121,7 @@ class Scheduling (threading.Thread):
         self._kwargs_on = kwargs
 
     def set_method_off (self, setpattern_method, **kwargs):
-        self._method_off = setpattern_method # TODO: check: always c.set_oattern() ?
+        self._method_off = setpattern_method # TODO: check: always c.set_pattern() ?
         self._kwargs_off = kwargs
 
     def run (self):
@@ -129,6 +129,7 @@ class Scheduling (threading.Thread):
         self.__is_off = True
 
         # TODO: now() < time_on < time_off (oder time_on/off => morgen?)
+        # TODO: with lock ...
         while self._running:
             now = datetime.now()
 
@@ -147,23 +148,17 @@ class Scheduling (threading.Thread):
                         self.__is_off = False
                         if not self._sp.daily:
                             self._sp.time_on = None
-                else:
-                    self.__is_on = False
 
             if not self._sp.permanent and self.__is_on:
-                print("go off #1")
                 if self._sp.time_off and \
                    now.hour   == self._sp.time_off.hour and \
                    now.minute == self._sp.time_off.minute:
-                    print("go off #2")
                     if not self.__is_off: # avoid multiple calls to off()
                         self._method_off(**self._kwargs_off)
                         self.__is_off = True
                         self.__is_on  = False
                         if not self._sp.daily:
                             self._sp.time_off = None
-                else:
-                    self.__is_off = False
 
             time.sleep(0.1)
 

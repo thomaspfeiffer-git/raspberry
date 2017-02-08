@@ -130,7 +130,7 @@ class Control_Strip (threading.Thread):
     def run (self):
         self.__flags[Flags.pattern_changed] = False
         while self.__flags[Flags.running]:
-            self.__pattern(self._strip, self.__flags, **self.__kwargs)
+            self.__pattern(self._strip, self.__flags, self.__kwargs)
             self.__flags[Flags.pattern_changed] = False
        
     def stop (self):
