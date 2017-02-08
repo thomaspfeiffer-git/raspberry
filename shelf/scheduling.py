@@ -115,6 +115,7 @@ class Scheduling (threading.Thread):
         self._sp = scheduling_params
         self.__setting_on  = False
         self.__setting_off = False
+        self.__is_on       = False
 
     def set_method_on (self, method, **kwargs):
         self._method_on = method
@@ -127,35 +128,45 @@ class Scheduling (threading.Thread):
     def run (self):
         self.__setting_on  = False  # call set_pattern() only once
         self.__setting_off = False
+        self.__is_on       = False
+        # TODO: use __is_on and __is_off instead of __setting_on/off
 
+
+        # TODO: now() < time_on < time_off (oder time_on/off => morgen?)
+        while self._running:
+            now = datetime.now()
+
+            if self._sp.permanent:
+                if not self.__setting_on:
+                    self._method_on(**self._kwargs_on)
+                    self.__setting_on = True
+            else:
+                if self._sp.time_on and \
+                   now.hour   == self._sp.time_on.hour and \
+                   now.minute == self._sp.time_on.minute:
+                    if not self.__setting_on:
+                        self._method_on(**self._kwargs_on)
+                        self.__setting_on = True
+                        self.__is_on = True
+                        if not self._sp.daily:
+                            self._sp.time_on = None
+                else:
+                    self.__setting_on = False
+
+            if not self._sp.permanent and self.__is_on:
+                if self._sp.time_off and \
+                   now.hour   == self._sp.time_off.hour and \
+                   now.minute == self._sp.time_off.minute:
+                    if not self.__setting_off:
+                        self._method_off(**self._kwargs_off)
+                        self.__setting_off = True
+                        self.__is_on = False
+                        if not self._sp.daily:
+                            self._sp.time_off = None
+                else:
+                    self.__setting_off = False
 
         """
-        if permanent:
-            if not setting_on:
-                method_on
-                setting_on = True
-        else:
-            if time_on and now() == time_on:
-                if not setting_on:
-                    method_on
-                    setting_on = True
-                    if not daily:
-                        time_on = None
-            else:
-                setting_on = False
-
-        if not permanent:
-            if time_off and now() == time_off:   # do _not_ take care of on() before off()
-                if not setting_off:
-                    method_off
-                    setting_off = True
-                    if not daily:
-                        time_off = None
-            else:
-                setting_off = False
-        """
-
-
         while self._running:
             now = datetime.now()
             if self._sp.permanent or self._sp.time_on:
@@ -182,6 +193,7 @@ class Scheduling (threading.Thread):
                             self._sp.time_off = None
                 else:
                     self.__setting_off = False
+            """
 
             time.sleep(0.1)
 
