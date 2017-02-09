@@ -65,15 +65,15 @@ class LED_Strip (object):
     PIN        = 18          # GPIO pin connected to the pixels (must support PWM!).
     FREQ_HZ    = 800000      # LED signal frequency in hertz (usually 800khz)
     DMA        = 5           # DMA channel to use for generating signal (try 5)
-    BRIGHTNESS = 15          # Set to 0 for darkest and 255 for brightest
+    BRIGHTNESS = 100         # Set to 0 for darkest and 255 for brightest
     INVERT     = False  
 
     def __init__ (self):
-        self.__brightness = self.BRIGHTNESS
+        pass
 
     def set_brightness (self, brightness):
-        self.__brightness = brightness
-        self.begin()
+        self._strip.setBrightness(brightness)
+        self.show()
 
     def set_pixel_color (self, i, color):
         b = color & 255
@@ -93,7 +93,7 @@ class LED_Strip (object):
     def begin (self):
         self.end()
         self._strip = Adafruit_NeoPixel(self.COUNT, self.PIN, self.FREQ_HZ, \
-                                        self.DMA, self.INVERT, self.__brightness)
+                                        self.DMA, self.INVERT, self.BRIGHTNESS)
         self._strip.begin()
 
     def show (self):
@@ -130,7 +130,7 @@ class Control_Strip (threading.Thread):
     def run (self):
         self.__flags[Flags.pattern_changed] = False
         while self.__flags[Flags.running]:
-            self.__pattern(self._strip, self.__flags, self.__kwargs)
+            self.__pattern(self._strip, self.__flags, self.__kwargs)  # TODO: parameter self instead of self._strip
             self.__flags[Flags.pattern_changed] = False
        
     def stop (self):
@@ -224,9 +224,15 @@ def rainbow ():
     return error_code
 
 
-@app.route('/lightness')
-def lightness ():
-    return "not implemented yet"
+@app.route('/brightness/<int:brightness>')
+def brightness (brightness):
+    """sets brightness of LEDs; 0 .. 255"""
+    try:
+        c.brightness = brightness
+    except ValueError:
+        return "brightness has to be in 0 .. 255"
+
+    return "brightness set to {}".format(brightness)
 
 
 ############################################################################
