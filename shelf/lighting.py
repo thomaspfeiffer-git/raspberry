@@ -67,15 +67,19 @@ class LED_Strip (object):
     PIN        = 18          # GPIO pin connected to the pixels (must support PWM!).
     FREQ_HZ    = 800000      # LED signal frequency in hertz (usually 800khz)
     DMA        = 5           # DMA channel to use for generating signal (try 5)
-    BRIGHTNESS = 20          # Set to 0 for darkest and 255 for brightest
+    BRIGHTNESS = 25          # Set to 0 for darkest and 255 for brightest
     INVERT     = False  
 
     def __init__ (self):
-        pass
+        """set_brighness() may interrupt set_color(). to avoid some
+           sync crazyness, a lock is used.
+        """
+        self.__show_lock = threading.Lock()
 
     def set_brightness (self, brightness):
-        self._strip.setBrightness(brightness)
-        self.show()
+        with self.__show_lock:
+            self._strip.setBrightness(brightness)
+            self.show()
 
     def set_pixel_color (self, i, color):
         b = color & 255
@@ -88,9 +92,10 @@ class LED_Strip (object):
         return self._strip.numPixels()
 
     def set_color (self, color):
-        for i in range(self.num_pixels()):
-            self.set_pixel_color(i, color)
-        self.show()
+        with self.__show_lock:
+            for i in range(self.num_pixels()):
+                self.set_pixel_color(i, color)
+            self.show()
 
     def begin (self):
         self.end()
@@ -163,9 +168,7 @@ def pattern_rainbow (strip, flags, kwargs):
     while flags[Flags.running] and not flags[Flags.pattern_changed]:
         for j in range(256):
             color = wheel(j)
-            for i in range(strip.num_pixels()):
-                strip.set_pixel_color(i, color)
-            strip.show()
+            strip.set_color(color)
 
             if not flags[Flags.running] or flags[Flags.pattern_changed]:
                break
@@ -175,6 +178,8 @@ def pattern_rainbow (strip, flags, kwargs):
                     sleep(0.001)
 
 
+############################################################################
+# Feedback - renders html template #########################################
 class Feedback (object):
     """provides some basic functions for rendering the html template.
        basically error and success message are set in __init__().
