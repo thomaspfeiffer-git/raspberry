@@ -31,6 +31,7 @@
 
 from enum import Enum
 from neopixel import *
+import signal
 import sys
 import threading
 from time import sleep
@@ -234,10 +235,28 @@ def brightness (brightness):
     return "brightness set to {}".format(brightness)
 
 
-############################################################################
-### main ###
-### if __name__ == 'main': ÄÄÄÄÄÄÄÄ oder so?
-# TODO: signal etc; on ctrl-c: light_off (scheduler_off=True)
+
+###############################################################################
+# Exit ########################################################################
+def _exit():
+    """cleanup stuff"""
+    light_off(scheduler_off=True)
+    sleep(0.5)  # give some time to switch off LEDs before threads are stopped
+    control.stop()
+    control.join()
+    scheduler.stop()
+    scheduler.join()
+    sys.exit()
+
+def __exit(__s, __f):
+    """cleanup stuff used for signal handler"""
+    _exit()
+
+
+###############################################################################
+# main ########################################################################
+signal.signal(signal.SIGTERM, __exit)
+signal.signal(signal.SIGINT, __exit)
 
 control = Control_Strip()
 control.set_pattern(method=pattern_color, color=Colors.red.value)
@@ -249,13 +268,6 @@ scheduler.set_pattern_method(control.set_pattern)
 
 scheduler.start()
 control.start()
-
-# control.stop()
-# control.join()
-
-# scheduler.stop()
-# scheduler.join()
-
 
 # eof #
 
