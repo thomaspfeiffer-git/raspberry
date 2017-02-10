@@ -2,6 +2,25 @@
 <html>
 <title>Dokumentation</title>
 <body>
+
+{% if error %}
+<font color="red">
+<p>
+Fehler: {{ error }}
+</p>
+</font>
+{% endif %}
+
+
+{% if success %}
+<font color="green">
+<p>
+Super: {{ success }}
+</p>
+</font>
+{% endif %}
+
+
 <p>
 Verf&uuml;gbare Links:<br />
 <a href="http://pia:5000/color/red">rot</a><br />
@@ -14,6 +33,13 @@ Verf&uuml;gbare Links:<br />
 <a href="http://pia:5000/color/black">schwarz</a><br />
 <br />
 <a href="http://pia:5000/rainbow">Regenbogen</a><br />
+<br />
+<a href="http://pia:5000/brightness/2">dunkel</a><br />
+<a href="http://pia:5000/brightness/20">normal</a><br />
+<a href="http://pia:5000/brightness/100">hell</a><br />
+<a href="http://pia:5000/brightness/200">sehr hell</a><br />
+<br />
+<a href="http://pia:5000/off">aus</a><br />
 </p>
 </body>
 </html>

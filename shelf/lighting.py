@@ -175,6 +175,37 @@ def pattern_rainbow (strip, flags, kwargs):
                     sleep(0.001)
 
 
+class Feedback (object):
+    """provides some basic functions for rendering the html template.
+       basically error and success message are set in __init__().
+       __str__() returns the rendered template including error and
+       success message(s)
+    """
+    def __init__ (self, error="", success=""):
+        self.error = error
+        self.success = success
+
+    @property
+    def error (self):
+        return self.__error
+
+    @error.setter
+    def error (self, error):
+        self.__error = error
+
+    @property
+    def success (self):
+        return self.__success
+
+    @success.setter
+    def success (self, success):
+        self.__success = success
+
+    def __str__ (self):
+        return render_template('documentation.html', \
+                               error=self.error, success=self.success)
+
+
 ############################################################################
 # Flask stuff ##############################################################
 @app.route('/')
@@ -183,45 +214,44 @@ def help():
 
 
 @app.route('/off')
-def light_off (scheduler_off=True):
+def light_off (scheduler_off=True, on_exit=False):
     """Switches the LEDs off. When explicitely called by the scheduler,
        scheduler_off shall be set to False to not cancel the scheduling."""
     if scheduler_off:
         scheduler.cancel()
     control.set_pattern(method=pattern_color, color=Colors.black.value)
-    return "set off"
+    if not on_exit:
+        return "{}".format(Feedback(success="LEDs off"))
 
 
 @app.route('/color/<color>')
 def set_color (color):
     """sets LEDs to a static color"""
-    error_code = ""
     if color in Colors.__members__.keys():
         if not scheduling_params.get_scheduling_params(request.args):
-            error_code = "format error!\n"
+            f = Feedback(error="format error!")
         else:
             scheduler.set_timings(scheduling_params)
             scheduler.set_method_on(method=pattern_color, \
                                     color=Colors[color].value)
-            error_code = "color set to {}; {}".format(color, scheduling_params)
+            f = Feedback(success="color set to {}; {}".format(color, scheduling_params))
     else:
-        error_code = "unknown color"
-    return error_code
+        f = Feedback(error="unknown color")
+    return "{}".format(f)
 
 
 @app.route('/rainbow')
 def rainbow ():
     """sets LEDs to rainbow colors; 
        color is changed every <delay> milliseconds"""
-    error_code = ""
     delay = int(request.args.get('delay', '5000'))  # delay in milliseconds
     if not scheduling_params.get_scheduling_params(request.args):
-        error_code = "format error!\n"
+        f = Feedback(error="format error")
     else:
         scheduler.set_timings(scheduling_params)
         scheduler.set_method_on(method=pattern_rainbow, delay=delay)
-        error_code = "rainbow set; delay: {}; {}".format(delay,scheduling_params)
-    return error_code
+        f = Feedback(success="rainbow set; delay: {}; {}".format(delay,scheduling_params))
+    return "{}".format(f)
 
 
 @app.route('/brightness/<int:brightness>')
@@ -230,16 +260,16 @@ def brightness (brightness):
     try:
         control.brightness = brightness
     except ValueError:
-        return "brightness has to be in 0 .. 255"
+        return "{}".format(Feedback(error="brightness has to be in 0 .. 255"))
 
-    return "brightness set to {}".format(brightness)
+    return "{}".format(Feedback(success="brightness set to {}".format(brightness)))
 
 
 ###############################################################################
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
-    light_off(scheduler_off=True)
+    light_off(scheduler_off=True, on_exit=True)
     sleep(0.5)  # give some time to switch off LEDs before threads are stopped
     control.stop()
     control.join()
