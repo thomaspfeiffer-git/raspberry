@@ -114,7 +114,6 @@ class Scheduling (threading.Thread):
         self._sp = scheduling_params if scheduling_params else Scheduling_Params()
         self._running = True
 
-
     def set_pattern_method (self, pattern_method):
         self._pattern_method = pattern_method
 
@@ -122,16 +121,6 @@ class Scheduling (threading.Thread):
         self._sp = scheduling_params
         self.__is_on  = False
         self.__is_off = True
-
-    """
-    def set_method_on (self, setpattern_method, **kwargs):
-        self._method_on = setpattern_method
-        self._kwargs_on = kwargs
-
-    def set_method_off (self, setpattern_method, **kwargs):
-        self._method_off = setpattern_method # TODO: check: always c.set_pattern() ?
-        self._kwargs_off = kwargs
-    """
 
     def set_method_on (self, **kwargs):
         self._kwargs_on = kwargs
@@ -153,7 +142,6 @@ class Scheduling (threading.Thread):
             with self._sp.lock:
                 if self._sp.permanent:
                     if not self.__is_on:  # avoid multiple calls to on()
-                        # self._method_on(**self._kwargs_on)
                         self._pattern_method(**self._kwargs_on)
                         self.__is_on  = True
                         self.__is_off = False
@@ -162,7 +150,6 @@ class Scheduling (threading.Thread):
                        now.hour   == self._sp.time_on.hour and \
                        now.minute == self._sp.time_on.minute:
                         if not self.__is_on: # avoid multiple calls to on()
-                            # self._method_on(**self._kwargs_on)
                             self._pattern_method(**self._kwargs_on)
                             self.__is_on = True
                             self.__is_off = False
@@ -175,7 +162,6 @@ class Scheduling (threading.Thread):
                        now.hour   == self._sp.time_off.hour and \
                        now.minute == self._sp.time_off.minute:
                         if not self.__is_off: # avoid multiple calls to off()
-                            # self._method_off(**self._kwargs_off)
                             self._pattern_method(**self._kwargs_off)
                             self.__is_off = True
                             self.__is_on  = False

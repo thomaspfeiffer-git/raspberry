@@ -200,8 +200,6 @@ def set_color (color):
             error_code = "format error!\n"
         else:
             scheduler.set_timings(scheduling_params)
-            # scheduler.set_method_on(control.set_pattern, method=pattern_color, \
-            #                                             color=Colors[color].value)
             scheduler.set_method_on(method=pattern_color, \
                                     color=Colors[color].value)
             error_code = "color set to {}; {}".format(color, scheduling_params)
@@ -220,8 +218,6 @@ def rainbow ():
         error_code = "format error!\n"
     else:
         scheduler.set_timings(scheduling_params)
-        # scheduler.set_method_on(control.set_pattern, method=pattern_rainbow, \
-        #                                              delay=delay)
         scheduler.set_method_on(method=pattern_rainbow, delay=delay)
         error_code = "rainbow set; delay: {}; {}".format(delay,scheduling_params)
     return error_code
@@ -241,7 +237,7 @@ def brightness (brightness):
 ############################################################################
 ### main ###
 ### if __name__ == 'main': ÄÄÄÄÄÄÄÄ oder so?
-# TODO: signal etc
+# TODO: signal etc; on ctrl-c: light_off (scheduler_off=True)
 
 control = Control_Strip()
 control.set_pattern(method=pattern_color, color=Colors.red.value)
@@ -250,11 +246,6 @@ scheduling_params = Scheduling_Params()
 
 scheduler = Scheduling()
 scheduler.set_pattern_method(control.set_pattern)
-# scheduler.set_method_on(control.set_pattern, method=pattern_color, color=Colors.yellow.value)
-
-# TODO: Check if removeable
-scheduler.set_method_on(method=pattern_color, color=Colors.yellow.value)
-# scheduler.set_method_off(light_off, scheduler_off=False)
 
 scheduler.start()
 control.start()
