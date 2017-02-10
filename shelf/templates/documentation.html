@@ -1,45 +1,105 @@
 <!doctype html>
 <html>
+<head>
 <title>Dokumentation</title>
+
+
+<style>
+thead {background-color:grey;}
+a:link    {color:black; text-decoration: none;}
+a:visited {color:black; text-decoration: none;}
+a:hover   {color:black; text-decoration: none;}
+a:active  {color:black; text-decoration: none;}
+table { border-collapse: collapse; }
+table, th, td { border: 1px solid black; }
+</style>
+
+</head>
 <body>
+<font face="arial" size="20">
 
 {% if error %}
-<font color="red">
-<p>
-Fehler: {{ error }}
-</p>
-</font>
+<table width="50%">
+<tr>
+<td width="100%" bgcolor="tomato"> {{ error }} </td>
+</tr>
+</table>
+<br />
 {% endif %}
 
 
 {% if success %}
-<font color="green">
-<p>
-Super: {{ success }}
-</p>
-</font>
+<table width="50%">
+<tr>
+<td width="100%" bgcolor="palegreen"> {{ success }} </td>
+</tr>
+</table>
+<br />
 {% endif %}
 
+<table border="0" width="100%">
+<thead>
+<tr>
+<th colspan="3">Farben</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td width="33%" bgcolor="red" align="center"><a href="http://pia:5000/color/red">rot</a></td>
+<td width="34%" bgcolor="green" align="center"><a href="http://pia:5000/color/green">gr&uuml;n</a></td>
+<td width="33%" bgcolor="blue" align="center"><a href="http://pia:5000/color/blue">blau</a></td>
+</tr><tr>
+<td width="33%" bgcolor="yellow" align="center"><a href="http://pia:5000/color/yellow">gelb</a></td>
+<td width="34%" bgcolor="fuchsia" align="center"><a href="http://pia:5000/color/fuchsia">fuchsia</a></td>
+<td width="33%" bgcolor="aqua" align="center"><a href="http://pia:5000/color/aqua">aqua</a></td>
+</tr><tr>
+<td width="33%" bgcolor="white" align="center"><a href="http://pia:5000/color/white">wei&szlig;</a></td>
+<td width="34%" bgcolor="black" align="center"><font color="white"><a href="http://pia:5000/color/black">schwarz</a></font></td>
+</tr>
+</tbody>
+</table>
+<br />
 
-<p>
-Verf&uuml;gbare Links:<br />
-<a href="http://pia:5000/color/red">rot</a><br />
-<a href="http://pia:5000/color/green">gr&uuml;n</a><br />
-<a href="http://pia:5000/color/blue">blau</a><br />
-<a href="http://pia:5000/color/yellow">gelb</a><br />
-<a href="http://pia:5000/color/fuchsia">fuchsia</a><br />
-<a href="http://pia:5000/color/aqua">aqua</a><br />
-<a href="http://pia:5000/color/white">wei&szlig;</a><br />
-<a href="http://pia:5000/color/black">schwarz</a><br />
+<table border="0" width="100%">
+<thead>
+<tr>
+<th colspan="4">Regenbogen</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td width="25%" bgcolor="" align="center"><a href="http://pia:5000/rainbow?delay=2">schnell</a></td>
+<td width="25%" bgcolor="" align="center"><a href="http://pia:5000/rainbow?delay=1000">mittel</a></td>
+<td width="25%" bgcolor="" align="center"><a href="http://pia:5000/rainbow?delay=2500">normal</a></td>
+<td width="25%" bgcolor="" align="center"><a href="http://pia:5000/rainbow?delay=5000">langsam</a></td>
+</tr>
+</tbody>
+</table>
 <br />
-<a href="http://pia:5000/rainbow">Regenbogen</a><br />
-<br />
-<a href="http://pia:5000/brightness/2">dunkel</a><br />
-<a href="http://pia:5000/brightness/20">normal</a><br />
-<a href="http://pia:5000/brightness/100">hell</a><br />
-<a href="http://pia:5000/brightness/200">sehr hell</a><br />
-<br />
-<a href="http://pia:5000/off">aus</a><br />
-</p>
+
+<table border="0" width="100%">
+<thead>
+<tr>
+<th colspan="4">Helligkeit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td width="25%" bgcolor="#808000" align="center"><a href="http://pia:5000/brightness/2">dunkel</a></td>
+<td width="25%" bgcolor="#cccc00" align="center"><a href="http://pia:5000/brightness/20">normal</a></td>
+<td width="25%" bgcolor="#ffff33" align="center"><a href="http://pia:5000/brightness/100">hell</a></td>
+<td width="25%" bgcolor="#ffff99" align="center"><a href="http://pia:5000/brightness/200">sehr hell</a></td>
+</tr>
+</table>
+
+<br>
+<table width="33%" align="center">
+<tr>
+<td bgcolor="crimson" align="center"><a href="http://pia:5000/off">ausschalten</a></td>
+</tr>
+</table>
+
+</font>
 </body>
 </html>
+
