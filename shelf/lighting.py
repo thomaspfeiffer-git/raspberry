@@ -235,7 +235,6 @@ def brightness (brightness):
     return "brightness set to {}".format(brightness)
 
 
-
 ###############################################################################
 # Exit ########################################################################
 def _exit():
@@ -259,7 +258,7 @@ signal.signal(signal.SIGTERM, __exit)
 signal.signal(signal.SIGINT, __exit)
 
 control = Control_Strip()
-control.set_pattern(method=pattern_color, color=Colors.red.value)
+control.set_pattern(method=pattern_color, color=Colors.green.value)
 
 scheduling_params = Scheduling_Params()
 
