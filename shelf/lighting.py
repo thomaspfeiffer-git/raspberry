@@ -62,10 +62,11 @@ class Colors (Enum):
 # LED_Strip ################################################################
 class LED_Strip (object):
     COUNT      = 288-13-13   # Number of LED pixels.
+#    COUNT      = 13
     PIN        = 18          # GPIO pin connected to the pixels (must support PWM!).
     FREQ_HZ    = 800000      # LED signal frequency in hertz (usually 800khz)
     DMA        = 5           # DMA channel to use for generating signal (try 5)
-    BRIGHTNESS = 100         # Set to 0 for darkest and 255 for brightest
+    BRIGHTNESS = 20          # Set to 0 for darkest and 255 for brightest
     INVERT     = False  
 
     def __init__ (self):
@@ -130,7 +131,7 @@ class Control_Strip (threading.Thread):
     def run (self):
         self.__flags[Flags.pattern_changed] = False
         while self.__flags[Flags.running]:
-            self.__pattern(self._strip, self.__flags, self.__kwargs)  # TODO: parameter self instead of self._strip
+            self.__pattern(self._strip, self.__flags, self.__kwargs)
             self.__flags[Flags.pattern_changed] = False
        
     def stop (self):
@@ -140,7 +141,7 @@ class Control_Strip (threading.Thread):
 ############################################################################
 # Patterns for LED Strip ###################################################
 def pattern_color (strip, flags, kwargs):
-    strip.set_color(kwargs['color'])  # TODO: use constant instead of magic string
+    strip.set_color(kwargs['color'])
     while flags[Flags.running] and not flags[Flags.pattern_changed]:
         sleep(0.05) 
 
@@ -156,7 +157,7 @@ def pattern_rainbow (strip, flags, kwargs):
             pos -= 170
             return Color(0, pos * 3, 255 - pos * 3)
 
-    delay = kwargs['delay'] # TODO: constant instead of magic string
+    delay = kwargs['delay']
     
     while flags[Flags.running] and not flags[Flags.pattern_changed]:
         for j in range(256):
@@ -184,10 +185,9 @@ def help():
 def light_off (scheduler_off=True):
     """Switches the LEDs off. When explicitely called by the scheduler,
        scheduler_off shall be set to False to not cancel the scheduling."""
-    c.set_pattern(method=pattern_color, color=Colors.black.value)
     if scheduler_off:
-        pass
-        # TODO: scheduler.cancel()
+        scheduler.cancel()
+    control.set_pattern(method=pattern_color, color=Colors.black.value)
     return "set off"
 
 
@@ -200,8 +200,10 @@ def set_color (color):
             error_code = "format error!\n"
         else:
             scheduler.set_timings(scheduling_params)
-            scheduler.set_method_on(c.set_pattern, method=pattern_color, \
-                                                   color=Colors[color].value)
+            # scheduler.set_method_on(control.set_pattern, method=pattern_color, \
+            #                                             color=Colors[color].value)
+            scheduler.set_method_on(method=pattern_color, \
+                                    color=Colors[color].value)
             error_code = "color set to {}; {}".format(color, scheduling_params)
     else:
         error_code = "unknown color"
@@ -218,8 +220,9 @@ def rainbow ():
         error_code = "format error!\n"
     else:
         scheduler.set_timings(scheduling_params)
-        scheduler.set_method_on(c.set_pattern, method=pattern_rainbow, \
-                                               delay=delay)
+        # scheduler.set_method_on(control.set_pattern, method=pattern_rainbow, \
+        #                                              delay=delay)
+        scheduler.set_method_on(method=pattern_rainbow, delay=delay)
         error_code = "rainbow set; delay: {}; {}".format(delay,scheduling_params)
     return error_code
 
@@ -228,7 +231,7 @@ def rainbow ():
 def brightness (brightness):
     """sets brightness of LEDs; 0 .. 255"""
     try:
-        c.brightness = brightness
+        control.brightness = brightness
     except ValueError:
         return "brightness has to be in 0 .. 255"
 
@@ -240,23 +243,28 @@ def brightness (brightness):
 ### if __name__ == 'main': ÄÄÄÄÄÄÄÄ oder so?
 # TODO: signal etc
 
-c = Control_Strip()
-c.set_pattern(method=pattern_color, color=Colors.red.value)
+control = Control_Strip()
+control.set_pattern(method=pattern_color, color=Colors.red.value)
 
 scheduling_params = Scheduling_Params()
 
 scheduler = Scheduling()
-scheduler.set_method_on(c.set_pattern, method=pattern_color, color=Colors.yellow.value)
-scheduler.set_method_off(light_off, scheduler_off=False)
+scheduler.set_pattern_method(control.set_pattern)
+# scheduler.set_method_on(control.set_pattern, method=pattern_color, color=Colors.yellow.value)
+
+# TODO: Check if removeable
+scheduler.set_method_on(method=pattern_color, color=Colors.yellow.value)
+# scheduler.set_method_off(light_off, scheduler_off=False)
 
 scheduler.start()
-c.start()
+control.start()
+
+# control.stop()
+# control.join()
 
 # scheduler.stop()
 # scheduler.join()
 
-# c.stop()
-# c.join()
 
 # eof #
 

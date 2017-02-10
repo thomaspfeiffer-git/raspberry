@@ -62,13 +62,15 @@ class Time (object):
 # Scheduling_Params ########################################################
 class Scheduling_Params (object):
     def __init__ (self):
+        self.lock = threading.Lock()
         self.reset()
 
     def reset (self):
-        self.time_on   = None
-        self.time_off  = None
-        self.daily     = False
-        self.permanent = False
+        with self.lock:
+            self.time_on   = None
+            self.time_off  = None
+            self.daily     = False
+            self.permanent = False
 
     def get_scheduling_params (self, request_args):
         """reads parameters from request string:
@@ -83,11 +85,12 @@ class Scheduling_Params (object):
         permanent = request_args.get('permanent', 'false')
 
         try:
-            self.time_on   = Time() if time_on == DEFAULT_ACTIVATE_TIME else \
-                             Time(string=time_on)
-            self.time_off  = Time(string=time_off)
-            self.daily     = False if daily == 'false' else True
-            self.permanent = False if permanent == 'false' else True
+            with self.lock:
+                self.time_on   = Time() if time_on == DEFAULT_ACTIVATE_TIME else \
+                                 Time(string=time_on)
+                self.time_off  = Time(string=time_off)
+                self.daily     = False if daily == 'false' else True
+                self.permanent = False if permanent == 'false' else True
         except ValueError:
             self.reset()
             return False
@@ -111,11 +114,16 @@ class Scheduling (threading.Thread):
         self._sp = scheduling_params if scheduling_params else Scheduling_Params()
         self._running = True
 
+
+    def set_pattern_method (self, pattern_method):
+        self._pattern_method = pattern_method
+
     def set_timings (self, scheduling_params):
         self._sp = scheduling_params
         self.__is_on  = False
         self.__is_off = True
 
+    """
     def set_method_on (self, setpattern_method, **kwargs):
         self._method_on = setpattern_method
         self._kwargs_on = kwargs
@@ -123,42 +131,56 @@ class Scheduling (threading.Thread):
     def set_method_off (self, setpattern_method, **kwargs):
         self._method_off = setpattern_method # TODO: check: always c.set_pattern() ?
         self._kwargs_off = kwargs
+    """
+
+    def set_method_on (self, **kwargs):
+        self._kwargs_on = kwargs
+
+    def set_method_off (self, **kwargs):
+        self._kwargs_off = kwargs
+
+    def cancel (self):
+        self._sp.reset()
 
     def run (self):
         self.__is_on  = False
         self.__is_off = True
 
         # TODO: now() < time_on < time_off (oder time_on/off => morgen?)
-        # TODO: with lock ...
         while self._running:
             now = datetime.now()
 
-            if self._sp.permanent:
-                if not self.__is_on:  # avoid multiple calls to on()
-                    self._method_on(**self._kwargs_on)
-                    self.__is_on  = True
-                    self.__is_off = False
-            else:
-                if self._sp.time_on and \
-                   now.hour   == self._sp.time_on.hour and \
-                   now.minute == self._sp.time_on.minute:
-                    if not self.__is_on: # avoid multiple calls to on()
-                        self._method_on(**self._kwargs_on)
-                        self.__is_on = True
+            with self._sp.lock:
+                if self._sp.permanent:
+                    if not self.__is_on:  # avoid multiple calls to on()
+                        # self._method_on(**self._kwargs_on)
+                        self._pattern_method(**self._kwargs_on)
+                        self.__is_on  = True
                         self.__is_off = False
-                        if not self._sp.daily:
-                            self._sp.time_on = None
+                else:
+                    if self._sp.time_on and \
+                       now.hour   == self._sp.time_on.hour and \
+                       now.minute == self._sp.time_on.minute:
+                        if not self.__is_on: # avoid multiple calls to on()
+                            # self._method_on(**self._kwargs_on)
+                            self._pattern_method(**self._kwargs_on)
+                            self.__is_on = True
+                            self.__is_off = False
+                            if not self._sp.daily:
+                                self._sp.time_on = None
 
-            if not self._sp.permanent and self.__is_on:
-                if self._sp.time_off and \
-                   now.hour   == self._sp.time_off.hour and \
-                   now.minute == self._sp.time_off.minute:
-                    if not self.__is_off: # avoid multiple calls to off()
-                        self._method_off(**self._kwargs_off)
-                        self.__is_off = True
-                        self.__is_on  = False
-                        if not self._sp.daily:
-                            self._sp.time_off = None
+            with self._sp.lock:
+                if not self._sp.permanent and self.__is_on:
+                    if self._sp.time_off and \
+                       now.hour   == self._sp.time_off.hour and \
+                       now.minute == self._sp.time_off.minute:
+                        if not self.__is_off: # avoid multiple calls to off()
+                            # self._method_off(**self._kwargs_off)
+                            self._pattern_method(**self._kwargs_off)
+                            self.__is_off = True
+                            self.__is_on  = False
+                            if not self._sp.daily:
+                                self._sp.time_off = None
 
             time.sleep(0.1)
 
