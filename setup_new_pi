@@ -241,14 +241,3 @@ sudo apt-get install python3-pandas
 sudo pip3 install scikit-learn
 
 
-
-Upgrade Kernel
-==============
-
-rpi-update
-https://www.raspberrypi.org/documentation/linux/kernel/updating.md
-
-
-
-
-
