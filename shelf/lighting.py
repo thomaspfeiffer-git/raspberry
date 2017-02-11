@@ -297,8 +297,9 @@ control.set_pattern(method=pattern_color, color=Colors.green.value)
 
 scheduling_params = Scheduling_Params()
 
-scheduler = Scheduling()
+scheduler = Scheduling() # TODO: use __init__()?
 scheduler.set_pattern_method(control.set_pattern)
+scheduler.set_method_off(method=pattern_color, color=Colors.black.value)
 
 scheduler.start()
 control.start()
