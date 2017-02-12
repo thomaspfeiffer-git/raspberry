@@ -65,7 +65,7 @@ class Colors (Enum):
 class LED_Strip (object):
     COUNT      = 288-13-13   # Number of LED pixels.
 #    COUNT      = 13
-    PIN        = 18          # GPIO pin connected to the pixels (must support PWM!).
+    PIN        = 18          # GPIO pin connected to the pixels
     FREQ_HZ    = 800000      # LED signal frequency in hertz (usually 800khz)
     DMA        = 5           # DMA channel to use for generating signal (try 5)
     BRIGHTNESS = 25          # Set to 0 for darkest and 255 for brightest
@@ -241,6 +241,7 @@ def rainbow ():
         scheduler.set_method_on(method=pattern_rainbow, delay=delay)
         f = Feedback(success="rainbow set", status=status)
     return "{}".format(f)
+
 
 @app.route('/brightness/<int:brightness>')
 def brightness (brightness):
