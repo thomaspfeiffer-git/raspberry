@@ -195,7 +195,7 @@ def status ():
 def light_off (scheduler_off=True, on_exit=False):
     """Switches the LEDs off. When explicitely called by the scheduler,
        scheduler_off shall be set to False to not cancel the scheduling."""
-    status.set(pattern="aus")
+    status.set(pattern="off")
     if scheduler_off:
         scheduler.cancel()
 
