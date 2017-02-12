@@ -22,15 +22,16 @@ DEFAULT_DEACTIVATE_TIME = "22:30"
 # Time #####################################################################
 class Time (object):
     """represents time with hours and minutes only"""
-    def __init__ (self, hour=None, minute=None, string=None):
-        if string:
-            h, m = string.split(':')
-            self.hour = int(h)
-            self.minute = int(m)
-        else:
-            now = datetime.now()
-            self.hour = int(hour) if hour else now.hour
-            self.minute = int(minute) if minute else now.minute
+    def __init__ (self, timestring): 
+        """format of timestring: "HH:MM"""
+        h, m = timestring.split(':')
+        self.hour = int(h)
+        self.minute = int(m)
+
+    @classmethod
+    def now (cls):
+        now = datetime.now()
+        return cls("{}:{}".format(now.hour, now.minute))
 
     @property
     def hour (self):
@@ -74,8 +75,8 @@ class Scheduling_Params (object):
 
     def get_scheduling_params (self, request_args):
         """reads parameters from request string:
-           -on:    when to switch on the LEDs; default == now()
-           -off:   when to switch off the LEDs; default == DEFAULT_DEACTIVATE_TIME
+           -on:    when to switch LEDs on; default == now()
+           -off:   when to switch LEDs off; default == DEFAULT_DEACTIVATE_TIME
            -daily: daily schedule; default == False
            -permanent: always on; default == False
         """
@@ -86,9 +87,9 @@ class Scheduling_Params (object):
 
         try:
             with self.lock:
-                self.time_on   = Time() if time_on == DEFAULT_ACTIVATE_TIME else \
-                                 Time(string=time_on)
-                self.time_off  = Time(string=time_off)
+                self.time_on   = Time.now() if time_on == DEFAULT_ACTIVATE_TIME \
+                                            else Time(time_on)
+                self.time_off  = Time(time_off)
                 self.daily     = False if daily == 'false' else True
                 self.permanent = False if permanent == 'false' else True
         except ValueError:

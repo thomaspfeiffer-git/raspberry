@@ -190,22 +190,6 @@ class Feedback (object):
         self.error = error
         self.success = success
 
-    @property
-    def error (self):
-        return self.__error
-
-    @error.setter
-    def error (self, error):
-        self.__error = error
-
-    @property
-    def success (self):
-        return self.__success
-
-    @success.setter
-    def success (self, success):
-        self.__success = success
-
     def __str__ (self):
         return render_template('documentation.html', \
                                error=self.error, success=self.success)
