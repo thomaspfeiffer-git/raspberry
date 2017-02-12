@@ -198,9 +198,12 @@ class Feedback (object):
 ############################################################################
 # Flask stuff ##############################################################
 @app.route('/')
-def help():
+def help ():
     return render_template('documentation.html')
 
+@app.route('/status')
+def status ():
+    return "{}".format(Feedback(success="Status: {}".format(scheduling_params)))
 
 @app.route('/off')
 def light_off (scheduler_off=True, on_exit=False):
@@ -211,7 +214,6 @@ def light_off (scheduler_off=True, on_exit=False):
     control.set_pattern(method=pattern_color, color=Colors.black.value)
     if not on_exit:
         return "{}".format(Feedback(success="LEDs off"))
-
 
 @app.route('/color/<color>')
 def set_color (color):
@@ -228,7 +230,6 @@ def set_color (color):
         f = Feedback(error="unknown color")
     return "{}".format(f)
 
-
 @app.route('/rainbow')
 def rainbow ():
     """sets LEDs to rainbow colors; 
@@ -241,7 +242,6 @@ def rainbow ():
         scheduler.set_method_on(method=pattern_rainbow, delay=delay)
         f = Feedback(success="rainbow set; delay: {}; {}".format(delay,scheduling_params))
     return "{}".format(f)
-
 
 @app.route('/brightness/<int:brightness>')
 def brightness (brightness):
@@ -281,7 +281,7 @@ control.set_pattern(method=pattern_color, color=Colors.green.value)
 
 scheduling_params = Scheduling_Params()
 
-scheduler = Scheduling() # TODO: use __init__()?
+scheduler = Scheduling()
 scheduler.set_pattern_method(control.set_pattern)
 scheduler.set_method_off(method=pattern_color, color=Colors.black.value)
 
