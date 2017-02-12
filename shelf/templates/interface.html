@@ -18,6 +18,8 @@ table, th, td { border: 1px solid black; }
 <body>
 <font face="arial" size="20">
 
+
+
 {% if error %}
 <table width="50%">
 <tr>
@@ -98,6 +100,20 @@ table, th, td { border: 1px solid black; }
 <td bgcolor="crimson" align="center"><a href="http://pia:5000/off">ausschalten</a></td>
 </tr>
 </table>
+
+
+<hr />
+
+<table>
+<tr>
+{% autoescape false %}
+{{ status }}
+{% endautoescape %}
+</tr>
+</table>
+
+
+
 
 </font>
 </body>

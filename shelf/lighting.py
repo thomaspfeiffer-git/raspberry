@@ -30,16 +30,17 @@
 
 
 from enum import Enum
+from flask import Flask, request, Markup, render_template
 from neopixel import *
 import signal
 import sys
 import threading
 from time import sleep
 
-from flask import Flask, render_template, request
-app = Flask(__name__)
-
 from scheduling import Scheduling, Scheduling_Params
+from userinterface import Feedback, Status
+
+app = Flask(__name__)
 
 
 ############################################################################
@@ -179,56 +180,51 @@ def pattern_rainbow (strip, flags, kwargs):
 
 
 ############################################################################
-# Feedback - renders html template #########################################
-class Feedback (object):
-    """provides some basic functions for rendering the html template.
-       basically error and success message are set in __init__().
-       __str__() returns the rendered template including error and
-       success message(s)
-    """
-    def __init__ (self, error="", success=""):
-        self.error = error
-        self.success = success
-
-    def __str__ (self):
-        return render_template('documentation.html', \
-                               error=self.error, success=self.success)
-
-
-############################################################################
 # Flask stuff ##############################################################
 @app.route('/')
 def help ():
     return render_template('documentation.html')
 
+
 @app.route('/status')
 def status ():
-    return "{}".format(Feedback(success="Status: {}".format(scheduling_params)))
+    return "{}".format(Feedback(status=status))
+
 
 @app.route('/off')
 def light_off (scheduler_off=True, on_exit=False):
     """Switches the LEDs off. When explicitely called by the scheduler,
        scheduler_off shall be set to False to not cancel the scheduling."""
+    status.set(pattern="aus")
     if scheduler_off:
         scheduler.cancel()
+
     control.set_pattern(method=pattern_color, color=Colors.black.value)
+
     if not on_exit:
-        return "{}".format(Feedback(success="LEDs off"))
+        return "{}".format(Feedback(success="LEDs off", status=status))
+
 
 @app.route('/color/<color>')
 def set_color (color):
     """sets LEDs to a static color"""
     if color in Colors.__members__.keys():
         if not scheduling_params.get_scheduling_params(request.args):
-            f = Feedback(error="format error!")
+            f = Feedback(error="format error!", status=status)
         else:
+            status.set(pattern="color", color=color)
+            status.schedule = scheduling_params
+
             scheduler.set_timings(scheduling_params)
             scheduler.set_method_on(method=pattern_color, \
                                     color=Colors[color].value)
-            f = Feedback(success="color set to {}; {}".format(color, scheduling_params))
+
+            f = Feedback(success="color set to {}".format(color), \
+                         status=status)
     else:
-        f = Feedback(error="unknown color")
+        f = Feedback(error="unknown color", status=status)
     return "{}".format(f)
+
 
 @app.route('/rainbow')
 def rainbow ():
@@ -236,11 +232,14 @@ def rainbow ():
        color is changed every <delay> milliseconds"""
     delay = int(request.args.get('delay', '5000'))  # delay in milliseconds
     if not scheduling_params.get_scheduling_params(request.args):
-        f = Feedback(error="format error")
+        f = Feedback(error="format error", status=status)
     else:
+        status.set(pattern="rainbow", delay=delay)
+        status.schedule = scheduling_params
+
         scheduler.set_timings(scheduling_params)
         scheduler.set_method_on(method=pattern_rainbow, delay=delay)
-        f = Feedback(success="rainbow set; delay: {}; {}".format(delay,scheduling_params))
+        f = Feedback(success="rainbow set", status=status)
     return "{}".format(f)
 
 @app.route('/brightness/<int:brightness>')
@@ -248,10 +247,12 @@ def brightness (brightness):
     """sets brightness of LEDs; 0 .. 255"""
     try:
         control.brightness = brightness
+        status.brightness  = brightness
     except ValueError:
-        return "{}".format(Feedback(error="brightness has to be in 0 .. 255"))
+        return "{}".format(Feedback(error="brightness has to be in 0 .. 255", \
+                                    status=status))
 
-    return "{}".format(Feedback(success="brightness set to {}".format(brightness)))
+    return "{}".format(Feedback(success="brightness set", status=status))
 
 
 ###############################################################################
@@ -275,6 +276,8 @@ def __exit(__s, __f):
 # main ########################################################################
 signal.signal(signal.SIGTERM, __exit)
 signal.signal(signal.SIGINT, __exit)
+
+status = Status(brightness=LED_Strip.BRIGHTNESS)
 
 control = Control_Strip()
 control.set_pattern(method=pattern_color, color=Colors.green.value)
