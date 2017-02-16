@@ -32,6 +32,7 @@
 from enum import Enum
 from flask import Flask, request, Markup, render_template
 from neopixel import *
+from random import randrange
 import signal
 import sys
 import threading
@@ -63,8 +64,8 @@ class Colors (Enum):
 ############################################################################
 # LED_Strip ################################################################
 class LED_Strip (object):
-    COUNT      = 288-13-13   # Number of LED pixels.
-#    COUNT      = 13
+#    COUNT      = 288-13-13   # Number of LED pixels.
+    COUNT      = 20
     PIN        = 18          # GPIO pin connected to the pixels
     FREQ_HZ    = 800000      # LED signal frequency in hertz (usually 800khz)
     DMA        = 5           # DMA channel to use for generating signal (try 5)
@@ -95,6 +96,12 @@ class LED_Strip (object):
     def set_color (self, color):
         with self.__show_lock:
             for i in range(self.num_pixels()):
+                self.set_pixel_color(i, color)
+            self.show()
+
+    def set_color_strip (self, colors):
+        with self.__show_lock:
+            for i, color in enumerate(colors):
                 self.set_pixel_color(i, color)
             self.show()
 
@@ -151,6 +158,29 @@ def pattern_color (strip, flags, kwargs):
     strip.set_color(kwargs['color'])
     while flags[Flags.running] and not flags[Flags.pattern_changed]:
         sleep(0.05) 
+
+
+def pattern_random (strip, flags, kwargs):
+    def random_color ():
+        red   = randrange(0, 255)
+        green = randrange(0, 255)
+        blue  = randrange(0, 255)
+        return Color(red, green, blue)
+
+    def random_color_strip ():
+        return [random_color() for i in range(strip.num_pixels())]
+
+    delay = kwargs['delay']
+
+    while flags[Flags.running] and not flags[Flags.pattern_changed]:
+        strip.set_color_strip(random_color_strip())
+
+        if not flags[Flags.running] or flags[Flags.pattern_changed]:
+            break
+
+        for s in range(delay):    # interruptible sleep  
+            if flags[Flags.running] and not flags[Flags.pattern_changed]:
+                sleep(0.001)
 
 
 def pattern_rainbow (strip, flags, kwargs):
@@ -240,6 +270,24 @@ def rainbow ():
         scheduler.set_timings(scheduling_params)
         scheduler.set_method_on(method=pattern_rainbow, delay=delay)
         f = Feedback(success="rainbow set", status=status)
+    return "{}".format(f)
+
+
+@app.route('/random')
+def random ():
+    """sets LEDs to random colors;
+       color is changed every <delay> milliseconds"""
+
+    delay = int(request.args.get('delay', '5000'))  # delay in milliseconds
+    if not scheduling_params.get_scheduling_params(request.args):
+        f = Feedback(error="format error", status=status)
+    else:
+        status.set(pattern="random", delay=delay)
+        status.schedule = scheduling_params
+
+        scheduler.set_timings(scheduling_params)
+        scheduler.set_method_on(method=pattern_random, delay=delay)
+        f = Feedback(success="random set", status=status)
     return "{}".format(f)
 
 
