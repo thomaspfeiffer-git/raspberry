@@ -161,13 +161,9 @@ def pattern_color (strip, flags, kwargs):
 
 
 def pattern_random (strip, flags, kwargs):
-    def random_color ():
-        red   = randrange(0, 255)
-        green = randrange(0, 255)
-        blue  = randrange(0, 255)
-        return Color(red, green, blue)
-
     def random_color_strip ():
+        def random_color ():
+            return Color(randrange(0, 255), randrange(0, 255), randrange(0, 255))
         return [random_color() for i in range(strip.num_pixels())]
 
     delay = kwargs['delay']

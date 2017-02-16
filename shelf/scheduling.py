@@ -30,8 +30,7 @@ class Time (object):
 
     @classmethod
     def now (cls):
-        now = datetime.now()
-        return cls("{}:{}".format(now.hour, now.minute))
+        return cls("{0.hour}:{0.minute}".format(datetime.now()))
 
     @property
     def hour (self):
@@ -56,7 +55,7 @@ class Time (object):
             raise ValueError("minute has to be in 0 .. 59")
 
     def __str__ (self):
-        return "{:d}:{:02d}".format(self.hour, self.minute)
+        return "{0.hour:d}:{0.minute:02d}".format(self)
 
 
 ############################################################################
