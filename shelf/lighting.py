@@ -27,6 +27,9 @@
 #
 # http://flask.pocoo.org/docs/0.12/
 # sudo pip3 install Flask
+#
+# https://learn.adafruit.com/neopixels-on-raspberry-pi/software
+
 
 
 from enum import Enum
