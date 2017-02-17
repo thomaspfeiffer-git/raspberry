@@ -10,7 +10,7 @@
 ### usage ###
 # sudo bash
 # export FLASK_APP=lighting.py
-# flask run --host=0.0.0.0
+# flask run --host=0.0.0.0 >lighting.log 2>&1 &
 
 
 # sudo PYTHONPATH=".:build/lib.linux-armv7l-2.7" python tp/strandtest.py &
