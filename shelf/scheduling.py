@@ -12,6 +12,7 @@
 from datetime import datetime
 import threading
 import time
+import sys
 
 
 DEFAULT_ACTIVATE_TIME   = "--:--"   # = now()
@@ -150,6 +151,7 @@ class Scheduling (threading.Thread):
                 if i > log_interval:
                     print("{}: {}".format(datetime.now(), \
                                           self._logging_method()))
+                    sys.stdout.flush()
                     i = 0
 
             return print_log
