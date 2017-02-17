@@ -111,11 +111,15 @@ class Scheduling (threading.Thread):
     """
     def __init__ (self, scheduling_params=None):
         threading.Thread.__init__(self)
-        self._sp = scheduling_params if scheduling_params else Scheduling_Params()
+        self._sp = scheduling_params if scheduling_params \
+                                     else Scheduling_Params()
         self._running = True
 
     def set_pattern_method (self, pattern_method):
         self._pattern_method = pattern_method
+
+    def set_logging_method (self, logging_method):
+        self._logging_method = logging_method
 
     def set_timings (self, scheduling_params):
         self._sp = scheduling_params
@@ -134,8 +138,24 @@ class Scheduling (threading.Thread):
     def run (self):
         self.__is_on  = False
         self.__is_off = True
+        sleeptime     = 0.1
 
-        # TODO: now() < time_on < time_off (oder time_on/off => morgen?)
+        def log ():
+            log_interval = 100
+            i = 0
+
+            def print_log ():
+                nonlocal i
+                i += 1
+                if i > log_interval:
+                    print("{}: {}".format(datetime.now(), \
+                                          self._logging_method()))
+                    i = 0
+
+            return print_log
+
+        loginfo = log()
+
         while self._running:
             now = datetime.now()
 
@@ -168,7 +188,8 @@ class Scheduling (threading.Thread):
                             if not self._sp.daily:
                                 self._sp.time_off = None
 
-            time.sleep(0.1)
+            loginfo()
+            time.sleep(sleeptime)
 
     def stop (self):
         self._running = False

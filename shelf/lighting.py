@@ -335,6 +335,7 @@ scheduling_params = Scheduling_Params()
 scheduler = Scheduling()
 scheduler.set_pattern_method(control.set_pattern)
 scheduler.set_method_off(method=pattern_color, color=Colors.black.value)
+scheduler.set_logging_method(status.loginfo)
 
 scheduler.start()
 control.start()

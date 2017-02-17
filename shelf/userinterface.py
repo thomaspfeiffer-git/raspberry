@@ -69,6 +69,9 @@ class Status (object):
     def schedule (self, schedule):
         self.__schedule = copy.copy(schedule)
 
+    def loginfo (self):
+        return "pattern: {0.pattern}; delay: {0.delay}; color: {0.color}; brightness: {0.brightness}; time on: {1.time_on}; time off: {1.time_off}; daily: {1.daily}; permanent: {1.permanent}".format(self, self.schedule)
+
     def __str__ (self):
         ret = "<tr><td>pattern:    </td><td>{}</td></tr>\n".format(self.pattern) + \
               "<tr><td>delay:      </td><td>{}</td></tr>\n".format(self.delay) + \
