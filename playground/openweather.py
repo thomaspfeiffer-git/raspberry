@@ -35,27 +35,25 @@ def make_icon_url (icon):
     return "{}{}.{}".format(path_to_icons, icon, extension)
 
 
-def get_noon_id (owm_data):
-    i = 0
-    while "12:00:00" not in owm_data[i]['dt_txt']:
-        i += 1 
-    return i
-
-
 response = urlopen(owm_url())
 data = json.loads(response.read().decode("utf-8"))
-forecast_owm = data['list'][get_noon_id(data['list'])]
 
-forecast = {
-            'temp':  forecast_owm['main']['temp'],
-            'humidity': forecast_owm['main']['humidity'],
-            'wind': forecast_owm['wind']['speed'],
-            'desc': forecast_owm['weather'][0]['description'],
-            'icon_url': make_icon_url(forecast_owm['weather'][0]['icon']),
-            'time': forecast_owm['dt'],
-            'time_text': forecast_owm['dt_txt']
-           }
+# get data from 12:00 only
+forecast_owm = [ data['list'][i] for i in range(len(data['list'])) 
+                                 if "12:00:00" in data['list'][i]['dt_txt'] ]
 
+
+forecast = []
+for i in range(len(forecast_owm)):
+    forecast.append({
+                     'temp':  forecast_owm[i]['main']['temp'],
+                     'humidity': forecast_owm[i]['main']['humidity'],
+                     'wind': forecast_owm[i]['wind']['speed'],
+                     'desc': forecast_owm[i]['weather'][0]['description'],
+                     'icon_url': make_icon_url(forecast_owm[i]['weather'][0]['icon']),
+                     'time': forecast_owm[i]['dt'],
+                     'time_text': forecast_owm[i]['dt_txt']
+                    })
 
 pprint.pprint(forecast)
 
