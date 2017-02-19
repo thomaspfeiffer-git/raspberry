@@ -3,4 +3,4 @@ __pycache__
 *.swp
 *.err
 *.log
-
+*.key
