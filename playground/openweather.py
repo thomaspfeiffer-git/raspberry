@@ -14,6 +14,24 @@ from urllib.request import urlopen
 # provide api:
 # http://flask-restful.readthedocs.io/en/latest/quickstart.html#a-minimal-api
 
+# install
+# sudo pip3 install flask-restful
+
+
+from flask import Flask
+from flask_restful import Resource, Api
+
+app = Flask(__name__)
+api = Api(app)
+
+
+class API_OpenWeatherData (Resource):
+    def get (self):
+        return json.dumps(forecast)
+
+api.add_resource(API_OpenWeatherData, '/')
+
+
 
 def read_api_key ():
     with open("openweathermap.key", "r") as key_file:
@@ -56,6 +74,11 @@ for i in range(len(forecast_owm)):
                     })
 
 pprint.pprint(forecast)
+
+
+if __name__ == '__main__':
+    app.run()
+
 
 # eof #
 
