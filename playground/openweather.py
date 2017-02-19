@@ -5,6 +5,7 @@
 
 import json
 import pprint
+import threading
 from urllib.request import urlopen
 
 # SensorValue:
@@ -31,6 +32,30 @@ class API_OpenWeatherData (Resource):
 
 api.add_resource(API_OpenWeatherData, '/')
 
+
+class OpenWeatherMap_Data (threading.Thread):
+    def __init__ (self):
+        self.api_key = self.read_api_key()
+
+        self.__lock    = threading.Lock()
+        self.__running = True
+
+    def __str__ (self):
+        pass
+
+    @property
+    def data (self):
+        with self.__lock:
+            pass
+            # return shallow copy 
+
+    def run (self):
+        while self.__running:
+            pass
+            # interruptible sleep!
+
+    def stop (self):
+        self.__running = False
 
 
 def read_api_key ():
