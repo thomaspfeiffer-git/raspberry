@@ -33,12 +33,41 @@ class API_OpenWeatherData (Resource):
 api.add_resource(API_OpenWeatherData, '/')
 
 
-class OpenWeatherMap_Data (threading.Thread):
-    def __init__ (self):
-        self.api_key = self.read_api_key()
+class OpenWeatherMap_Config (object):
+    """ todo """
+    def read_api_key ():
+        with open("openweathermap.key", "r") as key_file:
+            return key_file.read().rstrip() 
 
+    _base_url = "http://api.openweathermap.org/data/2.5/"
+    _api_key  = read_api_key()
+    _location = "vienna,at"
+    _units    = "metric"
+    _lang     = "de"
+
+    _path_to_icons = "http://openweathermap.org/img/w/"
+    _extension     = "png"
+
+    _url = "{}{{}}?q={}&APPID={}&units={}&lang={}".format(                      
+            _base_url, _location, _api_key, _units, _lang)
+    url_forecast = _url.format("forecast")
+    url_actual   = _url.format("weather")
+
+    @classmethod
+    def icon_url (cls, icon):
+        return "{0._path_to_icons}{1}.{0._extension}".format(cls, icon)
+
+    """TODO: prevent from instantiating"""
+
+
+class OpenWeatherMap_Data (threading.Thread):
+    """ todo """
+    def __init__ (self):
         self.__lock    = threading.Lock()
         self.__running = True
+
+        print("forecast: {}\nweather: {}".format(OpenWeatherMap_Config.url_forecast, OpenWeatherMap_Config.url_actual))
+        print("iconpath: {}".format(OpenWeatherMap_Config.icon_url("10d")))
 
     def __str__ (self):
         pass
@@ -58,26 +87,13 @@ class OpenWeatherMap_Data (threading.Thread):
         self.__running = False
 
 
-def read_api_key ():
-    with open("openweathermap.key", "r") as key_file:
-        return key_file.read().rstrip() 
-
-def owm_url ():
-    base_url = "http://api.openweathermap.org/data/2.5/forecast"
-    location = "vienna,at"
-    appid    = read_api_key()
-    units    = "metric"
-    lang     = "de"
-    return "{}?q={}&APPID={}&units={}&lang={}".format(base_url, location, \
-                                                      appid, units, lang)
 
 
-def make_icon_url (icon):
-    path_to_icons = "http://openweathermap.org/img/w/"
-    extension     = "png"
-    return "{}{}.{}".format(path_to_icons, icon, extension)
 
 
+ooooo = OpenWeatherMap_Data()
+
+"""
 response = urlopen(owm_url())
 data = json.loads(response.read().decode("utf-8"))
 
@@ -103,6 +119,7 @@ pprint.pprint(forecast)
 
 if __name__ == '__main__':
     app.run()
+"""
 
 
 # eof #
