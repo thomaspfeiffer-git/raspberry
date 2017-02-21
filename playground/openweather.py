@@ -3,6 +3,7 @@
 # weather icons:
 # https://openweathermap.org/weather-conditions
 
+import copy
 import json
 import pprint
 import threading
@@ -73,7 +74,7 @@ class OpenWeatherMap_Data (threading.Thread):
     def __str__ (self):
         pass
 
-    def read_data (self):
+    def read_data_forecast (self):
         response = urlopen(OpenWeatherMap_Config.url_forecast)
         data = json.loads(response.read().decode("utf-8"))
 
@@ -90,20 +91,24 @@ class OpenWeatherMap_Data (threading.Thread):
                      'humidity': forecast_owm[i]['main']['humidity'],
                      'wind': forecast_owm[i]['wind']['speed'],
                      'desc': forecast_owm[i]['weather'][0]['description'],
-                     'icon_url': make_icon_url(forecast_owm[i]['weather'][0]['icon']),
+                     'icon_url': OpenWeatherMap_Config.icon_url(forecast_owm[i]['weather'][0]['icon']),
                      'time': forecast_owm[i]['dt'],
                      'time_text': forecast_owm[i]['dt_txt']
                     })
 
-
+    def read_data_weather (self):
         with self.__lock:
             pass
             # self.__weather = ...
 
+    def read_data (self):
+        self.read_data_forecast()
+        self.read_data_weather()
+
     @property
     def forecast (self):
         with self.__lock:
-            pass
+            return copy.copy(self.__forecast)
             # return shallow copy 
 
     @property
@@ -126,14 +131,13 @@ class OpenWeatherMap_Data (threading.Thread):
 
 
 
-ooooo = OpenWeatherMap_Data()
+oo = OpenWeatherMap_Data()
+oo.read_data_forecast()
+
+
+pprint.pprint(oo.forecast)
 
 """
-
-
-pprint.pprint(forecast)
-
-
 if __name__ == '__main__':
     app.run()
 """
