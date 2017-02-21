@@ -109,14 +109,11 @@ class OpenWeatherMap_Data (threading.Thread):
     def forecast (self):
         with self.__lock:
             return copy.copy(self.__forecast)
-            # return shallow copy 
 
     @property
     def weather (self):
         with self.__lock:
-            pass
-            # return shallow copy 
-
+            return copy.copy(self.__weather)
 
     def run (self):
         while self.__running:
