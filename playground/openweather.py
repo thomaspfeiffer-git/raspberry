@@ -63,20 +63,55 @@ class OpenWeatherMap_Config (object):
 class OpenWeatherMap_Data (threading.Thread):
     """ todo """
     def __init__ (self):
-        self.__lock    = threading.Lock()
-        self.__running = True
+        self.__lock = threading.Lock()
 
-        print("forecast: {}\nweather: {}".format(OpenWeatherMap_Config.url_forecast, OpenWeatherMap_Config.url_actual))
-        print("iconpath: {}".format(OpenWeatherMap_Config.icon_url("10d")))
+        self.__forecast = []
+        self.__weather  = {}
+
+        self.__running = True
 
     def __str__ (self):
         pass
 
+    def read_data (self):
+        response = urlopen(OpenWeatherMap_Config.url_forecast)
+        data = json.loads(response.read().decode("utf-8"))
+
+        # get data from 12:00 am only
+        forecast_owm = [ data['list'][i] 
+                         for i in range(len(data['list'])) 
+                         if "12:00:00" in data['list'][i]['dt_txt'] ]
+
+        with self.__lock:
+            self.__forecast = []
+            for i in range(len(forecast_owm)):
+                self.__forecast.append({
+                     'temp':  forecast_owm[i]['main']['temp'],
+                     'humidity': forecast_owm[i]['main']['humidity'],
+                     'wind': forecast_owm[i]['wind']['speed'],
+                     'desc': forecast_owm[i]['weather'][0]['description'],
+                     'icon_url': make_icon_url(forecast_owm[i]['weather'][0]['icon']),
+                     'time': forecast_owm[i]['dt'],
+                     'time_text': forecast_owm[i]['dt_txt']
+                    })
+
+
+        with self.__lock:
+            pass
+            # self.__weather = ...
+
     @property
-    def data (self):
+    def forecast (self):
         with self.__lock:
             pass
             # return shallow copy 
+
+    @property
+    def weather (self):
+        with self.__lock:
+            pass
+            # return shallow copy 
+
 
     def run (self):
         while self.__running:
@@ -94,25 +129,7 @@ class OpenWeatherMap_Data (threading.Thread):
 ooooo = OpenWeatherMap_Data()
 
 """
-response = urlopen(owm_url())
-data = json.loads(response.read().decode("utf-8"))
 
-# get data from 12:00 only
-forecast_owm = [ data['list'][i] for i in range(len(data['list'])) 
-                                 if "12:00:00" in data['list'][i]['dt_txt'] ]
-
-
-forecast = []
-for i in range(len(forecast_owm)):
-    forecast.append({
-                     'temp':  forecast_owm[i]['main']['temp'],
-                     'humidity': forecast_owm[i]['main']['humidity'],
-                     'wind': forecast_owm[i]['wind']['speed'],
-                     'desc': forecast_owm[i]['weather'][0]['description'],
-                     'icon_url': make_icon_url(forecast_owm[i]['weather'][0]['icon']),
-                     'time': forecast_owm[i]['dt'],
-                     'time_text': forecast_owm[i]['dt_txt']
-                    })
 
 pprint.pprint(forecast)
 
