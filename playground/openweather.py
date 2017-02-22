@@ -7,9 +7,14 @@ import copy
 from datetime import datetime
 import json
 import pprint
+import sys
 import threading
 import time
 from urllib.request import urlopen
+
+sys.path.append("../libs/")
+from SensorQueue import SensorQueueClient_write
+from SensorValue import SensorValueLock, SensorValue
 
 # SensorValue:
 #    each value gets its own SensorValue() instance
@@ -66,6 +71,7 @@ class OpenWeatherMap_Config (object):
 class OpenWeatherMap_Data (threading.Thread):
     """ todo """
     def __init__ (self):
+        threading.Thread.__init__(self)
         self.__lock = threading.Lock()
         self.__weather = []
         self.read_data()
@@ -139,6 +145,24 @@ class OpenWeatherMap_Data (threading.Thread):
 
 
 
+###############################################################################
+# Exit ########################################################################
+def _exit():
+    """cleanup stuff"""
+    sq.stop()
+    sq.join()
+    sys.exit()
+
+def __exit(__s, __f):
+    """cleanup stuff used for signal handler"""
+    _exit()
+
+
+###############################################################################
+# Main ########################################################################
+
+
+sq = SensorQueueClient_write()
 
 
 
