@@ -4,9 +4,11 @@
 # https://openweathermap.org/weather-conditions
 
 import copy
+from datetime import datetime
 import json
 import pprint
 import threading
+import time
 from urllib.request import urlopen
 
 # SensorValue:
@@ -19,7 +21,7 @@ from urllib.request import urlopen
 # install
 # sudo pip3 install flask-restful
 
-
+"""
 from flask import Flask
 from flask_restful import Resource, Api
 
@@ -32,7 +34,7 @@ class API_OpenWeatherData (Resource):
         return json.dumps(forecast)
 
 api.add_resource(API_OpenWeatherData, '/')
-
+"""
 
 class OpenWeatherMap_Config (object):
     """ todo """
@@ -65,60 +67,72 @@ class OpenWeatherMap_Data (threading.Thread):
     """ todo """
     def __init__ (self):
         self.__lock = threading.Lock()
-
-        self.__forecast = []
-        self.__weather  = {}
+        self.__weather = []
+        self.read_data()
 
         self.__running = True
 
     def __str__ (self):
         pass
 
-    def read_data_forecast (self):
-        response = urlopen(OpenWeatherMap_Config.url_forecast)
-        data = json.loads(response.read().decode("utf-8"))
+    def get_forecast (self):
+        with urlopen(OpenWeatherMap_Config.url_forecast) as response:
+            data = json.loads(response.read().decode("utf-8"))
 
         # get data from 12:00 am only
         forecast_owm = [ data['list'][i] 
                          for i in range(len(data['list'])) 
                          if "12:00:00" in data['list'][i]['dt_txt'] ]
 
-        with self.__lock:
-            self.__forecast = []
-            for i in range(len(forecast_owm)):
-                self.__forecast.append({
-                     'temp':  forecast_owm[i]['main']['temp'],
-                     'humidity': forecast_owm[i]['main']['humidity'],
-                     'wind': forecast_owm[i]['wind']['speed'],
-                     'desc': forecast_owm[i]['weather'][0]['description'],
-                     'icon_url': OpenWeatherMap_Config.icon_url(forecast_owm[i]['weather'][0]['icon']),
-                     'time': forecast_owm[i]['dt'],
-                     'time_text': forecast_owm[i]['dt_txt']
-                    })
+        forecast = []
+        for i in range(len(forecast_owm)):
+            forecast.append({
+                 'temp':  forecast_owm[i]['main']['temp'],
+                 'humidity': forecast_owm[i]['main']['humidity'],
+                 'wind': forecast_owm[i]['wind']['speed'],
+                 'wind direction': forecast_owm[i]['wind']['deg'],
+                 'desc': forecast_owm[i]['weather'][0]['description'],
+                 'icon_url': OpenWeatherMap_Config.icon_url(forecast_owm[i]['weather'][0]['icon']),
+                 'time': forecast_owm[i]['dt'],
+                 'time_text': forecast_owm[i]['dt_txt']
+                })
+        return forecast
 
-    def read_data_weather (self):
-        with self.__lock:
-            pass
-            # self.__weather = ...
+    def get_actual (self):
+        with urlopen(OpenWeatherMap_Config.url_actual) as response:
+            data = json.loads(response.read().decode("utf-8"))
+
+        return {'temp': data['main']['temp'],
+                'humidity': data['main']['humidity'],
+                'wind': data['wind']['speed'],
+                'wind direction': data['wind']['deg'],
+                'desc': data['weather'][0]['description'],
+                'icon_url': OpenWeatherMap_Config.icon_url(data['weather'][0]['icon']),
+                'time': data['dt'],
+                'time_text': datetime.fromtimestamp(data['dt']).isoformat(' ')
+               }
 
     def read_data (self):
-        self.read_data_forecast()
-        self.read_data_weather()
-
-    @property
-    def forecast (self):
         with self.__lock:
-            return copy.copy(self.__forecast)
+            self.__weather = [ self.get_actual() ] + self.get_forecast()
+
+
+    def send_sensor_values (self):
+        pass
 
     @property
     def weather (self):
         with self.__lock:
-            return copy.copy(self.__weather)
+            return copy.deepcopy(self.__weather)
 
     def run (self):
+        i = 0
         while self.__running:
-            pass
-            # interruptible sleep!
+            time.sleep(0.1)
+            if i > 1200:
+                self.read_data()
+                self.send_sensor_values()
+                i = 0
 
     def stop (self):
         self.__running = False
@@ -129,10 +143,10 @@ class OpenWeatherMap_Data (threading.Thread):
 
 
 oo = OpenWeatherMap_Data()
-oo.read_data_forecast()
+oo.read_data()
 
 
-pprint.pprint(oo.forecast)
+pprint.pprint(oo.weather)
 
 """
 if __name__ == '__main__':
