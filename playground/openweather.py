@@ -16,10 +16,6 @@ sys.path.append("../libs/")
 from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock, SensorValue
 
-# SensorValue:
-#    each value gets its own SensorValue() instance
-#    compare to BME280: gets three instances of SensorValues in its constructor
-
 # provide api:
 # http://flask-restful.readthedocs.io/en/latest/quickstart.html#a-minimal-api
 
@@ -70,8 +66,9 @@ class OpenWeatherMap_Config (object):
 
 class OpenWeatherMap_Data (threading.Thread):
     """ todo """
-    def __init__ (self):
+    def __init__ (self, sv_queue):
         threading.Thread.__init__(self)
+        self.sv_queue = sv_queue
         self.__lock = threading.Lock()
         self.__weather = []
         self.read_data()
@@ -122,9 +119,8 @@ class OpenWeatherMap_Data (threading.Thread):
         with self.__lock:
             self.__weather = [ self.get_actual() ] + self.get_forecast()
 
-
     def send_sensor_values (self):
-        pass
+        self.sv_queue(self.weather)
 
     @property
     def weather (self):
@@ -146,6 +142,34 @@ class OpenWeatherMap_Data (threading.Thread):
 
 
 ###############################################################################
+# OWM_Sensorvalues ############################################################
+class OWM_Sensorvalues (object):
+    number_of_datasets = 3
+
+    def __init__ (self):
+        self.qv = []
+        for i in range(self.number_of_datasets):
+            self.qv.append({'temp': SensorValueLock("ID_OWM_{}1".format(i), "TempOWM_{}".format(i),  SensorValue.Types.Temp, "°C", threading.Lock()),
+                            'humidity': SensorValueLock("ID_OWM_{}2".format(i), "HumiOWM_{}".format(i),  SensorValue.Types.Humi, "% rF", threading.Lock()),
+                            'wind': SensorValueLock("ID_OWM_{}3".format(i), "WindOWM_{}".format(i),  SensorValue.Types.Wind, "km/h", threading.Lock()),
+                            'wind direction': SensorValueLock("ID_OWM_{}4".format(i), "WindDirOWM_{}".format(i),  SensorValue.Types.WindDir, "", threading.Lock()),
+                            'desc': SensorValueLock("ID_OWM_{}5".format(i), "DescOWM_{}".format(i),  SensorValue.Types.Desc, "", threading.Lock()),
+                            'icon_url': SensorValueLock("ID_OWM_{}6".format(i), "IconOWM_{}".format(i),  SensorValue.Types.Icon, "", threading.Lock())
+                           })
+            for k, qv in self.qv[i].items():
+                sq.register(qv)
+
+    def senddatatoqueue (self, data):        
+        for i in range(self.number_of_datasets):
+            for k, qv in self.qv[i].items():
+                pass
+
+        self.qv_temp_act.value = "%.1f" % data[0]['temp']
+        # ...
+
+
+
+###############################################################################
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
@@ -163,14 +187,16 @@ def __exit(__s, __f):
 
 
 sq = SensorQueueClient_write()
+owm_sv = OWM_Sensorvalues()
 
-
-
-oo = OpenWeatherMap_Data()
+oo = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
 oo.read_data()
-
-
+owm_sv.senddatatoqueue(oo.weather)
 pprint.pprint(oo.weather)
+
+
+
+
 
 """
 if __name__ == '__main__':
