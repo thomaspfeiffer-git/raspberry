@@ -13,6 +13,7 @@ Currently there are three screens:
 """
 
 
+from datetime import datetime
 import pygame
 from Config import CONFIG
 from Display import Display
@@ -179,7 +180,7 @@ class Screens (object):
         ypos = CONFIG.MARGIN 
         self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
 
-        ypos = self.display.drawForecastItem("Wettervorhersage heute:", \
+        ypos = self.display.drawForecastItem("Wettervorhersage aktuell:", \
                                              getvalue(allsensorvalues['ID_OWM_05']), \
                                              getvalue(allsensorvalues['ID_OWM_01']) + b' - ' + \
                                                    getvalue(allsensorvalues['ID_OWM_02']), \
@@ -187,6 +188,8 @@ class Screens (object):
                                                    getvalue(allsensorvalues['ID_OWM_04']) + b')', \
                                              None, \
                                              CONFIG.COLORS.OUTDOOR, ypos)
+
+        title = "Wettervorhersage heute" if datetime.now().hour < 12 else "Wettervorhersage morgen"
         ypos = self.display.drawForecastItem("Wettervorhersage morgen:", \
                                              getvalue(allsensorvalues['ID_OWM_15']), \
                                              getvalue(allsensorvalues['ID_OWM_11']) + b' - ' + \
@@ -195,6 +198,8 @@ class Screens (object):
                                                    getvalue(allsensorvalues['ID_OWM_14']) + b')', \
                                              None, \
                                              CONFIG.COLORS.OUTDOOR, ypos)
+
+        title = "Wettervorhersage morgen" if datetime.now().hour < 12 else "Wettervorhersage übermorgen"
         ypos = self.display.drawForecastItem("Wettervorhersage übermorgen:", \
                                              getvalue(allsensorvalues['ID_OWM_25']), \
                                              getvalue(allsensorvalues['ID_OWM_21']) + b' - ' + \
