@@ -41,9 +41,12 @@ class SensorValue (object):
 
     @value.setter
     def value (self, _value):
-        """sets the value of measurement
-           please note the decimal coma here"""
-        _value = _value.replace('.', ',')
+        """sets the value of measurement"""
+        if self.__type in (SensorValue.Types.Temp, SensorValue.Types.Humi, 
+                           SensorValue.Types.Pressure, SensorValue.Types.Light,
+                           SensorValue.Types.Wind):
+            """please note the decimal coma here"""
+            _value = _value.replace('.', ',')
         self.__value     = _value
         self.__timestamp = time()
 
