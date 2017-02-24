@@ -163,11 +163,8 @@ class OWM_Sensorvalues (object):
                 sq.register(qv)
 
     def senddatatoqueue (self, data):        
-        print("\n=======================\n{}".format(datetime.now()))
         for i in range(self.number_of_datasets):
             for k, qv in self.qv[i].items():
-                # print("i: {}; k: {}; qv: {}".format(i, k, qv))
-                print("senddatatoqueue: i: {}; k: {}; data[i][k]: {}".format(i, k, data[i][k]))
                 qv.value = str(data[i][k])
 
 
