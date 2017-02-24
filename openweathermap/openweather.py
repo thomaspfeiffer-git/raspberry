@@ -61,6 +61,26 @@ class OpenWeatherMap_Config (object):
     def icon_url (cls, icon):
         return "{0._path_to_icons}{1}.{0._extension}".format(cls, icon)
 
+    @classmethod
+    def direction (cls, degrees):
+        degrees = int(degrees)
+        if 22.5 <= degrees < 22.5+45:
+            return "nord-ost"
+        if 67.5 <= degrees < 67.5+45:
+            return "ost"
+        if 112.5 <= degrees < 112.5+45:
+            return "süd-ost"
+        if 157.5 <= degrees < 157.5+45:
+            return "süd"
+        if 202.5 <= degrees < 202.5+45:
+            return "süd-west"
+        if 247.5 <= degrees < 247.5+45:
+            return "west"
+        if 292.5 <= degrees < 292.5+45:
+            return "nord-west"
+        if 337.5 <= degrees <= 360 or 0 <= degrees < 22.5:
+            return "nord" 
+    
     """TODO: prevent from instantiating"""
 
 
@@ -83,6 +103,7 @@ class OpenWeatherMap_Data (threading.Thread):
     def get_forecast (self):
         with urlopen(OpenWeatherMap_Config.url_forecast) as response:
             data = json.loads(response.read().decode("utf-8"))
+        # TODO except HTTPError...
 
         # get data from 12:00 am only
         forecast_owm = [ data['list'][i] 
@@ -95,7 +116,7 @@ class OpenWeatherMap_Data (threading.Thread):
                  'temp':  forecast_owm[i]['main']['temp'],
                  'humidity': forecast_owm[i]['main']['humidity'],
                  'wind': forecast_owm[i]['wind']['speed'],
-                 'wind direction': forecast_owm[i]['wind']['deg'],
+                 'wind direction': OpenWeatherMap_Config.direction(forecast_owm[i]['wind']['deg']),
                  'desc': forecast_owm[i]['weather'][0]['description'],
                  'icon_url': OpenWeatherMap_Config.icon_url(forecast_owm[i]['weather'][0]['icon']),
                  'time': forecast_owm[i]['dt'],
@@ -106,11 +127,12 @@ class OpenWeatherMap_Data (threading.Thread):
     def get_actual (self):
         with urlopen(OpenWeatherMap_Config.url_actual) as response:
             data = json.loads(response.read().decode("utf-8"))
+        # TODO except HTTPError...
 
         return {'temp': data['main']['temp'],
                 'humidity': data['main']['humidity'],
                 'wind': data['wind']['speed'],
-                'wind direction': data['wind']['deg'],
+                'wind direction': OpenWeatherMap_Config.direction(data['wind']['deg']),
                 'desc': data['weather'][0]['description'],
                 'icon_url': OpenWeatherMap_Config.icon_url(data['weather'][0]['icon']),
                 'time': data['dt'],
