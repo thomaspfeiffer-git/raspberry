@@ -73,6 +73,24 @@ class AllSensorValues (dict):
         self['ID_31'] = None
         self['ID_32'] = None
         self['ID_33'] = None
+        self['ID_OWM_01'] = None
+        self['ID_OWM_02'] = None
+        self['ID_OWM_03'] = None
+        self['ID_OWM_04'] = None
+        self['ID_OWM_05'] = None
+        self['ID_OWM_06'] = None
+        self['ID_OWM_11'] = None
+        self['ID_OWM_12'] = None
+        self['ID_OWM_13'] = None
+        self['ID_OWM_14'] = None
+        self['ID_OWM_15'] = None
+        self['ID_OWM_16'] = None
+        self['ID_OWM_21'] = None
+        self['ID_OWM_22'] = None
+        self['ID_OWM_23'] = None
+        self['ID_OWM_24'] = None
+        self['ID_OWM_25'] = None
+        self['ID_OWM_26'] = None
 
     def readfromqueue (self):
         """polls the queue for new sensor values (only one at a time)"""

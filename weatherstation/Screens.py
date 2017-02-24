@@ -32,12 +32,13 @@ class Screens (object):
     def __init__(self, display):
         self.display    = display
         self.__screenid = 1
-        self.__screens  = {1: self.Screen1, \
-                           2: self.Screen2, \
-                           3: self.Screen3, \
-                           4: self.Screen4, \
-                           5: self.Screen5, \
-                           6: self.Screen6}
+        self.__screens  = {1: self.Screen1,
+                           2: self.Screen_OWM,
+                           3: self.Screen2,
+                           4: self.Screen3,
+                           5: self.Screen4,
+                           6: self.Screen5,
+                           7: self.Screen6}
 
 
     @property
@@ -177,6 +178,38 @@ class Screens (object):
                                             getvalue(allsensorvalues['ID_33']), \
                                             None,    \
                                             CONFIG.COLORS.WARDROBE, ypos)
+        self.display.drawTime()
+
+
+    def Screen_OWM (self, allsensorvalues):
+        """openweathermap"""
+        ypos = CONFIG.MARGIN 
+        self.display.screen.fill(CONFIG.COLORS.BACKGROUND)
+
+        ypos = self.display.drawForecastItem("Wettervorhersage heute:", \
+                                             getvalue(allsensorvalues['ID_OWM_05']), \
+                                             getvalue(allsensorvalues['ID_OWM_01']) + b' - ' + \
+                                                   getvalue(allsensorvalues['ID_OWM_02']), \
+                                             getvalue(allsensorvalues['ID_OWM_03']) + b' (' + \
+                                                   getvalue(allsensorvalues['ID_OWM_04']) + b')', \
+                                             None, \
+                                             CONFIG.COLORS.OUTDOOR, ypos)
+        ypos = self.display.drawForecastItem("Wettervorhersage morgen:", \
+                                             getvalue(allsensorvalues['ID_OWM_15']), \
+                                             getvalue(allsensorvalues['ID_OWM_11']) + b' - ' + \
+                                                   getvalue(allsensorvalues['ID_OWM_12']), \
+                                             getvalue(allsensorvalues['ID_OWM_13']) + b' (' + \
+                                                   getvalue(allsensorvalues['ID_OWM_14']) + b')', \
+                                             None, \
+                                             CONFIG.COLORS.OUTDOOR, ypos)
+        ypos = self.display.drawForecastItem("Wettervorhersage übermorgen:", \
+                                             getvalue(allsensorvalues['ID_OWM_25']), \
+                                             getvalue(allsensorvalues['ID_OWM_21']) + b' - ' + \
+                                                   getvalue(allsensorvalues['ID_OWM_22']), \
+                                             getvalue(allsensorvalues['ID_OWM_23']) + b' (' + \
+                                                   getvalue(allsensorvalues['ID_OWM_24']) + b')', \
+                                             None, \
+                                             CONFIG.COLORS.OUTDOOR, ypos)
         self.display.drawTime()
 
 # eof #
