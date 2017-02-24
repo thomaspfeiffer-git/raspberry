@@ -6,7 +6,7 @@
 import copy
 from datetime import datetime
 import json
-import pprint
+import signal
 import sys
 import threading
 import time
@@ -67,11 +67,13 @@ class OpenWeatherMap_Config (object):
 class OpenWeatherMap_Data (threading.Thread):
     """ todo """
     def __init__ (self, sv_queue):
+        """todo: describe sv_queue"""
         threading.Thread.__init__(self)
         self.sv_queue = sv_queue
         self.__lock = threading.Lock()
         self.__weather = []
         self.read_data()
+        self.send_sensor_values()
 
         self.__running = True
 
@@ -116,8 +118,9 @@ class OpenWeatherMap_Data (threading.Thread):
                }
 
     def read_data (self):
-        with self.__lock:
-            self.__weather = [ self.get_actual() ] + self.get_forecast()
+        w = [ self.get_actual() ] + self.get_forecast()
+        with self.__lock: 
+            self.__weather = w
 
     def send_sensor_values (self):
         self.sv_queue(self.weather)
@@ -131,6 +134,7 @@ class OpenWeatherMap_Data (threading.Thread):
         i = 0
         while self.__running:
             time.sleep(0.1)
+            i += 1
             if i > 1200:
                 self.read_data()
                 self.send_sensor_values()
@@ -138,7 +142,6 @@ class OpenWeatherMap_Data (threading.Thread):
 
     def stop (self):
         self.__running = False
-
 
 
 ###############################################################################
@@ -160,17 +163,20 @@ class OWM_Sensorvalues (object):
                 sq.register(qv)
 
     def senddatatoqueue (self, data):        
+        print("\n=======================\n{}".format(datetime.now()))
         for i in range(self.number_of_datasets):
             for k, qv in self.qv[i].items():
                 # print("i: {}; k: {}; qv: {}".format(i, k, qv))
-                # print("data[i][k]: {}".format(data[i][k]))
-                qv.value = str(data[i][k])  # TODO: Formatting?
+                print("senddatatoqueue: i: {}; k: {}; data[i][k]: {}".format(i, k, data[i][k]))
+                qv.value = str(data[i][k])
 
 
 ###############################################################################
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
+    oo.stop()
+    oo.join()
     sq.stop()
     sq.join()
     sys.exit()
@@ -182,17 +188,16 @@ def __exit(__s, __f):
 
 ###############################################################################
 # Main ########################################################################
+signal.signal(signal.SIGTERM, __exit)
+signal.signal(signal.SIGINT, __exit)
 
 
 sq = SensorQueueClient_write()
 owm_sv = OWM_Sensorvalues()
+sq.start()
 
 oo = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
-oo.read_data()
-pprint.pprint(oo.weather)
-
-owm_sv.senddatatoqueue(oo.weather)
-
+oo.start()
 
 
 
