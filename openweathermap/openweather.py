@@ -10,6 +10,7 @@ import signal
 import sys
 import threading
 import time
+from urllib.error import HTTPError
 from urllib.request import urlopen
 
 sys.path.append("../libs/")
@@ -43,7 +44,8 @@ class OpenWeatherMap_Config (object):
         with open("openweathermap.key", "r") as key_file:
             return key_file.read().rstrip() 
 
-    _base_url = "http://api.openweathermap.org/data/2.5/"
+    # _base_url = "http://api.openweathermap.org/data/2.5/"
+    _base_url = "http://api.openweathermap.org/data/2.588/"
     _api_key  = read_api_key()
     _location = "vienna,at"
     _units    = "metric"
@@ -101,9 +103,11 @@ class OpenWeatherMap_Data (threading.Thread):
         pass
 
     def get_forecast (self):
-        with urlopen(OpenWeatherMap_Config.url_forecast) as response:
-            data = json.loads(response.read().decode("utf-8"))
-        # TODO except HTTPError...
+        try:
+            with urlopen(OpenWeatherMap_Config.url_forecast) as response:
+                data = json.loads(response.read().decode("utf-8"))
+        except HTTPError:
+            raise ValueError
 
         # get data from 12:00 am only
         forecast_owm = [ data['list'][i] 
@@ -113,9 +117,9 @@ class OpenWeatherMap_Data (threading.Thread):
         forecast = []
         for i in range(len(forecast_owm)):
             forecast.append({
-                 'temp':  forecast_owm[i]['main']['temp'],
-                 'humidity': forecast_owm[i]['main']['humidity'],
-                 'wind': forecast_owm[i]['wind']['speed'],
+                 'temp': "{:.1f}".format(forecast_owm[i]['main']['temp']),
+                 'humidity': "{:.1f}".format(forecast_owm[i]['main']['humidity']),
+                 'wind': "{:.1f}".format(forecast_owm[i]['wind']['speed']),
                  'wind direction': OpenWeatherMap_Config.direction(forecast_owm[i]['wind']['deg']),
                  'desc': forecast_owm[i]['weather'][0]['description'],
                  'icon_url': OpenWeatherMap_Config.icon_url(forecast_owm[i]['weather'][0]['icon']),
@@ -125,13 +129,15 @@ class OpenWeatherMap_Data (threading.Thread):
         return forecast
 
     def get_actual (self):
-        with urlopen(OpenWeatherMap_Config.url_actual) as response:
-            data = json.loads(response.read().decode("utf-8"))
-        # TODO except HTTPError...
+        try:
+            with urlopen(OpenWeatherMap_Config.url_actual) as response:
+                data = json.loads(response.read().decode("utf-8"))
+        except HTTPError:
+            raise ValueError
 
-        return {'temp': data['main']['temp'],
-                'humidity': data['main']['humidity'],
-                'wind': data['wind']['speed'],
+        return {'temp': "{:.1f}".format(data['main']['temp']),
+                'humidity': "{:.1f}".format(data['main']['humidity']),
+                'wind': "{:.1f}".format(data['wind']['speed']),
                 'wind direction': OpenWeatherMap_Config.direction(data['wind']['deg']),
                 'desc': data['weather'][0]['description'],
                 'icon_url': OpenWeatherMap_Config.icon_url(data['weather'][0]['icon']),
@@ -140,9 +146,13 @@ class OpenWeatherMap_Data (threading.Thread):
                }
 
     def read_data (self):
-        w = [ self.get_actual() ] + self.get_forecast()
-        with self.__lock: 
-            self.__weather = w
+        try:
+            w = [ self.get_actual() ] + self.get_forecast()
+        except ValueError:
+            pass
+        else:  # update only if there was no error when reading data from owm.
+            with self.__lock: 
+                self.__weather = w
 
     def send_sensor_values (self):
         self.sv_queue(self.weather)
@@ -174,19 +184,21 @@ class OWM_Sensorvalues (object):
     def __init__ (self):
         self.qv = []
         for i in range(self.number_of_datasets):
-            self.qv.append({'temp': SensorValueLock("ID_OWM_{}1".format(i), "TempOWM_{}".format(i),  SensorValue.Types.Temp, "°C", threading.Lock()),
-                            'humidity': SensorValueLock("ID_OWM_{}2".format(i), "HumiOWM_{}".format(i),  SensorValue.Types.Humi, "% rF", threading.Lock()),
-                            'wind': SensorValueLock("ID_OWM_{}3".format(i), "WindOWM_{}".format(i),  SensorValue.Types.Wind, "km/h", threading.Lock()),
-                            'wind direction': SensorValueLock("ID_OWM_{}4".format(i), "WindDirOWM_{}".format(i),  SensorValue.Types.WindDir, "", threading.Lock()),
-                            'desc': SensorValueLock("ID_OWM_{}5".format(i), "DescOWM_{}".format(i),  SensorValue.Types.Desc, "", threading.Lock()),
-                            'icon_url': SensorValueLock("ID_OWM_{}6".format(i), "IconOWM_{}".format(i),  SensorValue.Types.Icon, "", threading.Lock())
+            self.qv.append({'temp': SensorValueLock("ID_OWM_{}1".format(i), "TempOWM_{}".format(i), SensorValue.Types.Temp, "°C", threading.Lock()),
+                            'humidity': SensorValueLock("ID_OWM_{}2".format(i), "HumiOWM_{}".format(i), SensorValue.Types.Humi, "% rF", threading.Lock()),
+                            'wind': SensorValueLock("ID_OWM_{}3".format(i), "WindOWM_{}".format(i), SensorValue.Types.Wind, "km/h", threading.Lock()),
+                            'wind direction': SensorValueLock("ID_OWM_{}4".format(i), "WindDirOWM_{}".format(i), SensorValue.Types.WindDir, None, threading.Lock()),
+                            'desc': SensorValueLock("ID_OWM_{}5".format(i), "DescOWM_{}".format(i), SensorValue.Types.Desc, None, threading.Lock()),
+                            'icon_url': SensorValueLock("ID_OWM_{}6".format(i), "IconOWM_{}".format(i), SensorValue.Types.IconUrl, None, threading.Lock())
                            })
             for k, qv in self.qv[i].items():
                 sq.register(qv)
 
     def senddatatoqueue (self, data):        
+        print("=====================================")
         for i in range(self.number_of_datasets):
             for k, qv in self.qv[i].items():
+                print("i: {}; {}: {}".format(i, k, data[i][k]))
                 qv.value = str(data[i][k])
 
 
@@ -210,7 +222,6 @@ def __exit(__s, __f):
 signal.signal(signal.SIGTERM, __exit)
 signal.signal(signal.SIGINT, __exit)
 
-
 sq = SensorQueueClient_write()
 owm_sv = OWM_Sensorvalues()
 sq.start()
@@ -218,14 +229,10 @@ sq.start()
 oo = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
 oo.start()
 
-
-
-
 """
 if __name__ == '__main__':
     app.run()
 """
-
 
 # eof #
 
