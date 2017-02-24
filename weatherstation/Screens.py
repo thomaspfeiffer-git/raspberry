@@ -61,7 +61,6 @@ class Screens (object):
         self.__screens[self.screenid](allsensorvalues)
         pygame.display.update()
 
-
     def Screen1 (self, allsensorvalues):
         """living room and outdoor"""
         ypos = CONFIG.MARGIN 
@@ -103,7 +102,6 @@ class Screens (object):
         ypos += CONFIG.SEP_Y
         self.display.drawTime()
 
-
     def Screen2 (self, allsensorvalues):
         """kid's room"""
         ypos = CONFIG.MARGIN 
@@ -119,7 +117,6 @@ class Screens (object):
         self.display.drawPicture(CONFIG.IMAGES.PIC_KIDSROOM, 0.8, 
                                  xpos=Display.Position.Center, ypos=ypos)
         self.display.drawTime()
-
 
     def Screen3 (self, allsensorvalues):
         """Kollerberg outside"""
@@ -137,7 +134,6 @@ class Screens (object):
                                  xpos=Display.Position.Center, ypos=ypos)
         self.display.drawTime()
 
-
     def Screen4 (self, allsensorvalues):
         """Kollerberg inside"""
         ypos = CONFIG.MARGIN 
@@ -152,7 +148,6 @@ class Screens (object):
         ypos += CONFIG.SEP_Y
         self.display.drawTime()
 
-
     def Screen6 (self, allsensorvalues):
         """misc sensor values"""
         ypos = CONFIG.MARGIN 
@@ -165,7 +160,6 @@ class Screens (object):
                                             None,    \
                                             CONFIG.COLORS.MISC, ypos)
         self.display.drawTime()
-
 
     def Screen5 (self, allsensorvalues):
         """Wardrobe"""
@@ -180,7 +174,6 @@ class Screens (object):
                                             CONFIG.COLORS.WARDROBE, ypos)
         self.display.drawTime()
 
-
     def Screen_OWM (self, allsensorvalues):
         """openweathermap"""
         ypos = CONFIG.MARGIN 
@@ -188,7 +181,7 @@ class Screens (object):
 
         ypos = self.display.drawForecastItem("Wettervorhersage heute:", \
                                              getvalue(allsensorvalues['ID_OWM_05']), \
-                                             getvalue(allsensorvalues['ID_OWM_01']) + b' - ' + \
+                                             getvalue(allsensorvalues['ID_OWM_01']) + b'x - ' + \
                                                    getvalue(allsensorvalues['ID_OWM_02']), \
                                              getvalue(allsensorvalues['ID_OWM_03']) + b' (' + \
                                                    getvalue(allsensorvalues['ID_OWM_04']) + b')', \
@@ -196,7 +189,7 @@ class Screens (object):
                                              CONFIG.COLORS.OUTDOOR, ypos)
         ypos = self.display.drawForecastItem("Wettervorhersage morgen:", \
                                              getvalue(allsensorvalues['ID_OWM_15']), \
-                                             getvalue(allsensorvalues['ID_OWM_11']) + b' - ' + \
+                                             getvalue(allsensorvalues['ID_OWM_11']) + b'x - ' + \
                                                    getvalue(allsensorvalues['ID_OWM_12']), \
                                              getvalue(allsensorvalues['ID_OWM_13']) + b' (' + \
                                                    getvalue(allsensorvalues['ID_OWM_14']) + b')', \
@@ -204,7 +197,7 @@ class Screens (object):
                                              CONFIG.COLORS.OUTDOOR, ypos)
         ypos = self.display.drawForecastItem("Wettervorhersage übermorgen:", \
                                              getvalue(allsensorvalues['ID_OWM_25']), \
-                                             getvalue(allsensorvalues['ID_OWM_21']) + b' - ' + \
+                                             getvalue(allsensorvalues['ID_OWM_21']) + b'x - ' + \
                                                    getvalue(allsensorvalues['ID_OWM_22']), \
                                              getvalue(allsensorvalues['ID_OWM_23']) + b' (' + \
                                                    getvalue(allsensorvalues['ID_OWM_24']) + b')', \

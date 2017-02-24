@@ -38,6 +38,8 @@ class Display (object):
                                                    CONFIG.FONTSIZE)
         self.font_small      = pygame.font.SysFont('arial', \
                                                    CONFIG.FONTSIZE_SMALL)
+        self.font_forecast   = pygame.font.SysFont('arial', \
+                                                   CONFIG.FONTSIZE_FORECAST)
         self.font_small_bold = pygame.font.SysFont('arial', \
                                                    CONFIG.FONTSIZE_SMALL, True)
         self.font_tiny       = pygame.font.SysFont('arial', \
