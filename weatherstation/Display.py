@@ -68,13 +68,13 @@ class Display (object):
         ypos = self.drawSeperatorLine(ypos)
         ypos = self.drawItem(room, self.font_tiny, CONFIG.COLORS.DESC, ypos)
         if value1 is not None:
-            ypos = self.drawItem(value1, self.font_small, color, ypos)
+            ypos = self.drawItem(value1, self.font_forecast, color, ypos)
         if value2 is not None:
-            ypos = self.drawItem(value2, self.font_small, color, ypos)
+            ypos = self.drawItem(value2, self.font_forecast, color, ypos)
         if value3 is not None:
-            ypos = self.drawItem(value3, self.font_small, color, ypos)
+            ypos = self.drawItem(value3, self.font_forecast, color, ypos)
         if value4 is not None:
-            ypos = self.drawItem(value4, self.font_small, color, ypos)
+            ypos = self.drawItem(value4, self.font_forecast, color, ypos)
         return ypos
 
 

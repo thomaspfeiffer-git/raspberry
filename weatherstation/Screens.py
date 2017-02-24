@@ -181,7 +181,7 @@ class Screens (object):
 
         ypos = self.display.drawForecastItem("Wettervorhersage heute:", \
                                              getvalue(allsensorvalues['ID_OWM_05']), \
-                                             getvalue(allsensorvalues['ID_OWM_01']) + b'x - ' + \
+                                             getvalue(allsensorvalues['ID_OWM_01']) + b' - ' + \
                                                    getvalue(allsensorvalues['ID_OWM_02']), \
                                              getvalue(allsensorvalues['ID_OWM_03']) + b' (' + \
                                                    getvalue(allsensorvalues['ID_OWM_04']) + b')', \
@@ -189,7 +189,7 @@ class Screens (object):
                                              CONFIG.COLORS.OUTDOOR, ypos)
         ypos = self.display.drawForecastItem("Wettervorhersage morgen:", \
                                              getvalue(allsensorvalues['ID_OWM_15']), \
-                                             getvalue(allsensorvalues['ID_OWM_11']) + b'x - ' + \
+                                             getvalue(allsensorvalues['ID_OWM_11']) + b' - ' + \
                                                    getvalue(allsensorvalues['ID_OWM_12']), \
                                              getvalue(allsensorvalues['ID_OWM_13']) + b' (' + \
                                                    getvalue(allsensorvalues['ID_OWM_14']) + b')', \
@@ -197,7 +197,7 @@ class Screens (object):
                                              CONFIG.COLORS.OUTDOOR, ypos)
         ypos = self.display.drawForecastItem("Wettervorhersage übermorgen:", \
                                              getvalue(allsensorvalues['ID_OWM_25']), \
-                                             getvalue(allsensorvalues['ID_OWM_21']) + b'x - ' + \
+                                             getvalue(allsensorvalues['ID_OWM_21']) + b' - ' + \
                                                    getvalue(allsensorvalues['ID_OWM_22']), \
                                              getvalue(allsensorvalues['ID_OWM_23']) + b' (' + \
                                                    getvalue(allsensorvalues['ID_OWM_24']) + b')', \
