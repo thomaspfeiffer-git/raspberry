@@ -16,7 +16,7 @@ class SensorValue (object):
     """contains various data of measured values"""
     class Types:
         """enum for sensor types"""
-        Temp, Humi, Pressure, Switch, Light, Wind, WindDir, Desc, Icon = range(9)
+        Temp, Humi, Pressure, Switch, Light, Wind, WindDir, Desc, IconUrl = range(9)
 
     def __init__ (self, v_id, name, type_, unit):
         self.__v_id      = v_id
