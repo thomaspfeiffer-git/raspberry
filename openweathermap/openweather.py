@@ -44,8 +44,7 @@ class OpenWeatherMap_Config (object):
         with open("openweathermap.key", "r") as key_file:
             return key_file.read().rstrip() 
 
-    # _base_url = "http://api.openweathermap.org/data/2.5/"
-    _base_url = "http://api.openweathermap.org/data/2.588/"
+    _base_url = "http://api.openweathermap.org/data/2.5/"
     _api_key  = read_api_key()
     _location = "vienna,at"
     _units    = "metric"
