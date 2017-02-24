@@ -162,11 +162,9 @@ class OWM_Sensorvalues (object):
     def senddatatoqueue (self, data):        
         for i in range(self.number_of_datasets):
             for k, qv in self.qv[i].items():
-                pass
-
-        self.qv_temp_act.value = "%.1f" % data[0]['temp']
-        # ...
-
+                # print("i: {}; k: {}; qv: {}".format(i, k, qv))
+                # print("data[i][k]: {}".format(data[i][k]))
+                qv.value = str(data[i][k])  # TODO: Formatting?
 
 
 ###############################################################################
@@ -191,8 +189,9 @@ owm_sv = OWM_Sensorvalues()
 
 oo = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
 oo.read_data()
-owm_sv.senddatatoqueue(oo.weather)
 pprint.pprint(oo.weather)
+
+owm_sv.senddatatoqueue(oo.weather)
 
 
 
