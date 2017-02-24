@@ -36,8 +36,10 @@ class SensorValue (object):
         else:
             if (self.type_ == SensorValue.Types.Switch):
                 return "%s %s" % (self.unit, self.__value)
-            else:
+            elif self.__value:
                 return "%s %s" % (self.__value, self.unit)
+            else:
+                return "%s" % (self.__value)
 
     @value.setter
     def value (self, _value):
