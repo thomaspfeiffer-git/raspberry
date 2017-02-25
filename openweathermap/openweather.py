@@ -105,6 +105,8 @@ class OpenWeatherMap_Data (threading.Thread):
         try:
             with urlopen(OpenWeatherMap_Config.url_forecast) as response:
                 data = json.loads(response.read().decode("utf-8"))
+                # import pprint
+                # pprint.pprint(data)
         except HTTPError:
             raise ValueError
 
@@ -131,6 +133,8 @@ class OpenWeatherMap_Data (threading.Thread):
         try:
             with urlopen(OpenWeatherMap_Config.url_actual) as response:
                 data = json.loads(response.read().decode("utf-8"))
+                # import pprint
+                # pprint.pprint(data)
         except HTTPError:
             raise ValueError
 
