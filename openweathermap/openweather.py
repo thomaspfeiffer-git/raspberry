@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -u
 
 # weather icons:
 # https://openweathermap.org/weather-conditions
