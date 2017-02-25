@@ -189,8 +189,8 @@ class Screens (object):
                                              None, \
                                              CONFIG.COLORS.OUTDOOR, ypos)
 
-        title = "Wettervorhersage heute" if datetime.now().hour < 12 else "Wettervorhersage morgen"
-        ypos = self.display.drawForecastItem("Wettervorhersage morgen:", \
+        title = "Wettervorhersage heute:" if datetime.now().hour < 12 else "Wettervorhersage morgen:"
+        ypos = self.display.drawForecastItem(title, \
                                              getvalue(allsensorvalues['ID_OWM_15']), \
                                              getvalue(allsensorvalues['ID_OWM_11']) + b' - ' + \
                                                    getvalue(allsensorvalues['ID_OWM_12']), \
@@ -199,8 +199,8 @@ class Screens (object):
                                              None, \
                                              CONFIG.COLORS.OUTDOOR, ypos)
 
-        title = "Wettervorhersage morgen" if datetime.now().hour < 12 else "Wettervorhersage übermorgen"
-        ypos = self.display.drawForecastItem("Wettervorhersage übermorgen:", \
+        title = "Wettervorhersage morgen:" if datetime.now().hour < 12 else "Wettervorhersage übermorgen:"
+        ypos = self.display.drawForecastItem(title, \
                                              getvalue(allsensorvalues['ID_OWM_25']), \
                                              getvalue(allsensorvalues['ID_OWM_21']) + b' - ' + \
                                                    getvalue(allsensorvalues['ID_OWM_22']), \
