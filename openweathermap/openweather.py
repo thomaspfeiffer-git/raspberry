@@ -39,7 +39,8 @@ api.add_resource(API_OpenWeatherData, '/')
 """
 
 class OpenWeatherMap_Config (object):
-    """ todo """
+    """provides some configuration and static methods for the
+       api call to openweathermap"""
     def read_api_key ():
         with open("openweathermap.key", "r") as key_file:
             return key_file.read().rstrip() 
@@ -64,6 +65,7 @@ class OpenWeatherMap_Config (object):
 
     @staticmethod
     def direction (degrees):
+        """converts wind direction in degrees (0 .. 360) to text"""
         if degrees is None:
             return "n/a"
 
@@ -84,12 +86,12 @@ class OpenWeatherMap_Config (object):
             return "nord-west"
         if 337.5 <= degrees <= 360 or 0 <= degrees < 22.5:
             return "nord" 
-    
-    """TODO: prevent from instantiating"""
-
+   
 
 class OpenWeatherMap_Data (threading.Thread):
-    """ todo """
+    """reads weather data from openweathermap and provides it to
+       the sensorvaluequeue and as a property (OpenWeatherMap_Data.weather)
+    """
     def __init__ (self, sv_queue):
         """todo: describe sv_queue"""
         threading.Thread.__init__(self)
@@ -105,11 +107,10 @@ class OpenWeatherMap_Data (threading.Thread):
         pass
 
     def get_forecast (self):
+        """reads forecast weather data from openweathermap"""
         try:
             with urlopen(OpenWeatherMap_Config.url_forecast) as response:
                 data = json.loads(response.read().decode("utf-8"))
-                # import pprint
-                # pprint.pprint(data)
         except HTTPError:
             raise ValueError
 
@@ -138,11 +139,10 @@ class OpenWeatherMap_Data (threading.Thread):
         return forecast
 
     def get_actual (self):
+        """reads current weather data from openweathermap"""
         try:
             with urlopen(OpenWeatherMap_Config.url_actual) as response:
                 data = json.loads(response.read().decode("utf-8"))
-                # import pprint
-                # pprint.pprint(data)
         except HTTPError:
             raise ValueError
 
