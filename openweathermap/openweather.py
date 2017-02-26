@@ -1,7 +1,32 @@
 #!/usr/bin/python3 -u
+# -*- coding: utf-8 -*-
+###############################################################################
+# openweather.py                                                              #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
+###############################################################################
+"""provides data from openweathermap:
+   - to my SensorValueQueue for my weather station
+   - as an api
+"""
 
+### usage ###
+# ./openweather.py > openweather.log 2>&1 &
+
+
+### setup ###
+# sudo pip3 install flask-restful
+
+
+### additional resources and documentation ###
+# openweathermap:
+# https://openweathermap.org/api
+#
 # weather icons:
 # https://openweathermap.org/weather-conditions
+#
+# provide api:
+# http://flask-restful.readthedocs.io/en/latest/quickstart.html#a-minimal-api
+
 
 import copy
 from datetime import datetime
@@ -17,11 +42,6 @@ sys.path.append("../libs/")
 from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock, SensorValue
 
-# provide api:
-# http://flask-restful.readthedocs.io/en/latest/quickstart.html#a-minimal-api
-
-# install
-# sudo pip3 install flask-restful
 
 """
 from flask import Flask
@@ -38,6 +58,8 @@ class API_OpenWeatherData (Resource):
 api.add_resource(API_OpenWeatherData, '/')
 """
 
+###############################################################################
+# OpenWeatherMap_Config #######################################################
 class OpenWeatherMap_Config (object):
     """provides some configuration and static methods for the
        api call to openweathermap"""
@@ -88,12 +110,18 @@ class OpenWeatherMap_Config (object):
             return "nord" 
    
 
+###############################################################################
+# OpenWeatherMap_Data #########################################################
 class OpenWeatherMap_Data (threading.Thread):
     """reads weather data from openweathermap and provides it to
        the sensorvaluequeue and as a property (OpenWeatherMap_Data.weather)
     """
+
+    OWMC = OpenWeatherMap_Config
+
     def __init__ (self, sv_queue):
-        """todo: describe sv_queue"""
+        """sv_queue: method to be called for sending all weather 
+           data to my SensorValueQueue"""
         threading.Thread.__init__(self)
         self.sv_queue = sv_queue
         self.__lock = threading.Lock()
@@ -103,13 +131,10 @@ class OpenWeatherMap_Data (threading.Thread):
 
         self.__running = True
 
-    def __str__ (self):
-        pass
-
     def get_forecast (self):
         """reads forecast weather data from openweathermap"""
         try:
-            with urlopen(OpenWeatherMap_Config.url_forecast) as response:
+            with urlopen(self.OWMC.url_forecast) as response:
                 data = json.loads(response.read().decode("utf-8"))
         except HTTPError:
             raise ValueError
@@ -121,7 +146,7 @@ class OpenWeatherMap_Data (threading.Thread):
 
         forecast = []
         for i in range(len(forecast_owm)):
-            try:  # if wind is almost 0, no direction is set
+            try:  # if wind speed is almost 0, no direction is set
                 forecast_owm[i]['wind']['deg']
             except KeyError:
                 forecast_owm[i]['wind']['deg'] = None
@@ -130,9 +155,9 @@ class OpenWeatherMap_Data (threading.Thread):
                  'temp': "{:.1f}".format(forecast_owm[i]['main']['temp']),
                  'humidity': "{:.1f}".format(forecast_owm[i]['main']['humidity']),
                  'wind': "{:.1f}".format(forecast_owm[i]['wind']['speed']),
-                 'wind direction': OpenWeatherMap_Config.direction(forecast_owm[i]['wind']['deg']),
+                 'wind direction': self.OWMC.direction(forecast_owm[i]['wind']['deg']),
                  'desc': forecast_owm[i]['weather'][0]['description'],
-                 'icon_url': OpenWeatherMap_Config.icon_url(forecast_owm[i]['weather'][0]['icon']),
+                 'icon_url': self.OWMC.icon_url(forecast_owm[i]['weather'][0]['icon']),
                  'time': forecast_owm[i]['dt'],
                  'time_text': forecast_owm[i]['dt_txt']
                 })
@@ -141,12 +166,12 @@ class OpenWeatherMap_Data (threading.Thread):
     def get_actual (self):
         """reads current weather data from openweathermap"""
         try:
-            with urlopen(OpenWeatherMap_Config.url_actual) as response:
+            with urlopen(self.OWMC.url_actual) as response:
                 data = json.loads(response.read().decode("utf-8"))
         except HTTPError:
             raise ValueError
 
-        try:  # if wind is almost 0, no direction is set
+        try:  # if wind speed is almost 0, no direction is set
             data['wind']['deg']
         except KeyError:
             data['wind']['deg'] = None
@@ -154,9 +179,9 @@ class OpenWeatherMap_Data (threading.Thread):
         return {'temp': "{:.1f}".format(data['main']['temp']),
                 'humidity': "{:.1f}".format(data['main']['humidity']),
                 'wind': "{:.1f}".format(data['wind']['speed']),
-                'wind direction': OpenWeatherMap_Config.direction(data['wind']['deg']),
+                'wind direction': self.OWMC.direction(data['wind']['deg']),
                 'desc': data['weather'][0]['description'],
-                'icon_url': OpenWeatherMap_Config.icon_url(data['weather'][0]['icon']),
+                'icon_url': self.OWMC.icon_url(data['weather'][0]['icon']),
                 'time': data['dt'],
                 'time_text': datetime.fromtimestamp(data['dt']).isoformat(' ')
                }
