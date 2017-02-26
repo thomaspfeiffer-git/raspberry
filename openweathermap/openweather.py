@@ -62,8 +62,11 @@ class OpenWeatherMap_Config (object):
     def icon_url (cls, icon):
         return "{0._path_to_icons}{1}.{0._extension}".format(cls, icon)
 
-    @classmethod
-    def direction (cls, degrees):
+    @staticmethod
+    def direction (degrees):
+        if degrees is None:
+            return "n/a"
+
         degrees = int(degrees)
         if 22.5 <= degrees < 22.5+45:
             return "nord-ost"
@@ -117,6 +120,11 @@ class OpenWeatherMap_Data (threading.Thread):
 
         forecast = []
         for i in range(len(forecast_owm)):
+            try:  # if wind is almost 0, no direction is set
+                forecast_owm[i]['wind']['deg']
+            except KeyError:
+                forecast_owm[i]['wind']['deg'] = None
+
             forecast.append({
                  'temp': "{:.1f}".format(forecast_owm[i]['main']['temp']),
                  'humidity': "{:.1f}".format(forecast_owm[i]['main']['humidity']),
@@ -137,6 +145,11 @@ class OpenWeatherMap_Data (threading.Thread):
                 # pprint.pprint(data)
         except HTTPError:
             raise ValueError
+
+        try:  # if wind is almost 0, no direction is set
+            data['wind']['deg']
+        except KeyError:
+            data['wind']['deg'] = None
 
         return {'temp': "{:.1f}".format(data['main']['temp']),
                 'humidity': "{:.1f}".format(data['main']['humidity']),
