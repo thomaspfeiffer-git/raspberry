@@ -91,23 +91,8 @@ class OpenWeatherMap_Config (object):
         if degrees is None:
             return "n/a"
 
-        degrees = int(degrees)
-        if 22.5 <= degrees < 22.5+45:
-            return "nord-ost"
-        if 67.5 <= degrees < 67.5+45:
-            return "ost"
-        if 112.5 <= degrees < 112.5+45:
-            return "süd-ost"
-        if 157.5 <= degrees < 157.5+45:
-            return "süd"
-        if 202.5 <= degrees < 202.5+45:
-            return "süd-west"
-        if 247.5 <= degrees < 247.5+45:
-            return "west"
-        if 292.5 <= degrees < 292.5+45:
-            return "nord-west"
-        if 337.5 <= degrees <= 360 or 0 <= degrees < 22.5:
-            return "nord" 
+        directions = "nord nord-ost ost süd-ost süd süd-west west nord-west nord".split()
+        return(directions[int((float(degrees)+22.5)/45.0)])
    
 
 ###############################################################################
