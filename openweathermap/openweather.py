@@ -129,6 +129,10 @@ class OpenWeatherMap_Data (threading.Thread):
                          for i in range(len(data['list'])) 
                          if "12:00:00" in data['list'][i]['dt_txt'] ]
 
+        print("---------------------------- get_forecast() --------------")
+        import pprint
+        pprint.pprint(forecast_owm)
+
         forecast = []
         for i in range(len(forecast_owm)):
             try:  # if wind speed is almost 0, no direction is set
@@ -160,6 +164,11 @@ class OpenWeatherMap_Data (threading.Thread):
             data['wind']['deg']
         except KeyError:
             data['wind']['deg'] = None
+
+
+        print("---------------------------- get_actual() --------------")
+        import pprint
+        pprint.pprint(data)
 
         return {'temp': "{:.1f}".format(data['main']['temp']),
                 'humidity': "{:.1f}".format(data['main']['humidity']),
@@ -221,7 +230,7 @@ class OWM_Sensorvalues (object):
                 sq.register(qv)
 
     def senddatatoqueue (self, data):        
-        print("=====================================")
+        print("{} =====================================".format(datetime.now()))
         for i in range(self.number_of_datasets):
             for k, qv in self.qv[i].items():
                 print("i: {}; {}: {}".format(i, k, data[i][k]))
