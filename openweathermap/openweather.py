@@ -155,20 +155,21 @@ class OpenWeatherMap_Data (threading.Thread):
     def get_actual (self):
         """reads current weather data from openweathermap"""
         try:
+            print("get_actual: before urlopen", flush=True)
             with urlopen(self.OWMC.url_actual) as response:
                 data = json.loads(response.read().decode("utf-8"))
+            print("get_actual: after urlopen", flush=True)
         except HTTPError:
             raise ValueError
+
+        print("---------------------------- get_actual() --------------")
+        import pprint
+        pprint.pprint(data)
 
         try:  # if wind speed is almost 0, no direction is set
             data['wind']['deg']
         except KeyError:
             data['wind']['deg'] = None
-
-
-        print("---------------------------- get_actual() --------------")
-        import pprint
-        pprint.pprint(data)
 
         return {'temp': "{:.1f}".format(data['main']['temp']),
                 'humidity': "{:.1f}".format(data['main']['humidity']),
@@ -182,7 +183,9 @@ class OpenWeatherMap_Data (threading.Thread):
 
     def read_data (self):
         try:
+            print("read_data: begin", flush=True)
             w = [ self.get_actual() ] + self.get_forecast()
+            print("read_data: end", flush=True)
         except ValueError:
             pass
         else:  # update only if there was no error when reading data from owm.
@@ -263,6 +266,12 @@ sq.start()
 
 oo = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
 oo.start()
+
+
+while True:
+    time.sleep(0.1)
+
+
 
 """
 if __name__ == '__main__':
