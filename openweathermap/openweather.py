@@ -154,6 +154,7 @@ class OpenWeatherMap_Data (threading.Thread):
 
     def get_actual (self):
         """reads current weather data from openweathermap"""
+        print("---------------------------- get_actual(), start --------------")
         try:
             print("get_actual: before urlopen", flush=True)
             with urlopen(self.OWMC.url_actual) as response:
