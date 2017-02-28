@@ -209,6 +209,7 @@ class OpenWeatherMap_Data (threading.Thread):
                 self.read_data()
                 self.send_sensor_values()
                 i = 0
+                print("set i to 0; self.__running: {} ==========================".format(self.__running))
 
     def stop (self):
         self.__running = False
@@ -233,17 +234,19 @@ class OWM_Sensorvalues (object):
                 sq.register(qv)
 
     def senddatatoqueue (self, data):        
-        print("{} =====================================".format(datetime.now()))
+        print("{} data start =====================================".format(datetime.now()))
         for i in range(self.number_of_datasets):
             for k, qv in self.qv[i].items():
                 print("i: {}; {}: {}".format(i, k, data[i][k]))
                 qv.value = str(data[i][k])
+        print("{} data stop =====================================".format(datetime.now()))
 
 
 ###############################################################################
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
+    print("in _exit() =======================")
     oo.stop()
     oo.join()
     sq.stop()
