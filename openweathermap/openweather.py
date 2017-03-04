@@ -129,10 +129,6 @@ class OpenWeatherMap_Data (threading.Thread):
                          for i in range(len(data['list'])) 
                          if "12:00:00" in data['list'][i]['dt_txt'] ]
 
-        print("---------------------------- get_forecast() --------------")
-        import pprint
-        pprint.pprint(forecast_owm)
-
         forecast = []
         for i in range(len(forecast_owm)):
             try:  # if wind speed is almost 0, no direction is set
@@ -154,18 +150,11 @@ class OpenWeatherMap_Data (threading.Thread):
 
     def get_actual (self):
         """reads current weather data from openweathermap"""
-        print("---------------------------- get_actual(), start --------------")
         try:
-            print("get_actual: before urlopen", flush=True)
             with urlopen(self.OWMC.url_actual) as response:
                 data = json.loads(response.read().decode("utf-8"))
-            print("get_actual: after urlopen", flush=True)
         except HTTPError:
             raise ValueError
-
-        print("---------------------------- get_actual() --------------")
-        import pprint
-        pprint.pprint(data)
 
         try:  # if wind speed is almost 0, no direction is set
             data['wind']['deg']
@@ -184,9 +173,7 @@ class OpenWeatherMap_Data (threading.Thread):
 
     def read_data (self):
         try:
-            print("read_data: begin", flush=True)
             w = [ self.get_actual() ] + self.get_forecast()
-            print("read_data: end", flush=True)
         except ValueError:
             pass
         else:  # update only if there was no error when reading data from owm.
@@ -210,7 +197,6 @@ class OpenWeatherMap_Data (threading.Thread):
                 self.read_data()
                 self.send_sensor_values()
                 i = 0
-                print("set i to 0; self.__running: {} ==========================".format(self.__running))
 
     def stop (self):
         self.__running = False
@@ -235,19 +221,16 @@ class OWM_Sensorvalues (object):
                 sq.register(qv)
 
     def senddatatoqueue (self, data):        
-        print("{} data start =====================================".format(datetime.now()))
         for i in range(self.number_of_datasets):
             for k, qv in self.qv[i].items():
                 print("i: {}; {}: {}".format(i, k, data[i][k]))
                 qv.value = str(data[i][k])
-        print("{} data stop =====================================".format(datetime.now()))
 
 
 ###############################################################################
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
-    print("in _exit() =======================")
     oo.stop()
     oo.join()
     sq.stop()
