@@ -304,7 +304,6 @@ printLightness()
     --watermark "$WATERMARK"                                \
     --right-axis 1:0                                        \
     --right-axis-format "%4.0lf"                            \
-    --logarithmic                                           \
     DEF:wr_lightness=$RRD_WR:wr_lightness:AVERAGE           \
     LINE1:wr_lightness#ffcc00:"Helligkeit Kleiderkasten   " \
     GPRINT:wr_lightness:LAST:"\t Aktuell\: %5.2lf lux"      \
