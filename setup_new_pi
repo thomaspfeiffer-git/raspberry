@@ -85,6 +85,8 @@ wiringPi
 https://github.com/WiringPi/WiringPi-Python/blob/master/README.md
 
 
+... but to be preferred:
+
 RPi.GPIO
 --------
 https://sourceforge.net/p/raspberry-gpio-python/wiki/BasicUsage/
