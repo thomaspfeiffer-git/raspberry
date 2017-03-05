@@ -231,6 +231,7 @@ class OWM_Sensorvalues (object):
 # Exit ########################################################################
 def _exit():
     """cleanup stuff"""
+    print("in _exit() =======================")
     oo.stop()
     oo.join()
     sq.stop()
