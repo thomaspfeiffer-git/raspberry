@@ -43,20 +43,18 @@ from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock, SensorValue
 
 
-"""
 from flask import Flask
 from flask_restful import Resource, Api
 
 app = Flask(__name__)
 api = Api(app)
 
-
 class API_OpenWeatherData (Resource):
     def get (self):
-        return json.dumps(forecast)
+        return json.dumps(owm_data.weather)
 
 api.add_resource(API_OpenWeatherData, '/')
-"""
+
 
 ###############################################################################
 # OpenWeatherMap_Config #######################################################
@@ -238,6 +236,7 @@ class Shutdown (object):
         signal.signal(signal.SIGINT, self.shutdown)
 
     def shutdown (self, __s, __f):
+        print("in Shutdown.shutdown()")
         self.terminate = True
 
 
@@ -250,25 +249,19 @@ if __name__ == '__main__':
     owm_sv = OWM_Sensorvalues()
     sq.start()
 
-    oo = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
-    oo.start()
+    owm_data = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
+    owm_data.start()
 
-    while not shutdown.terminate:
-        time.sleep(0.1)
+    app.run()
+    # while not shutdown.terminate:
+    #    time.sleep(0.1)
 
-    oo.stop()
-    oo.join()
+    owm_data.stop()
+    owm_data.join()
     sq.stop()
     sq.join()
+    print("terminated, good bye!")
 
-# alternatives and more information
-# http://stackoverflow.com/questions/18499497/how-to-process-sigterm-signal-gracefully
-# https://docs.python.org/3/library/signal.html
-
-
-"""
-    app.run()
-"""
 
 # eof #
 
