@@ -220,7 +220,8 @@ class OWM_Sensorvalues (object):
             for k, qv in self.qv[i].items():
                 sq.register(qv)
 
-    def senddatatoqueue (self, data):        
+    def senddatatoqueue (self, data):
+        print("=== {} ===================".format(datetime.now()))
         for i in range(self.number_of_datasets):
             for k, qv in self.qv[i].items():
                 print("i: {}; {}: {}".format(i, k, data[i][k]))
@@ -228,41 +229,44 @@ class OWM_Sensorvalues (object):
 
 
 ###############################################################################
-# Exit ########################################################################
-def _exit():
-    """cleanup stuff"""
-    print("in _exit() =======================")
-    oo.stop()
-    oo.join()
-    sq.stop()
-    sq.join()
-    sys.exit()
+# Shutdown ####################################################################
+class Shutdown (object):
+    terminate = False
 
-def __exit(__s, __f):
-    """cleanup stuff used for signal handler"""
-    _exit()
+    def __init__ (self):
+        signal.signal(signal.SIGTERM, self.shutdown)
+        signal.signal(signal.SIGINT, self.shutdown)
+
+    def shutdown (self, __s, __f):
+        self.terminate = True
 
 
 ###############################################################################
 # Main ########################################################################
-signal.signal(signal.SIGTERM, __exit)
-signal.signal(signal.SIGINT, __exit)
+if __name__ == '__main__':
+    shutdown = Shutdown()
 
-sq = SensorQueueClient_write()
-owm_sv = OWM_Sensorvalues()
-sq.start()
+    sq = SensorQueueClient_write()
+    owm_sv = OWM_Sensorvalues()
+    sq.start()
 
-oo = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
-oo.start()
+    oo = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
+    oo.start()
 
+    while not shutdown.terminate:
+        time.sleep(0.1)
 
-while True:
-    time.sleep(0.1)
+    oo.stop()
+    oo.join()
+    sq.stop()
+    sq.join()
 
+# alternatives and more information
+# http://stackoverflow.com/questions/18499497/how-to-process-sigterm-signal-gracefully
+# https://docs.python.org/3/library/signal.html
 
 
 """
-if __name__ == '__main__':
     app.run()
 """
 
