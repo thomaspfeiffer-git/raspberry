@@ -6,11 +6,11 @@
 ###############################################################################
 """provides data from openweathermap:
    - to my SensorValueQueue for my weather station
-   - as an api
+   - as an api: http://<host>:5000
 """
 
 ### usage ###
-# ./openweather.py > openweather.log 2>&1 &
+# nohup ./openweather.py > openweather.log 2>openweather.err &
 
 
 ### setup ###
@@ -218,6 +218,7 @@ class OpenWeatherMap_Data (threading.Thread):
 ###############################################################################
 # OWM_Sensorvalues ############################################################
 class OWM_Sensorvalues (object):
+    """class for sending all weather data to the SensorValueQueues"""
     number_of_datasets = 3
 
     def __init__ (self):
