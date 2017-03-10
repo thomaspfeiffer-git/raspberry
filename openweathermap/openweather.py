@@ -63,7 +63,8 @@ api.add_resource(API_OpenWeatherData, '/')
 # OpenWeatherMap_Config #######################################################
 class OpenWeatherMap_Config (object):
     """provides some configuration and static methods for the
-       api call to openweathermap"""
+       api call to openweathermap
+    """
     def read_api_key ():
         with open(expanduser('~') + "/keys/openweathermap.key", "r") as key_file:
             return key_file.read().rstrip() 
@@ -107,7 +108,8 @@ class OpenWeatherMap_Data (threading.Thread):
 
     def __init__ (self, sv_queue):
         """sv_queue: method to be called for sending all weather 
-           data to my SensorValueQueue"""
+           data to my SensorValueQueue
+        """
         threading.Thread.__init__(self)
         self.sv_queue = sv_queue
         self.__lock = threading.Lock()
@@ -173,6 +175,9 @@ class OpenWeatherMap_Data (threading.Thread):
                }
 
     def read_data (self):
+        """reads actual weather data and forecast and stores
+           these data in self.__weather
+        """
         try:
             w = [ self.get_actual() ] + self.get_forecast()
         except ValueError:
@@ -182,6 +187,9 @@ class OpenWeatherMap_Data (threading.Thread):
                 self.__weather = w
 
     def send_sensor_values (self):
+        """sends weather data to the SensorValueQueue by calling the
+           associated method
+        """
         self.sv_queue(self.weather)
 
     @property
@@ -190,6 +198,10 @@ class OpenWeatherMap_Data (threading.Thread):
             return copy.deepcopy(self.__weather)
 
     def run (self):
+        """main loop:
+           sleep for 120 s, then read new weather data and send these
+           data to the SensorValueQueue
+        """
         i = 0
         while self.__running:
             time.sleep(0.1)
@@ -232,6 +244,7 @@ class OWM_Sensorvalues (object):
 ###############################################################################
 # shutdown_application ########################################################
 def shutdown_application ():
+    """called on shutdown; stops all threads"""
     owm_data.stop()
     owm_data.join()
     sq.stop()
