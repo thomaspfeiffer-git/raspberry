@@ -31,7 +31,6 @@
 import copy
 from datetime import datetime
 import json
-import signal
 import sys
 import threading
 import time
@@ -41,6 +40,7 @@ from urllib.request import urlopen
 sys.path.append("../libs/")
 from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock, SensorValue
+from Shutdown import Shutdown
 
 
 from flask import Flask
@@ -229,21 +229,7 @@ class OWM_Sensorvalues (object):
 
 
 ###############################################################################
-# Shutdown ####################################################################
-class Shutdown (object):
-    terminate = False
-
-    def __init__ (self, shutdown_func=None):
-        self.shutdown_func = shutdown_func
-        signal.signal(signal.SIGTERM, self.shutdown)
-        signal.signal(signal.SIGINT, self.shutdown)
-
-    def shutdown (self, __s, __f):
-        self.terminate = True
-        if self.shutdown_func:
-             self.shutdown_func()
-
-
+# shutdown_application ########################################################
 def shutdown_application ():
     owm_data.stop()
     owm_data.join()
