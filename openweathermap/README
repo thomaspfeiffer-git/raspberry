@@ -1,0 +1,29 @@
+openweather.py
+==============
+
+Reads weather data from openweathermap.org and provides them to my
+local weather station (using SensorValues) and as an API.
+
+(c) Thomas Pfeiffer, March 2017
+
+
+Classes:
+--------
+
+class API_OpenWeatherData (Resource):
+
+
+
+class OpenWeatherMap_Config (object):
+
+
+
+class OpenWeatherMap_Data (threading.Thread):
+
+
+
+class OWM_Sensorvalues (object):
+
+
+# eof #
+
