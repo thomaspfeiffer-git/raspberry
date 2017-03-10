@@ -49,6 +49,8 @@ from flask_restful import Resource, Api
 app = Flask(__name__)
 api = Api(app)
 
+###############################################################################
+# API_OpenWeatherData #########################################################
 class API_OpenWeatherData (Resource):
     def get (self):
         return json.dumps(owm_data.weather)
@@ -231,19 +233,29 @@ class OWM_Sensorvalues (object):
 class Shutdown (object):
     terminate = False
 
-    def __init__ (self):
+    def __init__ (self, shutdown_func=None):
+        self.shutdown_func = shutdown_func
         signal.signal(signal.SIGTERM, self.shutdown)
         signal.signal(signal.SIGINT, self.shutdown)
 
     def shutdown (self, __s, __f):
-        print("in Shutdown.shutdown()")
         self.terminate = True
+        if self.shutdown_func:
+             self.shutdown_func()
+
+
+def shutdown_application ():
+    owm_data.stop()
+    owm_data.join()
+    sq.stop()
+    sq.join()
+    sys.exit(0)
 
 
 ###############################################################################
 # Main ########################################################################
 if __name__ == '__main__':
-    shutdown = Shutdown()
+    shutdown = Shutdown(shutdown_func=shutdown_application)
 
     sq = SensorQueueClient_write()
     owm_sv = OWM_Sensorvalues()
@@ -252,16 +264,7 @@ if __name__ == '__main__':
     owm_data = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
     owm_data.start()
 
-    app.run()
-    # while not shutdown.terminate:
-    #    time.sleep(0.1)
-
-    owm_data.stop()
-    owm_data.join()
-    sq.stop()
-    sq.join()
-    print("terminated, good bye!")
-
+    app.run(host="0.0.0.0")
 
 # eof #
 
