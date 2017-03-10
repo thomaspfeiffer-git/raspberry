@@ -31,6 +31,7 @@
 import copy
 from datetime import datetime
 import json
+from os.path import expanduser
 import sys
 import threading
 import time
@@ -64,7 +65,7 @@ class OpenWeatherMap_Config (object):
     """provides some configuration and static methods for the
        api call to openweathermap"""
     def read_api_key ():
-        with open("openweathermap.key", "r") as key_file:
+        with open(expanduser('~') + "/keys/openweathermap.key", "r") as key_file:
             return key_file.read().rstrip() 
 
     _base_url = "http://api.openweathermap.org/data/2.5/"
