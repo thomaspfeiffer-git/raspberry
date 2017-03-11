@@ -25,9 +25,7 @@ class Time (object):
     """represents time with hours and minutes only"""
     def __init__ (self, timestring): 
         """format of timestring: "HH:MM"""
-        h, m = timestring.split(':')
-        self.hour = int(h)
-        self.minute = int(m)
+        (self.hour, self.minute) = map(int, timestring.split(':'))
 
     @classmethod
     def now (cls):
