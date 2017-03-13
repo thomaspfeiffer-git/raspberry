@@ -157,8 +157,11 @@ class OpenWeatherMap_Data (object):
 if __name__ == '__main__':
 
     owm_data = OpenWeatherMap_Data()
-    owm_data.read_data()
-    pprint.pprint(owm_data.weather)
+
+    while True:
+        owm_data.read_data()
+        pprint.pprint(owm_data.weather)
+        time.sleep(120)
 
 # eof #
 
