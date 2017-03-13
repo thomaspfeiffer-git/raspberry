@@ -11,7 +11,7 @@
 ### setup ###
 # sudo pip3 install attrdict
 
-import attrdict
+from attrdict import AttrDict
 import copy
 from datetime import datetime
 import json
@@ -76,65 +76,42 @@ class OpenWeatherMap_Data (object):
         """
         self.__weather = []
 
+    def convert (self, data):
+        return {'temp': "{:.1f}".format(data.main.temp),
+                 'humidity': "{:.1f}".format(data.main.humidity),
+                 'wind': "{:.1f}".format(data.wind.speed),
+                 'wind direction': self.OWMC.direction(data.wind.deg),
+                 'desc': data.weather[0].description,
+                 'icon_url': self.OWMC.icon_url(data.weather[0].icon),
+                 'time': data.dt,
+                 'time_text': datetime.fromtimestamp(data.dt).isoformat(' ')
+                }
+
     def get_forecast (self):
         """reads forecast weather data from openweathermap"""
         try:
             with urlopen(self.OWMC.url_forecast) as response:
-                data = json.loads(response.read().decode("utf-8"))
+                data = AttrDict(json.loads(response.read().decode("utf-8")))
         except HTTPError:
             raise ValueError
 
-        data = attrdict.AttrDict(data)
-
         # get data from 12:00 am only
-        forecast_owm = [ data.list[i] 
-                         for i in range(len(data.list)) 
-                         if "12:00:00" in data.list[i].dt_txt ]
+        forecast = [ data.list[i] 
+                     for i in range(len(data.list)) 
+                     if "12:00:00" in data.list[i].dt_txt ]
 
-        forecast = []
-        for i in range(len(forecast_owm)):
-#            try:  # if wind speed is almost 0, no direction is set
-#                forecast_owm[i]['wind']['deg']
-#            except KeyError:
-#                forecast_owm[i]['wind']['deg'] = None
+        return [ self.convert(forecast[i]) for i in range(len(forecast)) ]
 
-
-            forecast.append({
-                 'temp': "{:.1f}".format(forecast_owm[i].main.temp),
-                 'humidity': "{:.1f}".format(forecast_owm[i].main.humidity),
-                 'wind': "{:.1f}".format(forecast_owm[i].wind.speed),
-                 'wind direction': self.OWMC.direction(forecast_owm[i].wind.deg),
-                 'desc': forecast_owm[i].weather[0].description,
-                 'icon_url': self.OWMC.icon_url(forecast_owm[i].weather[0].icon),
-                 'time': forecast_owm[i].dt,
-                 'time_text': forecast_owm[i].dt_txt
-                })
-        return forecast
 
     def get_actual (self):
         """reads current weather data from openweathermap"""
         try:
             with urlopen(self.OWMC.url_actual) as response:
-                data = json.loads(response.read().decode("utf-8"))
+                data = AttrDict(json.loads(response.read().decode("utf-8")))
         except HTTPError:
             raise ValueError
 
-        data = attrdict.AttrDict(data)
-
-#        try:  # if wind speed is almost 0, no direction is set
-#            data.wind.deg
-#        except KeyError:
-#            data.wind.deg = None
-
-        return {'temp': "{:.1f}".format(data.main.temp),
-                'humidity': "{:.1f}".format(data.main.humidity),
-                'wind': "{:.1f}".format(data.wind.speed),
-                'wind direction': self.OWMC.direction(data.wind.deg),
-                'desc': data.weather[0].description,
-                'icon_url': self.OWMC.icon_url(data.weather[0].icon),
-                'time': data.dt,
-                'time_text': datetime.fromtimestamp(data.dt).isoformat(' ')
-               }
+        return self.convert(data)
 
     def read_data (self):
         """reads actual weather data and forecast and stores
