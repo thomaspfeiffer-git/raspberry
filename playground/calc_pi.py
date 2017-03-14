@@ -15,8 +15,8 @@ for i in range(iterations):
         b += 1
 
 mypi = 4.0*a/iterations
-print("mypi: {:.50g}".format(mypi))
-print("accuracy: {:2.10g} %".format((math.pi-mypi)/math.pi))
+print("mypi: {:.50f}".format(mypi))
+print("accuracy: {:2.10f} %".format((math.pi-mypi)/math.pi))
 
 
 
