@@ -17,8 +17,6 @@ def calc ():
         r[math.sqrt(random()**2.0 + random()**2.0) <= 1.0] += 1
     return r
 
-
-
 print(datetime.now())
 
 workers = multiprocessing.cpu_count()
@@ -35,7 +33,6 @@ print("mypi: {:.50f}".format(mypi))
 print("deviation: {:2.10f} %".format((math.pi-mypi)/math.pi*100.0))
                                                               
 print(datetime.now())
+
 # eof #                                                       
-
-
 
