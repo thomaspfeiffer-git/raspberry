@@ -77,6 +77,11 @@ class OpenWeatherMap_Data (object):
         self.__weather = []
 
     def convert (self, data):
+        try:       # if wind speed is almost 0, no direction is set
+            data.wind.deg
+        except AttributeError:
+            data.wind.deg = None
+
         return {'temp': "{:.1f}".format(data.main.temp),
                  'humidity': "{:.1f}".format(data.main.humidity),
                  'wind': "{:.1f}".format(data.wind.speed),
@@ -101,7 +106,6 @@ class OpenWeatherMap_Data (object):
                      if "12:00:00" in data.list[i].dt_txt ]
 
         return [ self.convert(forecast[i]) for i in range(len(forecast)) ]
-
 
     def get_actual (self):
         """reads current weather data from openweathermap"""
