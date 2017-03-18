@@ -78,7 +78,7 @@ class OpenWeatherMap_Data (object):
 
     def convert (self, data):
         try:       # if wind speed is almost 0, no direction is set
-            data.wind.deg
+            _ = data.wind.deg
         except AttributeError:
             data.wind.deg = None
 
