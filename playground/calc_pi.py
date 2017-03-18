@@ -9,7 +9,7 @@ import math
 import multiprocessing
 from random import random
 
-iterations = 100000000000
+iterations = 1000000
 
 def calc ():
     r = {False: 0, True: 0}
