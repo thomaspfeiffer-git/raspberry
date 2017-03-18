@@ -101,9 +101,10 @@ class OpenWeatherMap_Data (object):
             raise ValueError
 
         # get data from 12:00 am only
+        noon = lambda t: "12:00:00" in t
         forecast = [ data.list[i] 
                      for i in range(len(data.list)) 
-                     if "12:00:00" in data.list[i].dt_txt ]
+                     if noon(data.list[i].dt_txt) ]
 
         return [ self.convert(forecast[i]) for i in range(len(forecast)) ]
 
