@@ -28,6 +28,7 @@ class Display (object):
         os.environ["SDL_FBDEV"] = "/dev/fb1" 
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         pygame.init()
+        pygame.mixer.quit() # no audio needed; shall be useable by other applications
         pygame.mouse.set_visible(False)
 
         self.screen = pygame.display.set_mode((CONFIG.WIDTH, CONFIG.HEIGHT), \
