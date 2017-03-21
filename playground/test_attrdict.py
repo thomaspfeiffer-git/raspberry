@@ -80,7 +80,7 @@ class OpenWeatherMap_Data (object):
         try:       # if wind speed is almost 0, no direction is set
             data.wind.deg
         except AttributeError:
-            data.wind.deg = None
+            data['wind']['deg'] = None
             print("set data.wind.deg = None")
 
         return {'temp': "{:.1f}".format(data.main.temp),
@@ -90,7 +90,6 @@ class OpenWeatherMap_Data (object):
                 'desc': data.weather[0].description,
                 'icon_url': self.OWMC.icon_url(data.weather[0].icon),
                 'time': data.dt,
-                'emil': data.wind.emil,
                 'time_text': datetime.fromtimestamp(data.dt).isoformat(' ')
                }
 
