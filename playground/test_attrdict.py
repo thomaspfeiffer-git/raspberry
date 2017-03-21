@@ -78,20 +78,21 @@ class OpenWeatherMap_Data (object):
 
     def convert (self, data):
         try:       # if wind speed is almost 0, no direction is set
-            x = data.wind.deg
+            data.wind.deg
         except AttributeError:
             data.wind.deg = None
             print("set data.wind.deg = None")
 
         return {'temp': "{:.1f}".format(data.main.temp),
-                 'humidity': "{:.1f}".format(data.main.humidity),
-                 'wind': "{:.1f}".format(data.wind.speed),
-                 'wind direction': self.OWMC.direction(data.wind.deg),
-                 'desc': data.weather[0].description,
-                 'icon_url': self.OWMC.icon_url(data.weather[0].icon),
-                 'time': data.dt,
-                 'time_text': datetime.fromtimestamp(data.dt).isoformat(' ')
-                }
+                'humidity': "{:.1f}".format(data.main.humidity),
+                'wind': "{:.1f}".format(data.wind.speed),
+                'wind direction': self.OWMC.direction(data.wind.deg),
+                'desc': data.weather[0].description,
+                'icon_url': self.OWMC.icon_url(data.weather[0].icon),
+                'time': data.dt,
+                'emil': data.wind.emil,
+                'time_text': datetime.fromtimestamp(data.dt).isoformat(' ')
+               }
 
     def get_forecast (self):
         """reads forecast weather data from openweathermap"""
