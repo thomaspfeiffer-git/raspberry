@@ -116,7 +116,7 @@ class Display (object):
         text = self.font_small.render(datestr, True, \
                                       CONFIG.COLORS.DATE, \
                                       CONFIG.COLORS.BACKGROUND)
-        self.screen.blit(text, ((CONFIG.WIDTH-w)/2, \
+        self.screen.blit(text, ((CONFIG.WIDTH-w-CONFIG.MARGIN), \
                          CONFIG.HEIGHT-2*CONFIG.FONTSIZE_SMALL-2*CONFIG.SEP_Y))
 
         datestr = strftime("%H:%M:%S", timestamp) 
@@ -124,7 +124,7 @@ class Display (object):
         text = self.font_small_bold.render(datestr, True, \
                                            CONFIG.COLORS.DATE, \
                                            CONFIG.COLORS.BACKGROUND)
-        self.screen.blit(text, ((CONFIG.WIDTH-w)/2, \
+        self.screen.blit(text, ((CONFIG.WIDTH-w-CONFIG.MARGIN), \
                          CONFIG.HEIGHT-CONFIG.FONTSIZE_SMALL-CONFIG.SEP_Y))
 
 
