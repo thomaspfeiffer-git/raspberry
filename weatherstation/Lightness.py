@@ -80,7 +80,6 @@ class ControlLightness (threading.Thread):
     def run (self):
         """main routine of thread"""
         while (self.__running):
-
             hour = int(strftime("%H", localtime()))
             if (6 <= hour < 22): # switch backlight off during night hours
                 self.__switch_on()

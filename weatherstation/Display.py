@@ -11,6 +11,7 @@ import pygame
 import re
 from time import strftime, localtime
 
+from Button import Button
 from Config import CONFIG
 from Constants import CONSTANTS
 
@@ -45,6 +46,11 @@ class Display (object):
                                                    CONFIG.FONTSIZE_SMALL, True)
         self.font_tiny       = pygame.font.SysFont('arial', \
                                                    CONFIG.FONTSIZE_TINY)
+
+        # TODO
+        # rename _button
+        # button area has to be defined in class CONFIG
+        self._button = Button(screen=self.screen, rect=(3, 410, 60, 60), caption="A", font=self.font)
 
 
     def drawSeperatorLine (self, ypos):
@@ -126,6 +132,8 @@ class Display (object):
                                            CONFIG.COLORS.BACKGROUND)
         self.screen.blit(text, ((CONFIG.WIDTH-w-CONFIG.MARGIN), \
                          CONFIG.HEIGHT-CONFIG.FONTSIZE_SMALL-CONFIG.SEP_Y))
+
+        self._button.draw() # TODO: dedicated method for footer area
 
 
     def drawPicture (self, pathToPic, scale, xpos, ypos):

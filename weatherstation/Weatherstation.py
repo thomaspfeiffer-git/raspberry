@@ -131,8 +131,14 @@ def Main():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not lightness.keypressed():
-                    screens.screenid += 1
-                    timestamp = time() + CONFIG.TIMETOFALLBACK
+                    mouse = pygame.mouse.get_pos()
+                    if display._button._rect.collidepoint(event.pos):
+                        print("Button pressed: {} {}".format(event.pos, mouse))
+                    else:
+                        print("Clicked somewhere: {} {}".format(event.pos, mouse))
+
+                        screens.screenid += 1
+                        timestamp = time() + CONFIG.TIMETOFALLBACK
 
         pygame.time.delay(10)
         i += 1
