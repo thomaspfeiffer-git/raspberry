@@ -227,6 +227,16 @@ sudo apt-get autoremove
 
 
 
+Calibrating a display when not running X (ie using pygame)
+==========================================================
+
+http://stackoverflow.com/questions/26092441/pygame-mousebuttondown-coordinates-are-off-unless-im-in-xwindows
+
+apt-get install tslib libts-bin
+
+
+
+
 
 WLAN-Hotspot
 ============

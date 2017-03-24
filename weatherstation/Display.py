@@ -16,6 +16,14 @@ from Config import CONFIG
 from Constants import CONSTANTS
 
 
+
+# calibrating
+# http://stackoverflow.com/questions/26092441/pygame-mousebuttondown-coordinates-are-off-unless-im-in-xwindows
+# https://github.com/notro/fbtft/issues/366
+# https://www.google.at/?gfe_rd=cr&ei=q5LTWJDyOaWT8QeVv7gQ#q=pygame+calibrate&*
+
+
+
 ###############################################################################
 ###############################################################################
 class Display (object):
@@ -28,6 +36,9 @@ class Display (object):
     def __init__ (self):
         os.environ["SDL_FBDEV"] = "/dev/fb1" 
         os.environ['SDL_VIDEO_CENTERED'] = '1'
+        os.environ["SDL_MOUSEDRV"] = "TSLIB"
+        os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
+
         pygame.init()
         pygame.mixer.quit() # no audio needed; shall be useable by other applications
         pygame.mouse.set_visible(False)
