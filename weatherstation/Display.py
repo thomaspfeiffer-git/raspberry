@@ -22,6 +22,8 @@ from Constants import CONSTANTS
 # https://github.com/notro/fbtft/issues/366
 # https://www.google.at/?gfe_rd=cr&ei=q5LTWJDyOaWT8QeVv7gQ#q=pygame+calibrate&*
 
+# sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/event0 ts_calibrate
+# sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/event0 ts_test
 
 
 ###############################################################################
@@ -35,9 +37,9 @@ class Display (object):
 
     def __init__ (self):
         os.environ["SDL_FBDEV"] = "/dev/fb1" 
-        os.environ['SDL_VIDEO_CENTERED'] = '1'
-        os.environ["SDL_MOUSEDRV"] = "TSLIB"
-        os.environ["SDL_MOUSEDEV"] = "/dev/input/touchscreen"
+#        os.environ['SDL_VIDEO_CENTERED'] = '1'
+#        os.environ["SDL_MOUSEDRV"] = "TSLIB"
+#        os.environ["SDL_MOUSEDEV"] = "/dev/input/event0"
 
         pygame.init()
         pygame.mixer.quit() # no audio needed; shall be useable by other applications
