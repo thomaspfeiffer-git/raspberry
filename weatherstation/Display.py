@@ -18,12 +18,25 @@ from Constants import CONSTANTS
 
 
 # calibrating
+
+# this seems to NOT work:
 # http://stackoverflow.com/questions/26092441/pygame-mousebuttondown-coordinates-are-off-unless-im-in-xwindows
 # https://github.com/notro/fbtft/issues/366
 # https://www.google.at/?gfe_rd=cr&ei=q5LTWJDyOaWT8QeVv7gQ#q=pygame+calibrate&*
 
 # sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/event0 ts_calibrate
 # sudo TSLIB_FBDEVICE=/dev/fb1 TSLIB_TSDEVICE=/dev/input/event0 ts_test
+
+
+
+# let's try:
+# https://www.google.at/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=calibration+Tontec&*
+# https://www.raspberrypi.org/forums/viewtopic.php?t=126770&p=848627
+
+
+# http://www.circuitbasics.com/raspberry-pi-touchscreen-calibration-screen-rotation/
+
+
 
 
 ###############################################################################
