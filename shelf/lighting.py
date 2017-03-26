@@ -41,6 +41,8 @@ import sys
 import threading
 from time import sleep
 
+from Shutdown import Shutdown
+
 from scheduling import Scheduling, Scheduling_Params
 from userinterface import Feedback, Status
 
@@ -322,6 +324,11 @@ def __exit(__s, __f):
 
 ###############################################################################
 # main ########################################################################
+
+# TODO:
+# if __name__ == '__main__':
+#     shutdown = Shutdown(shutdown_func=shutdown_application)
+
 signal.signal(signal.SIGTERM, __exit)
 signal.signal(signal.SIGINT, __exit)
 
