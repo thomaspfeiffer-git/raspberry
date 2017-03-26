@@ -3,7 +3,12 @@
 
 # http://www.forum-raspberrypi.de/Thread-tutorial-mpd-und-usb-soundkarte-unter-raspbian-jessie-einrichten
 
-
 for i in /schild/exchange/media/The\ Wall\ \(1\ of\ 2\)/03\ -\ Another\ Brick\ in\ the\ Wall\,\ Pt.\ 1.mp3 ; do mpg123 "$i" ; done
 
+
+
+sudo apt-get install vlc
+
+# The Sound of New York City
+vlc http://ic2377.c900.fast-serv.com/tsonyc.mp3
 
