@@ -1,0 +1,22 @@
+use class Shutdown
+   shutdown = Shutdown(shutdown_func=shutdown_application)
+
+min/max/map/reduce
+
+use lambdas
+
+   fst = lambda x: x[0] 
+   snd = lambda x: x[1]
+
+   red = lambda color: color[0] 
+   green = lambda color: color[1] 
+   blue = lambda color: color[2]
+
+use iterators
+
+class Enum
+
+
+
+
+
