@@ -24,7 +24,7 @@ from DHT22_AM2302 import DHT22_AM2302
 from Measurements import Measurements
 from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock, SensorValue
-
+from Shutdown import Shutdown
 
 DHT22_AM2302_PIN = 35
 
@@ -102,6 +102,9 @@ def __exit(__s, __f):
 ###############################################################################
 ###############################################################################
 if __name__ == '__main__':
+    # TODO
+    # shutdown = Shutdown(shutdown_func=shutdown_application)
+
     signal.signal(signal.SIGTERM, __exit)
 
     try:
