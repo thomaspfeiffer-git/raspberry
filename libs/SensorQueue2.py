@@ -31,7 +31,7 @@ def Log (logstr):
 class SensorQueueConfig (object):  # TODO: make constructor
     """some constants for client server communication"""
     PORT       = 50001
-    HOSTNAME   = "pih"
+    HOSTNAME   = "pia"
     AUTHKEY    = "finster war's, der mond schien helle auch auf pih".encode('latin1')
     RETRYDELAY = 60
     SENDDELAY  = 60
