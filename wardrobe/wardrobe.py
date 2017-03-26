@@ -20,7 +20,6 @@ import traceback
 sys.path.append("../libs/")
 from i2c import I2C
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
-from actuators.SSD1306 import SSD1306
 from sensors.CPU import CPU
 from sensors.HTU21DF import HTU21DF
 from sensors.TSL2561 import TSL2561 
@@ -28,6 +27,7 @@ from sensors.TSL2561 import TSL2561
 from SensorQueue import SensorQueueClient_write
 from SensorValue import SensorValueLock, SensorValue
 
+from Shutdown import Shutdown
 
 
 # sensor id | gpio-in | usage |
@@ -39,6 +39,7 @@ from SensorValue import SensorValueLock, SensorValue
 # debouncing:
 # https://www.raspberrypi.org/forums/viewtopic.php?t=137484&p=913137
 # http://raspberrypihobbyist.blogspot.co.at/2014/11/debouncing-gpio-input.html
+
 
 Sensor1_Pin = 15   # phys pin id
 Sensor2_Pin = 31
@@ -368,6 +369,9 @@ def __exit(__s, __f):
 ###############################################################################
 ###############################################################################
 if __name__ == '__main__':
+    # TODO
+    # shutdown = Shutdown(shutdown_func=shutdown_application)
+
     signal.signal(signal.SIGTERM, __exit)
 
     qv_temp_wardrobe  = SensorValueLock("ID_31", "TempWardrobe",  SensorValue.Types.Temp, "°C", threading.Lock())
