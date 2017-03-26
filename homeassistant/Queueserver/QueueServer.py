@@ -8,7 +8,7 @@
 import sys
 
 sys.path.append('../libs')
-from SensorQueue import SensorQueueServer
+from SensorQueue2 import SensorQueueServer
 from Shutdown import Shutdown
 
 
