@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 ###############################################################################
 # QueueServer.py                                                              #
 # (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
@@ -7,7 +8,7 @@
 
 import sys
 
-sys.path.append('../libs')
+sys.path.append('../../libs')
 from SensorQueue2 import SensorQueueServer
 from Shutdown import Shutdown
 
