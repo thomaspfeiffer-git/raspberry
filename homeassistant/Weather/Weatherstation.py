@@ -34,7 +34,6 @@ if __name__ == '__main__':
 
     while True:
         v = sensorqueue.read()
-        print("hier")
         if v is not None: 
             print(v)
 
