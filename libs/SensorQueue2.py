@@ -12,6 +12,7 @@ SensorQueueClient: Provides a client for the queue with methods
                    for read from and write to the queue.
 """
 
+import asyncio
 from multiprocessing.managers import BaseManager
 import pickle
 try:
@@ -34,7 +35,7 @@ class SensorQueueConfig (object):  # TODO: make constructor
     HOSTNAME   = "pia"
     AUTHKEY    = "finster war's, der mond schien helle auch auf pih".encode('latin1')
     RETRYDELAY = 60
-    SENDDELAY  = 60
+    SENDDELAY  = 1 # TODO: oldvalue: 60
     SERIALIZER = "pickle"
 
 
@@ -119,7 +120,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
                 with sensor._lock:
                     item = sensor._sensorvalue  # copy data from sensor
 
-                # Log("in run: %s" % item)
+                # Log("in SensorQueueClient_write.run(): %s" % item)
                 self.write(item)               # write data to queue
 
             for _ in range(SensorQueueConfig.SENDDELAY):
@@ -162,9 +163,12 @@ class SensorQueueClient_read (SensorQueueClient):
         """read from the queue"""
         if (self.connected):
             try:
-                return pickle.loads(self.queue.get_nowait())
+                if not self.queue.empty():
+                    return pickle.loads(self.queue.get_nowait())
             except queue.Empty:
                 return None
+            except SystemExit:
+                raise SystemExit
             except:
                 Log("Cannot read from queue: %s %s" % \
                     (sys.exc_info()[0], sys.exc_info()[1]))

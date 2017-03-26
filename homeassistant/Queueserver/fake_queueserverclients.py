@@ -30,15 +30,18 @@ if __name__ == '__main__':
          }
 
     sq = SensorQueueClient_write()
-    map(sq.register, qv.values())
+    # map(sq.register, qv.values())
+    sq.register(qv['qv_temp_wardrobe'])
+    sq.register(qv['qv_humi_wardrobe'])
+    sq.register(qv['qv_light_wardrobe'])
     sq.start()
 
     while True:
         print("sending values ...")
         qv['qv_temp_wardrobe'].value = "22.2"
-        qv['qv_humi_wardrobe'].value = "67.3"
-        qv['qv_light_wardrobe'].value = "823"
-        time.sleep(1)
+        # qv['qv_humi_wardrobe'].value = "67.3"
+        # qv['qv_light_wardrobe'].value = "823"
+        time.sleep(45)
 
 # eof #
 
