@@ -15,10 +15,7 @@ SensorQueueClient: Provides a client for the queue with methods
 import asyncio
 from multiprocessing.managers import BaseManager
 import pickle
-try:
-    import queue
-except ImportError:
-    import Queue as queue
+import queue
 import sys
 from time import strftime, localtime, sleep
 import threading
@@ -26,7 +23,7 @@ import threading
 
 def Log (logstr):
     """improved log output"""
-    print(strftime("%Y%m%d %H:%M:%S", localtime()), logstr)
+    print(strftime("%Y%m%d %H:%M:%S", localtime()), logstr)  # TODO: from datetime import datetime
 
 
 class SensorQueueConfig (object):  # TODO: make constructor
@@ -47,6 +44,7 @@ class SensorQueueServer (object):
     def __init__ (self):
         self.__queue = queue.Queue()
         QueueManager.register('get_queue', callable=lambda:self.__queue)
+        # TODO: if gethostbyname != SQC.HOSTNAME ...        
         manager = QueueManager(address=('', SensorQueueConfig.PORT), \
                                authkey=SensorQueueConfig.AUTHKEY,    \
                                serializer=SensorQueueConfig.SERIALIZER)
@@ -88,8 +86,7 @@ class SensorQueueClient (object):
                 self.connected = True
                 Log("Connected to manager")
             except:
-                Log("Cannot connect to manager: %s %s" % \
-                    (sys.exc_info()[0], sys.exc_info()[1]))
+                Log("Cannot connect to manager: {0[0]} {0[1]}".format(sys.exc_info()))
                 if isinstance(self, SensorQueueClient_write):
                     Log("bin in SensorQueueClient_write")
                 
@@ -123,8 +120,8 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
                 # Log("in SensorQueueClient_write.run(): %s" % item)
                 self.write(item)               # write data to queue
 
-            for _ in range(SensorQueueConfig.SENDDELAY):
-                sleep (1)
+            for _ in range(SensorQueueConfig.SENDDELAY * 10):
+                sleep(0.1)
                 if not self.__running:
                     break
 
@@ -139,8 +136,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
                 try:
                     pickled = pickle.dumps(item)
                 except:
-                    Log("Cannot pickle: %s %s" % \
-                        (sys.exc_info()[0], sys.exc_info()[1]))
+                    Log("Cannot pickle: {0[0]} {0[1]}".format(sys.exc_info()))
                 else:
                     self.queue.put_nowait(pickled)
             except KeyboardInterrupt:
@@ -149,8 +145,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
             except queue.Full:
                 Log("Queue full")
             except:
-                Log("Cannot write to queue: %s %s" % \
-                    (sys.exc_info()[0], sys.exc_info()[1]))
+                Log("Cannot write to queue: {0[0]} {0[1]}".format(sys.exc_info()))
                 self.connect()
 
 
@@ -168,10 +163,9 @@ class SensorQueueClient_read (SensorQueueClient):
             except queue.Empty:
                 return None
             except SystemExit:
-                raise SystemExit
+                raise
             except:
-                Log("Cannot read from queue: %s %s" % \
-                    (sys.exc_info()[0], sys.exc_info()[1]))
+                Log("Cannot read from queue: {0[0]} {0[1]}".format(sys.exc_info()))
                 self.connect()
         else:
             Log("not connected")
