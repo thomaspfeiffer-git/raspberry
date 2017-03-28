@@ -20,7 +20,7 @@ def shutdown_application ():
 
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
-    SensorServer = SensorQueueServer()
+    SensorServer = SensorQueueServer("../config.ini")
     SensorServer.start()
 
 ### eof ###

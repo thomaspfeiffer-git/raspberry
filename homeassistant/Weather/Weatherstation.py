@@ -30,7 +30,7 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    sensorqueue = SensorQueueClient_read()
+    sensorqueue = SensorQueueClient_read("../config.ini")
 
     while True:
         v = sensorqueue.read()

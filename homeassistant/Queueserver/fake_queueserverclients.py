@@ -29,11 +29,8 @@ if __name__ == '__main__':
           'qv_light_wardrobe': SensorValueLock("ID_33", "LightWardrobe", SensorValue.Types.Light, "lux", threading.Lock())
          }
 
-    sq = SensorQueueClient_write()
-    # map(sq.register, qv.values())
-    sq.register(qv['qv_temp_wardrobe'])
-    sq.register(qv['qv_humi_wardrobe'])
-    sq.register(qv['qv_light_wardrobe'])
+    sq = SensorQueueClient_write("../config.ini")
+    list(map(sq.register, qv.values()))
     sq.start()
 
     while True:

@@ -12,6 +12,8 @@ SensorQueueClient: Provides a client for the queue with methods
                    for read from and write to the queue.
 """
 
+import configparser
+import copy
 from datetime import datetime
 from multiprocessing.managers import BaseManager
 import pickle
@@ -22,12 +24,12 @@ import time
 import threading
 
 
-
 def Log (logstr):
     """improved log output"""
     print("{}: {}".format(datetime.now().strftime("%Y%m%d %H:%M:%S"), logstr))
 
 
+##############################################################################
 class Error (Exception):
     """Base class for exceptions in this module."""
     pass
@@ -45,30 +47,40 @@ class NotConnectedError (Error):
         self.message = message
 
 
-class SensorQueueConfig (object):  # TODO: make constructor
+##############################################################################
+class SensorQueueConfig (object):
     """some constants for client server communication"""
-    PORT       = 50001
-    HOSTNAME   = "pia"
-    AUTHKEY    = "finster war's, der mond schien helle auch auf pih".encode('latin1')
-    RETRYDELAY = 60
-    SENDDELAY  = 1 # TODO: oldvalue: 60
-    SERIALIZER = "pickle"
+    def __init__ (self, configfilename):
+        config = configparser.ConfigParser()
+        config.read(configfilename)  # TODO: Check with unknown filename
+
+        self.HOSTNAME   = config['Queue']['Hostname'] # TODO: Check with unknown configs
+        self.PORT       = int(config['Queue']['Port'])
+        self.AUTHKEY    = config['Queue']['Key'].encode('latin1')
+        self.RETRYDELAY = 60
+        self.SENDDELAY  = 10 # TODO: oldvalue: 60
+        self.SERIALIZER = "pickle"
 
 
+##############################################################################
 class QueueManager(BaseManager): 
     pass
 
+
+##############################################################################
 class SensorQueueServer (object):
     """server class"""
-    def __init__ (self):
-        if SensorQueueConfig.HOSTNAME != gethostname():
+    def __init__ (self, configfilename):
+        self.cfg = SensorQueueConfig(configfilename)
+
+        if self.cfg.HOSTNAME != gethostname():
             raise HostnameError("configured hostname mismatches current server")
 
         self.__queue = queue.Queue()
         QueueManager.register('get_queue', callable=lambda:self.__queue)
-        manager = QueueManager(address=('', SensorQueueConfig.PORT), \
-                               authkey=SensorQueueConfig.AUTHKEY,    \
-                               serializer=SensorQueueConfig.SERIALIZER)
+        manager = QueueManager(address=('', self.cfg.PORT), \
+                               authkey=self.cfg.AUTHKEY,    \
+                               serializer=self.cfg.SERIALIZER)
         self.__server = manager.get_server()
 
     def start (self):
@@ -84,24 +96,27 @@ class SensorQueueServer (object):
             Log("server stopped (other reason)")
 
 
+##############################################################################
 class SensorQueueClient (object):
     """client class providing methodes for read from and write to the queue"""
-    def __init__ (self):
+    def __init__ (self, configfilename):
+        self.cfg = SensorQueueConfig(configfilename)
+
         self.connected = False
         self.queue     = None
 
         QueueManager.register('get_queue')
-        self.__manager = QueueManager(address=(SensorQueueConfig.HOSTNAME, \
-                                               SensorQueueConfig.PORT),    \
-                                      authkey=SensorQueueConfig.AUTHKEY,   \
-                                      serializer=SensorQueueConfig.SERIALIZER)
+        self.__manager = QueueManager(address=(self.cfg.HOSTNAME, \
+                                               self.cfg.PORT),    \
+                                      authkey=self.cfg.AUTHKEY,   \
+                                      serializer=self.cfg.SERIALIZER)
         self.connect()
 
     def connect (self):
         """connects to the manager/server"""
         self.connected = False
 
-        while (not self.connected):
+        while not self.connected:
             try:
                 self.__manager.connect()
                 self.queue = self.__manager.get_queue()
@@ -111,15 +126,16 @@ class SensorQueueClient (object):
                 Log("Cannot connect to manager: {0}: {1[0]} {1[1]}".
                     format(self.__class__.__name__, sys.exc_info()))
                 
-                for _ in range(SensorQueueConfig.RETRYDELAY):
+                for _ in range(self.cfg.RETRYDELAY):
                     time.sleep(1.0)
 
 
+##############################################################################
 class SensorQueueClient_write (SensorQueueClient, threading.Thread):
     """write to queue as a thread"""
-    def __init__ (self):
+    def __init__ (self, configfilename):
         threading.Thread.__init__(self)
-        SensorQueueClient.__init__(self)
+        SensorQueueClient.__init__(self, configfilename)
         self.__svl     = []
         self.__running = True
 
@@ -140,7 +156,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
                     item = copy.deepcopy(sensor._sensorvalue) 
                 self.write(item)               # write data to queue
 
-            for _ in range(SensorQueueConfig.SENDDELAY * 10):
+            for _ in range(self.cfg.SENDDELAY * 10):
                 time.sleep(0.1)
                 if not self.__running:
                     break
@@ -157,7 +173,7 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
                     pickled = pickle.dumps(item)
                 except:
                     Log("Cannot pickle: {0[0]} {0[1]}".format(sys.exc_info()))
-                else: # TODO unnest try blocks
+                else:
                     self.queue.put_nowait(pickled)
             except KeyboardInterrupt:
                 Log("ctrl-c")
@@ -167,14 +183,15 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
             except:
                 Log("Cannot write to queue: {0[0]} {0[1]}".format(sys.exc_info()))
                 self.connect()
-        else:  # TODO: Test this exception
+        else:
             raise NotConnectedError("write() called without connection to queue") 
 
 
+##############################################################################
 class SensorQueueClient_read (SensorQueueClient):
     """read from queue"""
-    def __init__ (self):
-        SensorQueueClient.__init__(self)
+    def __init__ (self, configfilename):
+        SensorQueueClient.__init__(self, configfilename)
 
     def read (self):
         """read from the queue"""
@@ -188,7 +205,7 @@ class SensorQueueClient_read (SensorQueueClient):
             except:
                 Log("Cannot read from queue: {0[0]} {0[1]}".format(sys.exc_info()))
                 self.connect()
-        else: # TODO: Test this exception
+        else:
             raise NotConnectedError("read() called without connection to queue") 
 
 # eof #
