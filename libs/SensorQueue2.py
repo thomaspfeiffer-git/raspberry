@@ -52,13 +52,13 @@ class SensorQueueConfig (object):
     """some constants for client server communication"""
     def __init__ (self, configfilename):
         config = configparser.ConfigParser()
-        config.read(configfilename)  # TODO: Check with unknown filename
+        config.read(configfilename)
 
-        self.HOSTNAME   = config['Queue']['Hostname'] # TODO: Check with unknown configs
+        self.HOSTNAME   = config['Queue']['Hostname']
         self.PORT       = int(config['Queue']['Port'])
         self.AUTHKEY    = config['Queue']['Key'].encode('latin1')
         self.RETRYDELAY = 60
-        self.SENDDELAY  = 10 # TODO: oldvalue: 60
+        self.SENDDELAY  = 60
         self.SERIALIZER = "pickle"
 
 
