@@ -1,0 +1,5 @@
+[Queue]
+Hostname = server.domain.org
+Port     = 50001
+Key      = This is my key
+
