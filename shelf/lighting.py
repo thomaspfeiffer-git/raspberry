@@ -41,7 +41,8 @@ import sys
 import threading
 from time import sleep
 
-from Shutdown import Shutdown
+# sys.path.append
+# from Shutdown import Shutdown
 
 from scheduling import Scheduling, Scheduling_Params
 from userinterface import Feedback, Status
