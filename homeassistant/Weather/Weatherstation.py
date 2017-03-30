@@ -7,9 +7,16 @@
 """Weatherstation: collects various data from sensors in our flat and garden
    and displays them on a Touch Screen Display."""
 
-
+### usage ###
 # export DISPLAY=:0.0
 # ./Weatherstation.py
+
+
+### useful ressources ###
+# turn off screen saver:
+# http://www.etcwiki.org/wiki/Disable_screensaver_and_screen_blanking_Raspberry_Pi
+
+
 
 
 import tkinter as tk
