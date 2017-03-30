@@ -15,6 +15,7 @@
 ### useful ressources ###
 # turn off screen saver:
 # http://www.etcwiki.org/wiki/Disable_screensaver_and_screen_blanking_Raspberry_Pi
+# http://raspberrypi.stackexchange.com/questions/752/how-do-i-prevent-the-screen-from-going-blank
 
 
 
@@ -28,6 +29,8 @@ sys.path.append('../../libs')
 from SensorQueue2 import SensorQueueClient_read
 from Shutdown import Shutdown
 
+from Config import CONFIG
+
 
 ###############################################################################
 # WeatherApp ##################################################################
@@ -39,14 +42,29 @@ class WeatherApp (tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        self.hi_there = tk.Button(self)
-        self.hi_there["text"] = "Hello World\n(click me)"
-        self.hi_there["command"] = self.say_hi
-        self.hi_there.pack(side="top")
+        self.grid()
 
-        self.quit = tk.Button(self, text="QUIT", fg="red",
-                              command=shutdown_application)
-        self.quit.pack(side="bottom")
+        temp_indoor = tk.StringVar()
+        self.temp_indoor = tk.Label(self,
+                                    font="{} {}".format(CONFIG.FONT, CONFIG.FONTSIZE),
+                                    justify="left",
+                                    anchor="w",
+                                    fg=CONFIG.COLORS.INDOOR)
+        # self.temp_indoor.pack(side="top")
+        self.temp_indoor.grid(row=1, column=1, sticky="w")
+        self.temp_indoor['textvariable'] = temp_indoor
+        temp_indoor.set("23.7 °C")
+
+        humi_indoor = tk.StringVar()
+        self.humi_indoor = tk.Label(self,
+                                    font="{} {}".format(CONFIG.FONT, CONFIG.FONTSIZE),
+                                    justify="left",
+                                    anchor="w",
+                                    fg=CONFIG.COLORS.INDOOR)
+        # self.humi_indoor.pack(side="top")
+        self.humi_indoor.grid(row=2, column=1, sticky="w")
+        self.humi_indoor['textvariable'] = humi_indoor
+        humi_indoor.set("1013 hPa")
 
     def say_hi(self):
         print("hi there, everyone!")
