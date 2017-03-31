@@ -16,7 +16,21 @@
 # sudo apt-get install xscreensaver
 # start xscreensaver an set screensaver off manually
 #
+# Packages you might install
 # sudo apt-get install python3-pil.imagetk
+#
+# Adjusting lightness
+# cd /sys/class/backlight/rpi_backlight/
+# sudo bash -c 'echo "255" > brightness'
+# def _set_value(name, value):
+#    with open(os.path.join(PATH, name), "w") as f:
+#        f.write(str(value))
+#
+# Change of screen
+# grid_forget()
+# http://effbot.org/tkinterbook/grid.htm#Tkinter.Grid.grid_forget-method
+# http://stackoverflow.com/questions/12364981/how-to-delete-tkinter-widgets-from-a-window
+
 
 
 import tkinter as tk
