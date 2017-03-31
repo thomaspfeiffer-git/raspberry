@@ -20,10 +20,11 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.font import Font
+import PIL.Image
+import PIL.ImageTk
 
 import os
 import sys
-
 
 sys.path.append('../../libs')
 from SensorQueue2 import SensorQueueClient_read
@@ -45,9 +46,10 @@ class Displayelement (object):
 class Text (tk.Label, Displayelement):
     """prints text"""
     """update of data is done in stringvar (must be of type tk.StringVar)"""
-    def __init__ (self, frame, gridpos, text, stringvar, sticky, font, color):
+    def __init__ (self, frame, gridpos, text, stringvar, image, sticky, font, color):
         # TODO: type safety: stringvar
         super().__init__(frame, text=text, textvariable=stringvar, 
+                         image=image, compound="right",
                          justify="left", anchor="w", font=font,
                          foreground=color, background=CONFIG.COLORS.BACKGROUND)
         self.gridpos = gridpos+1
@@ -56,23 +58,23 @@ class Text (tk.Label, Displayelement):
 
 class WeatherItem (Text):
     """draws a single weather item"""
-    def __init__ (self, frame, gridpos, stringvar, font, color):
+    def __init__ (self, frame, gridpos, stringvar, image=None, font=None, color=None):
         super().__init__(frame, gridpos=gridpos, text=None, stringvar=stringvar, 
-                         sticky="w", font=font, color=color)
+                         image=image, sticky="w", font=font, color=color)
 
 
 class DateItem (Text):
     """draws a date line"""
     def __init__ (self, frame, gridpos, stringvar, font, color):
         super().__init__(frame, gridpos=gridpos, text=None, stringvar=stringvar, 
-                         sticky="n", font=font, color=color)
+                         image=None, sticky="n", font=font, color=color)
 
 
 class SeparatorText (Text):
     """prints separator text"""
     def __init__ (self, frame, gridpos, text, font):
         super().__init__(frame, gridpos=gridpos, text=text, stringvar=None, 
-                         sticky="w", font=font, color=CONFIG.COLORS.SEP)
+                         image=None, sticky="w", font=font, color=CONFIG.COLORS.SEP)
 
 
 class SeparatorLine (ttk.Separator, Displayelement):
@@ -134,8 +136,17 @@ class WeatherApp (tk.Frame):
         date_date.set(now.strftime("%A, %d. %B %Y"))
         date_time.set(now.strftime("%X"))
  
+
+        icon = PIL.Image.open("../Resources/ico_sunny.png")
+        icon = icon.resize((40, 40),  PIL.Image.ANTIALIAS)
+        self.icon = PIL.ImageTk.PhotoImage(icon)
+
+        # self.w1 = tk.Label(frame, image=self.icon)
+        # self.w1.grid(row=gridpos, column=1, sticky="e")
+
+
         gridpos = Separator(frame=frame, gridpos=gridpos, text="Wohnzimmer:", 
-                       font=self.font_separator).gridpos
+                            font=self.font_separator).gridpos
         gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=temp_indoor, 
                               font=self.font_item, color=CONFIG.COLORS.INDOOR).gridpos
         gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=humi_indoor, 
@@ -144,6 +155,7 @@ class WeatherApp (tk.Frame):
         gridpos = Separator(frame=frame, gridpos=gridpos, text="Draußen:", 
                             font=self.font_separator).gridpos
         gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=temp_outdoor, 
+                              image=self.icon,
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
         gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=humi_outdoor, 
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
@@ -166,12 +178,11 @@ class Weather (object):
         self.root.overrideredirect(1)
 
         self.root.resizable(width=False, height=False)
-        # w = self.root.winfo_screenwidth() // 2
+        # w = self.root.winfo_screenwidth()
         w = 280
         h = self.root.winfo_screenheight()
         self.root.geometry("{}x{}+{}+{}".format(w,h,0,0))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
-
         self.app = WeatherApp(master=self.root)
 
     def poll (self):
@@ -203,6 +214,7 @@ if __name__ == '__main__':
     # TODO: if $DISPLAY == "": default setting = ":0.0"
     os.environ["DISPLAY"] = ":0.0"
     shutdown = Shutdown(shutdown_func=shutdown_application)
+
 
     weather = Weather()
     weather.run()
