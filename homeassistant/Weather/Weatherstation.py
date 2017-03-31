@@ -55,7 +55,7 @@ class Text (tk.Label, Displayelement):
                          relief="raised",
                          foreground=color, background=CONFIG.COLORS.BACKGROUND)
         self.gridpos = gridpos+1
-        self.grid(row=gridpos, column=1, sticky=sticky)
+        self.grid(row=gridpos, column=1, columnspan=5, sticky=sticky)
 
 
 class WeatherItem (Text):
@@ -84,7 +84,7 @@ class SeparatorLine (ttk.Separator, Displayelement):
     def __init__ (self, frame, gridpos):
         super().__init__(frame, orient="horizontal")
         self.gridpos = gridpos+1
-        self.grid(row=gridpos, column=1, sticky="ew")
+        self.grid(row=gridpos, column=1, columnspan=5, sticky="ew")
 
 
 class Separator (Displayelement): 
@@ -142,8 +142,18 @@ class WeatherApp (tk.Frame):
         icon = PIL.Image.open("../Resources/ico_sunny.png")
         icon = icon.resize((40, 40),  PIL.Image.ANTIALIAS)
         self.icon = PIL.ImageTk.PhotoImage(icon)
-        x = tk.Label(frame, image=self.icon)
-        x.grid(row=7, column=2)
+        x = tk.Label(frame, image=self.icon, height=50, bg=CONFIG.COLORS.BACKGROUND)
+        x.grid(row=1, column=1)
+        y = tk.Label(frame, image=self.icon)
+        y.grid(row=1, column=2)
+        z = tk.Label(frame, image=self.icon)
+        z.grid(row=1, column=3)
+        a = tk.Label(frame, image=self.icon)
+        a.grid(row=1, column=4)
+        b = tk.Label(frame, image=self.icon)
+        b.grid(row=1, column=5)
+
+        gridpos += 1
 
         gridpos = Separator(frame=frame, gridpos=gridpos, text="Wohnzimmer:", 
                             font=self.font_separator).gridpos
