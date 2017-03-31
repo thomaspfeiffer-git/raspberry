@@ -15,6 +15,8 @@
 # turn off screen saver:
 # sudo apt-get install xscreensaver
 # start xscreensaver an set screensaver off manually
+#
+# sudo apt-get install python3-pil.imagetk
 
 
 import tkinter as tk
@@ -46,11 +48,11 @@ class Displayelement (object):
 class Text (tk.Label, Displayelement):
     """prints text"""
     """update of data is done in stringvar (must be of type tk.StringVar)"""
-    def __init__ (self, frame, gridpos, text, stringvar, image, sticky, font, color):
+    def __init__ (self, frame, gridpos, text, stringvar, sticky, font, color):
         # TODO: type safety: stringvar
         super().__init__(frame, text=text, textvariable=stringvar, 
-                         image=image, compound="right",
                          justify="left", anchor="w", font=font,
+                         relief="raised",
                          foreground=color, background=CONFIG.COLORS.BACKGROUND)
         self.gridpos = gridpos+1
         self.grid(row=gridpos, column=1, sticky=sticky)
@@ -58,23 +60,23 @@ class Text (tk.Label, Displayelement):
 
 class WeatherItem (Text):
     """draws a single weather item"""
-    def __init__ (self, frame, gridpos, stringvar, image=None, font=None, color=None):
+    def __init__ (self, frame, gridpos, stringvar, font=None, color=None):
         super().__init__(frame, gridpos=gridpos, text=None, stringvar=stringvar, 
-                         image=image, sticky="w", font=font, color=color)
+                         sticky="w", font=font, color=color)
 
 
 class DateItem (Text):
     """draws a date line"""
     def __init__ (self, frame, gridpos, stringvar, font, color):
         super().__init__(frame, gridpos=gridpos, text=None, stringvar=stringvar, 
-                         image=None, sticky="n", font=font, color=color)
+                         sticky="n", font=font, color=color)
 
 
 class SeparatorText (Text):
     """prints separator text"""
     def __init__ (self, frame, gridpos, text, font):
         super().__init__(frame, gridpos=gridpos, text=text, stringvar=None, 
-                         image=None, sticky="w", font=font, color=CONFIG.COLORS.SEP)
+                         sticky="w", font=font, color=CONFIG.COLORS.SEP)
 
 
 class SeparatorLine (ttk.Separator, Displayelement):
@@ -140,10 +142,8 @@ class WeatherApp (tk.Frame):
         icon = PIL.Image.open("../Resources/ico_sunny.png")
         icon = icon.resize((40, 40),  PIL.Image.ANTIALIAS)
         self.icon = PIL.ImageTk.PhotoImage(icon)
-
-        # self.w1 = tk.Label(frame, image=self.icon)
-        # self.w1.grid(row=gridpos, column=1, sticky="e")
-
+        x = tk.Label(frame, image=self.icon)
+        x.grid(row=7, column=2)
 
         gridpos = Separator(frame=frame, gridpos=gridpos, text="Wohnzimmer:", 
                             font=self.font_separator).gridpos
@@ -155,7 +155,6 @@ class WeatherApp (tk.Frame):
         gridpos = Separator(frame=frame, gridpos=gridpos, text="Draußen:", 
                             font=self.font_separator).gridpos
         gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=temp_outdoor, 
-                              image=self.icon,
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
         gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=humi_outdoor, 
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
