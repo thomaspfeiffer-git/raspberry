@@ -1,31 +1,35 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
-# Screens.py                                                                  #
-# (c) https://github.com/thomaspfeiffer-git 2016                              #
+# Config.py                                                                   #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
 ###############################################################################
 """lots of config stuff
    1) display properties
-   2) colors
-   3) files
+   2) fonts
+   3) colors
+   4) files
 """
- 
+
 import os
 
 class CONFIG:
     """various config stuff"""
-    FONT              = "Helvetica"
 
-    FONTSIZE          = int(32)
-    FONTSIZE_FORECAST = int(FONTSIZE / 2.0)
-    FONTSIZE_SMALL    = int(FONTSIZE / 2.4)
-    FONTSIZE_TINY     = int(FONTSIZE / 3.4)
+    class FONTS:
+        """definitions of fonts and font sizes"""
+        FAMILY = "Helvetica"
+
+        SIZE_NORMAL   = int(32)
+        SIZE_FORECAST = int(SIZE_NORMAL / 2.0)
+        SIZE_SMALL    = int(SIZE_NORMAL / 2.4)
+        SIZE_TINY     = int(SIZE_NORMAL / 3.4)
 
     class COLORS:
         """definitions of colors"""
         BACKGROUND = "white"
-        DATE       = (0, 0, 0)
-        DESC       = (0, 0, 0)
-        SEP        = (0, 0, 0)
+        DATE       = "black"
+        DESC       = "black"
+        SEP        = "black"
         INDOOR     = "red"
         OUTDOOR    = "blue"
         KIDSROOM   = (0, 0xCC, 0xFF)
@@ -44,7 +48,8 @@ class CONFIG:
         ICON_OVERCAST = os.path.join(PATH, 'ico_overcast.png')
         ICON_RAINY    = os.path.join(PATH, 'ico_rainy.png')
 
-    TIMETOFALLBACK = 15 # Wait 10 seconds until fallback to main screen
+
+    TIMETOFALLBACK = 15 # Wait 15 seconds until fallback to main screen
 
 # eof #
 
