@@ -26,7 +26,7 @@ class CONFIG:
 
     class COLORS:
         """definitions of colors"""
-        BACKGROUND = "white"
+        BACKGROUND = "Moccasin"
         DATE       = "black"
         DESC       = "black"
         SEP        = "black"
