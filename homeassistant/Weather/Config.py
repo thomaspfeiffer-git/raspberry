@@ -39,7 +39,7 @@ class CONFIG:
 
     class IMAGES:
         """definitions of images and path to images"""
-        PATH          = 'data'
+        PATH          = '../Resources'
         PIC_KIDSROOM  = os.path.join(PATH, 'child.png')
         PIC_COTTAGE   = os.path.join(PATH, 'cottage.png')
 
