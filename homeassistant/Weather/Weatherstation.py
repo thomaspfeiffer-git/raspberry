@@ -39,8 +39,11 @@ from tkinter.font import Font
 import PIL.Image
 import PIL.ImageTk
 
+from datetime import datetime
 import os
 import sys
+import threading
+import time
 
 sys.path.append('../../libs')
 from SensorQueue2 import SensorQueueClient_read
@@ -110,6 +113,31 @@ class Separator (Displayelement):
                                          text=text, font=font).gridpos
 
 
+
+###############################################################################
+# Values ######################################################################
+class Values (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self.__running = False
+
+    def init_values (self, master):
+        self.date_date = tk.StringVar(master)
+        self.date_time = tk.StringVar(master)
+
+    def run (self):
+        self.__running = True
+        while self.__running:
+            now = datetime.now()
+            self.date_date.set(now.strftime("%A, %d. %B %Y"))
+            self.date_time.set(now.strftime("%X"))
+            time.sleep(0.5)
+
+    def stop (self):
+        self.__running = False
+
+
+
 ###############################################################################
 # WeatherApp ##################################################################
 class WeatherApp (tk.Frame):
@@ -117,6 +145,9 @@ class WeatherApp (tk.Frame):
         super().__init__(master)
         self.master = master
         self.config(bg=CONFIG.COLORS.BACKGROUND)
+
+        values.init_values(master)
+        values.start()
 
         self.font_item      = Font(family="Helvetica", size=CONFIG.FONTS.SIZE_NORMAL)
         self.font_separator = Font(family="Helvetica", size=CONFIG.FONTS.SIZE_TINY)
@@ -138,8 +169,8 @@ class WeatherApp (tk.Frame):
         humi_outdoor = tk.StringVar()
         pressure_outdoor = tk.StringVar()
 
-        date_date = tk.StringVar()
-        date_time = tk.StringVar()
+        #date_date = tk.StringVar()
+        #date_time = tk.StringVar()
 
         temp_indoor.set("23,7 °C")
         humi_indoor.set("47,56 % rF")
@@ -147,10 +178,10 @@ class WeatherApp (tk.Frame):
         humi_outdoor.set("67,99 % rF")
         pressure_outdoor.set("1013,2  hPa")
 
-        from datetime import datetime
-        now = datetime.now()
-        date_date.set(now.strftime("%A, %d. %B %Y"))
-        date_time.set(now.strftime("%X"))
+        #from datetime import datetime
+        #now = datetime.now()
+        #date_date.set(now.strftime("%A, %d. %B %Y"))
+        #date_time.set(now.strftime("%X"))
  
 
         icon = PIL.Image.open("../Resources/ico_sunny.png")
@@ -186,9 +217,9 @@ class WeatherApp (tk.Frame):
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
 
         gridpos = Separator(frame=frame, gridpos=gridpos).gridpos
-        gridpos = DateItem(frame=frame, gridpos=gridpos, stringvar=date_date,
+        gridpos = DateItem(frame=frame, gridpos=gridpos, stringvar=values.date_date,
                            font=self.font_date, color=CONFIG.COLORS.DATE).gridpos
-        gridpos = DateItem(frame=frame, gridpos=gridpos, stringvar=date_time,
+        gridpos = DateItem(frame=frame, gridpos=gridpos, stringvar=values.date_time,
                            font=self.font_date_bold, color=CONFIG.COLORS.DATE).gridpos
 
 
@@ -227,6 +258,8 @@ class Weather (object):
 def shutdown_application ():
     """called on shutdown; stops all threads"""
     print("in shutdown_application()")
+    values.stop()
+    values.join()
     weather.stop()
     sys.exit(0)
 
@@ -238,6 +271,7 @@ if __name__ == '__main__':
     os.environ["DISPLAY"] = ":0.0"
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
+    values = Values()
 
     weather = Weather()
     weather.run()
