@@ -38,6 +38,7 @@ from tkinter.font import Font
 import PIL.Image
 import PIL.ImageTk
 
+from collections import OrderedDict
 from datetime import datetime
 import os
 import sys
@@ -125,6 +126,34 @@ class Values (threading.Thread):
         self.date_date = tk.StringVar(master)
         self.date_time = tk.StringVar(master)
 
+        # values of main screen (indoor and outdoor values at home)
+        self.temp_indoor = tk.StringVar()
+        self.humi_indoor = tk.StringVar()
+        self.temp_outdoor = tk.StringVar()
+        self.humi_outdoor = tk.StringVar()
+        self.pressure_outdoor = tk.StringVar()
+
+        # TODO: remove; use real data from queue
+        self.temp_indoor.set("23,7 °C")
+        self.humi_indoor.set("47,56 % rF")
+        self.temp_outdoor.set("-4,3 °C")
+        self.humi_outdoor.set("67,99 % rF")
+        self.pressure_outdoor.set("1013,2  hPa")
+
+
+        # values for data from openweathermap
+        self.owm_dummy1 = tk.StringVar()
+        self.owm_dummy2 = tk.StringVar()
+        self.owm_dummy1.set("22,2 °C")
+        self.owm_dummy2.set("22,22 % rF")
+
+        # values for data from kid's room
+        self.kid_dummy1 = tk.StringVar()
+        self.kid_dummy2 = tk.StringVar()
+        self.kid_dummy1.set("33,3 °C")
+        self.kid_dummy2.set("33,33 % rF")
+
+
     def run (self):
         self.__running = True
         while self.__running:
@@ -138,17 +167,14 @@ class Values (threading.Thread):
 
 
 
-def hallo (event):
-    print("Event: touched")
-
-
 ###############################################################################
 # WeatherApp ##################################################################
 class WeatherApp (tk.Frame):
     def __init__ (self, master=None):
         super().__init__(master)
 
-        self.screenid = 0
+        self.screennames = ['main', 'owm', 'kid']
+        self.screenid = 0  # Number of currently displayed screen (or frame).
 
         self.master = master
         self.config(bg=CONFIG.COLORS.BACKGROUND)
@@ -156,102 +182,106 @@ class WeatherApp (tk.Frame):
         values.init_values(master)
         values.start()
 
-        self.font_item      = Font(family="Helvetica", size=CONFIG.FONTS.SIZE_NORMAL)
-        self.font_separator = Font(family="Helvetica", size=CONFIG.FONTS.SIZE_TINY)
-        self.font_date      = Font(family="Helvetica", size=CONFIG.FONTS.SIZE_SMALL)
-        self.font_date_bold = Font(family="Helvetica", size=CONFIG.FONTS.SIZE_SMALL, weight="bold")
+        family = "Arial" # TODO: get from config file
+        self.font_item      = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
+        self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
+        self.font_date      = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL)
+        self.font_date_bold = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL, weight="bold")
 
         self.pack()
-
-        # http://www.python-course.eu/tkinter_events_binds.php
-        master.bind("<Button-1>", hallo)
-        # master.bind("<Button-1>", self.touch_event)
-
-        self.create_widgets()
-
-    def touch_event (event):
-        self.screenid += 1
-        if self.screenid >= 5: self.screenid = 0
-        print("WeatherApp.touch_event, screenid: {}".format(self.screenid))
-
-
-    def create_widgets (self):
         self.grid()
-        frame = tk.Frame(self, bd=10, bg=CONFIG.COLORS.BACKGROUND, width=400)
-        frame.grid()
+        self.create_screens()
+
+        master.bind("<Button-1>", self.touch_event)
+
+
+    def touch_event (self, event):
+        self.screens[self.screennames[self.screenid]].grid_remove()
+        self.screenid += 1
+        if self.screenid >= len(self.screennames): 
+            self.screenid = 0
+        self.screens[self.screennames[self.screenid]].grid()
+
+
+    def create_screens (self):
+        self.screens = OrderedDict()
+        for screen in self.screennames: # TODO: Check magic number 400
+            self.screens[screen] = tk.Frame(self, bd=10, bg=CONFIG.COLORS.BACKGROUND, width=400)
+
+        self.create_screen_main()
+        self.create_screen_owm()
+        self.create_screen_kid()
+
+        self.screens['main'].grid()
+
+
+    def create_screen_main (self):
         gridpos = 1
-
-        self.frame_array = [ frame,
-                             tk.Frame(self, bd=10, bg=CONFIG.COLORS.INDOOR, width=400),
-                             tk.Frame(self, bd=10, bg=CONFIG.COLORS.OUTDOOR, width=400) ]
-
-
-        # test 1
-        # on event click:
-        #    self.frame_array[0].grid_remove()
-        #    print("removed")
-        # on second event click:
-        #    self.frame_array[0].grid()
-        #    print("grid added")
-        
-
-        # i = 0
-        # on event click:
-        #    self.frame_array[i].grid_remove()
-        #    i += 1
-        #    if >= 3: i = 0
-        #    self.frame_array[i].grid()
-
- 
-        temp_indoor = tk.StringVar()
-        humi_indoor = tk.StringVar()
-        temp_outdoor = tk.StringVar()
-        humi_outdoor = tk.StringVar()
-        pressure_outdoor = tk.StringVar()
-
-        temp_indoor.set("23,7 °C")
-        humi_indoor.set("47,56 % rF")
-        temp_outdoor.set("-4,3 °C")
-        humi_outdoor.set("67,99 % rF")
-        pressure_outdoor.set("1013,2  hPa")
-
+      
         icon = PIL.Image.open("../Resources/ico_sunny.png")
         icon = icon.resize((40, 40),  PIL.Image.ANTIALIAS)
         self.icon = PIL.ImageTk.PhotoImage(icon)
-        x = tk.Label(frame, image=self.icon, height=50, bg=CONFIG.COLORS.BACKGROUND)
-        x.grid(row=1, column=1)
-        y = tk.Label(frame, image=self.icon)
-        y.grid(row=1, column=2)
-        z = tk.Label(frame, image=self.icon)
-        z.grid(row=1, column=3)
-        a = tk.Label(frame, image=self.icon)
-        a.grid(row=1, column=4)
-        b = tk.Label(frame, image=self.icon)
-        b.grid(row=1, column=5)
-
+        icons = [i for i in range(5)]
+        for i in range(len(icons)):
+            icons[i] = tk.Label(self.screens['main'], image=self.icon, 
+                                height=50, bg=CONFIG.COLORS.BACKGROUND)
+            icons[i].grid(row=gridpos, column=i+1)
         gridpos += 1
 
-        gridpos = Separator(frame=frame, gridpos=gridpos, text="Wohnzimmer:", 
+        gridpos = Separator(frame=self.screens['main'], gridpos=gridpos, text="Wohnzimmer:", 
                             font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=temp_indoor, 
+        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
+                              stringvar=values.temp_indoor, 
                               font=self.font_item, color=CONFIG.COLORS.INDOOR).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=humi_indoor, 
+        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
+                              stringvar=values.humi_indoor, 
                               font=self.font_item, color=CONFIG.COLORS.INDOOR).gridpos
 
-        gridpos = Separator(frame=frame, gridpos=gridpos, text="Draußen:", 
+        gridpos = Separator(frame=self.screens['main'], gridpos=gridpos, text="Draußen:", 
                             font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=temp_outdoor, 
+        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
+                              stringvar=values.temp_outdoor, 
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=humi_outdoor, 
+        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
+                              stringvar=values.humi_outdoor, 
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, stringvar=pressure_outdoor,
+        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
+                              stringvar=values.pressure_outdoor,
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
 
-        gridpos = Separator(frame=frame, gridpos=gridpos).gridpos
-        gridpos = DateItem(frame=frame, gridpos=gridpos, stringvar=values.date_date,
+        gridpos = Separator(frame=self.screens['main'], gridpos=gridpos).gridpos
+        gridpos = DateItem(frame=self.screens['main'], gridpos=gridpos, 
+                           stringvar=values.date_date,
                            font=self.font_date, color=CONFIG.COLORS.DATE).gridpos
-        gridpos = DateItem(frame=frame, gridpos=gridpos, stringvar=values.date_time,
+        gridpos = DateItem(frame=self.screens['main'], gridpos=gridpos, 
+                           stringvar=values.date_time,
                            font=self.font_date_bold, color=CONFIG.COLORS.DATE).gridpos
+
+
+    def create_screen_owm (self):
+        gridpos = 1
+        gridpos = Separator(frame=self.screens['owm'], gridpos=gridpos, 
+                            text="Wettervorhersage aktuell:", 
+                            font=self.font_separator).gridpos
+        gridpos = WeatherItem(frame=self.screens['owm'], gridpos=gridpos, 
+                              stringvar=values.owm_dummy1,
+                              font=self.font_item, color=CONFIG.COLORS.FORECAST).gridpos
+        gridpos = WeatherItem(frame=self.screens['owm'], gridpos=gridpos, 
+                              stringvar=values.owm_dummy2,
+                              font=self.font_item, color=CONFIG.COLORS.FORECAST).gridpos
+
+
+    def create_screen_kid (self):
+        gridpos = 1
+        gridpos = Separator(frame=self.screens['kid'], gridpos=gridpos, 
+                            text="Kinderzimmer:", 
+                            font=self.font_separator).gridpos
+        gridpos = WeatherItem(frame=self.screens['kid'], gridpos=gridpos, 
+                              stringvar=values.kid_dummy1,
+                              font=self.font_item, color=CONFIG.COLORS.KIDSROOM).gridpos
+        gridpos = WeatherItem(frame=self.screens['kid'], gridpos=gridpos, 
+                              stringvar=values.kid_dummy2,
+                              font=self.font_item, color=CONFIG.COLORS.KIDSROOM).gridpos
 
 
 ###############################################################################
