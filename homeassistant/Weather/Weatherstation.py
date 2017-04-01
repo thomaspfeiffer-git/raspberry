@@ -32,7 +32,6 @@
 # http://stackoverflow.com/questions/12364981/how-to-delete-tkinter-widgets-from-a-window
 
 
-
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.font import Font
@@ -53,6 +52,7 @@ from Config import CONFIG
 
 
 class Displayelement (object):
+    """provides the basic logic for calculating the grid pos of an element"""
     @property
     def gridpos (self):
         return self.__gridpos
@@ -138,11 +138,18 @@ class Values (threading.Thread):
 
 
 
+def hallo (event):
+    print("Event: touched")
+
+
 ###############################################################################
 # WeatherApp ##################################################################
 class WeatherApp (tk.Frame):
     def __init__ (self, master=None):
         super().__init__(master)
+
+        self.screenid = 0
+
         self.master = master
         self.config(bg=CONFIG.COLORS.BACKGROUND)
 
@@ -155,13 +162,46 @@ class WeatherApp (tk.Frame):
         self.font_date_bold = Font(family="Helvetica", size=CONFIG.FONTS.SIZE_SMALL, weight="bold")
 
         self.pack()
+
+        # http://www.python-course.eu/tkinter_events_binds.php
+        master.bind("<Button-1>", hallo)
+        # master.bind("<Button-1>", self.touch_event)
+
         self.create_widgets()
+
+    def touch_event (event):
+        self.screenid += 1
+        if self.screenid >= 5: self.screenid = 0
+        print("WeatherApp.touch_event, screenid: {}".format(self.screenid))
+
 
     def create_widgets (self):
         self.grid()
         frame = tk.Frame(self, bd=10, bg=CONFIG.COLORS.BACKGROUND, width=400)
         frame.grid()
         gridpos = 1
+
+        self.frame_array = [ frame,
+                             tk.Frame(self, bd=10, bg=CONFIG.COLORS.INDOOR, width=400),
+                             tk.Frame(self, bd=10, bg=CONFIG.COLORS.OUTDOOR, width=400) ]
+
+
+        # test 1
+        # on event click:
+        #    self.frame_array[0].grid_remove()
+        #    print("removed")
+        # on second event click:
+        #    self.frame_array[0].grid()
+        #    print("grid added")
+        
+
+        # i = 0
+        # on event click:
+        #    self.frame_array[i].grid_remove()
+        #    i += 1
+        #    if >= 3: i = 0
+        #    self.frame_array[i].grid()
+
  
         temp_indoor = tk.StringVar()
         humi_indoor = tk.StringVar()
@@ -169,20 +209,11 @@ class WeatherApp (tk.Frame):
         humi_outdoor = tk.StringVar()
         pressure_outdoor = tk.StringVar()
 
-        #date_date = tk.StringVar()
-        #date_time = tk.StringVar()
-
         temp_indoor.set("23,7 °C")
         humi_indoor.set("47,56 % rF")
         temp_outdoor.set("-4,3 °C")
         humi_outdoor.set("67,99 % rF")
         pressure_outdoor.set("1013,2  hPa")
-
-        #from datetime import datetime
-        #now = datetime.now()
-        #date_date.set(now.strftime("%A, %d. %B %Y"))
-        #date_time.set(now.strftime("%X"))
- 
 
         icon = PIL.Image.open("../Resources/ico_sunny.png")
         icon = icon.resize((40, 40),  PIL.Image.ANTIALIAS)
