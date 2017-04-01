@@ -26,10 +26,6 @@
 #    with open(os.path.join(PATH, name), "w") as f:
 #        f.write(str(value))
 #
-# Change of screen
-# grid_forget()
-# http://effbot.org/tkinterbook/grid.htm#Tkinter.Grid.grid_forget-method
-# http://stackoverflow.com/questions/12364981/how-to-delete-tkinter-widgets-from-a-window
 
 
 import tkinter as tk
@@ -50,6 +46,7 @@ from SensorQueue2 import SensorQueueClient_read
 from Shutdown import Shutdown
 
 from Config import CONFIG
+from Constants import CONSTANTS
 
 
 class Displayelement (object):
@@ -154,11 +151,17 @@ class Values (threading.Thread):
         self.kid_dummy2.set("33,33 % rF")
 
 
+    @staticmethod
+    def datestr (now):
+        return "{}, {}. {} {}".format(CONSTANTS.DAYOFWEEK[now.weekday()], now.day,
+                                      CONSTANTS.MONTHNAMES[now.month], now.year)
+
+
     def run (self):
         self.__running = True
         while self.__running:
             now = datetime.now()
-            self.date_date.set(now.strftime("%A, %d. %B %Y"))
+            self.date_date.set(self.datestr(now))
             self.date_time.set(now.strftime("%X"))
             time.sleep(0.5)
 
@@ -205,12 +208,9 @@ class WeatherApp (tk.Frame):
 
     def create_screens (self):
         self.screens = OrderedDict()
-        for screen in self.screennames: # TODO: Check magic number 400
-            self.screens[screen] = tk.Frame(self, bd=10, bg=CONFIG.COLORS.BACKGROUND, width=400)
-
-        self.create_screen_main()
-        self.create_screen_owm()
-        self.create_screen_kid()
+        for screen in self.screennames:
+            self.screens[screen] = tk.Frame(self, bd=10, bg=CONFIG.COLORS.BACKGROUND)
+            getattr(self, "create_screen_{}".format(screen))() # call create_screen_X()
 
         self.screens['main'].grid()
 
