@@ -170,7 +170,7 @@ class Values (threading.Thread):
                 self.values[v.id].set(self.getvalue(v))
             else:  # queue empty --> get some interruptible sleep
                 for _ in range(10):
-                    time.sleep(0.1)
+                   time.sleep(0.1)
 
     def stop (self):
         self.__running = False
