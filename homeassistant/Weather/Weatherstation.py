@@ -111,6 +111,32 @@ class Separator (Displayelement):
                                          text=text, font=font).gridpos
 
 
+class Clock (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self.__running = False
+
+    def init_values (self, master):
+        self.date_date = tk.StringVar(master)
+        self.date_time = tk.StringVar(master)
+
+    @staticmethod
+    def datestr (now):
+        return "{}, {}. {} {}".format(CONSTANTS.DAYOFWEEK[now.weekday()], now.day,
+                                      CONSTANTS.MONTHNAMES[now.month], now.year)
+
+    def run (self):
+        self.__running = True
+        while self.__running:
+            now = datetime.now()
+            self.date_date.set(self.datestr(now))
+            self.date_time.set(now.strftime("%X"))
+            time.sleep(0.3)
+
+    def stop (self):
+        self.__running = False
+
+
 ###############################################################################
 # Values ######################################################################
 class Values (threading.Thread):
@@ -119,8 +145,8 @@ class Values (threading.Thread):
         self.__running = False
 
     def init_values (self, master):
-        self.date_date = tk.StringVar(master)
-        self.date_time = tk.StringVar(master)
+        # self.date_date = tk.StringVar(master)
+        # self.date_time = tk.StringVar(master)
 
         # values of main screen (indoor and outdoor values at home)
         self.temp_indoor = tk.StringVar()
@@ -150,18 +176,8 @@ class Values (threading.Thread):
         self.kid_dummy2.set("33,33 % rF")
 
 
-    @staticmethod
-    def datestr (now):
-        return "{}, {}. {} {}".format(CONSTANTS.DAYOFWEEK[now.weekday()], now.day,
-                                      CONSTANTS.MONTHNAMES[now.month], now.year)
-
-
     def run (self):
-        self.__running = True
         while self.__running:
-            now = datetime.now()
-            self.date_date.set(self.datestr(now))
-            self.date_time.set(now.strftime("%X"))
             time.sleep(0.5)
 
     def stop (self):
@@ -179,6 +195,8 @@ class WeatherApp (tk.Frame):
 
         self.master = master
 
+        clock.init_values(master)
+        clock.start()
         values.init_values(master)
         values.start()
 
@@ -190,7 +208,7 @@ class WeatherApp (tk.Frame):
 
         self.grid()
         self.create_screens()
-        self.create_dateframe(master)
+        self.create_dateframe(self.master)
 
         self.master.bind("<Button-1>", self.touch_event)
 
@@ -225,15 +243,15 @@ class WeatherApp (tk.Frame):
         gridpos = 0
         gridpos = Separator(frame=self.dateframe, gridpos=gridpos).gridpos
         gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
-                           stringvar=values.date_date,
+                           stringvar=clock.date_date,
                            font=self.font_date, color=CONFIG.COLORS.DATE).gridpos
         gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
-                           stringvar=values.date_time,
+                           stringvar=clock.date_time,
                            font=self.font_date_bold, color=CONFIG.COLORS.DATE).gridpos
 
 
     def create_screen_main (self):
-        self.contentframe = self.screens['main']
+        self.contentframe = self.screens['main']  # TODO: Remove
         gridpos = 0
 
         icon = PIL.Image.open("../Resources/ico_sunny.png")
@@ -333,6 +351,8 @@ class Weather (object):
 def shutdown_application ():
     """called on shutdown; stops all threads"""
     print("in shutdown_application()")
+    clock.stop()
+    clock.join()
     values.stop()
     values.join()
     weather.stop()
@@ -347,6 +367,7 @@ if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     values = Values()
+    clock  = Clock()
 
     weather = Weather()
     weather.run()
