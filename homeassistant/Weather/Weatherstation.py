@@ -190,7 +190,7 @@ class WeatherApp (tk.Frame):
 
         self.grid()
         self.create_screens()
-        self.create_dateframe(self)
+        self.create_dateframe(master)
 
         self.master.bind("<Button-1>", self.touch_event)
 
