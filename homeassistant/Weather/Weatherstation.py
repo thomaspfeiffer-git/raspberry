@@ -66,8 +66,8 @@ class Text (tk.Label, Displayelement):
     def __init__ (self, frame, gridpos, text, stringvar, anchor, sticky, font, color):
         # TODO: type safety: stringvar
         super().__init__(frame, text=text, textvariable=stringvar, 
-                         justify="left", anchor=anchor, font=font,
-                         relief="raised",
+                         # justify="left", anchor=anchor, font=font,
+                         justify="center", anchor=anchor, font=font,
                          foreground=color, background=CONFIG.COLORS.BACKGROUND)
         self.gridpos = gridpos+1
         self.grid(row=gridpos, column=1, columnspan=5, sticky=sticky)
@@ -84,7 +84,7 @@ class DateItem (Text):
     """draws a date line"""
     def __init__ (self, frame, gridpos, stringvar, font, color):
         super().__init__(frame, gridpos=gridpos, text=None, stringvar=stringvar, 
-                         anchor="c", sticky="we", font=font, color=color)
+                         anchor="center", sticky="we", font=font, color=color)
 
 
 class SeparatorText (Text):
@@ -109,7 +109,6 @@ class Separator (Displayelement):
         if text is not None:
             self.gridpos = SeparatorText(frame=frame, gridpos=self.gridpos,
                                          text=text, font=font).gridpos
-
 
 
 ###############################################################################
@@ -169,7 +168,6 @@ class Values (threading.Thread):
         self.__running = False
 
 
-
 ###############################################################################
 # WeatherApp ##################################################################
 class WeatherApp (tk.Frame):
@@ -180,7 +178,6 @@ class WeatherApp (tk.Frame):
         self.screenid = 0  # Number of currently displayed screen
 
         self.master = master
-        # self.config(bg="DarkOrange", width=300, height=480)
 
         values.init_values(master)
         values.start()
@@ -193,6 +190,7 @@ class WeatherApp (tk.Frame):
 
         self.grid()
         self.create_screens()
+        self.create_dateframe(self)
 
         self.master.bind("<Button-1>", self.touch_event)
 
@@ -208,54 +206,39 @@ class WeatherApp (tk.Frame):
     def create_screens (self):
         self.screens = OrderedDict()
         for screen in self.screennames:
-            self.screens[screen] = tk.Frame(self, bd=10, bg=CONFIG.COLORS.BACKGROUND, height=250)
+            self.screens[screen] = tk.Frame(self)
+            self.screens[screen].config(bd=10, bg=CONFIG.COLORS.BACKGROUND, 
+                                        width=self.master.width, height=410)
+            self.screens[screen].grid_propagate(0)
             getattr(self, "create_screen_{}".format(screen))() # call create_screen_X()
 
         self.screens['main'].grid()
 
 
+    def create_dateframe (self, master):
+        self.dateframe = tk.Frame(master)
+        self.dateframe.config(bd=10, bg=CONFIG.COLORS.BACKGROUND, 
+                              width=self.master.width, height=70)
+        self.dateframe.grid_propagate(0)
+        self.dateframe.grid()
+
+        gridpos = 0
+        gridpos = Separator(frame=self.dateframe, gridpos=gridpos).gridpos
+        gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
+                           stringvar=values.date_date,
+                           font=self.font_date, color=CONFIG.COLORS.DATE).gridpos
+        gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
+                           stringvar=values.date_time,
+                           font=self.font_date_bold, color=CONFIG.COLORS.DATE).gridpos
+
+
     def create_screen_main (self):
+        self.contentframe = self.screens['main']
         gridpos = 0
 
-        self.screens['main'].grid_rowconfigure(0, weight=1) 
-        self.contentframe = tk.Frame(self.screens['main'], bg="green")
-        self.contentframe.grid(row=0, sticky="nsew")
-        # self.contentframe = self.screens['main']
-
- 
         icon = PIL.Image.open("../Resources/ico_sunny.png")
         icon = icon.resize((40, 40),  PIL.Image.ANTIALIAS)
         self.icon = PIL.ImageTk.PhotoImage(icon)
-
-        """
-        icons = [i for i in range(5)]
-        for i in range(len(icons)):
-            icons[i] = tk.Label(self.screens['main'], image=self.icon, 
-                                height=50, bg=CONFIG.COLORS.BACKGROUND)
-            icons[i].grid(row=gridpos, column=i+1)
-        gridpos += 1
-
-        gridpos = Separator(frame=self.screens['main'], gridpos=gridpos, text="Wohnzimmer:", 
-                            font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
-                              stringvar=values.temp_indoor, 
-                              font=self.font_item, color=CONFIG.COLORS.INDOOR).gridpos
-        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
-                              stringvar=values.humi_indoor, 
-                              font=self.font_item, color=CONFIG.COLORS.INDOOR).gridpos
-
-        gridpos = Separator(frame=self.screens['main'], gridpos=gridpos, text="Draußen:", 
-                            font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
-                              stringvar=values.temp_outdoor, 
-                              font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
-                              stringvar=values.humi_outdoor, 
-                              font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-        gridpos = WeatherItem(frame=self.screens['main'], gridpos=gridpos, 
-                              stringvar=values.pressure_outdoor,
-                              font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-        """
 
         icons = [i for i in range(5)]
         for i in range(len(icons)):
@@ -284,19 +267,6 @@ class WeatherApp (tk.Frame):
         gridpos = WeatherItem(frame=self.contentframe, gridpos=gridpos, 
                               stringvar=values.pressure_outdoor,
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-
-
-        self.dateframe = tk.Frame(self.screens['main'], bg="red", height=33)
-        self.dateframe.grid(row=1, sticky="we")
-        # self.dateframe = self.screens['main']
-
-        gridpos = Separator(frame=self.dateframe, gridpos=gridpos).gridpos
-        gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
-                           stringvar=values.date_date,
-                           font=self.font_date, color=CONFIG.COLORS.DATE).gridpos
-        gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
-                           stringvar=values.date_time,
-                           font=self.font_date_bold, color=CONFIG.COLORS.DATE).gridpos
 
 
     def create_screen_owm (self):
@@ -335,8 +305,10 @@ class Weather (object):
 
         self.root.resizable(width=False, height=False)
         # w = self.root.winfo_screenwidth() # TODO Get coordinates from config file
-        w = 280
+        w = 280 # TODO beautify code
         h = self.root.winfo_screenheight()
+        self.root.width = 280
+        self.root.height = self.root.winfo_screenheight()
         print("w: {}, h: {}".format(w, h))
         self.root.geometry("{}x{}+{}+{}".format(w,h,0,0))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
