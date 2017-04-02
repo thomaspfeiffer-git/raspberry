@@ -111,6 +111,8 @@ class Separator (Displayelement):
                                          text=text, font=font).gridpos
 
 
+###############################################################################
+# Clock #######################################################################
 class Clock (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
@@ -142,43 +144,33 @@ class Clock (threading.Thread):
 class Values (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
+        self.queue = SensorQueueClient_read("../config.ini")
+        self.values = { "ID_{:02d}".format(id+1): None for id in range(40) }
+        self.values.update({ "ID_OWM_{:02d}".format(id+1): None for id in range(30) })
         self.__running = False
 
     def init_values (self, master):
-        # self.date_date = tk.StringVar(master)
-        # self.date_time = tk.StringVar(master)
+        for id in self.values.keys():
+            self.values[id] = tk.StringVar()
+            self.values[id].set(self.getvalue(None))
 
-        # values of main screen (indoor and outdoor values at home)
-        self.temp_indoor = tk.StringVar()
-        self.humi_indoor = tk.StringVar()
-        self.temp_outdoor = tk.StringVar()
-        self.humi_outdoor = tk.StringVar()
-        self.pressure_outdoor = tk.StringVar()
-
-        # TODO: remove; use real data from queue
-        self.temp_indoor.set("23,7 °C")
-        self.humi_indoor.set("47,56 % rF")
-        self.temp_outdoor.set("-4,3 °C")
-        self.humi_outdoor.set("67,99 % rF")
-        self.pressure_outdoor.set("1013,2  hPa")
-
-
-        # values for data from openweathermap
-        self.owm_dummy1 = tk.StringVar()
-        self.owm_dummy2 = tk.StringVar()
-        self.owm_dummy1.set("22,2 °C")
-        self.owm_dummy2.set("22,22 % rF")
-
-        # values for data from kid's room
-        self.kid_dummy1 = tk.StringVar()
-        self.kid_dummy2 = tk.StringVar()
-        self.kid_dummy1.set("33,3 °C")
-        self.kid_dummy2.set("33,33 % rF")
-
+    @staticmethod
+    def getvalue (sensorvalue):
+        """returns measured value of sensor or "n/a" if sensorvalue == None"""
+        if sensorvalue is not None:
+            return sensorvalue.value
+        else:
+            return "(n/a)"
 
     def run (self):
+        self.__running = True
         while self.__running:
-            time.sleep(0.5)
+            v = self.queue.read()
+            if v is not None: 
+                self.values[v.id].set(self.getvalue(v))
+            else:  # queue empty --> get some interruptible sleep
+                for _ in range(100):
+                    time.sleep(0.1)
 
     def stop (self):
         self.__running = False
@@ -251,7 +243,7 @@ class WeatherApp (tk.Frame):
 
 
     def create_screen_main (self):
-        self.contentframe = self.screens['main']  # TODO: Remove
+        frame = self.screens['main']
         gridpos = 0
 
         icon = PIL.Image.open("../Resources/ico_sunny.png")
@@ -260,30 +252,30 @@ class WeatherApp (tk.Frame):
 
         icons = [i for i in range(5)]
         for i in range(len(icons)):
-            icons[i] = tk.Label(self.contentframe, image=self.icon, 
+            icons[i] = tk.Label(frame, image=self.icon, 
                                 height=50, bg=CONFIG.COLORS.BACKGROUND)
             icons[i].grid(row=gridpos, column=i+1)
         gridpos += 1
 
-        gridpos = Separator(frame=self.contentframe, gridpos=gridpos, text="Wohnzimmer:", 
+        gridpos = Separator(frame=frame, gridpos=gridpos, text="Wohnzimmer:", 
                             font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=self.contentframe, gridpos=gridpos, 
-                              stringvar=values.temp_indoor, 
+        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
+                              stringvar=values.values['ID_01'],
                               font=self.font_item, color=CONFIG.COLORS.INDOOR).gridpos
-        gridpos = WeatherItem(frame=self.contentframe, gridpos=gridpos, 
-                              stringvar=values.humi_indoor, 
+        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
+                              stringvar=values.values['ID_02'],
                               font=self.font_item, color=CONFIG.COLORS.INDOOR).gridpos
 
-        gridpos = Separator(frame=self.contentframe, gridpos=gridpos, text="Draußen:", 
+        gridpos = Separator(frame=frame, gridpos=gridpos, text="Draußen:", 
                             font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=self.contentframe, gridpos=gridpos, 
-                              stringvar=values.temp_outdoor, 
+        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
+                              stringvar=values.values['ID_12'],
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-        gridpos = WeatherItem(frame=self.contentframe, gridpos=gridpos, 
-                              stringvar=values.humi_outdoor, 
+        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
+                              stringvar=values.values['ID_04'],
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-        gridpos = WeatherItem(frame=self.contentframe, gridpos=gridpos, 
-                              stringvar=values.pressure_outdoor,
+        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
+                              stringvar=values.values['ID_05'],
                               font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
 
 
@@ -293,10 +285,10 @@ class WeatherApp (tk.Frame):
                             text="Wettervorhersage aktuell:", 
                             font=self.font_separator).gridpos
         gridpos = WeatherItem(frame=self.screens['owm'], gridpos=gridpos, 
-                              stringvar=values.owm_dummy1,
+                              stringvar=values.values['ID_OWM_01'],
                               font=self.font_item, color=CONFIG.COLORS.FORECAST).gridpos
         gridpos = WeatherItem(frame=self.screens['owm'], gridpos=gridpos, 
-                              stringvar=values.owm_dummy2,
+                              stringvar=values.values['ID_OWM_01'],
                               font=self.font_item, color=CONFIG.COLORS.FORECAST).gridpos
 
 
@@ -306,10 +298,10 @@ class WeatherApp (tk.Frame):
                             text="Kinderzimmer:", 
                             font=self.font_separator).gridpos
         gridpos = WeatherItem(frame=self.screens['kid'], gridpos=gridpos, 
-                              stringvar=values.kid_dummy1,
+                              stringvar=values.values['ID_06'],
                               font=self.font_item, color=CONFIG.COLORS.KIDSROOM).gridpos
         gridpos = WeatherItem(frame=self.screens['kid'], gridpos=gridpos, 
-                              stringvar=values.kid_dummy2,
+                              stringvar=values.values['ID_06'],
                               font=self.font_item, color=CONFIG.COLORS.KIDSROOM).gridpos
 
 
@@ -327,7 +319,7 @@ class Weather (object):
         h = self.root.winfo_screenheight()
         self.root.width = 280
         self.root.height = self.root.winfo_screenheight()
-        print("w: {}, h: {}".format(w, h))
+        # print("w: {}, h: {}".format(w, h))
         self.root.geometry("{}x{}+{}+{}".format(w,h,0,0))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = WeatherApp(master=self.root)
@@ -347,6 +339,7 @@ class Weather (object):
         self.root.quit() # TODO: check usage of destroy() and quit()
 
 
+###############################################################################
 # shutdown_application ########################################################
 def shutdown_application ():
     """called on shutdown; stops all threads"""
@@ -376,9 +369,6 @@ if __name__ == '__main__':
     # make separate thread
     sensorqueue = SensorQueueClient_read("../config.ini")
     while True:
-        v = sensorqueue.read()
-        if v is not None: 
-            print(v)
 """
 
 # eof #
