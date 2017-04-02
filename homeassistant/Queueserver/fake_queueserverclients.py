@@ -42,7 +42,7 @@ if __name__ == '__main__':
     sq.start()
 
     while True:
-        print("sending values ...")
+        # print("sending values ...")
         qv['qv_temp_wardrobe'].value = "22.{:02d}".format(random.randint(0,99))
         qv['qv_humi_wardrobe'].value = "67.{:02d}".format(random.randint(0,99))
         qv['qv_light_wardrobe'].value = "823.{:02d}".format(random.randint(0,99))
