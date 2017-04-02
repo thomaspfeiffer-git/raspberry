@@ -43,17 +43,17 @@ if __name__ == '__main__':
 
     while True:
         print("sending values ...")
-        qv['qv_temp_wardrobe'].value = "22.{:2d}".format(random.randint(0,99))
-        qv['qv_humi_wardrobe'].value = "67.{:2d}".format(random.randint(0,99))
-        qv['qv_light_wardrobe'].value = "823.{:2d}".format(random.randint(0,99))
-        qv['qvalue_temp_indoor'].value = "11.{:2d}".format(random.randint(0,99))
-        qv['qvalue_humi_indoor'].value = "11.{:2d}".format(random.randint(0,99))
-        qv['qvalue_temp_outdoor'].value = "22.{:2d}".format(random.randint(0,99))
-        qv['qvalue_humi_outdoor'].value = "22.{:2d}".format(random.randint(0,99))
-        qv['qvalue_pressure'].value = "1013.{:2d}".format(random.randint(0,99))
-        qv['qvalue_temp_realoutdoor'].value = "-22.{:2d}".format(random.randint(0,99))
-        qv['qvalue_temp_indoor2'].value = "23.{:2d}".format(random.randint(0,99))
-        time.sleep(5)
+        qv['qv_temp_wardrobe'].value = "22.{:02d}".format(random.randint(0,99))
+        qv['qv_humi_wardrobe'].value = "67.{:02d}".format(random.randint(0,99))
+        qv['qv_light_wardrobe'].value = "823.{:02d}".format(random.randint(0,99))
+        qv['qvalue_temp_indoor'].value = "11.{:02d}".format(random.randint(0,99))
+        qv['qvalue_humi_indoor'].value = "11.{:02d}".format(random.randint(0,99))
+        qv['qvalue_temp_outdoor'].value = "22.{:02d}".format(random.randint(0,99))
+        qv['qvalue_humi_outdoor'].value = "22.{:02d}".format(random.randint(0,99))
+        qv['qvalue_pressure'].value = "1013.{:02d}".format(random.randint(0,99))
+        qv['qvalue_temp_realoutdoor'].value = "-22.{:02d}".format(random.randint(0,99))
+        qv['qvalue_temp_indoor2'].value = "23.{:02d}".format(random.randint(0,99))
+        time.sleep(45)
 
 # eof #
 
