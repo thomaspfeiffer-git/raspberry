@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """provides fake data to the QueueServer2 for testing purposes"""
 
+import random
 import sys
 import time
 import threading
@@ -26,7 +27,14 @@ if __name__ == '__main__':
     qv = {
           'qv_temp_wardrobe': SensorValueLock("ID_31", "TempWardrobe", SensorValue.Types.Temp, "°C", threading.Lock()),
           'qv_humi_wardrobe': SensorValueLock("ID_32", "HumiWardrobe", SensorValue.Types.Humi, "% rF", threading.Lock()),
-          'qv_light_wardrobe': SensorValueLock("ID_33", "LightWardrobe", SensorValue.Types.Light, "lux", threading.Lock())
+          'qv_light_wardrobe': SensorValueLock("ID_33", "LightWardrobe", SensorValue.Types.Light, "lux", threading.Lock()),
+          'qvalue_temp_indoor':      SensorValueLock("ID_01", "TempWohnzimmerIndoor", SensorValue.Types.Temp, "°C", threading.Lock()),
+          'qvalue_humi_indoor':      SensorValueLock("ID_02", "HumiWohnzimmerIndoor", SensorValue.Types.Humi, "% rF", threading.Lock()),
+          'qvalue_temp_outdoor':     SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, "°C", threading.Lock()),
+          'qvalue_humi_outdoor':     SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, "% rF", threading.Lock()),
+          'qvalue_pressure':         SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, "hPa", threading.Lock()),
+          'qvalue_temp_realoutdoor': SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, "°C", threading.Lock()),
+          'qvalue_temp_indoor2':     SensorValueLock("ID_13", "TempWohnzimmerFenster", SensorValue.Types.Temp, "°C", threading.Lock())
          }
 
     sq = SensorQueueClient_write("../config.ini")
@@ -35,10 +43,17 @@ if __name__ == '__main__':
 
     while True:
         print("sending values ...")
-        qv['qv_temp_wardrobe'].value = "22.2"
-        # qv['qv_humi_wardrobe'].value = "67.3"
-        # qv['qv_light_wardrobe'].value = "823"
-        time.sleep(45)
+        qv['qv_temp_wardrobe'].value = "22.{}".format(random.randint(0,9))
+        qv['qv_humi_wardrobe'].value = "67.{}".format(random.randint(0,9))
+        qv['qv_light_wardrobe'].value = "823.{}".format(random.randint(0,9))
+        qv['qvalue_temp_indoor'].value = "11.{}".format(random.randint(0,9))
+        qv['qvalue_humi_indoor'].value = "11.{}".format(random.randint(0,9))
+        qv['qvalue_temp_outdoor'].value = "22.{}".format(random.randint(0,9))
+        qv['qvalue_humi_outdoor'].value = "22.{}".format(random.randint(0,9))
+        qv['qvalue_pressure'].value = "1013.{}".format(random.randint(0,9))
+        qv['qvalue_temp_realoutdoor'].value = "-22.{}".format(random.randint(0,9))
+        qv['qvalue_temp_indoor2'].value = "23.{}".format(random.randint(0,9))
+        time.sleep(5)
 
 # eof #
 
