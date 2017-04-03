@@ -50,7 +50,7 @@ if __name__ == '__main__':
         qv['qv_pressure'].value = "1013.{:02d}".format(random.randint(0,99))
         qv['qv_temp_realoutdoor'].value = "-22.{:02d}".format(random.randint(0,99))
         qv['qv_temp_indoor2'].value = "23.{:02d}".format(random.randint(0,99))
-        time.sleep(5)
+        time.sleep(1)
 
 # eof #
 
