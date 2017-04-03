@@ -114,6 +114,7 @@ class Separator (Displayelement):
 ###############################################################################
 # Clock #######################################################################
 class Clock (threading.Thread):
+    """dedicated thread for updating the date and time fields"""
     def __init__ (self):
         threading.Thread.__init__(self)
         self.__running = False
@@ -142,6 +143,7 @@ class Clock (threading.Thread):
 ###############################################################################
 # Values ######################################################################
 class Values (threading.Thread):
+    """dedicated thread for updating all weather items"""
     def __init__ (self):
         threading.Thread.__init__(self)
         self.queue = SensorQueueClient_read("../config.ini")
@@ -185,12 +187,11 @@ class WeatherApp (tk.Frame):
         super().__init__(master)
 
         self.screennames = ['main', 'owm', 'kid']
-
         self.master = master
 
-        clock.init_values(master)
+        clock.init_values(self.master)
         clock.start()
-        values.init_values(master)
+        values.init_values(self.master)
         values.start()
 
         family = "Arial" # TODO: get from config file
