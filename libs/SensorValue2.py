@@ -88,10 +88,11 @@ class SensorValue_Data (object):
 
 
 class SensorValue (object):
-    # TODO change doc string
-    """Provides a wrapper for a SensorValue with a Lock(). 
-       Locks cannot be pickled, therefore we need to use a dedicated
-       class for SensorValues with Locks"""
+    """Provides a wrapper for SensorValue_Data for immediately sending
+       data to the queue as soon as the value was changed.
+       Methods of other classes cannot be pickled, therefore we need to 
+       use a dedicated class for SensorValues with the ability of immediate
+       sending of data"""
     def __init__ (self, v_id, name, type_, unit):
         self.__queuefunc = None
         self._sensorvalue = SensorValue_Data(v_id, name, type_, unit)
@@ -102,18 +103,15 @@ class SensorValue (object):
            where sensorvalue is of type SensorValue
            queuefunc() is used to write data into a queue"""
         self.__queuefunc = func
-        print("setqueuefunc: {}".format(self.__queuefunc))
 
     @property
     def value (self):
         return self._sensorvalue.value
 
     @value.setter
-    def value (self, _value):
-        self._sensorvalue.value = _value
-        # print("value, __queuefunc: {}".format(self.__queuefunc))
-        if self.__queuefunc is not None:  # value() is called in constructor as well
-            self.__queuefunc(self._sensorvalue)   # TODO: set __queuefunc in Constructor?
+    def value (self, value_):
+        self._sensorvalue.value = value_
+        self.__queuefunc(self._sensorvalue)
 
 # eof
 
