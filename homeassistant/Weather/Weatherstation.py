@@ -185,7 +185,6 @@ class WeatherApp (tk.Frame):
         super().__init__(master)
 
         self.screennames = ['main', 'owm', 'kid']
-        self.screenid = 0  # Number of currently displayed screen
 
         self.master = master
 
@@ -204,15 +203,46 @@ class WeatherApp (tk.Frame):
         self.create_screens()
         self.create_dateframe(self.master)
 
-        self.master.bind("<Button-1>", self.touch_event)
+        self.master.bind("<Button-1>", self.next_screen())
 
 
-    def touch_event (self, event):
-        self.screens[self.screennames[self.screenid]].grid_remove()
-        self.screenid += 1
-        if self.screenid >= len(self.screennames): 
-            self.screenid = 0
-        self.screens[self.screennames[self.screenid]].grid()
+    def next_screen (self):
+        """pagination of screens with fallback to first (main) screen after
+           CONFIG.TIMETOFALLBACK milliseconds
+           triggered by bind("<Button-1>")"""
+        screenid = 0  # ID of currently displayed screen
+        reset = None
+
+        def first_screen ():
+            """switch back to first screen after 
+               CONFIG.TIMETOFALLBACK milliseconds"""
+            nonlocal screenid, reset
+
+            if screenid != 0:
+                self.screens[self.screennames[screenid]].grid_remove()
+                screenid = 0
+                self.screens[self.screennames[screenid]].grid()
+            reset = None
+ 
+        def next (event):
+            """do pagination of screens and set callback to first_screen()
+               after CONFIG.TIMETOFALLBACK milliseconds"""
+            nonlocal screenid, reset
+
+            if reset is not None:
+                self.master.after_cancel(reset)
+                reset = None
+
+            self.screens[self.screennames[screenid]].grid_remove()
+            screenid += 1
+            if screenid >= len(self.screennames): 
+                screenid = 0
+            self.screens[self.screennames[screenid]].grid()
+
+            # switch to first screen after CONFIG.TIMETOFALLBACK milliseconds
+            reset = self.master.after(CONFIG.TIMETOFALLBACK, first_screen)
+
+        return next
 
 
     def create_screens (self):
@@ -223,7 +253,7 @@ class WeatherApp (tk.Frame):
                                         bg=CONFIG.COLORS.BACKGROUND, 
                                         width=self.master.width, height=410)
             self.screens[screen].grid_propagate(0)
-            self.screens[screen].grid_columnconfigure(1, minsize=self.master.width- \
+            self.screens[screen].grid_columnconfigure(1, minsize=self.master.width - \
                                                          2*self.master.borderwidth)
             getattr(self, "create_screen_{}".format(screen))() # call create_screen_X()
 
@@ -236,7 +266,7 @@ class WeatherApp (tk.Frame):
                               bg=CONFIG.COLORS.BACKGROUND, 
                               width=self.master.width, height=70)
         self.dateframe.grid_propagate(0)
-        self.dateframe.grid_columnconfigure(1, minsize=self.master.width- \
+        self.dateframe.grid_columnconfigure(1, minsize=self.master.width - \
                                                        2*self.master.borderwidth)
         self.dateframe.grid()
 
@@ -300,7 +330,7 @@ class WeatherApp (tk.Frame):
                               stringvar=values.values['ID_OWM_01'],
                               font=self.font_item, color=CONFIG.COLORS.FORECAST).gridpos
         gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_OWM_01'],
+                              stringvar=values.values['ID_OWM_02'],
                               font=self.font_item, color=CONFIG.COLORS.FORECAST).gridpos
 
 
