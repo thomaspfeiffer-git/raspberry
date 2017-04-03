@@ -50,7 +50,7 @@ class CONFIG:
         ICON_RAINY    = os.path.join(PATH, 'ico_rainy.png')
 
 
-    TIMETOFALLBACK = 15 # Wait 15 seconds until fallback to main screen
+    TIMETOFALLBACK = 15000 # Wait 15 seconds until fallback to main screen
 
 # eof #
 
