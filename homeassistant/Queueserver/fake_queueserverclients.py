@@ -30,6 +30,8 @@ if __name__ == '__main__':
           'qv_temp_outdoor':     SensorValue("ID_03", "TempWohnzimmerOutdoor", SensorValue_Data.Types.Temp, "°C"),
           'qv_humi_outdoor':     SensorValue("ID_04", "HumiWohnzimmerOutdoor", SensorValue_Data.Types.Humi, "% rF"),
           'qv_pressure':         SensorValue("ID_05", "Luftdruck", SensorValue_Data.Types.Pressure, "hPa"),
+          'qv_temp_kid':         SensorValue("ID_06", "TempKinderzimmer", SensorValue_Data.Types.Temp, "°C"),
+          'qv_humi_kid':         SensorValue("ID_07", "HumiKinderzimmer", SensorValue_Data.Types.Humi, "% rF"),
           'qv_temp_realoutdoor': SensorValue("ID_12", "TempRealOutdoor", SensorValue_Data.Types.Temp, "°C"),
           'qv_temp_indoor2':     SensorValue("ID_13", "TempWohnzimmerFenster", SensorValue_Data.Types.Temp, "°C")
          }
@@ -47,7 +49,9 @@ if __name__ == '__main__':
         qv['qv_humi_indoor'].value = "11.{:02d}".format(random.randint(0,99))
         qv['qv_temp_outdoor'].value = "22.{:02d}".format(random.randint(0,99))
         qv['qv_humi_outdoor'].value = "22.{:02d}".format(random.randint(0,99))
-        qv['qv_pressure'].value = "1013.{:02d}".format(random.randint(0,99))
+        qv['qv_pressure'].value = "1013.{:01d}".format(random.randint(0,9))
+        qv['qv_temp_kid'].value = "33.{:02d}".format(random.randint(0,99))
+        qv['qv_humi_kid'].value = "33.{:02d}".format(random.randint(0,99))
         qv['qv_temp_realoutdoor'].value = "-22.{:02d}".format(random.randint(0,99))
         qv['qv_temp_indoor2'].value = "23.{:02d}".format(random.randint(0,99))
         time.sleep(1)
