@@ -13,7 +13,7 @@ SensorQueueClient: Provides a client for the queue with methods
 """
 
 import configparser
-import copy
+# import copy  # TODO remove after testing
 from datetime import datetime
 from multiprocessing.managers import BaseManager
 import pickle
@@ -21,7 +21,7 @@ import queue
 from socket import gethostname
 import sys
 import time
-import threading
+# import threading  # TODO remove after testing
 
 
 def Log (logstr):
@@ -58,7 +58,7 @@ class SensorQueueConfig (object):
         self.PORT       = int(config['Queue']['Port'])
         self.AUTHKEY    = config['Queue']['Key'].encode('latin1')
         self.RETRYDELAY = 60
-        self.SENDDELAY  = 60
+        # self.SENDDELAY  = 60  # TODO remove after testing
         self.SERIALIZER = "pickle"
 
 
@@ -131,39 +131,44 @@ class SensorQueueClient (object):
 
 
 ##############################################################################
-class SensorQueueClient_write (SensorQueueClient, threading.Thread):
+# class SensorQueueClient_write (SensorQueueClient, threading.Thread):  # TODO remove after testing
+class SensorQueueClient_write (SensorQueueClient):
     """write to queue as a thread"""
     def __init__ (self, configfilename):
-        threading.Thread.__init__(self)
+ #       threading.Thread.__init__(self)  # TODO remove after testing
         SensorQueueClient.__init__(self, configfilename)
+        # TODO check super().__init ...
         self.__svl     = []
-        self.__running = True
+        # self.__running = True  # TODO remove after testing
 
-    def register (self, sensorvaluelock):
+    def register (self, sensorvalue):
         """add another sensor"""
-        self.__svl.append(sensorvaluelock) 
+        self.__svl.append(sensorvalue)
+        print("register: {}".format(sensorvalue._sensorvalue.id))
+        sensorvalue.setqueuefunc(self.write)
 
-    def unregister (self, sensorvaluelock):
+    def unregister (self, sensorvalue):
         """remove sensor from list"""
-        self.__svl.remove(sensorvaluelock) # TODO: try/exception
+        self.__svl.remove(sensorvalue) # TODO: try/exception
 
-    def run (self):
-        """start thread. 
-           loop: send data of _all_ sensors to queue and sleep"""
-        while self.__running:
-            for sensor in self.__svl:
-                with sensor._lock:             # copy data from sensor
-                    item = copy.deepcopy(sensor._sensorvalue) 
-                self.write(item)               # write data to queue
+    # TODO: remove cfg.SENDDELAY
+    #def run (self):
+    #    """start thread. 
+    #       loop: send data of _all_ sensors to queue and sleep"""
+    #    while self.__running:
+    #        for sensor in self.__svl:
+    #            with sensor._lock:             # copy data from sensor
+    #                item = copy.deepcopy(sensor._sensorvalue) 
+    #            self.write(item)               # write data to queue
 
-            for _ in range(self.cfg.SENDDELAY * 10):
-                time.sleep(0.1)
-                if not self.__running:
-                    break
+    #        for _ in range(self.cfg.SENDDELAY * 10):
+    #            time.sleep(0.1)
+    #            if not self.__running:
+    #                break
 
-    def stop (self):
-        """stops the running thread"""
-        self.__running = False
+    #def stop (self):
+    #    """stops the running thread"""
+    #    self.__running = False
 
     def write (self, item):
         """write to the queue"""
@@ -171,6 +176,8 @@ class SensorQueueClient_write (SensorQueueClient, threading.Thread):
             try:
                 try:
                     pickled = pickle.dumps(item)
+                    print("sensorqueue.write(), sizeof pickled element id {}: {}".
+                           format(item.id, sys.getsizeof(pickled)))
                 except:
                     Log("Cannot pickle: {0[0]} {0[1]}".format(sys.exc_info()))
                 else:
