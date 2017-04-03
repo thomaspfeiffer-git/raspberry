@@ -171,6 +171,8 @@ class Values (threading.Thread):
             else:  # queue empty --> get some interruptible sleep
                 for _ in range(10):
                    time.sleep(0.1)
+                   if not self.__running:
+                       break
 
     def stop (self):
         self.__running = False
