@@ -18,14 +18,6 @@
 #
 # Packages you might install
 # sudo apt-get install python3-pil.imagetk
-#
-# Adjusting lightness
-# cd /sys/class/backlight/rpi_backlight/
-# sudo bash -c 'echo "255" > brightness'
-# def _set_value(name, value):
-#    with open(os.path.join(PATH, name), "w") as f:
-#        f.write(str(value))
-#
 
 
 import tkinter as tk
