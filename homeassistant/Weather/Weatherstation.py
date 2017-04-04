@@ -409,6 +409,7 @@ class Weather (object):
     def __init__ (self):
         self.root = tk.Tk()
         self.root.overrideredirect(1)
+        self.root.config(cursor='none')
 
         self.root.resizable(width=False, height=False)
         # w = self.root.winfo_screenwidth() # TODO Get coordinates and dimension from config file
