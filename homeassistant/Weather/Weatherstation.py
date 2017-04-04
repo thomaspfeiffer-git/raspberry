@@ -73,6 +73,13 @@ class Text (tk.Label, Displayelement):
         self.grid(row=gridpos, column=0, sticky=sticky)
 
 
+class Image (tk.Label, Displayelement):
+    def __init__ (self, frame, gridpos, image):
+        super().__init__(frame, image=image, background=CONFIG.COLORS.BACKGROUND)
+        self.gridpos = gridpos+1 
+        self.grid(row=gridpos, column=0, sticky="we")
+
+
 class WeatherItem (Text):
     """draws a single weather item"""
     def __init__ (self, frame, gridpos, stringvar, font=None, color=None):
@@ -287,6 +294,23 @@ class WeatherApp (tk.Frame):
                                   stringvar=values.values[item],
                                   font=self.font_item, color=color).gridpos
         return gridpos
+
+
+    def drawPicture (self, frame, picture, id_, zoom, gridpos):
+        picture = PIL.Image.open(picture)
+        w, h = picture.size
+        w = int(w*zoom)
+        h = int(h*zoom)
+        picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
+
+        # image needs to stored garbage collector save, otherwise the 
+        # image would be deleted by the garbage collector and therefore
+        # it would not be displayed.
+        attrname = "picture_{}".format(id_) 
+        setattr(self, attrname, PIL.ImageTk.PhotoImage(picture))
+        gridpos = Image(frame=frame, gridpos=gridpos, 
+                        image=getattr(self,attrname)).gridpos
+        return gridpos
         
 
     def create_screen_main (self):
@@ -334,6 +358,8 @@ class WeatherApp (tk.Frame):
                                           itemlist=['ID_06', 'ID_07'],
                                           color=CONFIG.COLORS.KIDSROOM,
                                           gridpos=gridpos)
+        gridpos = self.drawPicture(frame=frame, picture=CONFIG.IMAGES.PIC_KIDSROOM,
+                                   id_='kid', zoom=0.9, gridpos=gridpos)
 
 
     def create_screen_kb_outdoor (self):
@@ -344,6 +370,8 @@ class WeatherApp (tk.Frame):
                                           itemlist=['ID_24', 'ID_25', 'ID_23'],
                                           color=CONFIG.COLORS.COTTAGE,
                                           gridpos=gridpos)
+        gridpos = self.drawPicture(frame=frame, picture=CONFIG.IMAGES.PIC_COTTAGE,
+                                   id_='kb', zoom=0.8, gridpos=gridpos)
 
 
     def create_screen_kb_indoor (self):
