@@ -33,7 +33,16 @@ if __name__ == '__main__':
           'qv_temp_kid':         SensorValue("ID_06", "TempKinderzimmer", SensorValue_Data.Types.Temp, "°C"),
           'qv_humi_kid':         SensorValue("ID_07", "HumiKinderzimmer", SensorValue_Data.Types.Humi, "% rF"),
           'qv_temp_realoutdoor': SensorValue("ID_12", "TempRealOutdoor", SensorValue_Data.Types.Temp, "°C"),
-          'qv_temp_indoor2':     SensorValue("ID_13", "TempWohnzimmerFenster", SensorValue_Data.Types.Temp, "°C")
+          'qv_temp_indoor2':     SensorValue("ID_13", "TempWohnzimmerFenster", SensorValue_Data.Types.Temp, "°C"),
+
+          'qv_kb_i_t': SensorValue("ID_21", "Temp KB indoor", SensorValue_Data.Types.Temp, "°C"),
+          'qv_kb_i_h': SensorValue("ID_22", "Humi KB indoor", SensorValue_Data.Types.Humi, "% rF"),
+          'qv_kb_p':   SensorValue("ID_23", "Pressure KB",    SensorValue_Data.Types.Pressure, "hPa"),
+          'qv_kb_a_t': SensorValue("ID_24", "Temp KB outdoor", SensorValue_Data.Types.Temp, "°C"),
+          'qv_kb_a_h': SensorValue("ID_25", "Humi KB outdoor", SensorValue_Data.Types.Humi, "% rF"),
+          'qv_kb_k_t': SensorValue("ID_26", "Temp KB basement", SensorValue_Data.Types.Temp, "°C"),
+          'qv_kb_k_h': SensorValue("ID_27", "Humi KB basement", SensorValue_Data.Types.Humi, "% rF")
+
          }
 
     sq = SensorQueueClient_write("../config.ini")
@@ -42,18 +51,26 @@ if __name__ == '__main__':
 
     while True:
         # print("sending values ...")
-        qv['qv_temp_wardrobe'].value = "22.{:02d}".format(random.randint(0,99))
-        qv['qv_humi_wardrobe'].value = "67.{:02d}".format(random.randint(0,99))
+        qv['qv_temp_wardrobe'].value = "55.{:02d}".format(random.randint(0,99))
+        qv['qv_humi_wardrobe'].value = "56.{:02d}".format(random.randint(0,99))
         qv['qv_light_wardrobe'].value = "823.{:02d}".format(random.randint(0,99))
         qv['qv_temp_indoor'].value = "11.{:02d}".format(random.randint(0,99))
-        qv['qv_humi_indoor'].value = "11.{:02d}".format(random.randint(0,99))
+        qv['qv_humi_indoor'].value = "12.{:02d}".format(random.randint(0,99))
         qv['qv_temp_outdoor'].value = "22.{:02d}".format(random.randint(0,99))
-        qv['qv_humi_outdoor'].value = "22.{:02d}".format(random.randint(0,99))
+        qv['qv_humi_outdoor'].value = "23.{:02d}".format(random.randint(0,99))
         qv['qv_pressure'].value = "1013.{:01d}".format(random.randint(0,9))
         qv['qv_temp_kid'].value = "33.{:02d}".format(random.randint(0,99))
-        qv['qv_humi_kid'].value = "33.{:02d}".format(random.randint(0,99))
+        qv['qv_humi_kid'].value = "34.{:02d}".format(random.randint(0,99))
         qv['qv_temp_realoutdoor'].value = "-22.{:02d}".format(random.randint(0,99))
         qv['qv_temp_indoor2'].value = "23.{:02d}".format(random.randint(0,99))
+
+        qv['qv_kb_i_t'].value = "66.{:02d}".format(random.randint(0,99))
+        qv['qv_kb_i_h'].value = "67.{:02d}".format(random.randint(0,99))
+        qv['qv_kb_p'].value = "1068.{:01d}".format(random.randint(0,9))
+        qv['qv_kb_a_t'].value = "77.{:02d}".format(random.randint(0,99))
+        qv['qv_kb_a_h'].value = "78.{:02d}".format(random.randint(0,99))
+        qv['qv_kb_k_t'].value = "88.{:02d}".format(random.randint(0,99))
+        qv['qv_kb_k_h'].value = "89.{:02d}".format(random.randint(0,99))
         time.sleep(1)
 
 # eof #

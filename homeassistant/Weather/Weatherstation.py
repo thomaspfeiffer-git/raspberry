@@ -69,7 +69,7 @@ class Text (tk.Label, Displayelement):
                          # justify="left", anchor=anchor, font=font,
                          justify="center", anchor=anchor, font=font,
                          foreground=color, background=CONFIG.COLORS.BACKGROUND)
-        self.gridpos = gridpos+1
+        self.gridpos = gridpos+1  # TODO column=0
         self.grid(row=gridpos, column=1, sticky=sticky)
 
 
@@ -119,7 +119,7 @@ class Clock (threading.Thread):
         threading.Thread.__init__(self)
         self.__running = False
 
-    def init_values (self, master):
+    def init_values (self, master):  # TODO Check why master is needed
         self.date_date = tk.StringVar(master)
         self.date_time = tk.StringVar(master)
 
@@ -151,7 +151,7 @@ class Values (threading.Thread):
         self.values.update({ "ID_OWM_{:02d}".format(id+1): None for id in range(30) })
         self.__running = False
 
-    def init_values (self, master):
+    def init_values (self, master): # TODO Useage of master?
         for id in self.values.keys():
             self.values[id] = tk.StringVar()
             self.values[id].set(self.getvalue(None))
@@ -186,7 +186,7 @@ class WeatherApp (tk.Frame):
     def __init__ (self, master=None):
         super().__init__(master)
 
-        self.screennames = ['main', 'owm', 'kid']
+        self.screennames = "main owm kid kb_outdoor kb_indoor wardrobe".split()
         self.master = master
 
         clock.init_values(self.master)
@@ -253,7 +253,7 @@ class WeatherApp (tk.Frame):
             self.screens[screen].config(bd=self.master.borderwidth, 
                                         bg=CONFIG.COLORS.BACKGROUND, 
                                         width=self.master.width, height=410)
-            self.screens[screen].grid_propagate(0)
+            self.screens[screen].grid_propagate(0)    # TODO: column 0
             self.screens[screen].grid_columnconfigure(1, minsize=self.master.width - \
                                                          2*self.master.borderwidth)
             getattr(self, "create_screen_{}".format(screen))() # call create_screen_X()
@@ -266,20 +266,33 @@ class WeatherApp (tk.Frame):
         self.dateframe.config(bd=self.master.borderwidth, 
                               bg=CONFIG.COLORS.BACKGROUND, 
                               width=self.master.width, height=70)
-        self.dateframe.grid_propagate(0)
+        self.dateframe.grid_propagate(0)    # TODO: column 0
         self.dateframe.grid_columnconfigure(1, minsize=self.master.width - \
                                                        2*self.master.borderwidth)
         self.dateframe.grid()
 
         gridpos = 0
         gridpos = Separator(frame=self.dateframe, gridpos=gridpos).gridpos
-        gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
-                           stringvar=clock.date_date,
-                           font=self.font_date, color=CONFIG.COLORS.DATE).gridpos
-        gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
-                           stringvar=clock.date_time,
-                           font=self.font_date_bold, color=CONFIG.COLORS.DATE).gridpos
+        for d in [clock.date_date, clock.date_time]:
+            gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
+                               stringvar=d, font=self.font_date, 
+                               color=CONFIG.COLORS.DATE).gridpos
+        # gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
+        #                    stringvar=clock.date_time,
+        #                    font=self.font_date_bold, color=CONFIG.COLORS.DATE).gridpos
 
+
+    # TODO Check if @staticmethod possible 
+    # TODO Check if font= is necessary (_after_ implementation of owm)
+    def drawWeatherSection (self, frame, title, itemlist, font, color, gridpos):
+        gridpos = Separator(frame=frame, gridpos=gridpos, text=title, 
+                            font=self.font_separator).gridpos
+        for item in itemlist:
+            gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
+                                  stringvar=values.values[item],
+                                  font=font, color=color).gridpos
+        return gridpos
+        
 
     def create_screen_main (self):
         frame = self.screens['main']
@@ -298,56 +311,73 @@ class WeatherApp (tk.Frame):
         gridpos += 1
         """
 
-        gridpos = Separator(frame=frame, gridpos=gridpos, text="Wohnzimmer:", 
-                            font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_01'],
-                              font=self.font_item, color=CONFIG.COLORS.INDOOR).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_02'],
-                              font=self.font_item, color=CONFIG.COLORS.INDOOR).gridpos
-
-        gridpos = Separator(frame=frame, gridpos=gridpos, text="Draußen:", 
-                            font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_12'],
-                              font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_04'],
-                              font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_05'],
-                              font=self.font_item, color=CONFIG.COLORS.OUTDOOR).gridpos
+        gridpos = self.drawWeatherSection(frame=frame, title="Wohnzimmer:",
+                                          itemlist=['ID_01', 'ID_02'],
+                                          font=self.font_item, color=CONFIG.COLORS.INDOOR,
+                                          gridpos=gridpos)
+        gridpos = self.drawWeatherSection(frame=frame, title="Draußen:",
+                                          itemlist=['ID_12', 'ID_04', 'ID_05'],
+                                          font=self.font_item, color=CONFIG.COLORS.INDOOR,
+                                          gridpos=gridpos)
 
 
     def create_screen_owm (self):
         frame = self.screens['owm']
         gridpos = 0
 
-        gridpos = Separator(frame=frame, gridpos=gridpos, 
-                            text="Wettervorhersage aktuell:", 
-                            font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_OWM_01'],
-                              font=self.font_item, color=CONFIG.COLORS.FORECAST).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_OWM_02'],
-                              font=self.font_item, color=CONFIG.COLORS.FORECAST).gridpos
+        gridpos = self.drawWeatherSection(frame=frame, title="Wettervorhersage aktuell:",
+                                          itemlist=['ID_OWM_01', 'ID_OWM_02'],
+                                          font=self.font_item, color=CONFIG.COLORS.FORECAST,
+                                          gridpos=gridpos)
 
 
     def create_screen_kid (self):
         frame = self.screens['kid']
         gridpos = 0
 
-        gridpos = Separator(frame=frame, gridpos=gridpos, 
-                            text="Kinderzimmer:", 
-                            font=self.font_separator).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_06'],
-                              font=self.font_item, color=CONFIG.COLORS.KIDSROOM).gridpos
-        gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                              stringvar=values.values['ID_07'],
-                              font=self.font_item, color=CONFIG.COLORS.KIDSROOM).gridpos
+        gridpos = self.drawWeatherSection(frame=frame, title="Kinderzimmer:",
+                                          itemlist=['ID_06', 'ID_07'],
+                                          font=self.font_item, color=CONFIG.COLORS.KIDSROOM,
+                                          gridpos=gridpos)
+
+
+    def create_screen_kb_outdoor (self):
+       frame = self.screens['kb_outdoor']
+       gridpos = 0
+
+       gridpos = self.drawWeatherSection(frame=frame, title="Kollerberg (außen):",
+                                         itemlist=['ID_24', 'ID_25', 'ID_23'],
+                                         font=self.font_item, color=CONFIG.COLORS.COTTAGE,
+                                         gridpos=gridpos)
+
+
+    def create_screen_kb_indoor (self):
+       frame = self.screens['kb_indoor']
+       gridpos = 0
+
+       gridpos = self.drawWeatherSection(frame=frame, title="Kollerberg (innen):",
+                                         itemlist=['ID_21', 'ID_22'],
+                                         font=self.font_item, color=CONFIG.COLORS.COTTAGE,
+                                         gridpos=gridpos)
+       gridpos = self.drawWeatherSection(frame=frame, title="Kollerberg (Keller):",
+                                         itemlist=['ID_26', 'ID_27'],
+                                         font=self.font_item, color=CONFIG.COLORS.COTTAGE,
+                                         gridpos=gridpos)
+
+
+    def create_screen_wardrobe (self):
+       frame = self.screens['wardrobe']
+       gridpos = 0
+
+       gridpos = self.drawWeatherSection(frame=frame, title="Schlafzimmerkasten:",
+                                         itemlist=['ID_31', 'ID_32', 'ID_33'],
+                                         font=self.font_item, color=CONFIG.COLORS.WARDROBE,
+                                         gridpos=gridpos)
+
+       gridpos = self.drawWeatherSection(frame=frame, title="Misc:",
+                                         itemlist=['ID_03', 'ID_13'],
+                                         font=self.font_item, color=CONFIG.COLORS.MISC,
+                                         gridpos=gridpos)
 
 
 ###############################################################################

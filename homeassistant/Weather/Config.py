@@ -34,9 +34,9 @@ class CONFIG:
         OUTDOOR    = "blue"
         FORECAST   = "SlateGrey"
         KIDSROOM   = "DeepSkyBlue"
-        COTTAGE    = (0x08, 0x8A, 0x08)
-        MISC       = (0x08, 0x8A, 0x08)
-        WARDROBE   = (0xFF, 0xCC, 0x00)
+        COTTAGE    = "ForestGreen"
+        MISC       = "Indigo"
+        WARDROBE   = "Gold"
 
     class IMAGES:
         """definitions of images and path to images"""
