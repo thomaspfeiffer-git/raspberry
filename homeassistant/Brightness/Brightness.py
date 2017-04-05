@@ -17,7 +17,6 @@
 
 
 from datetime import datetime, timedelta
-import json
 import subprocess
 import sys
 import threading
@@ -48,16 +47,14 @@ CONTROLBRIGHTNESS = '/sys/class/backlight/rpi_backlight/brightness'
 class API_Brightness (Resource):
     def get (self):
         if control.schedule_on() or control.switched_on():
-            result = {'FullBrightness': True}
+            result = { 'FullBrightness': True }
         else:
-            result = {'FullBrightness': False}
-        control.switch_on()
+            result = { 'FullBrightness': False }
 
-        return json.dumps(result)
+        control.switch_on()
+        return result
 
 api.add_resource(API_Brightness, '/touchevent')
-
-
 
 
 ##############################################################################

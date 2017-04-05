@@ -8,12 +8,15 @@
    2) fonts
    3) colors
    4) files
+   5) misc stuff
 """
 
+import configparser
 import os
 
 class CONFIG:
     """various config stuff"""
+    CONFIGFILE = "../config.ini"    
 
     class FONTS:
         """definitions of fonts and font sizes"""
@@ -51,6 +54,10 @@ class CONFIG:
 
 
     TIMETOFALLBACK = 15000 # Wait 15 seconds until fallback to main screen
+
+    __cfg = configparser.ConfigParser()
+    __cfg.read(CONFIGFILE)
+    URL_BRIGHTNESS_CONTROL = __cfg['Brightness']['URL']
 
 # eof #
 

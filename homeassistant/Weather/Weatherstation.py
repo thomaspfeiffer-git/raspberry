@@ -18,7 +18,11 @@
 #
 # Packages you might install
 # sudo apt-get install python3-pil.imagetk
+# sudo pip3 install attrdict
 
+
+from pprint import pprint
+import types
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -26,12 +30,16 @@ from tkinter.font import Font
 import PIL.Image
 import PIL.ImageTk
 
+from attrdict import AttrDict
 from collections import OrderedDict
 from datetime import datetime
+import json
 import os
 import sys
 import threading
 import time
+from urllib.error import HTTPError, URLError 
+from urllib.request import urlopen
 
 sys.path.append('../../libs')
 from SensorQueue2 import SensorQueueClient_read
@@ -41,6 +49,14 @@ from Config import CONFIG
 from Constants import CONSTANTS
 
 
+
+def Log (logstr):
+    """improved log output"""
+    print("{}: {}".format(datetime.now().strftime("%Y%m%d %H:%M:%S"), logstr))
+
+
+###############################################################################
+# Basic display elements ######################################################
 class Displayelement (object):
     """provides the basic logic for calculating the grid pos of an element"""
     @property
@@ -228,6 +244,19 @@ class WeatherApp (tk.Frame):
             """do pagination of screens and set callback to first_screen()
                after CONFIG.TIMETOFALLBACK milliseconds"""
             nonlocal screenid, reset
+
+            """send the touch event to the brightness controller.
+               if brightness was not at full level, the brightness
+               controller sets brightness to full. in this case, no
+               pagination shall be done."""
+            try:
+                with urlopen(CONFIG.URL_BRIGHTNESS_CONTROL) as response:
+                    data = json.loads(response.read().decode("utf-8"))
+            except (HTTPError, URLError):
+                Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
+            else:
+                if data['FullBrightness'] is False: 
+                    return                         
 
             if reset is not None:
                 self.master.after_cancel(reset)
