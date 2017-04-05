@@ -8,13 +8,12 @@
    luminosity measured by a TSL2561"""
 
 ### usage ###
-# run programm: TODO 
+# run programm: nohup ./Brightness.py &
 # call in case of a touch event: http://<host>:5000/touchevent
 
 
 ### setup ###
 # sudo pip3 install flask-restful
-
 
 
 from datetime import datetime, timedelta
@@ -117,8 +116,6 @@ class Control (threading.Thread):
 
                 command = "sudo bash -c \"echo \\\"{}\\\" > {}\""
                 command = command.format(brightness, CONTROLBRIGHTNESS)
-
-                # print("command:", command)
                 subprocess.call(command, shell=True)
 
         return set_value
