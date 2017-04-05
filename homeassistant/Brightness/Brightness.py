@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ##############################################################################
 # Brightness.py                                                              #
@@ -8,10 +8,17 @@
    luminosity measured by a TSL2561"""
 
 ### usage ###
-# TODO 
+# run programm: TODO 
+# call in case of a touch event: http://<host>:5000/touchevent
 
 
-from datetime import datetime
+### setup ###
+# sudo pip3 install flask-restful
+
+
+
+from datetime import datetime, timedelta
+import json
 import subprocess
 import sys
 import threading
@@ -27,7 +34,31 @@ from sensors.TSL2561 import TSL2561
 from Shutdown import Shutdown
 
 
+from flask import Flask
+from flask_restful import Resource, Api
+
+app = Flask(__name__)
+api = Api(app)
+
+
 CONTROLBRIGHTNESS = '/sys/class/backlight/rpi_backlight/brightness'
+
+
+###############################################################################
+# API_OpenWeatherData #########################################################
+class API_Brightness (Resource):
+    def get (self):
+        if control.schedule_on() or control.switched_on():
+            result = {'ReuseTouchEvent': True}
+        else:
+            result = {'ReuseTouchEvent': False}
+        control.switch_on()
+
+        return json.dumps(result)
+
+api.add_resource(API_Brightness, '/touchevent')
+
+
 
 
 ##############################################################################
@@ -94,12 +125,16 @@ class Control (threading.Thread):
 
     def switch_on (self):
         self.__switchedon = True
-        self.timestamp = datetime.timestamp(seconds=DELAYTOLIGHTOFF)
+        self.timestamp = datetime.now() + timedelta(seconds=self.DELAYTOLIGHTOFF)
 
     def switched_on (self):
         if datetime.now() > self.timestamp:
             self.__switchedon = False
         return self.__switchedon
+
+    @staticmethod 
+    def schedule_on ():
+        return 6 <= datetime.now().hour < 18
 
     def run (self):
         self.__running = True
@@ -110,7 +145,7 @@ class Control (threading.Thread):
             measurements.append(sensor.lux)
                     # full brightness between 6 am and 10 pm or
                     # if manually switched on
-            if 6 <= datetime.now().hour < 18 or self.switched_on(): 
+            if self.schedule_on() or self.switched_on(): 
                 set_brightness(Sensor.MAX)   
             else:
                 set_brightness(int(measurements.avg()))
@@ -144,8 +179,7 @@ if __name__ == '__main__':
     control = Control()
     control.start()
 
-    while True:
-        time.sleep(0.1)
+    app.run(host="0.0.0.0")
 
 # eof #
 
