@@ -437,9 +437,12 @@ def shutdown_application ():
     print("in shutdown_application()")
     clock.stop()
     clock.join()
+    print("after clock.join()")
     values.stop()
     values.join()
+    print("after values.join()")
     weather.stop()
+    print("after weather.stop()")
     sys.exit(0)
 
 
