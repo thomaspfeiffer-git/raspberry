@@ -7,18 +7,8 @@
 """controls brightness of a raspberry pi display based on the
    luminosity measured by a TSL2561"""
 
-
 ### usage ###
 # TODO 
-
-
-# Adjusting lightness
-# cd /sys/class/backlight/rpi_backlight/
-# sudo bash -c 'echo "255" > brightness'
-# def _set_value(name, value):
-#    with open(os.path.join(PATH, name), "w") as f:
-#        f.write(str(value))
-#
 
 
 import subprocess
@@ -34,9 +24,6 @@ from i2c import I2C
 from Measurements import Measurements
 from sensors.TSL2561 import TSL2561
 from Shutdown import Shutdown
-
-
-sensor = TSL2561()
 
 
 ##############################################################################
