@@ -48,9 +48,9 @@ CONTROLBRIGHTNESS = '/sys/class/backlight/rpi_backlight/brightness'
 class API_Brightness (Resource):
     def get (self):
         if control.schedule_on() or control.switched_on():
-            result = {'ReuseTouchEvent': True}
+            result = {'FullBrightness': True}
         else:
-            result = {'ReuseTouchEvent': False}
+            result = {'FullBrightness': False}
         control.switch_on()
 
         return json.dumps(result)
