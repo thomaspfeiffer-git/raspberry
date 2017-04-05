@@ -56,7 +56,7 @@ api = Api(app)
 # API_OpenWeatherData #########################################################
 class API_OpenWeatherData (Resource):
     def get (self):
-        return json.dumps(owm_data.weather)
+        return owm_data.weather
 
 api.add_resource(API_OpenWeatherData, '/')
 
