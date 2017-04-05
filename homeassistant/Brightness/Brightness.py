@@ -23,6 +23,7 @@
 
 import subprocess
 import sys
+import threading
 import time
 
 sys.path.append('../../libs')
@@ -30,24 +31,68 @@ sys.path.append('../../libs/sensors')  # TODO beautify import paths
 sys.path.append('../../libs/sensors/Adafruit')
 
 from i2c import I2C
+from Measurements import Measurements
 from sensors.TSL2561 import TSL2561
+from Shutdown import Shutdown
+
 
 sensor = TSL2561()
 
 
+##############################################################################
+# Control ####################################################################
+class Control (threading.Thread):
+    MIN = 15
+    MAX = 255
+    sensor = TSL2561()
 
-while True:
-    lux = int(sensor.lux()) * 2
-    if lux < 15: lux = 15
-    if lux > 255: lux = 255
-    # TODO: call only on change of value etc
-    # command = "./brightness {}".format(lux)
-    command = "sudo bash -c \"echo \\\"{}\\\" > /sys/class/backlight/rpi_backlight/brightness\"".format(lux)
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self.__running = False
 
-    # print("command:", command)
-    subprocess.call(command, shell=True)
+    def run (self):
+        self.__running = True
+        measurements = Measurements(maxlen=20)
 
-    time.sleep(1)
+        while self.__running:
+            lux = int(sensor.lux()) * 2
+            if lux < self.MIN: lux = self.MIN
+            if lux > self.MAX: lux = self.MAX
+            measurements.append(lux)
+            avg = int(measurements.avg())
+
+            # TODO: call only on change of value etc
+            command = "sudo bash -c \"echo \\\"{}\\\" > /sys/class/backlight/rpi_backlight/brightness\"".format(avg)
+
+            # print("command:", command)
+            subprocess.call(command, shell=True)
+
+            time.sleep(0.1)
+
+    def stop (self):
+        # TODO set brightness to self.MAX on exit
+        self.__running = False
+
+
+###############################################################################
+# shutdown_application ########################################################
+def shutdown_application ():
+    """called on shutdown; stops all threads"""
+    print("in shutdown_application()")
+    control.stop()
+    control.join()
+    sys.exit(0)
+
+
+###############################################################################
+# Main ########################################################################
+if __name__ == '__main__':
+    shutdown = Shutdown(shutdown_func=shutdown_application)
+    control = Control()
+    control.start()
+
+    while True:
+        time.sleep(0.1)
 
 # eof #
 
