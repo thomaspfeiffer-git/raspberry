@@ -128,7 +128,8 @@ class Control (threading.Thread):
 
     @staticmethod 
     def schedule_on ():
-        return 6 <= datetime.now().hour < 18
+        """full brightness from 6 am to 10 pm"""
+        return 6 <= datetime.now().hour < 22
 
     def run (self):
         self.__running = True
