@@ -11,10 +11,7 @@ import sys
 class Measurements (deque):
     """extended deque: additional methods for average and last added item"""
     def __init__ (self, maxlen=5):
-        if sys.version_info >= (3,0):
-            super().__init__([], maxlen)
-        else:
-            super(Measurements, self).__init__([], maxlen)
+        super().__init__([], maxlen)
 
     def avg (self):
         """returns average of list elements"""
