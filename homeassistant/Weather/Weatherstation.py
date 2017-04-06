@@ -27,7 +27,6 @@ from tkinter.font import Font
 import PIL.Image
 import PIL.ImageTk
 
-from attrdict import AttrDict
 from collections import OrderedDict
 from datetime import datetime
 import json
