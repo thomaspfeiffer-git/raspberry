@@ -21,9 +21,6 @@
 # sudo pip3 install attrdict
 
 
-from pprint import pprint
-import types
-
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.font import Font
@@ -47,7 +44,6 @@ from Shutdown import Shutdown
 
 from Config import CONFIG
 from Constants import CONSTANTS
-
 
 
 def Log (logstr):
