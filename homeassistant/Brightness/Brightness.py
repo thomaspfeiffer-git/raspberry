@@ -46,7 +46,7 @@ CONTROLBRIGHTNESS = '/sys/class/backlight/rpi_backlight/brightness'
 # API_OpenWeatherData #########################################################
 class API_Brightness (Resource):
     def get (self):
-        if control.schedule_on() or control.switched_on():
+        if control.schedule_on() or control.switched_on() or control.prettybright():
             result = { 'FullBrightness': True }
         else:
             result = { 'FullBrightness': False }
@@ -91,7 +91,7 @@ class Sensor (threading.Thread):
 ##############################################################################
 # Control ####################################################################
 class Control (threading.Thread):
-    """todo """
+    """controls brightness of display"""
 
     DELAYTOLIGHTOFF = 15
 
@@ -126,6 +126,11 @@ class Control (threading.Thread):
             self.__switchedon = False
         return self.__switchedon
 
+    def prettybright (self):
+        """no need to set display to full brightness 
+           if it is already very bright"""
+        return self.measurements.avg() > Sensor.MAX - 5
+
     @staticmethod 
     def schedule_on ():
         """full brightness from 6 am to 10 pm"""
@@ -133,17 +138,17 @@ class Control (threading.Thread):
 
     def run (self):
         self.__running = True
-        measurements = Measurements(maxlen=20)
+        self.measurements = Measurements(maxlen=20)
         set_brightness = self.set_brightness()
 
         while self.__running:
-            measurements.append(sensor.lux)
+            self.measurements.append(sensor.lux)
                     # full brightness between 6 am and 10 pm or
                     # if manually switched on
             if self.schedule_on() or self.switched_on(): 
                 set_brightness(Sensor.MAX)   
             else:
-                set_brightness(int(measurements.avg()))
+                set_brightness(int(self.measurements.avg()))
             time.sleep(0.02)
 
         set_brightness(Sensor.MAX) # set max brightness on exit
