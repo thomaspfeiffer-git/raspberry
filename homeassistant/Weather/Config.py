@@ -20,7 +20,7 @@ class CONFIG:
 
     class FONTS:
         """definitions of fonts and font sizes"""
-        FAMILY = "Helvetica"
+        FAMILY = "Arial"
 
         SIZE_NORMAL   = int(32)
         SIZE_FORECAST = int(SIZE_NORMAL / 2.0)

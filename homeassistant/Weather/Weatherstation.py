@@ -221,7 +221,7 @@ class Pagination (object):
            CONFIG.TIMETOFALLBACK milliseconds"""
         if self.screenid != 0:
             self.screens[self.screennames[self.screenid]].grid_remove()
-            screenid = 0
+            self.screenid = 0
             self.screens[self.screennames[self.screenid]].grid()
         self.reset = None
 
@@ -259,11 +259,7 @@ class WeatherApp (tk.Frame):
         values.init_values()
         values.start()
 
-        family = "Arial" # TODO: get from config file
-        self.font_item      = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
-        self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
-        self.font_date      = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL)
-        self.font_date_bold = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL, weight="bold")
+        self.init_fonts()
 
         self.grid()
         self.create_screens()
@@ -272,6 +268,13 @@ class WeatherApp (tk.Frame):
         self.pagination = Pagination(self.master, self.screens, self.screennames)
         self.master.bind("<Button-1>", self.pagination.next_screen)
 
+
+    def init_fonts (self):
+        family = CONFIG.FONTS.FAMILY
+        self.font_item      = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
+        self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
+        self.font_date      = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL)
+        self.font_date_bold = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL, weight="bold")
 
     def create_screens (self):
         self.screens = OrderedDict()
@@ -318,9 +321,7 @@ class WeatherApp (tk.Frame):
 
     def drawPicture (self, frame, picture, id_, zoom, gridpos):
         picture = PIL.Image.open(picture)
-        w, h = picture.size  # TODO: check w, h = map(lambda x: int(x*zoom), pic.size)
-        w = int(w*zoom)
-        h = int(h*zoom)
+        w, h = map(lambda x: int(x*zoom), picture.size)
         picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
 
         # image needs to stored garbage collector save, otherwise the 
@@ -336,19 +337,6 @@ class WeatherApp (tk.Frame):
     def create_screen_main (self):
         frame = self.screens['main']
         gridpos = 0
-
-        """
-        icon = PIL.Image.open("../Resources/ico_sunny.png")
-        icon = icon.resize((40, 40),  PIL.Image.ANTIALIAS)
-        self.icon = PIL.ImageTk.PhotoImage(icon)
-
-        icons = [i for i in range(5)]
-        for i in range(len(icons)):
-            icons[i] = tk.Label(frame, image=self.icon, 
-                                height=50, bg=CONFIG.COLORS.BACKGROUND)
-            icons[i].grid(row=gridpos, column=i+1)
-        gridpos += 1
-        """
 
         gridpos = self.drawWeatherSection(frame=frame, title="Wohnzimmer:",
                                           itemlist=['ID_01', 'ID_02'],
@@ -477,8 +465,11 @@ def shutdown_application ():
 ###############################################################################
 # Main ########################################################################
 if __name__ == '__main__':
-    # TODO: if $DISPLAY == "": default setting = ":0.0"
-    os.environ["DISPLAY"] = ":0.0"
+    try:
+        os.environ["DISPLAY"]
+    except KeyError:
+        Log("$DISPLAY not set, using default :0.0")
+        os.environ["DISPLAY"] = ":0.0"
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     values = Values()
