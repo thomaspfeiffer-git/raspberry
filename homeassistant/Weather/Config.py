@@ -8,15 +8,21 @@
    2) fonts
    3) colors
    4) files
-   5) misc stuff
+   5) coordinates
+   6) misc stuff
 """
 
 import configparser
 import os
 
+
+CONFIGFILE = "../config.ini"    
+cfg = configparser.ConfigParser()
+cfg.read(CONFIGFILE)
+
+
 class CONFIG:
     """various config stuff"""
-    CONFIGFILE = "../config.ini"    
 
     class FONTS:
         """definitions of fonts and font sizes"""
@@ -53,11 +59,14 @@ class CONFIG:
         ICON_RAINY    = os.path.join(PATH, 'ico_rainy.png')
 
 
-    TIMETOFALLBACK = 15000 # Wait 15 seconds until fallback to main screen
+    class COORDINATES:
+        WIDTH  = int(cfg['Weatherstation']['width'])
+        HEIGHT = int(cfg['Weatherstation']['height'])
+        XPOS   = int(cfg['Weatherstation']['xpos'])
+        YPOS   = int(cfg['Weatherstation']['ypos'])
 
-    __cfg = configparser.ConfigParser()
-    __cfg.read(CONFIGFILE)
-    URL_BRIGHTNESS_CONTROL = __cfg['Brightness']['URL']
+    TIMETOFALLBACK = 15000 # Wait 15 seconds until fallback to main screen
+    URL_BRIGHTNESS_CONTROL = cfg['Brightness']['URL']
 
 # eof #
 

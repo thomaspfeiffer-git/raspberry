@@ -77,6 +77,7 @@ class Text (tk.Label, Displayelement):
 
 class Image (tk.Label, Displayelement):
     def __init__ (self, frame, gridpos, image):
+        # TODO: type safety: image
         super().__init__(frame, image=image, background=CONFIG.COLORS.BACKGROUND)
         self.gridpos = gridpos+1 
         self.grid(row=gridpos, column=0, sticky="we")
@@ -159,7 +160,7 @@ class Values (threading.Thread):
         self.queue = SensorQueueClient_read("../config.ini")
         self.values = { "ID_{:02d}".format(id+1): None for id in range(40) }
         self.values.update({ "ID_OWM_{:02d}".format(id+1): None for id in range(30) })
-                 # some local calculated values
+                                                # some local calculated values
         self.values.update({ "ID_LC_{:02d}".format(id+1): None for id in range(30) })
         self.__running = False
 
@@ -183,13 +184,15 @@ class Values (threading.Thread):
         self.values['ID_LC_03'].set("{} ({})".format(self.values['ID_OWM_03'].get(),
                                                      self.values['ID_OWM_04'].get()))
 
-        self.values['ID_LC_11'].set("Wettervorhersage morgen:")
+        title = "Wettervorhersage heute:" if datetime.now().hour < 12 else "Wettervorhersage morgen:"
+        self.values['ID_LC_11'].set(title)
         self.values['ID_LC_12'].set("{} - {}".format(self.values['ID_OWM_11'].get(),
                                                      self.values['ID_OWM_12'].get()))
         self.values['ID_LC_13'].set("{} ({})".format(self.values['ID_OWM_13'].get(),
                                                      self.values['ID_OWM_14'].get()))
 
-        self.values['ID_LC_21'].set("Wettervorhersage übermorgen:")
+        title = "Wettervorhersage morgen:" if datetime.now().hour < 12 else "Wettervorhersage übermorgen:"
+        self.values['ID_LC_21'].set(title)
         self.values['ID_LC_22'].set("{} - {}".format(self.values['ID_OWM_21'].get(),
                                                      self.values['ID_OWM_22'].get()))
         self.values['ID_LC_23'].set("{} ({})".format(self.values['ID_OWM_23'].get(),
@@ -223,7 +226,7 @@ class Pagination (object):
        CONFIG.TIMETOFALLBACK milliseconds
        triggered by bind("<Button-1>")"""
     def __init__ (self, master, screens, screennames):
-        self.master = master
+        self.master  = master
         self.screens = screens
         self.screennames = screennames
         self.screenid = 0
@@ -296,6 +299,7 @@ class WeatherApp (tk.Frame):
         clock.start()
         values.start()
 
+
     def init_fonts (self):
         family = CONFIG.FONTS.FAMILY
         self.font_item      = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
@@ -303,6 +307,7 @@ class WeatherApp (tk.Frame):
         self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
         self.font_date      = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL)
         self.font_date_bold = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL, weight="bold")
+
 
     def create_screens (self):
         self.screens = OrderedDict()
@@ -364,7 +369,7 @@ class WeatherApp (tk.Frame):
         w, h = map(lambda x: int(x*zoom), picture.size)
         picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
 
-        # image needs to stored garbage collector save, otherwise the 
+        # image needs to be stored garbage collector save, otherwise the 
         # image would be deleted by the garbage collector and therefore
         # it would not be displayed.
         attrname = "picture_{}".format(id_) 
@@ -462,16 +467,15 @@ class Weather (object):
         self.root = tk.Tk()
         self.root.overrideredirect(1)
         self.root.config(cursor='none')
-
         self.root.resizable(width=False, height=False)
-        # w = self.root.winfo_screenwidth() # TODO Get coordinates and dimension from config file
-        w = 280 # TODO beautify code
-        h = self.root.winfo_screenheight()
-        self.root.width = 280
-        self.root.height = self.root.winfo_screenheight()
+
+        self.root.width  = CONFIG.COORDINATES.WIDTH
+        self.root.height = CONFIG.COORDINATES.HEIGHT
         self.root.borderwidth = 10
-        # print("w: {}, h: {}".format(w, h))
-        self.root.geometry("{}x{}+{}+{}".format(w,h,0,0))
+        self.root.geometry("{}x{}+{}+{}".format(self.root.width, 
+                                                self.root.height,
+                                                CONFIG.COORDINATES.XPOS, 
+                                                CONFIG.COORDINATES.XPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = WeatherApp(master=self.root)
 
