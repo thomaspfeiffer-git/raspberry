@@ -42,8 +42,18 @@ if __name__ == '__main__':
           'qv_kb_a_h': SensorValue("ID_25", "Humi KB outdoor", SensorValue_Data.Types.Humi, "% rF"),
           'qv_kb_k_t': SensorValue("ID_26", "Temp KB basement", SensorValue_Data.Types.Temp, "°C"),
           'qv_kb_k_h': SensorValue("ID_27", "Humi KB basement", SensorValue_Data.Types.Humi, "% rF")
-
          }
+
+
+    for i in range(3):
+        qv.update({'temp_owm_{}'.format(i): SensorValue("ID_OWM_{}1".format(i), "TempOWM_{}".format(i), SensorValue_Data.Types.Temp, "°C"),
+                   'humidity_owm_{}'.format(i): SensorValue("ID_OWM_{}2".format(i), "HumiOWM_{}".format(i), SensorValue_Data.Types.Humi, "% rF"),
+                   'wind_owm_{}'.format(i): SensorValue("ID_OWM_{}3".format(i), "WindOWM_{}".format(i), SensorValue_Data.Types.Wind, "km/h"),
+                   'wind direction_owm_{}'.format(i): SensorValue("ID_OWM_{}4".format(i), "WindDirOWM_{}".format(i), SensorValue_Data.Types.WindDir, None),
+                   'desc_owm_{}'.format(i): SensorValue("ID_OWM_{}5".format(i), "DescOWM_{}".format(i), SensorValue_Data.Types.Desc, None),
+                   })
+
+
 
     sq = SensorQueueClient_write("../config.ini")
     list(map(sq.register, qv.values()))
@@ -71,6 +81,25 @@ if __name__ == '__main__':
         qv['qv_kb_a_h'].value = "78.{:02d}".format(random.randint(0,99))
         qv['qv_kb_k_t'].value = "88.{:02d}".format(random.randint(0,99))
         qv['qv_kb_k_h'].value = "89.{:02d}".format(random.randint(0,99))
+
+        qv['temp_owm_0'].value = "22.{:01d}".format(random.randint(0,9))
+        qv['humidity_owm_0'].value = "23.{:01d}".format(random.randint(0,9))
+        qv['wind_owm_0'].value = "24.{:01d}".format(random.randint(0,9))
+        qv['wind direction_owm_0'].value = "nordwest"
+        qv['desc_owm_0'].value = "leicht bewölkt"
+
+        qv['temp_owm_1'].value = "32.{:01d}".format(random.randint(0,9))
+        qv['humidity_owm_1'].value = "33.{:01d}".format(random.randint(0,9))
+        qv['wind_owm_1'].value = "34.{:01d}".format(random.randint(0,9))
+        qv['wind direction_owm_1'].value = "west"
+        qv['desc_owm_1'].value = "starke Sonne"
+
+        qv['temp_owm_2'].value = "42.{:01d}".format(random.randint(0,9))
+        qv['humidity_owm_2'].value = "43.{:01d}".format(random.randint(0,9))
+        qv['wind_owm_2'].value = "44.{:01d}".format(random.randint(0,9))
+        qv['wind direction_owm_2'].value = "südost"
+        qv['desc_owm_2'].value = "leichter Regen"
+
         time.sleep(1)
 
 # eof #
