@@ -18,7 +18,6 @@
 #
 # Packages you might install
 # sudo apt-get install python3-pil.imagetk
-# sudo pip3 install attrdict
 
 
 import tkinter as tk
@@ -190,6 +189,63 @@ class Values (threading.Thread):
         self.__running = False
 
 
+
+###############################################################################
+# Pagination ##################################################################
+class Pagination (object):
+    """pagination of screens with fallback to first (main) screen after
+       CONFIG.TIMETOFALLBACK milliseconds
+       triggered by bind("<Button-1>")"""
+    def __init__ (self, master, screens, screennames):
+        self.master = master
+        self.screens = screens
+        self.screennames = screennames
+        self.screenid = 0
+        self.reset    = None
+     
+    def turn_page (self):
+        """send the touch event to the brightness controller.
+           if brightness was not at full level, the brightness
+           controller sets brightness to full. in this case, no
+           pagination shall be done."""
+        try:
+            with urlopen(CONFIG.URL_BRIGHTNESS_CONTROL) as response:
+                data = json.loads(response.read().decode("utf-8"))
+        except (HTTPError, URLError):
+            Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
+        else:
+            return data['FullBrightness']
+        return True
+ 
+    def first_screen (self):
+        """switch back to first screen after 
+           CONFIG.TIMETOFALLBACK milliseconds"""
+        if self.screenid != 0:
+            self.screens[self.screennames[self.screenid]].grid_remove()
+            screenid = 0
+            self.screens[self.screennames[self.screenid]].grid()
+        self.reset = None
+
+    def next_screen (self, event):
+        """do pagination of screens and set callback to first_screen()
+           after CONFIG.TIMETOFALLBACK milliseconds"""
+
+        if not self.turn_page():
+            return
+
+        if self.reset is not None:
+            self.master.after_cancel(self.reset)
+            self.reset = None
+
+        self.screens[self.screennames[self.screenid]].grid_remove()
+        self.screenid += 1
+        if self.screenid >= len(self.screennames): 
+            self.screenid = 0
+        self.screens[self.screennames[self.screenid]].grid()
+
+        self.reset = self.master.after(CONFIG.TIMETOFALLBACK, self.first_screen)
+
+
 ###############################################################################
 # WeatherApp ##################################################################
 class WeatherApp (tk.Frame):
@@ -214,59 +270,8 @@ class WeatherApp (tk.Frame):
         self.create_screens()
         self.create_dateframe(self.master)
 
-        self.master.bind("<Button-1>", self.next_screen())
-
-
-    def next_screen (self):
-        """pagination of screens with fallback to first (main) screen after
-           CONFIG.TIMETOFALLBACK milliseconds
-           triggered by bind("<Button-1>")"""
-        screenid = 0  # ID of currently displayed screen
-        reset = None
-
-        def first_screen ():
-            """switch back to first screen after 
-               CONFIG.TIMETOFALLBACK milliseconds"""
-            nonlocal screenid, reset
-
-            if screenid != 0:
-                self.screens[self.screennames[screenid]].grid_remove()
-                screenid = 0
-                self.screens[self.screennames[screenid]].grid()
-            reset = None
- 
-        def next (event):
-            """do pagination of screens and set callback to first_screen()
-               after CONFIG.TIMETOFALLBACK milliseconds"""
-            nonlocal screenid, reset
-
-            """send the touch event to the brightness controller.
-               if brightness was not at full level, the brightness
-               controller sets brightness to full. in this case, no
-               pagination shall be done."""
-            try:
-                with urlopen(CONFIG.URL_BRIGHTNESS_CONTROL) as response:
-                    data = json.loads(response.read().decode("utf-8"))
-            except (HTTPError, URLError):
-                Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
-            else:
-                if data['FullBrightness'] is False: 
-                    return                         
-
-            if reset is not None:
-                self.master.after_cancel(reset)
-                reset = None
-
-            self.screens[self.screennames[screenid]].grid_remove()
-            screenid += 1
-            if screenid >= len(self.screennames): 
-                screenid = 0
-            self.screens[self.screennames[screenid]].grid()
-
-            # switch to first screen after CONFIG.TIMETOFALLBACK milliseconds
-            reset = self.master.after(CONFIG.TIMETOFALLBACK, first_screen)
-
-        return next
+        self.pagination = Pagination(self.master, self.screens, self.screennames)
+        self.master.bind("<Button-1>", self.pagination.next_screen)
 
 
     def create_screens (self):
@@ -314,7 +319,7 @@ class WeatherApp (tk.Frame):
 
     def drawPicture (self, frame, picture, id_, zoom, gridpos):
         picture = PIL.Image.open(picture)
-        w, h = picture.size
+        w, h = picture.size  # TODO: check w, h = map(lambda x: int(x*zoom), pic.size)
         w = int(w*zoom)
         h = int(h*zoom)
         picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
@@ -458,7 +463,7 @@ class Weather (object):
 # shutdown_application ########################################################
 def shutdown_application ():
     """called on shutdown; stops all threads"""
-    print("in shutdown_application()")
+    Log("shutdown_application()")
     clock.stop()
     clock.join()
     print("after clock.join()")
