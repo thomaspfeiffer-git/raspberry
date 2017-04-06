@@ -128,9 +128,9 @@ class Clock (threading.Thread):
         threading.Thread.__init__(self)
         self.__running = False
 
-    def init_values (self, master):  # TODO Check why master is needed
-        self.date_date = tk.StringVar(master)
-        self.date_time = tk.StringVar(master)
+    def init_values (self):
+        self.date_date = tk.StringVar()
+        self.date_time = tk.StringVar()
 
     @staticmethod
     def datestr (now):
@@ -160,7 +160,7 @@ class Values (threading.Thread):
         self.values.update({ "ID_OWM_{:02d}".format(id+1): None for id in range(30) })
         self.__running = False
 
-    def init_values (self, master): # TODO Useage of master?
+    def init_values (self):
         for id in self.values.keys():
             self.values[id] = tk.StringVar()
             self.values[id].set(self.getvalue(None))
@@ -187,7 +187,6 @@ class Values (threading.Thread):
 
     def stop (self):
         self.__running = False
-
 
 
 ###############################################################################
@@ -255,9 +254,9 @@ class WeatherApp (tk.Frame):
         self.screennames = "main owm kid kb_outdoor kb_indoor wardrobe".split()
         self.master = master
 
-        clock.init_values(self.master)
+        clock.init_values()
         clock.start()
-        values.init_values(self.master)
+        values.init_values()
         values.start()
 
         family = "Arial" # TODO: get from config file
