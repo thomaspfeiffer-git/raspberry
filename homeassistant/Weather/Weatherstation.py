@@ -98,8 +98,8 @@ class DateItem (Text):
 
 class SeparatorText (Text):
     """prints separator text"""
-    def __init__ (self, frame, gridpos, text, font):
-        super().__init__(frame, gridpos=gridpos, text=text, stringvar=None, 
+    def __init__ (self, frame, gridpos, text=None, vartext=None, font=None):
+        super().__init__(frame, gridpos=gridpos, text=text, stringvar=vartext,
                          anchor="w", sticky="we", font=font, color=CONFIG.COLORS.SEP)
 
 
@@ -113,11 +113,12 @@ class SeparatorLine (ttk.Separator, Displayelement):
 
 class Separator (Displayelement): 
     """prints a separator which consists of a line and some text"""
-    def __init__ (self, frame, gridpos, text=None, font=None):
+    def __init__ (self, frame, gridpos, text=None, vartext=None, font=None):
         self.gridpos = SeparatorLine(frame=frame, gridpos=gridpos).gridpos
-        if text is not None:
+        if text is not None or vartext is not None:
             self.gridpos = SeparatorText(frame=frame, gridpos=self.gridpos,
-                                         text=text, font=font).gridpos
+                                         text=text, vartext=vartext, 
+                                         font=font).gridpos
 
 
 ###############################################################################
@@ -158,6 +159,8 @@ class Values (threading.Thread):
         self.queue = SensorQueueClient_read("../config.ini")
         self.values = { "ID_{:02d}".format(id+1): None for id in range(40) }
         self.values.update({ "ID_OWM_{:02d}".format(id+1): None for id in range(30) })
+                 # some local calculated values
+        self.values.update({ "ID_LC_{:02d}".format(id+1): None for id in range(30) })
         self.__running = False
 
     def init_values (self):
@@ -173,13 +176,37 @@ class Values (threading.Thread):
         else:
             return "(n/a)"
 
+    def calculate_local_values (self):
+        self.values['ID_LC_01'].set("Wettervorhersage aktuell:")
+        self.values['ID_LC_02'].set("{} - {}".format(self.values['ID_OWM_01'].get(),
+                                                     self.values['ID_OWM_02'].get()))
+        self.values['ID_LC_03'].set("{} ({})".format(self.values['ID_OWM_03'].get(),
+                                                     self.values['ID_OWM_04'].get()))
+
+        self.values['ID_LC_11'].set("Wettervorhersage morgen:")
+        self.values['ID_LC_12'].set("{} - {}".format(self.values['ID_OWM_11'].get(),
+                                                     self.values['ID_OWM_12'].get()))
+        self.values['ID_LC_13'].set("{} ({})".format(self.values['ID_OWM_13'].get(),
+                                                     self.values['ID_OWM_14'].get()))
+
+        self.values['ID_LC_21'].set("Wettervorhersage übermorgen:")
+        self.values['ID_LC_22'].set("{} - {}".format(self.values['ID_OWM_21'].get(),
+                                                     self.values['ID_OWM_22'].get()))
+        self.values['ID_LC_23'].set("{} ({})".format(self.values['ID_OWM_23'].get(),
+                                                     self.values['ID_OWM_24'].get()))
+
     def run (self):
         self.__running = True
+        newvalues = False
         while self.__running:
             v = self.queue.read()
             if v is not None: 
                 self.values[v.id].set(self.getvalue(v))
+                newvalues = True
             else:  # queue empty --> get some interruptible sleep
+                if newvalues:
+                   self.calculate_local_values()
+                   newvalues = False
                 for _ in range(10):
                    time.sleep(0.1)
                    if not self.__running:
@@ -255,9 +282,7 @@ class WeatherApp (tk.Frame):
         self.master = master
 
         clock.init_values()
-        clock.start()
         values.init_values()
-        values.start()
 
         self.init_fonts()
 
@@ -268,10 +293,13 @@ class WeatherApp (tk.Frame):
         self.pagination = Pagination(self.master, self.screens, self.screennames)
         self.master.bind("<Button-1>", self.pagination.next_screen)
 
+        clock.start()
+        values.start()
 
     def init_fonts (self):
         family = CONFIG.FONTS.FAMILY
         self.font_item      = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
+        self.font_forecast  = Font(family=family, size=CONFIG.FONTS.SIZE_FORECAST)
         self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
         self.font_date      = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL)
         self.font_date_bold = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL, weight="bold")
@@ -319,6 +347,18 @@ class WeatherApp (tk.Frame):
         return gridpos
 
 
+    def drawForecastSection (self, frame, vartitle, itemlist, gridpos):
+        gridpos = Separator(frame=frame, gridpos=gridpos, 
+                            vartext=values.values[vartitle],
+                            font=self.font_separator).gridpos
+        for item in itemlist:
+            gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
+                                  stringvar=values.values[item],
+                                  font=self.font_forecast, 
+                                  color=CONFIG.COLORS.FORECAST).gridpos
+        return gridpos
+
+
     def drawPicture (self, frame, picture, id_, zoom, gridpos):
         picture = PIL.Image.open(picture)
         w, h = map(lambda x: int(x*zoom), picture.size)
@@ -352,11 +392,15 @@ class WeatherApp (tk.Frame):
         frame = self.screens['owm']
         gridpos = 0
 
-        gridpos = self.drawWeatherSection(frame=frame, title="Wettervorhersage aktuell:",
-                                          itemlist=['ID_OWM_01', 'ID_OWM_02'],
-                                          color=CONFIG.COLORS.FORECAST,
-                                          gridpos=gridpos)
-
+        gridpos = self.drawForecastSection(frame=frame, vartitle='ID_LC_01',
+                                           itemlist=['ID_OWM_05', 'ID_LC_02', 'ID_LC_03'],
+                                           gridpos=gridpos)
+        gridpos = self.drawForecastSection(frame=frame, vartitle='ID_LC_11',
+                                           itemlist=['ID_OWM_15', 'ID_LC_12', 'ID_LC_13'],
+                                           gridpos=gridpos)
+        gridpos = self.drawForecastSection(frame=frame, vartitle='ID_LC_21',
+                                           itemlist=['ID_OWM_25', 'ID_LC_22', 'ID_LC_23'],
+                                           gridpos=gridpos)
 
     def create_screen_kid (self):
         frame = self.screens['kid']
