@@ -3,27 +3,25 @@
 #############################################################################
 # weather_kidsroom.py                                                       #
 # Monitor temperature and humidity in our kid's room.                       #
-# (c) https://github.com/thomaspfeiffer-git 2015, 2016                      #
+# (c) https://github.com/thomaspfeiffer-git 2015, 2016, 2017                #
 #############################################################################
 """Monitor temperature and humidity in our kid's room."""
+
 # Start with:
 # nohup sudo ./weather_kidsroom.py > /dev/null &
 
 import datetime
-import signal
 import subprocess
 import sys
-from threading import Lock
 from time import strftime, localtime, sleep, time
-import traceback
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 from CPU import CPU
 from DHT22_AM2302 import DHT22_AM2302
 from Measurements import Measurements
-from SensorQueue import SensorQueueClient_write
-from SensorValue import SensorValueLock, SensorValue
+from SensorQueue2 import SensorQueueClient_write
+from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 
 DHT22_AM2302_PIN = 35
@@ -42,11 +40,11 @@ DS_HUMI    = "kidsroom_humi"
 # Main ########################################################################
 def main():
     """main part"""
-    qvalue_temp = SensorValueLock("ID_06", "TempKinderzimmer", SensorValue.Types.Temp, "°C", Lock())
-    qvalue_humi = SensorValueLock("ID_07", "HumiKinderzimmer", SensorValue.Types.Humi, "% rF", Lock())
+    sq = SensorQueueClient_write("../../configs/weatherqueue.ini")
+    qvalue_temp = SensorValue("ID_06", "TempKinderzimmer", SensorValue_Data.Types.Temp, "°C")
+    qvalue_humi = SensorValue("ID_07", "HumiKinderzimmer", SensorValue_Data.Types.Humi, "% rF")
     sq.register(qvalue_temp)
     sq.register(qvalue_humi)
-    sq.start()
 
     temphumi    = DHT22_AM2302(19, qvalue_temp, qvalue_humi)   # BCM 19 = PIN 35
     temp_cpu    = CPU()
@@ -87,42 +85,18 @@ def main():
 
 ###############################################################################
 # Exit ########################################################################
-def _exit():
+def shutdown_application ():
     """cleanup stuff"""
-    sq.stop()
-    sq.join()
-    sys.exit()
-
-def __exit(__s, __f):
-    """cleanup stuff used for signal handler"""
-    _exit()
+    sys.exit(0)
 
 
 
 ###############################################################################
 ###############################################################################
 if __name__ == '__main__':
-    # TODO
-    # shutdown = Shutdown(shutdown_func=shutdown_application)
+    shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    signal.signal(signal.SIGTERM, __exit)
-
-    try:
-        sq = SensorQueueClient_write()
-        main()
-
-    except KeyboardInterrupt:
-        _exit()
-
-    except SystemExit:              # Done in signal handler (method _exit()) #
-        pass
-
-    except:
-        print(traceback.print_exc())
-        _exit()
-
-    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
-        pass
+    main()
 
 ### eof ###
 
