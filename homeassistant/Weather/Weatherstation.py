@@ -156,7 +156,7 @@ class WeatherApp (tk.Frame):
                                           gridpos=gridpos)
         gridpos = self.drawWeatherSection(frame=frame, title="Draußen:",
                                           itemlist=['ID_12', 'ID_04', 'ID_05'],
-                                          color=CONFIG.COLORS.INDOOR,
+                                          color=CONFIG.COLORS.OUTDOOR,
                                           gridpos=gridpos)
 
 
