@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 #############################################################################
 # wardrobe.py                                                               #
@@ -6,16 +6,17 @@
 #############################################################################
 """controls lighting of my wardrobe"""
 
+# start with
+# nohup ./wardrobe.py 2>wardrobe.err >wardrobe.log &
+
+
 from enum import Enum
 from math import pi, sin, asin
 import RPi.GPIO as io
 import rrdtool
-import signal
 import sys
 import threading
 from time import sleep, strftime, time
-import traceback
-
 
 sys.path.append("../libs/")
 from i2c import I2C
@@ -24,8 +25,8 @@ from sensors.CPU import CPU
 from sensors.HTU21DF import HTU21DF
 from sensors.TSL2561 import TSL2561 
 
-from SensorQueue import SensorQueueClient_write
-from SensorValue import SensorValueLock, SensorValue
+from SensorQueue2 import SensorQueueClient_write
+from SensorValue2 import SensorValue, SensorValue_Data
 
 from Shutdown import Shutdown
 
@@ -310,7 +311,6 @@ class Control_Button (Control):
 ###############################################################################
 # Main ########################################################################
 def main ():
-
     cpu     = CPU()
     htu21df = HTU21DF(qvalue_temp=qv_temp_wardrobe, qvalue_humi=qv_humi_wardrobe)
     lightness.start()
@@ -349,62 +349,38 @@ def main ():
 
 ###############################################################################
 # Exit ########################################################################
-def _exit():
+def shutdown_application ():
     """cleanup stuff"""
     for c in controls.values():
         c.stop()
         c.join()
 
-    sq.stop()
-    sq.join()
     lightness.stop()
     lightness.join()
-    sys.exit()
-
-def __exit(__s, __f):
-    """cleanup stuff used for signal handler"""
-    _exit()
+    sys.exit(0)
 
 
 ###############################################################################
 ###############################################################################
 if __name__ == '__main__':
-    # TODO
-    # shutdown = Shutdown(shutdown_func=shutdown_application)
+    shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    signal.signal(signal.SIGTERM, __exit)
+    qv_temp_wardrobe  = SensorValue("ID_31", "TempWardrobe",  SensorValue_Data.Types.Temp, "°C")
+    qv_humi_wardrobe  = SensorValue("ID_32", "HumiWardrobe",  SensorValue_Data.Types.Humi, "% rF")
+    qv_light_wardrobe = SensorValue("ID_33", "LightWardrobe", SensorValue_Data.Types.Light, "lux")
 
-    qv_temp_wardrobe  = SensorValueLock("ID_31", "TempWardrobe",  SensorValue.Types.Temp, "°C", threading.Lock())
-    qv_humi_wardrobe  = SensorValueLock("ID_32", "HumiWardrobe",  SensorValue.Types.Humi, "% rF", threading.Lock())
-    qv_light_wardrobe = SensorValueLock("ID_33", "LightWardrobe", SensorValue.Types.Light, "lux", threading.Lock())
+    sq = SensorQueueClient_write("../../configs/weatherqueue.ini")
+    sq.register(qv_temp_wardrobe)
+    sq.register(qv_humi_wardrobe)
+    sq.register(qv_light_wardrobe)
 
-    try:
-        sq = SensorQueueClient_write()
-        sq.register(qv_temp_wardrobe)
-        sq.register(qv_humi_wardrobe)
-        sq.register(qv_light_wardrobe)
-        sq.start()
-
-        lightness = Lightness(qv=qv_light_wardrobe)
-        controls  = {
-                     'doors':  Control(Sensor1_Pin, Actuator1_ID),
-                     'drawer': Control(Sensor2_Pin, Actuator2_ID),
-                     'button': Control_Button(Sensor3_Pin, Actuator3_ID)
-                    }
-        main()
-
-    except KeyboardInterrupt:
-        _exit()
-
-    except SystemExit:              # Done in signal handler (method _exit()) #
-        pass
-
-    except:
-        print(traceback.print_exc())
-        _exit()
-
-    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
-        pass
+    lightness = Lightness(qv=qv_light_wardrobe)
+    controls  = {
+                 'doors':  Control(Sensor1_Pin, Actuator1_ID),
+                 'drawer': Control(Sensor2_Pin, Actuator2_ID),
+                 'button': Control_Button(Sensor3_Pin, Actuator3_ID)
+                }
+    main()
 
 # eof #
 
