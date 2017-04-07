@@ -7,15 +7,14 @@
 # (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
 ###############################################################################
 
-import signal
 import sys
-from threading import Lock
 from time import sleep
 import traceback
 
 sys.path.append('../libs')
-from SensorQueue import SensorQueueClient_write
-from SensorValue import SensorValueLock, SensorValue
+from SensorQueue2 import SensorQueueClient_write
+from SensorValue2 import SensorValue, SensorValue_Data
+from Shutdown import Shutdown
 
 
 pik_i = "pik_i"
@@ -36,15 +35,15 @@ def getDataFromFile (filename):
 ################################################################################
 # Main #########################################################################
 def Main():
-    qv_kb_i_t = SensorValueLock("ID_21", "Temp KB indoor", SensorValue.Types.Temp, "°C", Lock())
-    qv_kb_i_h = SensorValueLock("ID_22", "Humi KB indoor", SensorValue.Types.Humi, "% rF", Lock())
-    qv_kb_p   = SensorValueLock("ID_23", "Pressure KB",    SensorValue.Types.Pressure, "hPa", Lock())
+    qv_kb_i_t = SensorValue("ID_21", "Temp KB indoor", SensorValue_Data.Types.Temp, "°C")
+    qv_kb_i_h = SensorValue("ID_22", "Humi KB indoor", SensorValue_Data.Types.Humi, "% rF")
+    qv_kb_p   = SensorValue("ID_23", "Pressure KB",    SensorValue_Data.Types.Pressure, "hPa")
 
-    qv_kb_a_t = SensorValueLock("ID_24", "Temp KB outdoor", SensorValue.Types.Temp, "°C", Lock())
-    qv_kb_a_h = SensorValueLock("ID_25", "Humi KB outdoor", SensorValue.Types.Humi, "% rF", Lock())
+    qv_kb_a_t = SensorValue("ID_24", "Temp KB outdoor", SensorValue_Data.Types.Temp, "°C")
+    qv_kb_a_h = SensorValue("ID_25", "Humi KB outdoor", SensorValue_Data.Types.Humi, "% rF")
 
-    qv_kb_k_t = SensorValueLock("ID_26", "Temp KB basement", SensorValue.Types.Temp, "°C", Lock())
-    qv_kb_k_h = SensorValueLock("ID_27", "Humi KB basement", SensorValue.Types.Humi, "% rF", Lock())
+    qv_kb_k_t = SensorValue("ID_26", "Temp KB basement", SensorValue_Data.Types.Temp, "°C")
+    qv_kb_k_h = SensorValue("ID_27", "Humi KB basement", SensorValue_Data.Types.Humi, "% rF")
 
     sq.register(qv_kb_i_t)
     sq.register(qv_kb_i_h)
@@ -53,7 +52,6 @@ def Main():
     sq.register(qv_kb_a_h)
     sq.register(qv_kb_k_t)
     sq.register(qv_kb_k_h)
-    sq.start()
 
     while True:
         try:
@@ -80,37 +78,18 @@ def Main():
 
 ################################################################################
 # Exit #########################################################################
-def Exit():
+def shutdown_application ():
     """cleanup stuff"""
-    sq.stop()
-    sq.join()
-    sys.exit()
-
-def _Exit(__s, __f):
-    """cleanup stuff used for signal handler"""
-    Exit()
+    sys.exit(0)
 
 
 ###############################################################################
 ###############################################################################
 if __name__ == '__main__':
-    signal.signal(signal.SIGTERM, _Exit)
+    shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    try:
-        sq = SensorQueueClient_write()
-        Main()
-
-    except KeyboardInterrupt:
-        Exit()
-
-    except SystemExit:              # Done in signal handler (method _Exit()) #
-        pass
-
-    except:
-        print(traceback.print_exc())
-
-    finally:
-        pass
+    sq = SensorQueueClient_write("../../configs/weatherqueue.ini")
+    Main()
 
 # eof #
 
