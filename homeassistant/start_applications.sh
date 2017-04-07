@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# starts all home automation applications
 
 echo "Starting QueueServer.py ..."
 cd Queueserver/
