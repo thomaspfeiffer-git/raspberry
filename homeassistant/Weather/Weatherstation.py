@@ -14,265 +14,32 @@
 ### useful ressources ###
 # turn off screen saver:
 # sudo apt-get install xscreensaver
-# start xscreensaver an set screensaver off manually
+# start xscreensaver and set screensaver off manually
 #
 # Packages you might install
 # sudo apt-get install python3-pil.imagetk
 
 
 import tkinter as tk
-import tkinter.ttk as ttk
 from tkinter.font import Font
 import PIL.Image
 import PIL.ImageTk
 
 from collections import OrderedDict
 from datetime import datetime
-import json
 import os
 import sys
-import threading
 import time
-from urllib.error import HTTPError, URLError 
-from urllib.request import urlopen
 
 sys.path.append('../../libs')
-from SensorQueue2 import SensorQueueClient_read
 from Shutdown import Shutdown
+from Logging import Log
 
-from Config import CONFIG
-from Constants import CONSTANTS
-
-
-def Log (logstr):
-    """improved log output"""
-    print("{}: {}".format(datetime.now().strftime("%Y%m%d %H:%M:%S"), logstr))
-
-
-###############################################################################
-# Basic display elements ######################################################
-class Displayelement (object):
-    """provides the basic logic for calculating the grid pos of an element"""
-    @property
-    def gridpos (self):
-        return self.__gridpos
-
-    @gridpos.setter
-    def gridpos (self, gridpos):
-        self.__gridpos = gridpos
-
-
-class Text (tk.Label, Displayelement):
-    """prints text"""
-    """update of data is done in stringvar (must be of type tk.StringVar)"""
-    def __init__ (self, frame, gridpos, text, stringvar, anchor, sticky, font, color):
-        # TODO: type safety: stringvar
-        super().__init__(frame, text=text, textvariable=stringvar, 
-                         # justify="left", anchor=anchor, font=font,
-                         justify="center", anchor=anchor, font=font,
-                         foreground=color, background=CONFIG.COLORS.BACKGROUND)
-        self.gridpos = gridpos+1 
-        self.grid(row=gridpos, column=0, sticky=sticky)
-
-
-class Image (tk.Label, Displayelement):
-    def __init__ (self, frame, gridpos, image):
-        # TODO: type safety: image
-        super().__init__(frame, image=image, background=CONFIG.COLORS.BACKGROUND)
-        self.gridpos = gridpos+1 
-        self.grid(row=gridpos, column=0, sticky="we")
-
-
-class WeatherItem (Text):
-    """draws a single weather item"""
-    def __init__ (self, frame, gridpos, stringvar, font=None, color=None):
-        super().__init__(frame, gridpos=gridpos, text=None, stringvar=stringvar, 
-                         anchor="w", sticky="w", font=font, color=color)
-
-
-class DateItem (Text):
-    """draws a date line"""
-    def __init__ (self, frame, gridpos, stringvar, font, color):
-        super().__init__(frame, gridpos=gridpos, text=None, stringvar=stringvar, 
-                         anchor="center", sticky="we", font=font, color=color)
-
-
-class SeparatorText (Text):
-    """prints separator text"""
-    def __init__ (self, frame, gridpos, text=None, vartext=None, font=None):
-        super().__init__(frame, gridpos=gridpos, text=text, stringvar=vartext,
-                         anchor="w", sticky="we", font=font, color=CONFIG.COLORS.SEP)
-
-
-class SeparatorLine (ttk.Separator, Displayelement):
-    """prints separator line"""
-    def __init__ (self, frame, gridpos):
-        super().__init__(frame, orient="horizontal")
-        self.gridpos = gridpos+1
-        self.grid(row=gridpos, column=0, sticky="we")
-
-
-class Separator (Displayelement): 
-    """prints a separator which consists of a line and some text"""
-    def __init__ (self, frame, gridpos, text=None, vartext=None, font=None):
-        self.gridpos = SeparatorLine(frame=frame, gridpos=gridpos).gridpos
-        if text is not None or vartext is not None:
-            self.gridpos = SeparatorText(frame=frame, gridpos=self.gridpos,
-                                         text=text, vartext=vartext, 
-                                         font=font).gridpos
-
-
-###############################################################################
-# Clock #######################################################################
-class Clock (threading.Thread):
-    """dedicated thread for updating the date and time fields"""
-    def __init__ (self):
-        threading.Thread.__init__(self)
-        self.__running = False
-
-    def init_values (self):
-        self.date_date = tk.StringVar()
-        self.date_time = tk.StringVar()
-
-    @staticmethod
-    def datestr (now):
-        return "{}, {}. {} {}".format(CONSTANTS.DAYOFWEEK[now.weekday()], now.day,
-                                      CONSTANTS.MONTHNAMES[now.month], now.year)
-
-    def run (self):
-        self.__running = True
-        while self.__running:
-            now = datetime.now()
-            self.date_date.set(self.datestr(now))
-            self.date_time.set(now.strftime("%X"))
-            time.sleep(0.3)
-
-    def stop (self):
-        self.__running = False
-
-
-###############################################################################
-# Values ######################################################################
-class Values (threading.Thread):
-    """dedicated thread for updating all weather items"""
-    def __init__ (self):
-        threading.Thread.__init__(self)
-        self.queue = SensorQueueClient_read("../config.ini")
-        self.values = { "ID_{:02d}".format(id+1): None for id in range(40) }
-        self.values.update({ "ID_OWM_{:02d}".format(id+1): None for id in range(30) })
-                                                # some local calculated values
-        self.values.update({ "ID_LC_{:02d}".format(id+1): None for id in range(30) })
-        self.__running = False
-
-    def init_values (self):
-        for id in self.values.keys():
-            self.values[id] = tk.StringVar()
-            self.values[id].set(self.getvalue(None))
-
-    @staticmethod
-    def getvalue (sensorvalue):
-        """returns measured value of sensor or "n/a" if sensorvalue == None"""
-        if sensorvalue is not None:
-            return sensorvalue.value
-        else:
-            return "(n/a)"
-
-    def calculate_local_values (self):
-        self.values['ID_LC_01'].set("Wettervorhersage aktuell:")
-        self.values['ID_LC_02'].set("{} - {}".format(self.values['ID_OWM_01'].get(),
-                                                     self.values['ID_OWM_02'].get()))
-        self.values['ID_LC_03'].set("{} ({})".format(self.values['ID_OWM_03'].get(),
-                                                     self.values['ID_OWM_04'].get()))
-
-        title = "Wettervorhersage heute:" if datetime.now().hour < 12 else "Wettervorhersage morgen:"
-        self.values['ID_LC_11'].set(title)
-        self.values['ID_LC_12'].set("{} - {}".format(self.values['ID_OWM_11'].get(),
-                                                     self.values['ID_OWM_12'].get()))
-        self.values['ID_LC_13'].set("{} ({})".format(self.values['ID_OWM_13'].get(),
-                                                     self.values['ID_OWM_14'].get()))
-
-        title = "Wettervorhersage morgen:" if datetime.now().hour < 12 else "Wettervorhersage übermorgen:"
-        self.values['ID_LC_21'].set(title)
-        self.values['ID_LC_22'].set("{} - {}".format(self.values['ID_OWM_21'].get(),
-                                                     self.values['ID_OWM_22'].get()))
-        self.values['ID_LC_23'].set("{} ({})".format(self.values['ID_OWM_23'].get(),
-                                                     self.values['ID_OWM_24'].get()))
-
-    def run (self):
-        self.__running = True
-        newvalues = False
-        while self.__running:
-            v = self.queue.read()
-            if v is not None: 
-                self.values[v.id].set(self.getvalue(v))
-                newvalues = True
-            else:  # queue empty --> get some interruptible sleep
-                if newvalues:
-                   self.calculate_local_values()
-                   newvalues = False
-                for _ in range(10):
-                   time.sleep(0.1)
-                   if not self.__running:
-                       break
-
-    def stop (self):
-        self.__running = False
-
-
-###############################################################################
-# Pagination ##################################################################
-class Pagination (object):
-    """pagination of screens with fallback to first (main) screen after
-       CONFIG.TIMETOFALLBACK milliseconds
-       triggered by bind("<Button-1>")"""
-    def __init__ (self, master, screens, screennames):
-        self.master  = master
-        self.screens = screens
-        self.screennames = screennames
-        self.screenid = 0
-        self.reset    = None
-     
-    def turn_page (self):
-        """send the touch event to the brightness controller.
-           if brightness was not at full level, the brightness
-           controller sets brightness to full. in this case, no
-           pagination shall be done."""
-        try:
-            with urlopen(CONFIG.URL_BRIGHTNESS_CONTROL) as response:
-                data = json.loads(response.read().decode("utf-8"))
-        except (HTTPError, URLError):
-            Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
-        else:
-            return data['FullBrightness']
-        return True
- 
-    def first_screen (self):
-        """switch back to first screen after 
-           CONFIG.TIMETOFALLBACK milliseconds"""
-        if self.screenid != 0:
-            self.screens[self.screennames[self.screenid]].grid_remove()
-            self.screenid = 0
-            self.screens[self.screennames[self.screenid]].grid()
-        self.reset = None
-
-    def next_screen (self, event):
-        """do pagination of screens and set callback to first_screen()
-           after CONFIG.TIMETOFALLBACK milliseconds"""
-
-        if not self.turn_page():
-            return
-
-        if self.reset is not None:
-            self.master.after_cancel(self.reset)
-            self.reset = None
-
-        self.screens[self.screennames[self.screenid]].grid_remove()
-        self.screenid += 1
-        if self.screenid >= len(self.screennames): 
-            self.screenid = 0
-        self.screens[self.screennames[self.screenid]].grid()
-
-        self.reset = self.master.after(CONFIG.TIMETOFALLBACK, self.first_screen)
+from config import CONFIG
+from constants import CONSTANTS
+from displaybasics import WeatherItem, DateItem, Separator, Image
+from pagination import Pagination
+from refreshvalues import Clock, Values
 
 
 ###############################################################################

@@ -16,6 +16,17 @@ use iterators
 
 class Enum
 
+sq = SensorQueueClient_write("../config.ini")
+list(map(sq.register, qv.values()))
+
+# self.__running = True _only_ in run()
+def run (self):
+    self.__running = True
+
+
+
+use libs/Logging.py
+
 ...
 
 
