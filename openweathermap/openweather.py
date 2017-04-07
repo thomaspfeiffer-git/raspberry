@@ -41,8 +41,8 @@ from urllib.error import HTTPError
 from urllib.request import urlopen
 
 sys.path.append("../libs/")
-from SensorQueue import SensorQueueClient_write
-from SensorValue import SensorValueLock, SensorValue
+from SensorQueue2 import SensorQueueClient_write
+from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 
 
@@ -214,12 +214,12 @@ class OWM_Sensorvalues (object):
     def __init__ (self):
         self.qv = []
         for i in range(self.number_of_datasets):
-            self.qv.append({'temp': SensorValueLock("ID_OWM_{}1".format(i), "TempOWM_{}".format(i), SensorValue.Types.Temp, "°C", threading.Lock()),
-                            'humidity': SensorValueLock("ID_OWM_{}2".format(i), "HumiOWM_{}".format(i), SensorValue.Types.Humi, "% rF", threading.Lock()),
-                            'wind': SensorValueLock("ID_OWM_{}3".format(i), "WindOWM_{}".format(i), SensorValue.Types.Wind, "km/h", threading.Lock()),
-                            'wind direction': SensorValueLock("ID_OWM_{}4".format(i), "WindDirOWM_{}".format(i), SensorValue.Types.WindDir, None, threading.Lock()),
-                            'desc': SensorValueLock("ID_OWM_{}5".format(i), "DescOWM_{}".format(i), SensorValue.Types.Desc, None, threading.Lock()),
-                            'icon_url': SensorValueLock("ID_OWM_{}6".format(i), "IconOWM_{}".format(i), SensorValue.Types.IconUrl, None, threading.Lock())
+            self.qv.append({'temp': SensorValue("ID_OWM_{}1".format(i), "TempOWM_{}".format(i), SensorValue_Data.Types.Temp, "°C"),
+                            'humidity': SensorValue("ID_OWM_{}2".format(i), "HumiOWM_{}".format(i), SensorValue_Data.Types.Humi, "% rF"),
+                            'wind': SensorValue("ID_OWM_{}3".format(i), "WindOWM_{}".format(i), SensorValue_Data.Types.Wind, "km/h"),
+                            'wind direction': SensorValue("ID_OWM_{}4".format(i), "WindDirOWM_{}".format(i), SensorValue_Data.Types.WindDir, None),
+                            'desc': SensorValue("ID_OWM_{}5".format(i), "DescOWM_{}".format(i), SensorValue_Data.Types.Desc, None),
+                            'icon_url': SensorValue("ID_OWM_{}6".format(i), "IconOWM_{}".format(i), SensorValue_Data.Types.IconUrl, None)
                            })
             for k, qv in self.qv[i].items():
                 sq.register(qv)
@@ -238,8 +238,6 @@ def shutdown_application ():
     """called on shutdown; stops all threads"""
     owm_data.stop()
     owm_data.join()
-    sq.stop()
-    sq.join()
     sys.exit(0)
 
 
@@ -248,9 +246,8 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    sq = SensorQueueClient_write()
+    sq = SensorQueueClient_write("../../configs/weatherqueue.ini")
     owm_sv = OWM_Sensorvalues()
-    sq.start()
 
     owm_data = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
     owm_data.start()
