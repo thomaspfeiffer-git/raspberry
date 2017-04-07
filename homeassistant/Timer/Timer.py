@@ -44,7 +44,7 @@ class TimerApp (tk.Frame):
                              foreground="black", background="yellow")
         self.text.grid(sticky="we")
 
-        self.drawPicture(self.frame, "ei01.jpg", 0.5)
+        self.drawPicture(self.frame, "ei01.jpg", 0.8)
 
 
     def drawPicture (self, frame, picture, zoom):
@@ -67,11 +67,11 @@ class Timer (object):
         self.root.config(cursor='none')
         self.root.resizable(width=False, height=False)
 
-        self.root.width  = 350
-        self.root.height = 250
+        self.root.width  = 520
+        self.root.height = 800
         self.root.borderwidth = 10
 
-        self.root.geometry("300x250+10+10")
+        self.root.geometry("520x800+280+0")
         self.root.config(bg="yellow")
         self.app = TimerApp(master=self.root)
         
