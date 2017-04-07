@@ -285,6 +285,7 @@ if __name__ == '__main__':
     except KeyError:
         Log("$DISPLAY not set, using default :0.0")
         os.environ["DISPLAY"] = ":0.0"
+
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     values = Values()
