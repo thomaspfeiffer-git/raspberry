@@ -7,6 +7,9 @@
 # (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
 ###############################################################################
 
+# start width
+# nohup ./kollerberg_to_queue.py 2>kollerberg_to_queue.err > kollerberg_to_queue.log &
+
 import sys
 from time import sleep
 import traceback
