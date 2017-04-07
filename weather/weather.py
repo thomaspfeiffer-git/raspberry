@@ -9,13 +9,12 @@
 """this new version runs on a NanoPi NEO Air"""
 """(runs on a Raspberry Pi as well :-) )"""
 
+# start with:
+# nohup ./weather.py 2>weather.err >weather.err &
 
 import rrdtool
-import signal
 import sys
-from threading import Lock
 from time import sleep, strftime
-import traceback
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
@@ -28,8 +27,9 @@ import DS1820    # temperature
 import HTU21DF   # temperature, humidity; outdoor
 import CPU
 
-from SensorQueue import SensorQueueClient_write
-from SensorValue import SensorValueLock, SensorValue
+from SensorQueue2 import SensorQueueClient_write
+from SensorValue2 import SensorValue, SensorValue_Data
+from Shutdown import Shutdown
 
 
 # Misc for rrdtool
@@ -44,20 +44,18 @@ DS_AIRPRESSURE     = "air_pressure"
 DS_TEMPCPU         = "temp_cpu"
 
 
-
-
 ###############################################################################
 # Main ########################################################################
 def main():
     """main part"""
 
-    qvalue_temp_indoor      = SensorValueLock("ID_01", "TempWohnzimmerIndoor", SensorValue.Types.Temp, "°C", Lock())
-    qvalue_humi_indoor      = SensorValueLock("ID_02", "HumiWohnzimmerIndoor", SensorValue.Types.Humi, "% rF", Lock())
-    qvalue_temp_outdoor     = SensorValueLock("ID_03", "TempWohnzimmerOutdoor", SensorValue.Types.Temp, "°C", Lock())
-    qvalue_humi_outdoor     = SensorValueLock("ID_04", "HumiWohnzimmerOutdoor", SensorValue.Types.Humi, "% rF", Lock())
-    qvalue_pressure         = SensorValueLock("ID_05", "Luftdruck", SensorValue.Types.Pressure, "hPa", Lock())
-    qvalue_temp_realoutdoor = SensorValueLock("ID_12", "TempRealOutdoor", SensorValue.Types.Temp, "°C", Lock())
-    qvalue_temp_indoor2     = SensorValueLock("ID_13", "TempWohnzimmerFenster", SensorValue.Types.Temp, "°C", Lock())
+    qvalue_temp_indoor      = SensorValue("ID_01", "TempWohnzimmerIndoor", SensorValue_Data.Types.Temp, "°C")
+    qvalue_humi_indoor      = SensorValue("ID_02", "HumiWohnzimmerIndoor", SensorValue_Data.Types.Humi, "% rF")
+    qvalue_temp_outdoor     = SensorValue("ID_03", "TempWohnzimmerOutdoor", SensorValue_Data.Types.Temp, "°C")
+    qvalue_humi_outdoor     = SensorValue("ID_04", "HumiWohnzimmerOutdoor", SensorValue_Data.Types.Humi, "% rF")
+    qvalue_pressure         = SensorValue("ID_05", "Luftdruck", SensorValue_Data.Types.Pressure, "hPa")
+    qvalue_temp_realoutdoor = SensorValue("ID_12", "TempRealOutdoor", SensorValue_Data.Types.Temp, "°C")
+    qvalue_temp_indoor2     = SensorValue("ID_13", "TempWohnzimmerFenster", SensorValue_Data.Types.Temp, "°C")
 
     sq.register(qvalue_temp_indoor)
     sq.register(qvalue_humi_indoor)
@@ -66,7 +64,6 @@ def main():
     sq.register(qvalue_pressure)
     sq.register(qvalue_temp_realoutdoor)
     sq.register(qvalue_temp_indoor2)
-    sq.start()
 
     bme280   = BME280.BME280(qvalue_pressure=qvalue_pressure, \
                              qvalue_temp=qvalue_temp_indoor,  \
@@ -120,44 +117,23 @@ def main():
 
 ###############################################################################
 # Exit ########################################################################
-def _exit():
+def shutdown_application ():
     """cleanup stuff"""
     print("in _exit()")
-    sq.stop()
-    sq.join()
     if platform == Platform.NANOPI:
         print("calling ds1820_1.consume_cpu_stop()")
         ds1820_1.consume_cpu_stop()
-    sys.exit()
-
-def __exit(__s, __f):
-    """cleanup stuff used for signal handler"""
-    print("in __exit()")
-    _exit()
+    sys.exit(0)
 
 
 ###############################################################################
 ###############################################################################
 if __name__ == '__main__':
-    signal.signal(signal.SIGTERM, __exit)
+    shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    try:
-        ds1820_1 = None
-        sq = SensorQueueClient_write()
-        main()
-
-    except KeyboardInterrupt:
-        _exit()
-
-    except SystemExit:              # Done in signal handler (method _exit()) #
-        pass
-
-    except:
-        print(traceback.print_exc())
-        _exit()
-
-    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
-        pass
+    ds1820_1 = None
+    sq = SensorQueueClient_write("../../configs/weatherqueue.ini")
+    main()
 
 # eof #
 
