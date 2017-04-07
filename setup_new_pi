@@ -227,6 +227,13 @@ sudo apt-get autoremove
 
 
 
+Switch off screen saver of X:
+=============================
+
+sudo apt-get install xscreensaver
+start xscreensaver and set screensaver off manually
+
+
 Calibrating a display when not running X (ie using pygame)
 ==========================================================
 
