@@ -191,7 +191,7 @@ def shutdown_application ():
 # Main ########################################################################
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
-    qv_brightness = SensorValue("ID_06", "LightKitchen", SensorValue_Data.Types.Light, "lux")
+    qv_brightness = SensorValue("ID_09", "LightKitchen", SensorValue_Data.Types.Light, "lux")
     sq = SensorQueueClient_write("../config.ini")
     sq.register(qv_brightness)
 
