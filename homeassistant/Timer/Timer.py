@@ -59,7 +59,7 @@ class TimerApp (tk.Frame):
         picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
 
         self.image = PIL.ImageTk.PhotoImage(picture)
-        self.pic = tk.Label(frame, image=self.image, justify="center", anchor="center", background="yellow")
+        self.pic = tk.Label(frame, image=self.image, width=520, justify="center", anchor="center", background="yellow")
         self.pic.grid(sticky="we") 
 
 
