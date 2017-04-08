@@ -46,6 +46,8 @@ class CONFIG:
         COTTAGE    = "ForestGreen"
         MISC       = "Indigo"
         WARDROBE   = "Gold"
+        BRIGHTNESSKITCHEN = "DarkOrange"
+
 
     class IMAGES:
         """definitions of images and path to images"""
