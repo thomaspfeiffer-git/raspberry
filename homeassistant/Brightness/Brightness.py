@@ -74,8 +74,7 @@ class Sensor (threading.Thread):
 
     def __init__ (self, qvalue=None):
         threading.Thread.__init__(self)
-        self.sensor       = TSL2561()
-        self.__qvalue     = qvalue
+        self.sensor       = TSL2561(qvalue=qvalue)
         self.__lux_calced = 0
         self.__lux        = 0
         self.__running = False
@@ -92,9 +91,6 @@ class Sensor (threading.Thread):
         self.__running = True
         while self.__running:
             v = self.sensor.lux()
-            if self.__qvalue is not None:
-                self.__qvalue = str(v)
-
             self.__lux = v
             v = v * 2
             if v < self.MIN: v = self.MIN
