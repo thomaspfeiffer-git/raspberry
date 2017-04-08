@@ -158,7 +158,7 @@ class WeatherApp (tk.Frame):
                                           itemlist=['ID_12', 'ID_04', 'ID_05'],
                                           color=CONFIG.COLORS.OUTDOOR,
                                           gridpos=gridpos)
-        gridpos = self.drawWeatherSection(frame=frame, title="Helligkeit Küche",
+        gridpos = self.drawWeatherSection(frame=frame, title="Helligkeit Küche:",
                                           itemlist=['ID_09'],
                                           color=CONFIG.COLORS.BRIGHTNESSKITCHEN,
                                           gridpos=gridpos)
