@@ -29,6 +29,8 @@ sys.path.append('../../libs/sensors/Adafruit')
 from i2c import I2C
 from Measurements import Measurements
 from sensors.TSL2561 import TSL2561
+from SensorQueue2 import SensorQueueClient_write
+from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 
 
@@ -43,8 +45,8 @@ CONTROLBRIGHTNESS = '/sys/class/backlight/rpi_backlight/brightness'
 
 
 ###############################################################################
-# API_OpenWeatherData #########################################################
-class API_Brightness (Resource):
+# APIs ########################################################################
+class API_Touchevent (Resource):
     def get (self):
         if control.schedule_on() or control.switched_on() or control.prettybright():
             result = { 'FullBrightness': True }
@@ -54,7 +56,12 @@ class API_Brightness (Resource):
         control.switch_on()
         return result
 
-api.add_resource(API_Brightness, '/touchevent')
+class API_Brightness (Resource):
+    def get (self):
+         return sensor.lux
+
+api.add_resource(API_Touchevent, '/touchevent')
+api.add_resource(API_Brightness, '/brightness')
 
 
 ##############################################################################
@@ -65,11 +72,17 @@ class Sensor (threading.Thread):
     MIN = 15
     MAX = 255
 
-    def __init__ (self):
+    def __init__ (self, qvalue=None):
         threading.Thread.__init__(self)
-        self.sensor    = TSL2561()
-        self.__lux     = 0
+        self.sensor       = TSL2561()
+        self.__qvalue     = qvalue
+        self.__lux_calced = 0
+        self.__lux        = 0
         self.__running = False
+
+    @property
+    def lux_calced (self):
+        return self.__lux_calced
 
     @property
     def lux (self):
@@ -78,10 +91,15 @@ class Sensor (threading.Thread):
     def run (self):
         self.__running = True
         while self.__running:
-            v = self.sensor.lux() * 2
+            v = self.sensor.lux()
+            if self.__qvalue is not None:
+                self.__qvalue = str(v)
+
+            self.__lux = v
+            v = v * 2
             if v < self.MIN: v = self.MIN
             if v > self.MAX: v = self.MAX
-            self.__lux = v
+            self.__lux_calced = v
             time.sleep(1)
 
     def stop (self):
@@ -142,7 +160,7 @@ class Control (threading.Thread):
         set_brightness = self.set_brightness()
 
         while self.__running:
-            self.measurements.append(sensor.lux)
+            self.measurements.append(sensor.lux_calced)
                     # full brightness between 6 am and 10 pm or
                     # if manually switched on
             if self.schedule_on() or self.switched_on(): 
@@ -173,7 +191,11 @@ def shutdown_application ():
 # Main ########################################################################
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
-    sensor = Sensor()
+    qv_brightness = SensorValue("ID_06", "LightKitchen", SensorValue_Data.Types.Light, "lux")
+    sq = SensorQueueClient_write("../config.ini")
+    sq.register(qv_brightness)
+
+    sensor = Sensor(qvalue=qv_brightness)
     sensor.start()
 
     control = Control()
