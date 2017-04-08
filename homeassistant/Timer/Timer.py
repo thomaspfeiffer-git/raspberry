@@ -49,7 +49,8 @@ class TimerApp (tk.Frame):
                              foreground="black", background="yellow")
         self.text.grid(sticky="we")
 
-        self.drawPicture(self.frame, "ei01.jpg", 0.55)
+        # self.drawPicture(self.frame, "ei01.jpg", 0.55)
+        self.drawPicture(self.frame, "calimero.png", 0.55)
 
 
     def drawPicture (self, frame, picture, zoom):
