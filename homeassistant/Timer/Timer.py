@@ -38,13 +38,18 @@ class TimerApp (tk.Frame):
         self.master = master
         self.grid()
 
+
+        self.font  = Font(family="Arial", size=20)
         self.frame = tk.Frame(self)
-        self.frame.grid(sticky="we")
-        self.text = tk.Label(self.frame, text="Frohe Ostern!", anchor="center",
+        self.frame.config(width=520, height=500, background="yellow")
+        self.frame.grid_propagate(0)
+        self.frame.grid()
+        self.text = tk.Label(self.frame, text="Frohe Ostern!", font=self.font,
+                             anchor="center", justify="center",
                              foreground="black", background="yellow")
         self.text.grid(sticky="we")
 
-        self.drawPicture(self.frame, "ei01.jpg", 0.8)
+        self.drawPicture(self.frame, "ei01.jpg", 0.55)
 
 
     def drawPicture (self, frame, picture, zoom):
@@ -68,10 +73,10 @@ class Timer (object):
         self.root.resizable(width=False, height=False)
 
         self.root.width  = 520
-        self.root.height = 800
+        self.root.height = 500
         self.root.borderwidth = 10
 
-        self.root.geometry("520x800+280+0")
+        self.root.geometry("520x500+280+0")
         self.root.config(bg="yellow")
         self.app = TimerApp(master=self.root)
         
