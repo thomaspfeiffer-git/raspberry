@@ -15,7 +15,7 @@ from config import CONFIG
 
 ###############################################################################
 # Basic display elements ######################################################
-class Displayelement (object):
+class Displayelement_Mixin (object):
     """provides the basic logic for calculating the grid pos of an element"""
     @property
     def gridpos (self):
@@ -26,7 +26,7 @@ class Displayelement (object):
         self.__gridpos = gridpos
 
 
-class Text (tk.Label, Displayelement):
+class Text (tk.Label, Displayelement_Mixin):
     """prints text"""
     """update of data is done in stringvar (must be of type tk.StringVar)"""
     def __init__ (self, frame, gridpos, text, stringvar, anchor, sticky, font, color):
@@ -39,7 +39,7 @@ class Text (tk.Label, Displayelement):
         self.grid(row=gridpos, column=0, sticky=sticky)
 
 
-class Image (tk.Label, Displayelement):
+class Image (tk.Label, Displayelement_Mixin):
     def __init__ (self, frame, gridpos, image):
         # TODO: type safety: image
         super().__init__(frame, image=image, background=CONFIG.COLORS.BACKGROUND)
@@ -68,7 +68,7 @@ class SeparatorText (Text):
                          anchor="w", sticky="we", font=font, color=CONFIG.COLORS.SEP)
 
 
-class SeparatorLine (ttk.Separator, Displayelement):
+class SeparatorLine (ttk.Separator, Displayelement_Mixin):
     """prints separator line"""
     def __init__ (self, frame, gridpos):
         super().__init__(frame, orient="horizontal")
