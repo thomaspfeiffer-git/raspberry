@@ -1,14 +1,14 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# Timer.py                                                                    #
+# MessageOfTheDay.py                                                          #
 # (c) https://github.com/thomaspfeiffer-git 2017                              #
 ###############################################################################
 """
 """
 
 ### usage ###
-# nohup ./Timer.py &
+# nohup ./MessageOfTheDay.py &
 
 
 # Packages you might install
@@ -40,8 +40,8 @@ class TimerApp (tk.Frame):
 
 
         self.font  = Font(family="Arial", size=20)
-        self.frame = tk.Frame(self)
-        self.frame.config(width=520, height=500, background="LightSkyBlue")
+        self.frame = tk.Frame(self)    # TODO: configfile
+        self.frame.config(width=440, height=480, background="LightSkyBlue")
         self.frame.grid_propagate(0)
         self.frame.grid()
 #        self.text = tk.Label(self.frame, text="Frohe Ostern!", font=self.font,
@@ -59,14 +59,14 @@ class TimerApp (tk.Frame):
         w, h = map(lambda x: int(x*zoom), picture.size)
         picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
 
-        self.image = PIL.ImageTk.PhotoImage(picture)
-        self.pic = tk.Label(frame, image=self.image, width=520, justify="center", anchor="center", background="LightSkyBlue")
+        self.image = PIL.ImageTk.PhotoImage(picture)  # TODO: width=<configfile>
+        self.pic = tk.Label(frame, image=self.image, width=440, justify="center", anchor="center", background="LightSkyBlue")
         self.pic.grid(sticky="we") 
 
 
 ###############################################################################
 # Timer #######################################################################
-class Timer (object):
+class Timer (object):  # TODO: rename
     def __init__ (self):
         self.root = tk.Tk()
 
@@ -74,11 +74,13 @@ class Timer (object):
         self.root.config(cursor='none')
         self.root.resizable(width=False, height=False)
 
-        self.root.width  = 520
-        self.root.height = 500
+        # self.root.width  = 520   # TODO: config file
+        self.root.width  = 440   # TODO: config file
+        self.root.height = 480
         self.root.borderwidth = 10
 
-        self.root.geometry("520x500+280+0")
+        # self.root.geometry("520x500+280+0")   # TODO: config file
+        self.root.geometry("440x480+280+0")   # TODO: config file
         self.root.config(bg="LightSkyBlue")
         self.app = TimerApp(master=self.root)
         
