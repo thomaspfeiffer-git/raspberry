@@ -15,12 +15,52 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.font import Font
 
+from collections import OrderedDict
 import os
 import sys
 
 sys.path.append('../../libs')
 from Shutdown import Shutdown
 from Logging import Log
+
+
+
+class Countdown (object):
+    def __init__ (self):
+        self.__counter = 0
+
+    @property
+    def counter (self, value): 
+        return self.__counter 
+
+    @counter.setter
+    def counter (self):
+        self.__counter = value
+ 
+    def __str__ (self):
+        return "{}".format(self.counter)
+ 
+
+class Control (object):
+    def __init__ (self, frame, counter):
+        self.master = frame
+        self.frame  = tk.Frame(self.master, bg="red", width=110, height=300)
+        self.frame.pack_propagate(0)
+        self.frame.pack()
+ 
+        self.counter = counter
+ 
+        self.style = ttk.Style()
+        self.style.configure("Timer.TButton", font=("Arial", 20, "bold"),
+                             width=5, background="DodgerBlue")
+        self.buttons = OrderedDict({ 'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton"),
+                         'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton"),
+                         'm1': ttk.Button(self.frame, text="-1", style="Timer.TButton"),
+                         'm5': ttk.Button(self.frame, text="-5", style="Timer.TButton"),
+                         'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton")
+                       })
+        for btn in self.buttons.values():
+            btn.pack(padx=5, pady=5)
 
 
 ###############################################################################
@@ -32,21 +72,27 @@ class TimerApp (tk.Frame):
         self.master = master
         self.pack()
 
-        self.buttonframe = tk.Frame(self, bg="red")
-        self.buttonframe.pack()
+        self.counter = Countdown()
+        self.control = Control(self, self.counter)
 
-        self.buttonstyle = ttk.Style()
-        self.buttonstyle.configure("Timer.TButton", font=("Arial", 20, "bold"), 
-                                   width=5, background="DodgerBlue")
+        # self.buttonframe = tk.Frame(self, bg="red", width=110, height=300)
+        # self.buttonframe.pack_propagate(0) 
+        # self.buttonframe.pack()
 
-        self.button_p5 = ttk.Button(self.buttonframe, text="+5", style="Timer.TButton")
-        self.button_p1 = ttk.Button(self.buttonframe, text="+1", style="Timer.TButton")
-        self.button_m1 = ttk.Button(self.buttonframe, text="–1", style="Timer.TButton")
-        self.button_m5 = ttk.Button(self.buttonframe, text="–5", style="Timer.TButton")
-        self.button_p5.pack()
-        self.button_p1.pack()
-        self.button_m1.pack()
-        self.button_m5.pack()
+        # self.buttonstyle = ttk.Style()
+        # self.buttonstyle.configure("Timer.TButton", font=("Arial", 20, "bold"), 
+        #                            width=5, background="DodgerBlue")
+
+        # self.button_p5 = ttk.Button(self.buttonframe, text="+5", style="Timer.TButton")
+        # self.button_p1 = ttk.Button(self.buttonframe, text="+1", style="Timer.TButton")
+        # self.button_m1 = ttk.Button(self.buttonframe, text="–1", style="Timer.TButton")
+        # self.button_m5 = ttk.Button(self.buttonframe, text="–5", style="Timer.TButton")
+        # self.button_reset = ttk.Button(self.buttonframe, text="Reset", style="Timer.TButton")
+        # self.button_p5.pack(padx=5, pady=5)
+        # self.button_p1.pack(padx=5, pady=5)
+        # self.button_m1.pack(padx=5, pady=5)
+        # self.button_m5.pack(padx=5, pady=5)
+        # self.button_reset.pack(padx=5, pady=5)
 
 
 
@@ -108,3 +154,4 @@ if __name__ == '__main__':
     timer.run()
 
 # eof #
+
