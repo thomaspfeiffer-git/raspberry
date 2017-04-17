@@ -76,7 +76,7 @@ class SeparatorLine (ttk.Separator, Displayelement_Mixin):
         self.grid(row=gridpos, column=0, sticky="we")
 
 
-class Separator (Displayelement): 
+class Separator (Displayelement_Mixin): 
     """prints a separator which consists of a line and some text"""
     def __init__ (self, frame, gridpos, text=None, vartext=None, font=None):
         self.gridpos = SeparatorLine(frame=frame, gridpos=gridpos).gridpos
