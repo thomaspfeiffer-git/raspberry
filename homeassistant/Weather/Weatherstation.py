@@ -72,8 +72,8 @@ class WeatherApp (tk.Frame):
     def init_fonts (self):
         family = CONFIG.FONTS.FAMILY
         self.font_item      = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
-        self.font_item_decorated = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL, 
-                                        weight="bold")
+        self.font_item_decorated = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL+5, 
+                                        slant="italic", weight="bold")
         self.font_forecast  = Font(family=family, size=CONFIG.FONTS.SIZE_FORECAST)
         self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
         self.font_date      = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL)
