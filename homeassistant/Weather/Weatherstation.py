@@ -81,11 +81,14 @@ class WeatherApp (tk.Frame):
 
 
     def create_screens (self):
+        """creates all screens listes in screennames.
+           each screen's parent is this tk.Frame (self).
+           pagination is done by displaying different screens."""
         self.screens = OrderedDict()
         for screen in self.screennames:
             self.screens[screen] = tk.Frame(self)
             self.screens[screen].config(bd=self.master.borderwidth, 
-                                        bg=CONFIG.COLORS.BACKGROUND, 
+                                        bg=CONFIG.COLORS.BACKGROUND,
                                         width=self.master.width, height=410)
             self.screens[screen].grid_propagate(0)    
             self.screens[screen].grid_columnconfigure(0, minsize=self.master.width - \
@@ -96,6 +99,9 @@ class WeatherApp (tk.Frame):
 
 
     def create_dateframe (self, master):
+        """creates a  date frame which is indepentant from the weather screens
+           created in WeatherApp.create_screens(). Thus it's possible to do 
+           pagination without a flickering date/time section."""
         self.dateframe = tk.Frame(master)
         self.dateframe.config(bd=self.master.borderwidth, 
                               bg=CONFIG.COLORS.BACKGROUND, 
