@@ -8,7 +8,7 @@
    and displays them on a Touch Screen Display."""
 
 ### usage ###
-# ./Weatherstation.py
+# nohup ./Weatherstation.py &
 
 
 ### useful ressources ###
@@ -179,7 +179,6 @@ class WeatherApp (tk.Frame):
                                           gridpos=gridpos)
 
 
-
     def create_screen_owm (self):
         frame = self.screens['owm']
         gridpos = 0
@@ -193,6 +192,7 @@ class WeatherApp (tk.Frame):
         gridpos = self.drawForecastSection(frame=frame, vartitle='ID_LC_21',
                                            itemlist=['ID_OWM_25', 'ID_LC_22', 'ID_LC_23'],
                                            gridpos=gridpos)
+
 
     def create_screen_kid (self):
         frame = self.screens['kid']

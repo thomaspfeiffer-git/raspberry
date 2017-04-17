@@ -3,8 +3,7 @@
 # displaybasics.py                                                            #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
 ###############################################################################
-"""
-"""
+"""provides some classes for basic screen elements."""
 
 
 import tkinter as tk

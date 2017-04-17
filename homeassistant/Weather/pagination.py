@@ -3,7 +3,10 @@
 # pagination.py                                                            #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
 ############################################################################
-"""
+"""provides the pagination logic for the WeatherApp:
+   . on touch event switch to next screen
+   . after a certain amount of time fall back to main screen
+   . when indicated, first touch event will set brightness to max level
 """
 
 import json

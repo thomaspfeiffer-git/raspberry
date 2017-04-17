@@ -3,7 +3,11 @@
 # refreshvalues.py                                                         #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
 ############################################################################
-"""
+"""updates all variable values of the screens:
+   - Clock: all date/time items updated in a dedicated thread.
+   - Values: all weather values updated in a dedicated thread.
+             all these values are read from the queue provided
+             by the SensorQueue.
 """
 
 from datetime import datetime
@@ -69,12 +73,11 @@ class Values (threading.Thread):
     @staticmethod
     def getvalue (sensorvalue):
         """returns measured value of sensor or "n/a" if sensorvalue == None"""
-        if sensorvalue is not None:
-            return sensorvalue.value
-        else:
-            return "(n/a)"
+        return sensorvalue.value if sensorvalue is not None else return "(n/a)"
 
     def calculate_local_values (self):
+        """some tk.StringVar() values are calculated locally, eg compiled
+           from several OpenWeatherMap data"""
         self.values['ID_LC_01'].set("Wettervorhersage aktuell:")
         self.values['ID_LC_02'].set("{} - {}".format(self.values['ID_OWM_01'].get(),
                                                      self.values['ID_OWM_02'].get()))
