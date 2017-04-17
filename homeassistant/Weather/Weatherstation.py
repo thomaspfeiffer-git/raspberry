@@ -72,6 +72,8 @@ class WeatherApp (tk.Frame):
     def init_fonts (self):
         family = CONFIG.FONTS.FAMILY
         self.font_item      = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
+        self.font_item_decorated = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL, 
+                                        weight="bold")
         self.font_forecast  = Font(family=family, size=CONFIG.FONTS.SIZE_FORECAST)
         self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
         self.font_date      = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL)
@@ -111,13 +113,16 @@ class WeatherApp (tk.Frame):
                                color=CONFIG.COLORS.DATE).gridpos
 
 
-    def drawWeatherSection (self, frame, title, itemlist, color, gridpos):
+    def drawWeatherSection (self, frame, title, itemlist, color, gridpos, decorated=None):
         gridpos = Separator(frame=frame, gridpos=gridpos, text=title, 
                             font=self.font_separator).gridpos
         for item in itemlist:
+            font = self.font_item
+            if decorated is not None:
+                font = self.font_item_decorated if item in decorated else font
             gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
                                   stringvar=values.values[item],
-                                  font=self.font_item, color=color).gridpos
+                                  font=font, color=color).gridpos
         return gridpos
 
 
@@ -154,10 +159,12 @@ class WeatherApp (tk.Frame):
 
         gridpos = self.drawWeatherSection(frame=frame, title="Wohnzimmer:",
                                           itemlist=['ID_01', 'ID_02'],
+                                          decorated=['ID_01'],
                                           color=CONFIG.COLORS.INDOOR,
                                           gridpos=gridpos)
         gridpos = self.drawWeatherSection(frame=frame, title="Draußen:",
                                           itemlist=['ID_12', 'ID_04', 'ID_05'],
+                                          decorated=['ID_12'],
                                           color=CONFIG.COLORS.OUTDOOR,
                                           gridpos=gridpos)
         gridpos = self.drawWeatherSection(frame=frame, title="Helligkeit Küche:",
