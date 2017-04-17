@@ -41,16 +41,17 @@ class TimerApp (tk.Frame):
 
         self.font  = Font(family="Arial", size=20)
         self.frame = tk.Frame(self)
-        self.frame.config(width=520, height=500, background="yellow")
+        self.frame.config(width=520, height=500, background="LightSkyBlue")
         self.frame.grid_propagate(0)
         self.frame.grid()
-        self.text = tk.Label(self.frame, text="Frohe Ostern!", font=self.font,
-                             anchor="center", justify="center",
-                             foreground="black", background="yellow")
-        self.text.grid(sticky="we")
+#        self.text = tk.Label(self.frame, text="Frohe Ostern!", font=self.font,
+#                             anchor="center", justify="center",
+#                             foreground="black", background="yellow")
+#        self.text.grid(sticky="we")
 
         # self.drawPicture(self.frame, "ei01.jpg", 0.55)
-        self.drawPicture(self.frame, "calimero.png", 0.55)
+        # self.drawPicture(self.frame, "calimero.png", 0.55)
+        self.drawPicture(self.frame, "timon_kapitaen.jpg", 0.15)
 
 
     def drawPicture (self, frame, picture, zoom):
@@ -59,7 +60,7 @@ class TimerApp (tk.Frame):
         picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
 
         self.image = PIL.ImageTk.PhotoImage(picture)
-        self.pic = tk.Label(frame, image=self.image, width=520, justify="center", anchor="center", background="yellow")
+        self.pic = tk.Label(frame, image=self.image, width=520, justify="center", anchor="center", background="LightSkyBlue")
         self.pic.grid(sticky="we") 
 
 
@@ -78,7 +79,7 @@ class Timer (object):
         self.root.borderwidth = 10
 
         self.root.geometry("520x500+280+0")
-        self.root.config(bg="yellow")
+        self.root.config(bg="LightSkyBlue")
         self.app = TimerApp(master=self.root)
         
     def poll (self):
