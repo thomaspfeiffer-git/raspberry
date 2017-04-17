@@ -73,7 +73,7 @@ class Values (threading.Thread):
     @staticmethod
     def getvalue (sensorvalue):
         """returns measured value of sensor or "n/a" if sensorvalue == None"""
-        return sensorvalue.value if sensorvalue is not None else return "(n/a)"
+        return sensorvalue.value if sensorvalue is not None else "(n/a)"
 
     def calculate_local_values (self):
         """some tk.StringVar() values are calculated locally, eg compiled
