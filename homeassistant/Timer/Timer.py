@@ -24,18 +24,24 @@ from Shutdown import Shutdown
 from Logging import Log
 
 
-
 class Countdown (object):
     def __init__ (self):
-        self.__counter = 0
+        self.reset()
 
     @property
-    def counter (self, value): 
+    def counter (self):
         return self.__counter 
 
     @counter.setter
-    def counter (self):
+    def counter (self, value): 
         self.__counter = value
+        print("counter: {}".format(self.counter))
+
+    def alter (self, value):
+        self.counter += value
+
+    def reset (self):
+        self.counter = 0
  
     def __str__ (self):
         return "{}".format(self.counter)
@@ -53,12 +59,12 @@ class Control (object):
         self.style = ttk.Style()
         self.style.configure("Timer.TButton", font=("Arial", 20, "bold"),
                              width=5, background="DodgerBlue")
-        self.buttons = OrderedDict({ 'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton"),
-                         'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton"),
-                         'm1': ttk.Button(self.frame, text="-1", style="Timer.TButton"),
-                         'm5': ttk.Button(self.frame, text="-5", style="Timer.TButton"),
-                         'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton")
-                       })
+        self.buttons = OrderedDict()
+        self.buttons.update({'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton", command = lambda: self.counter.alter(5))})
+        self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: self.counter.alter(1))})
+        self.buttons.update({'m1': ttk.Button(self.frame, text="-1", style="Timer.TButton", command = lambda: self.counter.alter(-1))})
+        self.buttons.update({'m5': ttk.Button(self.frame, text="-5", style="Timer.TButton", command = lambda: self.counter.alter(-5))})
+        self.buttons.update({'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton", command = self.counter.reset)})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
