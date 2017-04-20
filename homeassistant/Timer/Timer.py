@@ -18,6 +18,7 @@ from tkinter.font import Font
 from collections import OrderedDict
 import os
 import sys
+import time
 
 sys.path.append('../../libs')
 from Shutdown import Shutdown
@@ -40,13 +41,24 @@ class Countdown (object):
     def alter (self, value):
         self.counter += value
 
-    def reset (self):
-        self.counter = 0
+    def reset (self, value=0):
+        self.counter = value
  
     def __str__ (self):
         return "{}".format(self.counter)
- 
 
+    def run (self):
+        self.__running = True
+        while self.__running:
+            time.sleep(0.1)
+            # reduce counter every second
+            ## control.timedisplay == tk.StringVar()
+            # control.timedisplay.set("{}".format(self.counter))
+
+    def stop (self):
+        self.__running = False
+
+ 
 class Control (object):
     def __init__ (self, frame, counter):
         self.master = frame
@@ -60,10 +72,10 @@ class Control (object):
         self.style.configure("Timer.TButton", font=("Arial", 20, "bold"),
                              width=5, background="DodgerBlue")
         self.buttons = OrderedDict()
-        self.buttons.update({'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton", command = lambda: self.counter.alter(5))})
-        self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: self.counter.alter(1))})
-        self.buttons.update({'m1': ttk.Button(self.frame, text="-1", style="Timer.TButton", command = lambda: self.counter.alter(-1))})
-        self.buttons.update({'m5': ttk.Button(self.frame, text="-5", style="Timer.TButton", command = lambda: self.counter.alter(-5))})
+        self.buttons.update({'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton", command = lambda: self.counter.alter(5*60))})
+        self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: self.counter.alter(1*60))})
+        self.buttons.update({'m1': ttk.Button(self.frame, text="-1", style="Timer.TButton", command = lambda: self.counter.alter(-1*60))})
+        self.buttons.update({'m5': ttk.Button(self.frame, text="-5", style="Timer.TButton", command = lambda: self.counter.alter(-5*60))})
         self.buttons.update({'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton", command = self.counter.reset)})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
@@ -80,26 +92,6 @@ class TimerApp (tk.Frame):
 
         self.counter = Countdown()
         self.control = Control(self, self.counter)
-
-        # self.buttonframe = tk.Frame(self, bg="red", width=110, height=300)
-        # self.buttonframe.pack_propagate(0) 
-        # self.buttonframe.pack()
-
-        # self.buttonstyle = ttk.Style()
-        # self.buttonstyle.configure("Timer.TButton", font=("Arial", 20, "bold"), 
-        #                            width=5, background="DodgerBlue")
-
-        # self.button_p5 = ttk.Button(self.buttonframe, text="+5", style="Timer.TButton")
-        # self.button_p1 = ttk.Button(self.buttonframe, text="+1", style="Timer.TButton")
-        # self.button_m1 = ttk.Button(self.buttonframe, text="–1", style="Timer.TButton")
-        # self.button_m5 = ttk.Button(self.buttonframe, text="–5", style="Timer.TButton")
-        # self.button_reset = ttk.Button(self.buttonframe, text="Reset", style="Timer.TButton")
-        # self.button_p5.pack(padx=5, pady=5)
-        # self.button_p1.pack(padx=5, pady=5)
-        # self.button_m1.pack(padx=5, pady=5)
-        # self.button_m5.pack(padx=5, pady=5)
-        # self.button_reset.pack(padx=5, pady=5)
-
 
 
 ###############################################################################
