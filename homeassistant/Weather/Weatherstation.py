@@ -262,7 +262,7 @@ class Weather (object):
         self.root.geometry("{}x{}+{}+{}".format(self.root.width, 
                                                 self.root.height,
                                                 CONFIG.COORDINATES.XPOS, 
-                                                CONFIG.COORDINATES.XPOS))
+                                                CONFIG.COORDINATES.YPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = WeatherApp(master=self.root)
 
