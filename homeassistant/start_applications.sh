@@ -21,5 +21,13 @@ nohup ./Weatherstation.py &
 echo "Weatherstation.py started."
 cd ..
 
+
+echo "Starting Timer.py ..."
+cd Timer/
+nohup ./Timer.py &
+echo "Timer.py started."
+cd ..
+
+
 # eof #
 
