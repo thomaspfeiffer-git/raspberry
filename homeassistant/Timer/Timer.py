@@ -16,8 +16,10 @@ import tkinter.ttk as ttk
 from tkinter.font import Font
 
 from collections import OrderedDict
+from datetime import datetime
 import os
 import sys
+import threading
 import time
 
 sys.path.append('../../libs')
@@ -25,8 +27,12 @@ from Shutdown import Shutdown
 from Logging import Log
 
 
-class Countdown (object):
+###############################################################################
+# Countdown ###################################################################
+class Countdown (threading.Thread):
     def __init__ (self):
+        threading.Thread.__init__(self)
+        self.__lock = threading.RLock()
         self.reset()
 
     @property
@@ -34,49 +40,55 @@ class Countdown (object):
         return self.__counter 
 
     @counter.setter
-    def counter (self, value): 
-        self.__counter = value
-        print("counter: {}".format(self.counter))
+    def counter (self, value):
+        with self.__lock:
+            self.__counter = value
+            if self.__counter < 0:
+                self.__counter = 0
+        print("counter: {!s}".format(self))
 
     def alter (self, value):
-        self.counter += value
+        with self.__lock:
+            self.counter += value
 
     def reset (self, value=0):
         self.counter = value
  
     def __str__ (self):
-        return "{}".format(self.counter)
+        c = self.counter
+        return "{:d}:{:02d}".format(c // 60, c % 60)
 
     def run (self):
         self.__running = True
+        now = datetime.now().timestamp()
         while self.__running:
             time.sleep(0.1)
-            # reduce counter every second
-            ## control.timedisplay == tk.StringVar()
-            # control.timedisplay.set("{}".format(self.counter))
+            if datetime.now().timestamp() > now + 1.0:
+                self.alter(-1)
+                now = datetime.now().timestamp() 
 
     def stop (self):
         self.__running = False
 
  
+###############################################################################
+# Control #####################################################################
 class Control (object):
-    def __init__ (self, frame, counter):
+    def __init__ (self, frame):
         self.master = frame
         self.frame  = tk.Frame(self.master, bg="red", width=110, height=300)
         self.frame.pack_propagate(0)
         self.frame.pack()
  
-        self.counter = counter
- 
         self.style = ttk.Style()
         self.style.configure("Timer.TButton", font=("Arial", 20, "bold"),
                              width=5, background="DodgerBlue")
         self.buttons = OrderedDict()
-        self.buttons.update({'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton", command = lambda: self.counter.alter(5*60))})
-        self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: self.counter.alter(1*60))})
-        self.buttons.update({'m1': ttk.Button(self.frame, text="-1", style="Timer.TButton", command = lambda: self.counter.alter(-1*60))})
-        self.buttons.update({'m5': ttk.Button(self.frame, text="-5", style="Timer.TButton", command = lambda: self.counter.alter(-5*60))})
-        self.buttons.update({'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton", command = self.counter.reset)})
+        self.buttons.update({'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton", command = lambda: countdown.alter(5*60))})
+        self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: countdown.alter(1*60))})
+        self.buttons.update({'m1': ttk.Button(self.frame, text="-1", style="Timer.TButton", command = lambda: countdown.alter(-1*60))})
+        self.buttons.update({'m5': ttk.Button(self.frame, text="-5", style="Timer.TButton", command = lambda: countdown.alter(-5*60))})
+        self.buttons.update({'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton", command = countdown.reset)})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
@@ -90,8 +102,7 @@ class TimerApp (tk.Frame):
         self.master = master
         self.pack()
 
-        self.counter = Countdown()
-        self.control = Control(self, self.counter)
+        self.control = Control(self)
 
 
 ###############################################################################
@@ -134,6 +145,7 @@ def shutdown_application ():
     Log("shutdown_application()")
 
     timer.stop()
+    countdown.stop()
     sys.exit(0)
 
 
@@ -147,6 +159,9 @@ if __name__ == '__main__':
         os.environ["DISPLAY"] = ":0.0"
 
     shutdown = Shutdown(shutdown_func=shutdown_application)
+
+    countdown = Countdown()
+    countdown.start()
 
     timer = Timer()
     timer.run()
