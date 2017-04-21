@@ -30,10 +30,11 @@ from Logging import Log
 ###############################################################################
 # Countdown ###################################################################
 class Countdown (threading.Thread):
-    def __init__ (self):
+    def __init__ (self, value=0):
+        self.__running = False
         threading.Thread.__init__(self)
         self.__lock = threading.RLock()
-        self.reset()
+        self.reset(value)
 
     @property
     def counter (self):
@@ -73,14 +74,18 @@ class Countdown (threading.Thread):
  
 ###############################################################################
 # Control #####################################################################
-class Control (object):
-    def __init__ (self, frame):
-        self.master = frame
+class Control (threading.Thread):
+    def __init__ (self):
+        self.__running = False
+        threading.Thread.__init__(self)
+
+    def create_elements (self, frame):
+        self.master = frame   # TODO config file
         self.frame  = tk.Frame(self.master, bg="red", width=110, height=300)
         self.frame.pack_propagate(0)
         self.frame.pack()
  
-        self.style = ttk.Style()
+        self.style = ttk.Style()  # TODO config file
         self.style.configure("Timer.TButton", font=("Arial", 20, "bold"),
                              width=5, background="DodgerBlue")
         self.buttons = OrderedDict()
@@ -88,9 +93,26 @@ class Control (object):
         self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: countdown.alter(1*60))})
         self.buttons.update({'m1': ttk.Button(self.frame, text="-1", style="Timer.TButton", command = lambda: countdown.alter(-1*60))})
         self.buttons.update({'m5': ttk.Button(self.frame, text="-5", style="Timer.TButton", command = lambda: countdown.alter(-5*60))})
-        self.buttons.update({'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton", command = countdown.reset)})
+        self.buttons.update({'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton", command = self.reset)})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
+
+    def reset (self):
+        """resets the timer and switches alarm off"""
+        countdown.reset()
+        # alarm.off()
+
+    def run (self):
+        self.__running = False
+        while self.__running:
+            time.sleep(0.1)
+            # TODO
+            # update countdown value in display (only if changed!)
+            # if 0: alarm on for 20 seconds (or reset?)
+            
+
+    def stop (self):
+        self.__running = False
 
 
 ###############################################################################
@@ -102,7 +124,8 @@ class TimerApp (tk.Frame):
         self.master = master
         self.pack()
 
-        self.control = Control(self)
+        control.create_elements(self)
+        control.start()
 
 
 ###############################################################################
@@ -144,6 +167,7 @@ def shutdown_application ():
     """called on shutdown; stops all threads"""
     Log("shutdown_application()")
 
+    control.stop()
     timer.stop()
     countdown.stop()
     sys.exit(0)
@@ -162,6 +186,8 @@ if __name__ == '__main__':
 
     countdown = Countdown()
     countdown.start()
+
+    control = Control()
 
     timer = Timer()
     timer.run()
