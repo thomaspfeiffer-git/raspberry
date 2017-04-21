@@ -41,7 +41,7 @@ class TimerApp (tk.Frame):
 
         self.font  = Font(family="Arial", size=20)
         self.frame = tk.Frame(self)    # TODO: configfile
-        self.frame.config(width=440, height=480, background="LightSkyBlue")
+        self.frame.config(width=410, height=480, background="LightSkyBlue")
         self.frame.grid_propagate(0)
         self.frame.grid()
 #        self.text = tk.Label(self.frame, text="Frohe Ostern!", font=self.font,
@@ -60,7 +60,7 @@ class TimerApp (tk.Frame):
         picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
 
         self.image = PIL.ImageTk.PhotoImage(picture)  # TODO: width=<configfile>
-        self.pic = tk.Label(frame, image=self.image, width=440, justify="center", anchor="center", background="LightSkyBlue")
+        self.pic = tk.Label(frame, image=self.image, width=410, justify="center", anchor="center", background="LightSkyBlue")
         self.pic.grid(sticky="we") 
 
 
@@ -75,12 +75,12 @@ class Timer (object):  # TODO: rename
         self.root.resizable(width=False, height=False)
 
         # self.root.width  = 520   # TODO: config file
-        self.root.width  = 440   # TODO: config file
+        self.root.width  = 410   # TODO: config file
         self.root.height = 480
         self.root.borderwidth = 10
 
         # self.root.geometry("520x500+280+0")   # TODO: config file
-        self.root.geometry("440x480+280+0")   # TODO: config file
+        self.root.geometry("410x480+280+0")   # TODO: config file
         self.root.config(bg="LightSkyBlue")
         self.app = TimerApp(master=self.root)
         
