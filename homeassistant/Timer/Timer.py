@@ -26,6 +26,8 @@ sys.path.append('../../libs')
 from Shutdown import Shutdown
 from Logging import Log
 
+from config import CONFIG
+
 
 ###############################################################################
 # Countdown ###################################################################
@@ -76,14 +78,18 @@ class Control (threading.Thread):
         threading.Thread.__init__(self)
 
     def create_elements (self, frame):
-        self.master = frame   # TODO config file
-        self.frame  = tk.Frame(self.master, bg="red", width=110, height=320)
+        self.master = frame
+        self.frame  = tk.Frame(self.master, bg=CONFIG.COLORS.BACKGROUND,
+                               width=CONFIG.COORDINATES.WIDTH, 
+                               height=CONFIG.COORDINATES.HEIGHT)
         self.frame.pack_propagate(0)
         self.frame.pack()
  
-        self.style = ttk.Style()  # TODO config file
-        self.style.configure("Timer.TButton", font=("Arial", 20, "bold"),
-                             width=5, background="DodgerBlue")
+        self.style = ttk.Style()
+        self.style.configure("Timer.TButton", 
+                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL, 
+                                   "bold"),
+                             width=5, background=CONFIG.COLORS.BUTTON)
         self.buttons = OrderedDict()
         self.buttons.update({'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton", command = lambda: countdown.alter(5*60))})
         self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: countdown.alter(1*60))})
@@ -104,14 +110,15 @@ class Control (threading.Thread):
 
     def run (self):
         self.__running = True
+        lastvalue = 0
         while self.__running:
             time.sleep(0.1)
-            c = countdown.counter
-            self.timer.set("{:d}:{:02d}".format(c // 60, c % 60))
-            # TODO
-            # update countdown value in display (only if changed!)
-            # if 0: alarm on for 20 seconds (or reset?)
-            
+            value = countdown.counter
+            if value != 0:
+                self.timer.set("{:d}:{:02d}".format(value // 60, value % 60))
+            if lastvalue != 0 and value == 0:
+                self.timer.set("Alarm")  # TODO: what if self.reset()?
+            lastvalue = value
 
     def stop (self):
         print("Control.stop()")
@@ -141,25 +148,29 @@ class Timer (object):
         self.root.config(cursor='none')
         self.root.resizable(width=False, height=False)
 
-        self.root.width  = 300   # TODO: config file
-        self.root.height = 480
+        self.root.width  = CONFIG.COORDINATES.WIDTH
+        self.root.height = CONFIG.COORDINATES.HEIGHT
         self.root.borderwidth = 10
 
-        self.root.geometry("300x480+100+0")   # TODO: config file
-        self.root.config(bg="yellow")
+        self.root.geometry("{}x{}+{}+{}".format(self.root.width, 
+                                                self.root.height,
+                                                CONFIG.COORDINATES.XPOS, 
+                                                CONFIG.COORDINATES.YPOS))
+        self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = TimerApp(master=self.root)
         
     def poll (self):
         """polling needed for ctrl-c"""
-        self.root.after(50, self.poll)
+        self.root.pollid = self.root.after(50, self.poll)
 
     def run (self):
         """start polling and run application"""
-        self.root.after(50, self.poll)
+        self.root.pollid = self.root.after(50, self.poll)
         self.app.mainloop()
 
     def stop (self):
         """stops application, called on shutdown"""
+        self.root.after_cancel(self.root.pollid)
         self.root.destroy()
         self.root.quit() # TODO: check usage of destroy() and quit()
 
@@ -170,17 +181,12 @@ def shutdown_application ():
     """called on shutdown; stops all threads"""
     Log("shutdown_application()")
 
-    timer.stop()
-
     control.stop()
-    countdown.stop()
-    time.sleep(0.5)
     control.join()
+    countdown.stop()
     countdown.join()
-    time.sleep(0.5)
 
-
-    time.sleep(0.5)
+    timer.stop()
 
     sys.exit(0)
 
