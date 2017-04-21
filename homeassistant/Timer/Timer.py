@@ -46,7 +46,6 @@ class Countdown (threading.Thread):
             self.__counter = value
             if self.__counter < 0:
                 self.__counter = 0
-        print("counter: {!s}".format(self))
 
     def alter (self, value):
         with self.__lock:
@@ -55,10 +54,6 @@ class Countdown (threading.Thread):
     def reset (self, value=0):
         self.counter = value
  
-    def __str__ (self):
-        c = self.counter
-        return "{:d}:{:02d}".format(c // 60, c % 60)
-
     def run (self):
         self.__running = True
         now = datetime.now().timestamp()
@@ -69,6 +64,7 @@ class Countdown (threading.Thread):
                 now = datetime.now().timestamp() 
 
     def stop (self):
+        print("Countdown.stop()")
         self.__running = False
 
  
@@ -81,7 +77,7 @@ class Control (threading.Thread):
 
     def create_elements (self, frame):
         self.master = frame   # TODO config file
-        self.frame  = tk.Frame(self.master, bg="red", width=110, height=300)
+        self.frame  = tk.Frame(self.master, bg="red", width=110, height=320)
         self.frame.pack_propagate(0)
         self.frame.pack()
  
@@ -97,21 +93,28 @@ class Control (threading.Thread):
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
+        self.timer = tk.StringVar()
+        self.timerdisplay = ttk.Label(self.frame, textvariable=self.timer, style="Timer.TButton")
+        self.timerdisplay.pack(padx=5, pady=5)
+
     def reset (self):
         """resets the timer and switches alarm off"""
         countdown.reset()
         # alarm.off()
 
     def run (self):
-        self.__running = False
+        self.__running = True
         while self.__running:
             time.sleep(0.1)
+            c = countdown.counter
+            self.timer.set("{:d}:{:02d}".format(c // 60, c % 60))
             # TODO
             # update countdown value in display (only if changed!)
             # if 0: alarm on for 20 seconds (or reset?)
             
 
     def stop (self):
+        print("Control.stop()")
         self.__running = False
 
 
@@ -167,9 +170,18 @@ def shutdown_application ():
     """called on shutdown; stops all threads"""
     Log("shutdown_application()")
 
-    control.stop()
     timer.stop()
+
+    control.stop()
     countdown.stop()
+    time.sleep(0.5)
+    control.join()
+    countdown.join()
+    time.sleep(0.5)
+
+
+    time.sleep(0.5)
+
     sys.exit(0)
 
 
