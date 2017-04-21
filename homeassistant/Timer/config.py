@@ -27,11 +27,11 @@ class CONFIG:
     class FONTS:
         """definitions of fonts and font sizes"""
         FAMILY = "Arial"
-        SIZE_NORMAL   = int(20)
+        SIZE_NORMAL = int(20)
 
     class COLORS:
         """definitions of colors"""
-        BACKGROUND = "red"
+        BACKGROUND = "Moccasin"
         BUTTON     = "DodgerBlue"
 
     class COORDINATES:
