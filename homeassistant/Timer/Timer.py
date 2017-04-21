@@ -87,9 +87,10 @@ class Control (threading.Thread):
  
         self.style = ttk.Style()
         self.style.configure("Timer.TButton", 
-                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL, 
-                                   "bold"),
+                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL, "bold"),
                              width=5, background=CONFIG.COLORS.BUTTON)
+        self.style.map("Timer.TButton", background=[('active', CONFIG.COLORS.BUTTON)])
+
         self.buttons = OrderedDict()
         self.buttons.update({'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton", command = lambda: countdown.alter(5*60))})
         self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: countdown.alter(1*60))})
