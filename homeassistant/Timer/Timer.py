@@ -121,6 +121,7 @@ class Control (threading.Thread):
         if countdown.counter > 0:
             self.timerdisplay.pack(padx=5, pady=5)
             self.reset_event = False
+        subprocess.call(["mpg321", "click.mp3"]) 
     
     def reset_counter (self):
         """resets the timer and switches alarm off"""
