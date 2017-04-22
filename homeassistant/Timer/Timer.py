@@ -18,6 +18,7 @@ from tkinter.font import Font
 from collections import OrderedDict
 from datetime import datetime
 import os
+import subprocess
 import sys
 import threading
 import time
@@ -139,7 +140,7 @@ class Control (threading.Thread):
         self.timer.set("Alarm")
         self.alarm_id = self.master.after(CONFIG.ALARM.DELAY, 
                                 lambda: self.alarm_blink(CONFIG.ALARM.COUNT))
-        # TODO Make some noise
+        subprocess.call(["mpg321", "kikeriki.mp3"]) 
 
     def run (self):
         self.__running = True
