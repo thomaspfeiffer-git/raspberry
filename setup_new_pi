@@ -242,6 +242,11 @@ http://stackoverflow.com/questions/26092441/pygame-mousebuttondown-coordinates-a
 apt-get install tslib libts-bin
 
 
+Audio on USB:
+=============
+
+sudo apt-get -y install mpg321
+
 
 
 
