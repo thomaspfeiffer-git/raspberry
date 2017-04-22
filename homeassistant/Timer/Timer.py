@@ -77,6 +77,7 @@ class Control (threading.Thread):
     def __init__ (self):
         self.__running = False
         threading.Thread.__init__(self)
+        self.set_event   = False
         self.reset_event = False
         self.alarm_id    = None
 
@@ -106,13 +107,16 @@ class Control (threading.Thread):
             btn.pack(padx=5, pady=5)
 
         self.timer = tk.StringVar()
-        self.timerdisplay = ttk.Label(self.frame, textvariable=self.timer, style="Timer.TButton")
+        self.timerdisplay = ttk.Label(self.frame, textvariable=self.timer, 
+                                      style="Timer.TButton")
         self.timerdisplay.pack(padx=5, pady=5)
         self.timerdisplay.pack_forget()
 
     def set_counter (self, value):
         """sets the counter/countdown
            and displays the countdown to the screen"""
+        if self.alarm_id is not None:
+            self.set_event = True
         countdown.alter(value*60)
         if countdown.counter > 0:
             self.timerdisplay.pack(padx=5, pady=5)
@@ -126,7 +130,8 @@ class Control (threading.Thread):
         self.timerdisplay.pack_forget()
 
     def alarm_blink (self, counter):
-        if counter > 0 and self.__running and not self.reset_event:
+        if counter > 0 and self.__running \
+           and not self.reset_event and not self.set_event:
             self.timerdisplay.config(background=
                      CONFIG.ALARM.COLORS[counter % len(CONFIG.ALARM.COLORS)])
             self.alarm_id = self.master.after(CONFIG.ALARM.DELAY, 
@@ -134,7 +139,9 @@ class Control (threading.Thread):
         else:
             self.alarm_id = None
             self.timerdisplay.config(background=CONFIG.COLORS.BUTTON)
-            self.timerdisplay.pack_forget()
+            if not self.set_event: 
+                self.timerdisplay.pack_forget()
+            self.set_event = False
 
     def alarm (self):
         self.timer.set("Alarm")
