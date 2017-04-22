@@ -34,6 +34,11 @@ class CONFIG:
         BACKGROUND = "Moccasin"
         BUTTON     = "DodgerBlue"
 
+    class ALARM:
+        COLORS = ["red", "yellow", "blue"]
+        DELAY  = 100
+        COUNT  = 100
+
     class COORDINATES:
         WIDTH  = int(cfg['Timer']['width'])
         HEIGHT = int(cfg['Timer']['height'])
