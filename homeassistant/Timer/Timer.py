@@ -221,7 +221,7 @@ class Timer (object):
                                                 CONFIG.COORDINATES.YPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = TimerApp(master=self.root)
-        
+       
     def poll (self):
         """polling needed for ctrl-c"""
         self.root.pollid = self.root.after(50, self.poll)
