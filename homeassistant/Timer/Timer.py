@@ -159,6 +159,11 @@ class Control (threading.Thread):
             self.set_event = False
 
     def alarm (self):
+        """1) set the timer text to "Alarm"
+           2) start a tkinter timer for changing the background color
+              of the Alarm text field
+           3) play a sound
+        """
         self.timer.set("Alarm")
         self.alarm_id = self.master.after(CONFIG.ALARM.DELAY, 
                                 lambda: self.alarm_blink(CONFIG.ALARM.COUNT))
