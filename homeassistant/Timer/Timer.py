@@ -31,6 +31,19 @@ from config import CONFIG
 
 
 ###############################################################################
+# Sound #######################################################################
+class Sound (object):
+    """plays a sound
+       - mp3: path to mp3 file
+       - runs: how often the mp3 file shall be played
+    """
+    @staticmethod
+    def play (mp3, runs=1):
+        command = ["mpg321", "-g 100"] + [mp3] * runs
+        subprocess.Popen(command) 
+
+
+###############################################################################
 # Countdown ###################################################################
 class Countdown (threading.Thread):
     def __init__ (self, value=0):
@@ -115,16 +128,17 @@ class Control (threading.Thread):
     def set_counter (self, value):
         """sets the counter/countdown
            and displays the countdown to the screen"""
+        Sound.play(CONFIG.CLICK_SOUND)
         if self.alarm_id is not None:
             self.set_event = True
         countdown.alter(value*60)
         if countdown.counter > 0:
             self.timerdisplay.pack(padx=5, pady=5)
             self.reset_event = False
-        subprocess.call(["mpg321", "click.mp3"]) 
     
     def reset_counter (self):
         """resets the timer and switches alarm off"""
+        Sound.play(CONFIG.CLICK_SOUND)
         self.reset_event = True
         countdown.reset()
         self.timer.set("")
@@ -148,7 +162,7 @@ class Control (threading.Thread):
         self.timer.set("Alarm")
         self.alarm_id = self.master.after(CONFIG.ALARM.DELAY, 
                                 lambda: self.alarm_blink(CONFIG.ALARM.COUNT))
-        subprocess.call(["mpg321", "kikeriki.mp3"]) 
+        Sound.play(CONFIG.ALARM.SOUND, runs=3)
 
     def run (self):
         self.__running = True

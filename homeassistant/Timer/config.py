@@ -35,9 +35,11 @@ class CONFIG:
         BUTTON     = "DodgerBlue"
 
     class ALARM:
+        """definitions of alarm stuff"""
         COLORS = ["red", "yellow", "blue"]
-        DELAY  = 100
-        COUNT  = 100
+        DELAY  = 100   # milliseconds
+        COUNT  = 150
+        SOUND  = "kikeriki.mp3"
 
     class COORDINATES:
         WIDTH  = int(cfg['Timer']['width'])
@@ -45,6 +47,7 @@ class CONFIG:
         XPOS   = int(cfg['Timer']['xpos'])
         YPOS   = int(cfg['Timer']['ypos'])
 
+    CLICK_SOUND = "click.mp3"
     URL_BRIGHTNESS_CONTROL = cfg['Brightness']['URL']
 
 # eof #
