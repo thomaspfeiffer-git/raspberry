@@ -77,6 +77,7 @@ class Control (threading.Thread):
         self.__running = False
         threading.Thread.__init__(self)
         self.reset_event = False
+        self.alarm_id    = None
 
     def create_elements (self, frame):
         self.master = frame
@@ -123,6 +124,23 @@ class Control (threading.Thread):
         self.timer.set("")
         self.timerdisplay.pack_forget()
 
+    def alarm_blink (self, counter):
+        if counter > 0 and self.__running and not self.reset_event:
+            self.timerdisplay.config(background=
+                     CONFIG.ALARM.COLORS[counter % len(CONFIG.ALARM.COLORS)])
+            self.alarm_id = self.master.after(CONFIG.ALARM.DELAY, 
+                                lambda: self.alarm_blink(counter-1))
+        else:
+            self.alarm_id = None
+            self.timerdisplay.config(background=CONFIG.COLORS.BUTTON)
+            self.timerdisplay.pack_forget()
+
+    def alarm (self):
+        self.timer.set("Alarm")
+        self.alarm_id = self.master.after(CONFIG.ALARM.DELAY, 
+                                lambda: self.alarm_blink(CONFIG.ALARM.COUNT))
+        # TODO Make some noise
+
     def run (self):
         self.__running = True
         lastvalue = 0
@@ -132,9 +150,10 @@ class Control (threading.Thread):
             if value != 0:
                 self.timer.set("{:d}:{:02d}".format(value // 60, value % 60))
             if lastvalue != 0 and value == 0 and not self.reset_event:
-                self.timer.set("Alarm")
-                # TODO Make some noise
+                self.alarm()
             lastvalue = value
+        if self.alarm_id:
+           self.master.after_cancel(self.alarm_id)
 
     def stop (self):
         print("Control.stop()")
