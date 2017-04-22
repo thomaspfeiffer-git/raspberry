@@ -76,6 +76,7 @@ class Control (threading.Thread):
     def __init__ (self):
         self.__running = False
         threading.Thread.__init__(self)
+        self.reset_event = False
 
     def create_elements (self, frame):
         self.master = frame
@@ -92,22 +93,33 @@ class Control (threading.Thread):
         self.style.map("Timer.TButton", background=[('active', CONFIG.COLORS.BUTTON)])
 
         self.buttons = OrderedDict()
-        self.buttons.update({'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton", command = lambda: countdown.alter(5*60))})
-        self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: countdown.alter(1*60))})
-        self.buttons.update({'m1': ttk.Button(self.frame, text="-1", style="Timer.TButton", command = lambda: countdown.alter(-1*60))})
-        self.buttons.update({'m5': ttk.Button(self.frame, text="-5", style="Timer.TButton", command = lambda: countdown.alter(-5*60))})
-        self.buttons.update({'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton", command = self.reset)})
+        self.buttons.update({'p5': ttk.Button(self.frame, text="+5", style="Timer.TButton", command = lambda: self.set_counter(5))})
+        self.buttons.update({'p1': ttk.Button(self.frame, text="+1", style="Timer.TButton", command = lambda: self.set_counter(1))})
+        self.buttons.update({'m1': ttk.Button(self.frame, text="-1", style="Timer.TButton", command = lambda: self.set_counter(-1))})
+        self.buttons.update({'m5': ttk.Button(self.frame, text="-5", style="Timer.TButton", command = lambda: self.set_counter(-5))})
+        self.buttons.update({'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton", command = self.reset_counter)})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
         self.timer = tk.StringVar()
         self.timerdisplay = ttk.Label(self.frame, textvariable=self.timer, style="Timer.TButton")
         self.timerdisplay.pack(padx=5, pady=5)
+        self.timerdisplay.pack_forget()
 
-    def reset (self):
+    def set_counter (self, value):
+        """sets the counter/countdown
+           and displays the countdown to the screen"""
+        countdown.alter(value*60)
+        if countdown.counter > 0:
+            self.timerdisplay.pack(padx=5, pady=5)
+            self.reset_event = False
+    
+    def reset_counter (self):
         """resets the timer and switches alarm off"""
+        self.reset_event = True
         countdown.reset()
-        # alarm.off()
+        self.timer.set("")
+        self.timerdisplay.pack_forget()
 
     def run (self):
         self.__running = True
@@ -117,8 +129,9 @@ class Control (threading.Thread):
             value = countdown.counter
             if value != 0:
                 self.timer.set("{:d}:{:02d}".format(value // 60, value % 60))
-            if lastvalue != 0 and value == 0:
-                self.timer.set("Alarm")  # TODO: what if self.reset()?
+            if lastvalue != 0 and value == 0 and not self.reset_event:
+                self.timer.set("Alarm")
+                # TODO Make some noise
             lastvalue = value
 
     def stop (self):
