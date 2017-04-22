@@ -247,6 +247,20 @@ Audio on USB:
 
 sudo apt-get -y install mpg321
 
+aplay -l 
+   ==> card X = USB
+
+/etc/asound.conf:
+
+pcm.!default {
+    type hw
+    card <number of your card>
+}
+ctl.!default {
+    type hw
+    card <number of your card>
+}
+
 
 
 
