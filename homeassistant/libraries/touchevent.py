@@ -3,7 +3,10 @@
 # touchevent.py                                                            #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
 ############################################################################
-"""
+"""send the touch event to the brightness controller.
+   if brightness was not at full level, the brightness
+   controller sets brightness to full. in this case, False is retured.
+   otherwise if the event shall be handled by the caller, True is returned.
 """
 
 import json

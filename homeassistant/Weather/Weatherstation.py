@@ -35,11 +35,10 @@ sys.path.append('../../libs')
 from Shutdown import Shutdown
 from Logging import Log
 
-sys.path.append('../libraries')
-from displaybasics import WeatherItem, DateItem, Separator, Image
 
 from config import CONFIG
 from constants import CONSTANTS
+from displaybasics import WeatherItem, DateItem, Separator, Image
 from pagination import Pagination
 from refreshvalues import Clock, Values
 
