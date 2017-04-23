@@ -57,9 +57,9 @@ class MotDApp (tk.Frame):
         # (Touchevent.event()):
         # - brightness is low:  set brightness to max and return False
         # - brightness is high: return True
-        self.frame.bind("<Button-1>", Touchevent.event) # brightness control
+        self.master.bind("<Button-1>", Touchevent.event) # brightness control
 
-        self.font  = Font(family=CONFIG.FONTS.FAMILY, size=CONFIG.FONTS.SIZE_NORMAL)
+        self.font = Font(family=CONFIG.FONTS.FAMILY, size=CONFIG.FONTS.SIZE_NORMAL)
 
         if message_of_the_day is not None:
             self.text = tk.Label(self.frame, text=message_of_the_day, 
