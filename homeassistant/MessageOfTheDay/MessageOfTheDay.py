@@ -30,14 +30,13 @@ from Logging import Log
 
 
 ###############################################################################
-# TimerApp ####################################################################
-class TimerApp (tk.Frame):
+# MotDApp #####################################################################
+class MotDApp (tk.Frame):
     def __init__ (self, master=None):
         super().__init__(master)
 
         self.master = master
         self.grid()
-
 
         self.font  = Font(family="Arial", size=20)
         self.frame = tk.Frame(self)    # TODO: configfile
@@ -65,8 +64,8 @@ class TimerApp (tk.Frame):
 
 
 ###############################################################################
-# Timer #######################################################################
-class Timer (object):  # TODO: rename
+# Message of the Day ##########################################################
+class MotD (object):
     def __init__ (self):
         self.root = tk.Tk()
 
@@ -74,27 +73,26 @@ class Timer (object):  # TODO: rename
         self.root.config(cursor='none')
         self.root.resizable(width=False, height=False)
 
-        # self.root.width  = 520   # TODO: config file
         self.root.width  = 410   # TODO: config file
         self.root.height = 480
         self.root.borderwidth = 10
 
-        # self.root.geometry("520x500+280+0")   # TODO: config file
         self.root.geometry("410x480+280+0")   # TODO: config file
         self.root.config(bg="LightSkyBlue")
-        self.app = TimerApp(master=self.root)
+        self.app = MotDApp(master=self.root)
         
     def poll (self):
         """polling needed for ctrl-c"""
-        self.root.after(50, self.poll)
+        self.root.pollid = self.root.after(50, self.poll)
 
     def run (self):
         """start polling and run application"""
-        self.root.after(50, self.poll)
+        elf.root.pollid = elf.root.after(50, self.poll)
         self.app.mainloop()
 
     def stop (self):
         """stops application, called on shutdown"""
+        self.root.after_cancel(self.root.pollid)
         self.root.destroy()
         self.root.quit() # TODO: check usage of destroy() and quit()
 
@@ -120,8 +118,8 @@ if __name__ == '__main__':
 
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    timer = Timer()
-    timer.run()
+    motd = MotD()
+    motd.run()
 
 # eof #
 
