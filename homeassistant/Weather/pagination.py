@@ -9,13 +9,10 @@
    . when indicated, first touch event will set brightness to max level
 """
 
-import json
 import sys
-from urllib.error import HTTPError, URLError 
-from urllib.request import urlopen
 
-sys.path.append('../../libs')
-from Logging import Log
+sys.path.append('../libraries')
+from touchevent import Touchevent
 
 from config import CONFIG
 
@@ -36,14 +33,7 @@ class Pagination (object):
            if brightness was not at full level, the brightness
            controller sets brightness to full. in this case, no
            pagination shall be done."""
-        try:
-            with urlopen(CONFIG.URL_BRIGHTNESS_CONTROL) as response:
-                data = json.loads(response.read().decode("utf-8"))
-        except (HTTPError, URLError):
-            Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
-        else:
-            return data['FullBrightness']
-        return True
+        return Touchevent.event()
  
     def first_screen (self):
         """switch back to first screen after 
