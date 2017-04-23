@@ -28,6 +28,9 @@ sys.path.append('../../libs')
 from Shutdown import Shutdown
 from Logging import Log
 
+sys.path.append('../libraries')
+from touchevent import Touchevent
+
 from config import CONFIG
 
 
@@ -47,6 +50,14 @@ class MotDApp (tk.Frame):
                                height=CONFIG.COORDINATES.HEIGHT)
         self.frame.pack_propagate(0)
         self.frame.pack()
+
+        # brightness control:
+        # brightness control runs in a dedicated application (see ../Brightness/).
+        # each touch event is first sent to the brightness control 
+        # (Touchevent.event()):
+        # - brightness is low:  set brightness to max and return False
+        # - brightness is high: return True
+        self.frame.bind("<Button-1>", Touchevent.event) # brightness control
 
         self.font  = Font(family=CONFIG.FONTS.FAMILY, size=CONFIG.FONTS.SIZE_NORMAL)
 
