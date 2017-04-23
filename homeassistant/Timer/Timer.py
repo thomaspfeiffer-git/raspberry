@@ -30,14 +30,7 @@ from Logging import Log
 sys.path.append('../libraries')
 from touchevent import Touchevent
 
-
 from config import CONFIG
-
-
-
-def emil (event):
-    print("flull brightness: {}".format(Touchevent.event()))
-       
 
 
 ###############################################################################
@@ -129,7 +122,7 @@ class Control (threading.Thread):
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
-        self.frame.bind("<Button-1>", emil)
+        self.frame.bind("<Button-1>", Touchevent.event) # brightness control
 
         self.timer = tk.StringVar()
         self.timerdisplay = ttk.Label(self.frame, textvariable=self.timer, 
@@ -140,21 +133,23 @@ class Control (threading.Thread):
     def set_counter (self, value):
         """sets the counter/countdown
            and displays the countdown to the screen"""
-        Sound.play(CONFIG.CLICK_SOUND)
-        if self.alarm_id is not None:
-            self.set_event = True
-        countdown.alter(value*60)
-        if countdown.counter > 0:
-            self.timerdisplay.pack(padx=5, pady=5)
-            self.reset_event = False
+        if Touchevent.event():   # brightness control
+            Sound.play(CONFIG.CLICK_SOUND)
+            if self.alarm_id is not None:
+                self.set_event = True
+            countdown.alter(value*60)
+            if countdown.counter > 0:
+                self.timerdisplay.pack(padx=5, pady=5)
+                self.reset_event = False
     
     def reset_counter (self):
         """resets the timer and switches alarm off"""
-        Sound.play(CONFIG.CLICK_SOUND)
-        self.reset_event = True
-        countdown.reset()
-        self.timer.set("")
-        self.timerdisplay.pack_forget()
+        if Touchevent.event():   # brightness control
+            Sound.play(CONFIG.CLICK_SOUND)
+            self.reset_event = True
+            countdown.reset()
+            self.timer.set("")
+            self.timerdisplay.pack_forget()
 
     def alarm_blink (self, counter):
         if counter > 0 and self.__running \
