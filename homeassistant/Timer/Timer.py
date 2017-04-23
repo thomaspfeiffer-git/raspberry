@@ -30,6 +30,12 @@ from Logging import Log
 from config import CONFIG
 
 
+
+def emil (event):
+    print("emil!")
+       
+
+
 ###############################################################################
 # Sound #######################################################################
 class Sound (object):
@@ -39,7 +45,7 @@ class Sound (object):
     """
     @staticmethod
     def play (mp3, runs=1):
-        command = ["mpg321", "-g 100"] + [mp3] * runs
+        command = ["mpg321", "-g 100", "-q"] + [mp3] * runs
         subprocess.Popen(command) 
 
 
@@ -118,6 +124,8 @@ class Control (threading.Thread):
         self.buttons.update({'reset': ttk.Button(self.frame, text="Reset", style="Timer.TButton", command = self.reset_counter)})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
+
+        self.frame.bind("<Button-1>", emil)
 
         self.timer = tk.StringVar()
         self.timerdisplay = ttk.Label(self.frame, textvariable=self.timer, 
@@ -221,7 +229,7 @@ class Timer (object):
                                                 CONFIG.COORDINATES.YPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = TimerApp(master=self.root)
-       
+
     def poll (self):
         """polling needed for ctrl-c"""
         self.root.pollid = self.root.after(50, self.poll)
