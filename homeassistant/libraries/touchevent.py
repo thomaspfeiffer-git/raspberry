@@ -21,7 +21,7 @@ from config import CONFIG
 
 class Touchevent (object):
     @staticmethod
-    def event ():
+    def event (event=None):
         """return True if the event shall be handled by the caller,
            otherwise False."""
         try:
