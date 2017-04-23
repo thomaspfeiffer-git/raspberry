@@ -27,12 +27,16 @@ sys.path.append('../../libs')
 from Shutdown import Shutdown
 from Logging import Log
 
+sys.path.append('../libraries')
+from touchevent import Touchevent
+
+
 from config import CONFIG
 
 
 
 def emil (event):
-    print("emil!")
+    print("flull brightness: {}".format(Touchevent.event()))
        
 
 
