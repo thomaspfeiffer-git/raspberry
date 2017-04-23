@@ -8,13 +8,14 @@ echo "QueueServer.py started."
 cd ..
 
 
+echo
 echo "Starting Brightness.py ..."
 cd Brightness/
 nohup ./Brightness.py &
 echo "Brightness.py started."
 cd ..
 
-
+echo
 echo "Starting Weatherstation.py ..."
 cd Weather/
 nohup ./Weatherstation.py &
@@ -22,10 +23,19 @@ echo "Weatherstation.py started."
 cd ..
 
 
+echo
 echo "Starting Timer.py ..."
 cd Timer/
 nohup ./Timer.py &
 echo "Timer.py started."
+cd ..
+
+
+echo
+echo "Starting Message of the Day ..."
+cd MessageOfTheDay
+nohup ./MessageOfTheDay.py &
+echo "Message of the Day started."
 cd ..
 
 
