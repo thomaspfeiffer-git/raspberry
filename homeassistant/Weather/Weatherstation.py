@@ -267,15 +267,16 @@ class Weather (object):
 
     def poll (self):
         """polling needed for ctrl-c"""
-        self.root.after(50, self.poll)
+        self.root.pollid = self.root.after(50, self.poll)
 
     def run (self):
         """start polling and run application"""
-        self.root.after(50, self.poll)
+        self.root.pollid = self.root.after(50, self.poll)
         self.app.mainloop()
 
     def stop (self):
         """stops application, called on shutdown"""
+        self.root.after_cancel(self.root.pollid)
         self.root.destroy()
         self.root.quit() # TODO: check usage of destroy() and quit()
 
