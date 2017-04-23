@@ -4,7 +4,8 @@
 # Timer.py                                                                    #
 # (c) https://github.com/thomaspfeiffer-git 2017                              #
 ###############################################################################
-"""
+"""Part of the homeautomation project: timer for my kitchen (for perfect
+   eggs or noodles :-) ).
 """
 
 ### usage ###
@@ -49,6 +50,11 @@ class Sound (object):
 ###############################################################################
 # Countdown ###################################################################
 class Countdown (threading.Thread):
+    """simple countdown functionality. decrements the counter
+       every second. counter can be set to a dedicated value
+       (property setter) or altered (method alter()).
+       runs as a independent thread.
+    """
     def __init__ (self, value=0):
         self.__running = False
         threading.Thread.__init__(self)
@@ -83,13 +89,15 @@ class Countdown (threading.Thread):
                 now = datetime.now().timestamp() 
 
     def stop (self):
-        print("Countdown.stop()")
         self.__running = False
 
  
 ###############################################################################
 # Control #####################################################################
 class Control (threading.Thread):
+    """creates all display elements and corresponding callback methods
+       for the business logic (increase and decrease timer; alarm).
+    """
     def __init__ (self):
         self.__running = False
         threading.Thread.__init__(self)
@@ -122,6 +130,12 @@ class Control (threading.Thread):
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
+        # brightness control:
+        # brightness control runs in a dedicated application (see ../Brightness/).
+        # each touch event is first sent to the brightness control 
+        # (Touchevent.event()):
+        # - brightness is low:  set brightness to max and return False
+        # - brightness is high: return True
         self.frame.bind("<Button-1>", Touchevent.event) # brightness control
 
         self.timer = tk.StringVar()
@@ -168,7 +182,7 @@ class Control (threading.Thread):
     def alarm (self):
         """1) set the timer text to "Alarm"
            2) start a tkinter timer for changing the background color
-              of the Alarm text field
+              of the Alarm text field (method alarm_blink())
            3) play a sound
         """
         self.timer.set("Alarm")
@@ -191,7 +205,6 @@ class Control (threading.Thread):
            self.master.after_cancel(self.alarm_id)
 
     def stop (self):
-        print("Control.stop()")
         self.__running = False
 
 
