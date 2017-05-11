@@ -1,0 +1,37 @@
+
+
+
+Some useful links (german):
+
+
+https://diyhacking.com/best-voice-recognition-software-for-raspberry-pi/
+
+
+http://www.raspberrypi-tutorials.de/software/raspberry-pi-sprachsteuerung-mit-der-piauisuite.html
+https://stevenhickson.blogspot.co.at/2013/04/voice-control-on-raspberry-pi.html
+https://www.rhydolabz.com/wiki/?p=16234
+
+https://maczarr.de/blog/jasper-lights-off-sprachsteuerung-im-eigenbau-692/
+https://jasperproject.github.io/
+
+
+
+
+https://pypi.python.org/pypi/SpeechRecognition/
+
+http://www.techradar.com/how-to/how-to-control-the-raspberry-pi-with-your-voice
+
+https://groups.google.com/forum/#!topic/jasper-support-forum/fqYCWGdcLho
+
+
+====================
+Install Jasper (no dedicated image necessary):
+https://github.com/unixabg/raspi-helpers
+
+
+
+Switch to german:
+https://groups.google.com/forum/#!topic/jasper-support-forum/fqYCWGdcLho
+
+
+

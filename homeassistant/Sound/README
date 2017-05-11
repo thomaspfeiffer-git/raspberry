@@ -12,3 +12,9 @@ sudo apt-get install vlc
 # The Sound of New York City
 vlc http://ic2377.c900.fast-serv.com/tsonyc.mp3
 
+# Run in background
+# use cvlc
+cvlc http://ic2377.c900.fast-serv.com/tsonyc.mp3 &
+
+
+

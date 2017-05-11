@@ -59,7 +59,15 @@ sudo apt-get install vim
 syntax on
 set number
 set expandtab
+filetype indent plugin on
+set modeline
+set tabstop=8
+set expandtab
+set shiftwidth=4
+set softtabstop=4
 
+http://www.vim.org/scripts/script.php?script_id=790
+http://www.vim.org/scripts/script.php?script_id=850
 
 
 
