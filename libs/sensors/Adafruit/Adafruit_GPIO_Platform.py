@@ -45,6 +45,7 @@ def platform_detect():
         return NANOPI
     elif plat.lower().find('armv7l-with-glibc2.4') > -1:
         return NANOPI
+    
         
     # Handle Minnowboard
     # Assumption is that mraa is installed
@@ -100,6 +101,8 @@ def pi_version():
         return 1
     elif match.group(1) == 'BCM2709':
         # Pi 2
+        return 2
+    elif match.group(1) == 'BCM2835':
         return 2
     else:
         # Something else, not a pi.
