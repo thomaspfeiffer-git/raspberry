@@ -107,13 +107,14 @@ def main():
         temp_ds            = tempds.read_temperature()
         temp_cpu           = tempcpu.read_temperature()
         temp_dht, humi_dht = tempdht.read()
+
         if this_PI == pik_i:
             pressure = bmp180.read_pressure() / 100.0
 
         rrd_data = "N:{:.2f}".format(temp_ds)     + \
                     ":{:.2f}".format(temp_dht)    + \
                     ":{:.2f}".format(temp_cpu)    + \
-                    ":{:.2f}".format(float(humi_dht))    + \
+                    ":{:.2f}".format(humi_dht)    + \
                     ":{:.2f}".format(pressure)
         # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
         # no rrd needed here; rrd is done at schild.smtp.at
