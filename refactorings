@@ -24,6 +24,8 @@ def run (self):
     self.__running = True
 
 
+use method __call__() for some classes
+
 
 use libs/Logging.py
 
