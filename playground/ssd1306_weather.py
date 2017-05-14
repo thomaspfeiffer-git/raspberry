@@ -20,6 +20,7 @@ from datetime import datetime
 import json
 import sys
 import time
+from urllib.error import HTTPError, URLError 
 from urllib.request import urlopen
 
 from PIL import Image
@@ -28,6 +29,7 @@ from PIL import ImageFont
 
 sys.path.append('../libs')
 from actuators.SSD1306 import SSD1306
+from Logging import Log
 
 
 ###############################################################################
@@ -40,9 +42,12 @@ class OWM (object):
 
     def _read (self):
         with urlopen("http://nano02:5000") as response:
-            self.data = AttrDict(json.loads(response.read().decode("utf-8"))[1])
-            self.last_changed = datetime.now().timestamp()
-            # TODO: exception
+            try:
+                self.data = AttrDict(json.loads(response.read().decode("utf-8"))[1])
+            except (HTTPError, URLError):
+                Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
+            else:
+                self.last_changed = datetime.now().timestamp()
 
     def __call__ (self):
         if self.last_changed + 60 < datetime.now().timestamp():
