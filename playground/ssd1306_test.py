@@ -14,8 +14,8 @@ import time
 
 
 from PIL import Image
-# from PIL import ImageDraw
-# from PIL import ImageFont
+from PIL import ImageDraw
+from PIL import ImageFont
 
 sys.path.append('../libs')
 from actuators.SSD1306 import SSD1306
@@ -31,6 +31,23 @@ disp.clear()
 disp.display()
 
 
+xpos = 4
+ypos = 4
+width = disp.width
+height = disp.height
+image = Image.new('1', (width, height))
+draw = ImageDraw.Draw(image)
+font = ImageFont.load_default()
+
+while True:
+    draw.rectangle((0,0,width,height), outline=0, fill=255)
+    y = ypos
+    draw.text((xpos, y), "Zeit: {}".format(time.strftime("%X")), font=font, fill=0)
+    disp.image(image)
+    disp.display()
+
+
+"""
 while True:
     image = Image.open('katze.png').convert('1')
     disp.image(image)
@@ -40,6 +57,7 @@ while True:
     disp.image(image)
     disp.display()
     time.sleep(1)
+"""
 
 # eof #
 
