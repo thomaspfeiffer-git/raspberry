@@ -57,6 +57,8 @@ while True:
     y += textheight
     draw.text((xpos, y), "Humi: {} % rF".format(data[1]['humidity']))
     y += textheight
+    draw.text((xpos, y), "{}".format(data[1]['desc']))
+    y += textheight
     draw.text((xpos, y), "{}".format(data[1]['time_text']))
     y += textheight
 
