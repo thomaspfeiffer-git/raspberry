@@ -98,7 +98,7 @@ if __name__ == '__main__':
             timestring = "{0.hour:d}:{0.minute:02d}:{0.second:02d}".format(now)
 
         display.text(timestring, offset=3)
-        display.text("{0.temp} C - {0.humidity} % rF".format(data).replace(".", ","))
+        display.text("{0.temp} °C - {0.humidity} % rF".format(data).replace(".", ","))
         display.text("{}".format(data.desc))
         display.text("{}".format(data.time_text))
         display.show()
