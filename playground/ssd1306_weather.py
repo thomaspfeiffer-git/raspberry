@@ -7,8 +7,8 @@
 """demo programm for display weather data on an SSD1306"""
 
 
+from datetime import datetime
 import json
-import pprint
 import sys
 import time
 from urllib.request import urlopen
@@ -44,18 +44,50 @@ draw = ImageDraw.Draw(image)
 font = ImageFont.load_default()
 _, textheight = draw.textsize("Text", font=font)
 
+
+
+def read_owm ():
+    with urlopen("http://nano02:5000") as response:
+        data = json.loads(response.read().decode("utf-8"))
+    return data
+
+
+def owm ():
+    last_changed = datetime.now().timestamp()
+    data = read_owm()
+
+    def update ():
+        nonlocal last_changed
+        nonlocal data
+
+        now = datetime.now().timestamp()
+        if last_changed + 60 < now:
+            last_changed = now
+            data = read_owm()
+        return data
+
+    return update
+
+get_data_from_owm = owm()
+
+
 while True:
     draw.rectangle((0,0,width,height), outline=0, fill=255)
     y = ypos
-    draw.text((xpos, y), "Zeit: {}".format(time.strftime("%X")), font=font, fill=0)
-    y += textheight
+    now = datetime.now()
+    if now.second % 2:
+        timestring = "{}, {}. {}. {}".format(["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][now.weekday()],
+                                     now.day, now.month, now.year)
+    else:
+        timestring = "{:d}:{:02d}:{:02d}".format(now.hour, now.minute, now.second)
 
-    with urlopen("http://nano02:5000") as response:
-        data = json.loads(response.read().decode("utf-8"))
+    draw.text((xpos, y), timestring, font=font, fill=0)
+    y += textheight + 3
 
-    draw.text((xpos, y), "Temp: {} C".format(data[1]['temp']))
-    y += textheight
-    draw.text((xpos, y), "Humi: {} % rF".format(data[1]['humidity']))
+    data = get_data_from_owm()
+
+    temp_humi = "{0} C - {1} % rF".format(data[1]['temp'], data[1]['humidity']).replace(".", ",")
+    draw.text((xpos, y), temp_humi)
     y += textheight
     draw.text((xpos, y), "{}".format(data[1]['desc']))
     y += textheight
@@ -65,7 +97,7 @@ while True:
     disp.image(image)
     disp.display()
 
-    time.sleep(10)
+    time.sleep(0.1)
 
 # eof #
 
