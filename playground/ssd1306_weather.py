@@ -45,8 +45,7 @@ class OWM (object):
             # TODO: exception
 
     def __call__ (self):
-        now = datetime.now().timestamp()
-        if self.last_changed + 60 < now:
+        if self.last_changed + 60 < datetime.now().timestamp():
             self._read()
         return self.data
 
@@ -94,7 +93,7 @@ if __name__ == '__main__':
         data = owm()
 
         if now.second % 2:
-            timestring = "{0}, {1.day}. {1.month}. {1.year}".format(["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][now.weekday()], now)
+            timestring = "{0}, {1.day}. {1.month}. {1.year}".format("Mo Di Mi Do Fr Sa So".split()[now.weekday()], now)
         else:
             timestring = "{0.hour:d}:{0.minute:02d}:{0.second:02d}".format(now)
 
