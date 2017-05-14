@@ -49,6 +49,7 @@ _, textheight = draw.textsize("Text", font=font)
 def read_owm ():
     with urlopen("http://nano02:5000") as response:
         data = json.loads(response.read().decode("utf-8"))
+        # TODO: exception
     return data
 
 
@@ -76,10 +77,9 @@ while True:
     y = ypos
     now = datetime.now()
     if now.second % 2:
-        timestring = "{}, {}. {}. {}".format(["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][now.weekday()],
-                                     now.day, now.month, now.year)
+        timestring = "{0}, {1.day}. {1.month}. {1.year}".format(["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][now.weekday()], now)
     else:
-        timestring = "{:d}:{:02d}:{:02d}".format(now.hour, now.minute, now.second)
+        timestring = "{0.hour:d}:{0.minute:02d}:{0.second:02d}".format(now)
 
     draw.text((xpos, y), timestring, font=font, fill=0)
     y += textheight + 3
