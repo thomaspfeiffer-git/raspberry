@@ -7,15 +7,20 @@
 """demo programm for display weather data on an SSD1306"""
 
 
+### usage ###
+# nohup ./ssd1306_weather.py &
+
+
+# Packages you might install
+# sudo pip3 install Pillow
+
+
+from attrdict import AttrDict
 from datetime import datetime
 import json
 import sys
 import time
 from urllib.request import urlopen
-
-# Packages you might install
-# sudo pip3 install Pillow
-
 
 from PIL import Image
 from PIL import ImageDraw
@@ -25,79 +30,81 @@ sys.path.append('../libs')
 from actuators.SSD1306 import SSD1306
 
 
-disp = SSD1306()
+###############################################################################
+# OWM #########################################################################
+class OWM (object):
+    def __init__ (self):
+        self.data = None
+        self.last_changed = None
+        self._read()
 
-# Initialize library.
-disp.begin()
+    def _read (self):
+        with urlopen("http://nano02:5000") as response:
+            self.data = AttrDict(json.loads(response.read().decode("utf-8"))[1])
+            self.last_changed = datetime.now().timestamp()
+            # TODO: exception
 
-# Clear display.
-disp.clear()
-disp.display()
-
-
-xpos = 4
-ypos = 4
-width = disp.width
-height = disp.height
-image = Image.new('1', (width, height))
-draw = ImageDraw.Draw(image)
-font = ImageFont.load_default()
-_, textheight = draw.textsize("Text", font=font)
-
-
-
-def read_owm ():
-    with urlopen("http://nano02:5000") as response:
-        data = json.loads(response.read().decode("utf-8"))
-        # TODO: exception
-    return data
-
-
-def owm ():
-    last_changed = datetime.now().timestamp()
-    data = read_owm()
-
-    def update ():
-        nonlocal last_changed
-        nonlocal data
-
+    def __call__ (self):
         now = datetime.now().timestamp()
-        if last_changed + 60 < now:
-            last_changed = now
-            data = read_owm()
-        return data
-
-    return update
-
-get_data_from_owm = owm()
+        if self.last_changed + 60 < now:
+            self._read()
+        return self.data
 
 
-while True:
-    draw.rectangle((0,0,width,height), outline=0, fill=255)
-    y = ypos
-    now = datetime.now()
-    if now.second % 2:
-        timestring = "{0}, {1.day}. {1.month}. {1.year}".format(["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][now.weekday()], now)
-    else:
-        timestring = "{0.hour:d}:{0.minute:02d}:{0.second:02d}".format(now)
+###############################################################################
+# Display #####################################################################
+class Display (SSD1306):
+    def __init__ (self):
+        super().__init__()
+        self.begin()
+        self.clear()
+        self.display()
 
-    draw.text((xpos, y), timestring, font=font, fill=0)
-    y += textheight + 3
+        self.xpos = 4
+        self.ypos = self.y = 4
 
-    data = get_data_from_owm()
+        self.img  = Image.new('1', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.img)
+        self.font = ImageFont.load_default()
+        _, self.textheight = self.draw.textsize("Text", font=self.font)
 
-    temp_humi = "{0} C - {1} % rF".format(data[1]['temp'], data[1]['humidity']).replace(".", ",")
-    draw.text((xpos, y), temp_humi)
-    y += textheight
-    draw.text((xpos, y), "{}".format(data[1]['desc']))
-    y += textheight
-    draw.text((xpos, y), "{}".format(data[1]['time_text']))
-    y += textheight
+    def reset (self):
+        self.y = self.ypos
+        self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
 
-    disp.image(image)
-    disp.display()
+    def text (self, text, offset=0):
+        self.draw.text((self.xpos, self.y), text) 
+        self.y += self.textheight + offset
 
-    time.sleep(0.1)
+    def show (self):
+        self.image(self.img)
+        self.display()
+
+
+###############################################################################
+# Main ########################################################################
+if __name__ == '__main__':
+    display = Display()
+    owm = OWM()
+
+    while True:
+        display.reset()
+
+        now  = datetime.now()
+        data = owm()
+
+        if now.second % 2:
+            timestring = "{0}, {1.day}. {1.month}. {1.year}".format(["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"][now.weekday()], now)
+        else:
+            timestring = "{0.hour:d}:{0.minute:02d}:{0.second:02d}".format(now)
+
+        display.text(timestring, offset=3)
+        display.text("{0.temp} C - {0.humidity} % rF".format(data).replace(".", ",")
+        display.text("{}".format(data.desc))
+        display.text("{}".format(data.time_text))
+        display.show()
+
+        time.sleep(0.1)
 
 # eof #
 
