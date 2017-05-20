@@ -37,13 +37,15 @@ from os.path import expanduser
 import sys
 import threading
 import time
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 sys.path.append("../libs/")
+from Logging import Log
 from SensorQueue2 import SensorQueueClient_write
 from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
+
 
 
 from flask import Flask
@@ -143,7 +145,8 @@ class OpenWeatherMap_Data (threading.Thread):
         try:
             with urlopen(self.OWMC.url_forecast) as response:
                 data = AttrDict(json.loads(response.read().decode("utf-8")))
-        except HTTPError:
+        except (HTTPError, URLError):
+            Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
             raise ValueError
 
         # get data from 12:00 am only
@@ -159,7 +162,8 @@ class OpenWeatherMap_Data (threading.Thread):
         try:
             with urlopen(self.OWMC.url_actual) as response:
                 data = AttrDict(json.loads(response.read().decode("utf-8")))
-        except HTTPError:
+        except (HTTPError, URLError):
+            Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
             raise ValueError
 
         return self.convert(data)
