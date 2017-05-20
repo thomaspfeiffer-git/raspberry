@@ -16,6 +16,15 @@ chown root.root
 chmod 644 8192cu.conf
 
 
+fix rtl8192 driver (not tested, just saving the links here):
+
+sudo apt-get install raspberrypi-kernel-headers
+https://adamscheller.com/systems-administration/rtl8192cu-fix-wifi/
+
+
+
+
+
 NFS:
 ====
 
