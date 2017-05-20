@@ -4,7 +4,7 @@
 # ssd1306_weater.py                                                         #
 # (c) https://github.com/thomaspfeiffer-git 2017                            #
 #############################################################################
-"""demo programm for display weather data on an SSD1306"""
+"""demo programm for displaying weather data on an SSD1306"""
 
 
 ### usage ###
@@ -41,13 +41,13 @@ class OWM (object):
         self._read()
 
     def _read (self):
-        with urlopen("http://nano02:5000") as response:
-            try:
+        try:
+            with urlopen("http://nano02:5000") as response:
                 self.data = AttrDict(json.loads(response.read().decode("utf-8"))[1])
-            except (HTTPError, URLError):
-                Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
-            else:
-                self.last_changed = datetime.now().timestamp()
+        except (HTTPError, URLError):
+            Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
+        else:
+            self.last_changed = datetime.now().timestamp()
 
     def __call__ (self):
         if self.last_changed + 60 < datetime.now().timestamp():
