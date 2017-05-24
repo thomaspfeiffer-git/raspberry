@@ -66,9 +66,9 @@ DS = { pik_i: { DS_TEMP1: 'kb_i_t1',
                 DS_PRESS: 'kb_k_press' }
      } 
 
-DATAFILES = { pik_i: "/share/kb_i_weather.data",
-              pik_a: "/share/kb_a_weather.data",
-              pik_k: "/share/kb_k_weather.data" }
+DATAFILES = { pik_i: "/share/kb_i_weather",
+              pik_a: "/share/kb_a_weather",
+              pik_k: "/share/kb_k_weather" }
 
 
 ###############################################################################
