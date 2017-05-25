@@ -5,6 +5,13 @@ import atexit
 import _rpi_ws281x as ws
 
 
+# maybe useful
+# http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=646
+# https://github.com/leonyuhanov/SK6812viaSPI
+
+
+
+
 def Color(red, green, blue, white = 0):
 	"""Convert the provided red, green, blue color to a 24-bit color value.
 	Each color component should be a value 0-255 where 0 is the lowest intensity

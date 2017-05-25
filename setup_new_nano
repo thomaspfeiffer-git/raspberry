@@ -37,6 +37,12 @@ echo "600000" > scaling_max_freq
 
 
 
+WS2812:
+http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=646
+https://github.com/leonyuhanov/SK6812viaSPI
+
+
+
 
 
 ############################################################################
