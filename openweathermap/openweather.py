@@ -145,7 +145,7 @@ class OpenWeatherMap_Data (threading.Thread):
         try:
             with urlopen(self.OWMC.url_forecast) as response:
                 data = AttrDict(json.loads(response.read().decode("utf-8")))
-        except (HTTPError, URLError):
+        except (HTTPError, URLError, ConnectionResetError):
             Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
             raise ValueError
 
@@ -162,7 +162,7 @@ class OpenWeatherMap_Data (threading.Thread):
         try:
             with urlopen(self.OWMC.url_actual) as response:
                 data = AttrDict(json.loads(response.read().decode("utf-8")))
-        except (HTTPError, URLError):
+        except (HTTPError, URLError, ConnectionResetError):
             Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
             raise ValueError
 
