@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python -u
 # -*- coding: utf-8 -*-
 #############################################################################
 # weather.py                                                                #
-# (c) https://github.com/thomaspfeiffer-git 2016                            #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017                      #
 #############################################################################
 """Weather station at our summer cottage"""
 
@@ -18,7 +18,7 @@ sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 
 from CPU import CPU
-from DHT22_AM2302 import DHT22_AM2302
+from HTU21DF import HTU21DF
 from DS1820 import DS1820
 
 
@@ -36,8 +36,6 @@ if this_PI == pik_i:   # BMP180 installed only at pik_i
 AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w1_slave",
                     pik_a: "/sys/bus/w1/devices/w1_bus_master1/28-000006dd6ac1/w1_slave",
                     pik_k: "/sys/bus/w1/devices/w1_bus_master1/28-000006de535b/w1_slave" }
-
-DHT22_AM2302_PIN = 14  # Pin 8
 
 
 # Misc for rrdtool
@@ -90,7 +88,7 @@ def main():
         print("wrong host!")
         _exit()
 
-    tempdht = DHT22_AM2302(DHT22_AM2302_PIN)
+    htu21df = HTU21DF()
     tempds  = DS1820(AddressesDS1820[this_PI])
     tempcpu = CPU()
     if this_PI == pik_i:
@@ -104,17 +102,18 @@ def main():
 
     pressure = 1013.25 # in case of no BMP180 available
     while True:
-        temp_ds            = tempds.read_temperature()
-        temp_cpu           = tempcpu.read_temperature()
-        temp_dht, humi_dht = tempdht.read()
+        temp_ds  = tempds.read_temperature()
+        temp_cpu = tempcpu.read_temperature()
+        temp_htu = htu21df.read_temperature()
+        humi_htu = htu21df.read_humidity()
 
         if this_PI == pik_i:
             pressure = bmp180.read_pressure() / 100.0
 
         rrd_data = "N:{:.2f}".format(temp_ds)     + \
-                    ":{:.2f}".format(temp_dht)    + \
+                    ":{:.2f}".format(temp_htu)    + \
                     ":{:.2f}".format(temp_cpu)    + \
-                    ":{:.2f}".format(humi_dht)    + \
+                    ":{:.2f}".format(humi_htu)    + \
                     ":{:.2f}".format(pressure)
         # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data) 
         # no rrd needed here; rrd is done at schild.smtp.at
@@ -124,7 +123,7 @@ def main():
 
         writeData(rrd_data)
 
-        sleep(10)
+        sleep(45)
 
 
 ###############################################################################
