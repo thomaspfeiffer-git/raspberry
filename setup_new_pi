@@ -23,8 +23,6 @@ https://adamscheller.com/systems-administration/rtl8192cu-fix-wifi/
 
 
 
-
-
 NFS:
 ====
 
@@ -126,22 +124,8 @@ sudo raspi-config
       --> Enable I2C
 
 
-/etc/modules    add lines:
-i2c-bcm2708 
-i2c-dev
-
-/boot/config.txt add lines:
-
-dtparam=i2c1=on
-dtparam=i2c_arm=on
-
-
-reboot
-
 Test:
 sudo i2cdetect -y 1
-
-
 
 
 1-wire (DS1820)
@@ -149,39 +133,6 @@ sudo i2cdetect -y 1
 
 sudo raspi-config
 --> Advanced
-
-
-
-/boot/config.txt:
-   dtoverlay=w1-gpio,gpiopin=4
-/etc/modules:
-   w1-gpio pullup=1
-   w1-therm
-
-
-DHT22_AM2302:
--------------
-
-mkdir dhtreader
-cd dhtreader/
-wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.45.tar.gz 
-tar xvf bcm2835-1.45.tar.gz 
-cd bcm2835-1.45/
-./configure 
-make
-sudo make check
-sudo make install
-
-
-git clone https://github.com/adafruit/Adafruit_Python_DHT.git 
-cd Adafruit_Python_DHT
-sudo apt-get install build-essential python-dev  
-sudo python setup.py build
-sudo python setup.py install 
-
-sudo python3 setup.py build
-sudo python3 setup.py install 
-
 
 
 Kamera:
