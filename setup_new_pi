@@ -12,7 +12,7 @@ WIFI-Scan:
 
 /etc/modprobe.d/8192cu.conf
     options 8192cu rtw_power_mgnt=0 rtw_enusbss=0
-sudo chown root.root
+sudo chown root.root 8192cu.conf
 sudo chmod 644 8192cu.conf
 
 
