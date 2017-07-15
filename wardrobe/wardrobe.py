@@ -30,6 +30,8 @@ from SensorValue2 import SensorValue, SensorValue_Data
 
 from Shutdown import Shutdown
 
+from Forecast import Forecast
+
 
 # sensor id | gpio-in | usage |
 # #1        | pin 15  | main area
@@ -314,6 +316,7 @@ def main ():
     cpu     = CPU()
     htu21df = HTU21DF(qvalue_temp=qv_temp_wardrobe, qvalue_humi=qv_humi_wardrobe)
     lightness.start()
+    forecast.start()
     for c in controls.values():
         c.start()
 
@@ -355,6 +358,8 @@ def shutdown_application ():
         c.stop()
         c.join()
 
+    forecast.stop()
+    forecast.join()
     lightness.stop()
     lightness.join()
     sys.exit(0)
@@ -375,6 +380,7 @@ if __name__ == '__main__':
     sq.register(qv_light_wardrobe)
 
     lightness = Lightness(qv=qv_light_wardrobe)
+    forecast  = Forecast()
     controls  = {
                  'doors':  Control(Sensor1_Pin, Actuator1_ID),
                  'drawer': Control(Sensor2_Pin, Actuator2_ID),
