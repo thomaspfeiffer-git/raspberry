@@ -52,12 +52,13 @@ class OWM (object):
 ###############################################################################
 # Display #####################################################################
 class Display (SSD1306):
-    def __init__ (self):
+    def __init__ (self, central_i2c_lock):
         super().__init__()
+        self.central_i2c_lock = central_i2c_lock
         self.begin()
         self.clear()
-        # with ... TODO
-        # self.display()
+        with self.central_i2c_lock: 
+            self.display()
 
         self.xpos = 4
         self.ypos = self.y = 4
@@ -77,16 +78,16 @@ class Display (SSD1306):
 
     def show (self):
         self.image(self.img)
-        # with ... TODO
-        # self.display()
+        with self.central_i2c_lock:
+            self.display()
 
 
 ###############################################################################
 # Forecast ####################################################################
 class Forecast (threading.Thread):
-    def __init__ (self, qv=None):
+    def __init__ (self, central_i2c_lock):
         threading.Thread.__init__(self)
-        self.display = Display()
+        self.display = Display(central_i2c_lock)
         self.owm = OWM()
         self.__running = True
 
@@ -98,18 +99,14 @@ class Forecast (threading.Thread):
             now  = datetime.now()
             data = self.owm()
 
-            if now.second % 2:
-                timestring = "{0}, {1.day}. {1.month}. {1.year}".format("Mo Di Mi Do Fr Sa So".split()[now.weekday()], now)
-            else:
-                timestring = "{0.hour:d}:{0.minute:02d}:{0.second:02d}".format(now)
-
+            timestring = "{0}, {1.day}. {1.month}.; {1.hour:d}:{1.minute:02d}".format("Mo Di Mi Do Fr Sa So".split()[now.weekday()], now)
             self.display.text(timestring, offset=3)
             self.display.text("{0.temp} °C - {0.humidity} % rF".format(data).replace(".", ","))
             self.display.text("{}".format(data.desc))
             self.display.text("{}".format(data.time_text))
             self.display.show()
 
-            time.sleep(0.1)
+            time.sleep(1)
 
     def stop (self):
         self.__running = False

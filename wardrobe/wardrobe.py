@@ -380,7 +380,7 @@ if __name__ == '__main__':
     sq.register(qv_light_wardrobe)
 
     lightness = Lightness(qv=qv_light_wardrobe)
-    forecast  = Forecast()
+    forecast  = Forecast(central_i2c_lock)
     controls  = {
                  'doors':  Control(Sensor1_Pin, Actuator1_ID),
                  'drawer': Control(Sensor2_Pin, Actuator2_ID),
