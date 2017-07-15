@@ -29,6 +29,8 @@
 # sudo pip3 install Flask
 #
 # https://learn.adafruit.com/neopixels-on-raspberry-pi/software
+# note: sudo python setup.py install ===> sudo python3 setup.py install
+#
 
 
 
