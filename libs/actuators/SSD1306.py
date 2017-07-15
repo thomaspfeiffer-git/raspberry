@@ -17,7 +17,7 @@
 # https://github.com/rm-hull/ssd1306 (fonts!)
 
 
-from time import sleep, strftime
+from time import strftime, sleep
 import sys
 sys.path.append('../libs')
 from i2c import I2C
