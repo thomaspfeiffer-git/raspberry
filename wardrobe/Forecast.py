@@ -4,13 +4,14 @@
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
 ############################################################################
 """
-   TODO
+   Gets the weather forecast from a local server and displays
+   the forecast for 2 pm on an SSD1306.
 """
-
 
 from attrdict import AttrDict
 from datetime import datetime
 import json
+import socket
 import sys
 import threading
 import time
@@ -25,6 +26,19 @@ sys.path.append('../libs')
 from actuators.SSD1306 import SSD1306
 from Logging import Log
 
+import pprint
+
+
+###############################################################################
+# FC_Config ###################################################################
+class FC_Config (object):
+    """some constants"""
+    # if necessary:
+    #   config = configparser.ConfigParser()
+    #   config.read(configfilename)
+
+    OWM_URL = "http://nano02:5000"
+
 
 ###############################################################################
 # OWM #########################################################################
@@ -36,16 +50,21 @@ class OWM (object):
 
     def _read (self):
         try:
-            with urlopen("http://nano02:5000") as response:  # TODO: use config file
+            with urlopen(FC_Config.OWM_URL, timeout=15) as response:
                 self.data = AttrDict(json.loads(response.read().decode("utf-8"))[1])
         except (HTTPError, URLError):
-            Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
+            Log("HTTPError, URLError: {0[0]} {0[1]}".format(sys.exc_info()))
+            pprint.pprint(self.data)
+        except socket.timeout:
+            Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+            pprint.pprint(self.data)
         else:
             self.last_changed = datetime.now().timestamp()
 
     def __call__ (self):
         if self.last_changed + 60 < datetime.now().timestamp():
             self._read()
+            Log("daten gelesen")
         return self.data
 
 
@@ -85,12 +104,13 @@ class Display (SSD1306):
 ###############################################################################
 # Forecast ####################################################################
 class Forecast (threading.Thread):
+    """reads data from the local openweathermap server and displays
+       these data on a SSD1306 display."""
     def __init__ (self, central_i2c_lock):
         threading.Thread.__init__(self)
         self.display = Display(central_i2c_lock)
         self.owm = OWM()
         self.__running = True
-
 
     def run (self):
         while self.__running:
@@ -104,7 +124,9 @@ class Forecast (threading.Thread):
             self.display.text("{0.temp} °C - {0.humidity} % rF".format(data).replace(".", ","))
             self.display.text("{}".format(data.desc))
             self.display.text("{}".format(data.time_text))
+            Log("vor show")
             self.display.show()
+            Log("nach show")
 
             time.sleep(1)
 
