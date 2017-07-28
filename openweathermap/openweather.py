@@ -34,6 +34,7 @@ import copy
 from datetime import datetime
 import json
 from os.path import expanduser
+import socket
 import sys
 import threading
 import time
@@ -148,6 +149,9 @@ class OpenWeatherMap_Data (threading.Thread):
         except (HTTPError, URLError, ConnectionResetError):
             Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
             raise ValueError
+        except socket.timeout:
+            Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+            raise ValueError
 
         # get data from 12:00 am only
         noon = lambda t: "12:00:00" in t
@@ -164,6 +168,9 @@ class OpenWeatherMap_Data (threading.Thread):
                 data = AttrDict(json.loads(response.read().decode("utf-8")))
         except (HTTPError, URLError, ConnectionResetError):
             Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
+            raise ValueError
+        except socket.timeout:
+            Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
             raise ValueError
 
         return self.convert(data)

@@ -10,6 +10,7 @@
 """
 
 import json
+import socket
 import sys
 from urllib.error import HTTPError, URLError 
 from urllib.request import urlopen
@@ -29,6 +30,8 @@ class Touchevent (object):
                 data = json.loads(response.read().decode("utf-8"))
         except (HTTPError, URLError):
             Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
+        except socket.timeout:
+            Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
         else:
             return data['FullBrightness']
         return True
