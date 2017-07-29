@@ -26,8 +26,6 @@ sys.path.append('../libs')
 from actuators.SSD1306 import SSD1306
 from Logging import Log
 
-import pprint
-
 
 ###############################################################################
 # FC_Config ###################################################################
@@ -54,17 +52,14 @@ class OWM (object):
                 self.data = AttrDict(json.loads(response.read().decode("utf-8"))[1])
         except (HTTPError, URLError):
             Log("HTTPError, URLError: {0[0]} {0[1]}".format(sys.exc_info()))
-            pprint.pprint(self.data)
         except socket.timeout:
             Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
-            pprint.pprint(self.data)
         else:
             self.last_changed = datetime.now().timestamp()
 
     def __call__ (self):
         if self.last_changed + 60 < datetime.now().timestamp():
             self._read()
-            Log("daten gelesen")
         return self.data
 
 
@@ -124,9 +119,7 @@ class Forecast (threading.Thread):
             self.display.text("{0.temp} °C - {0.humidity} % rF".format(data).replace(".", ","))
             self.display.text("{}".format(data.desc))
             self.display.text("{}".format(data.time_text))
-            Log("vor show")
             self.display.show()
-            Log("nach show")
 
             time.sleep(1)
 
