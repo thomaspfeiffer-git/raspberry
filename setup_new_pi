@@ -90,6 +90,11 @@ sudo apt-get install libjpeg8-dev
 sudo pip3 install Pillow
 
 
+# AttrDict
+sudo pip3 install attrdict
+
+
+
 
 
 Libs:
