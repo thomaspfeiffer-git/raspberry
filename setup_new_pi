@@ -94,6 +94,11 @@ sudo pip3 install Pillow
 sudo pip3 install attrdict
 
 
+# cachetools
+sudo pip3 install cachetools
+
+
+
 
 
 
