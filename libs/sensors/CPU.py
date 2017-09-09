@@ -24,7 +24,10 @@ class CPU:
 
     def __nanoPi (self):
         with open('/sys/class/thermal/thermal_zone0/temp', 'r') as f:
-            return float(f.read())
+            t = float(f.read())
+            if t > 1000:
+                t = t / 1000.0
+            return t
 
     def read_temperature (self):
         plat = Platform.platform_detect()
