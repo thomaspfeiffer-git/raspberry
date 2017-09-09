@@ -9,6 +9,45 @@
 screen /dev/ttyUSB0 115200
 
 
+
+
+
+##### nanopi-neo-air_ubuntu-core-xenial_4.11.2_20170905.img ###########
+
+sudo npi-config
+
+etc/network/interfaces
+etc/wpa_supplicant/wpa_supplicant.conf
+
+sudo apt-get install vim git man python3-pip
+
+
+.vimrc  # get from pi@pia
+
+.bashrc:
+   alias vi=/usr/bin/vim
+   export  EDITOR=vi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####### end of nanopi-neo-air_ubuntu-core-xenial_4.11.2_20170905.img ########
+
+
 # GPIO
 echo 203 > /sys/class/gpio/export
 echo out > /sys/class/gpio/gpio203/direction
