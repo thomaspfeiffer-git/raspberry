@@ -19,17 +19,22 @@ sudo npi-config
 etc/network/interfaces
 etc/wpa_supplicant/wpa_supplicant.conf
 
-sudo apt-get install vim git man python3-pip
+sudo apt-get install vim git man python3-pip nfs-common -y
+
+# .vimrc  
+   # get from pi@pia
 
 
-.vimrc  # get from pi@pia
-
-.bashrc:
+# .bashrc:
    alias vi=/usr/bin/vim
    export  EDITOR=vi
 
 
+# /etc/fstab
+schild.smtp.at:/exports/share/pi        /schild nfs comment=systemd.automount,_netdev,auto,vers=2,rsize=8192,wsize=8192,timeo=14,intr 0 0 
 
+sudo mkdir /schild
+sudo chmod ugo=rwx /schild/
 
 
 
