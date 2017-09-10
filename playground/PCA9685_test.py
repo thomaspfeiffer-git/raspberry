@@ -7,17 +7,12 @@
 ###############################################################################
 """tests the 16 channel PWM device PCA9685"""
 
-
-
-
 import sys
 from time import sleep
-
 
 sys.path.append("../libs/")
 from i2c import I2C
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
-
 
 
 ###############################################################################
@@ -29,9 +24,6 @@ class PWM (PCA9685):
 
     def set_pwm_l (self, on):
         super().set_pwm(self.__channel, self.MAX-int(on), self.MAX)
-
-# eof #
-
 
 
 pwm = PWM(0)
