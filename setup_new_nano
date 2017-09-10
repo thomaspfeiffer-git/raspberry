@@ -38,9 +38,8 @@ sudo chmod ugo=rwx /schild/
 sudo mount /schild
 
 
-
-
-
+# /etc/rc.local
+sudo /sbin/iwconfig wlan0 power off
 
 
 
