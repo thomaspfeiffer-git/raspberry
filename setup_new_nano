@@ -46,8 +46,17 @@ sudo usermod -aG i2c pi
 
 
 
+# RPi.GPIO should be pre-installed
+# http://wiki.friendlyarm.com/wiki/index.php/RPi.GPIO_:_NanoPi_NEO/NEO2/Air_GPIO_Programming_with_Python
 
+# wiringpi_NP
+http://wiki.friendlyarm.com/wiki/index.php/WiringNP:_NanoPi_NEO/NEO2/Air_GPIO_Programming_with_C#Install_WiringNP_on_NEO.2FNEO2
 
+sudo bash
+... install
+
+gpio mode 7 in
+gpio read 7
 
 
 
