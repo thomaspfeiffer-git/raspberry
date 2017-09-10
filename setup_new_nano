@@ -19,7 +19,7 @@ sudo npi-config
 etc/network/interfaces
 etc/wpa_supplicant/wpa_supplicant.conf
 
-sudo apt-get install vim git man python3-pip nfs-common -y
+sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
 
 # .vimrc  
    # get from pi@pia
@@ -35,6 +35,7 @@ schild.smtp.at:/exports/share/pi        /schild nfs comment=systemd.automount,_n
 
 sudo mkdir /schild
 sudo chmod ugo=rwx /schild/
+sudo mount /schild
 
 
 
