@@ -183,6 +183,10 @@ options w1-gpio-board gpio=203
 # setup emmc
 
 1) Prepare basic image (using mount -o loop)
+   # https://raspberrypi.stackexchange.com/questions/13137/how-can-i-mount-a-raspberry-pi-linux-distro-image
+   # sudo mount -v -o offset=67108864 -t ext4 nanopi-neo-air_ubuntu-core-xenial_4.11.2_20170905.img nanopi.mnt/
+
+
    . wifi
  
 2) copy image to nfs share
