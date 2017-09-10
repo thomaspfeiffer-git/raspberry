@@ -41,7 +41,8 @@ sudo mount /schild
 # /etc/rc.local
 sudo /sbin/iwconfig wlan0 power off
 
-
+# adding group i2c to user pi
+sudo usermod -aG i2c pi
 
 
 
