@@ -1,11 +1,11 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 # coding=utf-8
 
 
 import RPi.GPIO as io
 import time
 
-pin_ir = 37
+pin_ir = 7
 
 
 io.setmode(io.BOARD)
