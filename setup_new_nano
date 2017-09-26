@@ -20,6 +20,7 @@ etc/network/interfaces
 etc/wpa_supplicant/wpa_supplicant.conf
 
 sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
+sudo apt-get install --reinstall rsyslog -y # fixes missing files in /var/log
 
 # .vimrc  
    # get from pi@pia
