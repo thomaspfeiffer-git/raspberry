@@ -11,8 +11,14 @@ pin_ir = 7
 io.setmode(io.BOARD)
 io.setup(pin_ir, io.IN) 
 
+last = None
 while True:
-    print(io.input(pin_ir))
-    time.sleep(0.5)
+    act = io.input(pin_ir)
+    if act != last:
+        last = act
+        print "Status: {}".format(act)
 
+    time.sleep(0.05)
+
+# eof #
 
