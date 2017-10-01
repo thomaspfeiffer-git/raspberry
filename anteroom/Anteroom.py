@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 ############################################################################
 # Anteroom.py                                                              #
@@ -14,13 +14,16 @@
 # TODO
 
 
-import RPi.GPIO as io
+from flask import Flask
 import sys
 import time
 
 sys.path.append("../libs/")
 from i2c import I2C
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
+
+
+app = Flask(__name__)
 
 
 ###############################################################################
@@ -36,30 +39,25 @@ class PWM (PCA9685):
         super(PWM,self).set_pwm(self.__channel, self.MAX-int(on), self.MAX)
 
 
+############################################################################
+# Flask stuff ##############################################################
+@app.route('/relais')
+    relais = int(request.args.get('status', 'off'))  
+    # TODO: validate param
+
+
+
+
+
 ###############################################################################
 ## main ######################################################################
 pwm = PWM(0)
 
-pin_ir = 7
 
 
-io.setmode(io.BOARD)
-io.setup(pin_ir, io.IN) 
 
 
-last = None
-while True:
-    act = io.input(pin_ir)
-    if act != last:
-        if act == 1:
-            pwm.set_pwm(PWM.MAX)
-        else:
-            pwm.set_pwm(PWM.MIN)
 
-        last = act
-        print("Status: {}".format(act))
-
-    time.sleep(0.05)
 
 # eof #
 
