@@ -57,22 +57,17 @@ def Relais ():
     # TODO: validate param
 
     if relais == 'on':
-        pwm.set_pwm(PWM.MIN)
-        # pwm.set_pwm(PWM.MAX)
+#        pwm.set_pwm(PWM.MIN)
+        pwm.set_pwm(PWM.MAX)
     else:
         pwm.set_pwm(PWM.MIN)
-    return "ok"    
+    return "ok: {}".format(relais)
 
 
 
 ###############################################################################
 ## main ######################################################################
 pwm = PWM(0)
-
-
-
-
-
 
 
 # eof #

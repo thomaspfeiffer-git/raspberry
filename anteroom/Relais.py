@@ -8,39 +8,46 @@
    check relais and send status zu Anteroom main programm"""
 
 ### usage ###
-# TODO
 # sudo Relais.py
 
-### setup ###
-# TODO
-
-
 import RPi.GPIO as io
+import socket
 import time
-
-###############################################################################
-## main ######################################################################
+import urllib
 
 pin_ir = 7
-
-
 io.setmode(io.BOARD)
 io.setup(pin_ir, io.IN) 
 
+url = "http://localhost:5000/relais?status={}"
 
+###############################################################################
+def SendRelaisStatus (status):
+    url_ = url.format(status)
+
+    try:
+        response = urllib.urlopen(url_)
+        data = response.read().decode("utf-8")
+    except (IOError):
+        Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
+        raise ValueError
+    except socket.timeout:
+        Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+        raise ValueError
+
+
+###############################################################################
+## main ######################################################################
 last = None
 while True:
     act = io.input(pin_ir)
     if act != last:
         if act == 1:
-            # call url status == on
-            pass
+            SendRelaisStatus("off")
         else:
-            # call url status == off
-            pass
+            SendRelaisStatus("on")
 
         last = act
-        print("Status: {}".format(act))
 
     time.sleep(0.05)
 
