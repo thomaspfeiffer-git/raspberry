@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-############################################################################
-# Anteroom.py                                                              #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
-############################################################################
+###############################################################################
+# Anteroom.py                                                                 #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
+###############################################################################
 """control lighting of our anteroom"""
 
 ### usage ###
@@ -26,7 +26,9 @@
 
 
 from flask import Flask, request
+import signal
 import sys
+import threading
 import time
 
 sys.path.append("../libs/")
@@ -48,27 +50,103 @@ class PWM (PCA9685):
         super().set_pwm(self.__channel, self.MAX-int(on), self.MAX)
 
 
-############################################################################
-# Flask stuff ##############################################################
+###############################################################################
+# LED_Strip ###################################################################
+class LED_Strip (PWM):
+    def __init__ (self, channel):
+        super().__init__(channel)
+        self.lightness = PWM.MIN
+        self.stepsize  = 25
+
+    def on (self):
+        self.lightness += self.stepsize
+        if self.lightness > PWM.MAX:
+            self.lightness = PWM.MAX
+        self.set_pwm(self.lightness)    
+
+    def off (self):
+        self.lightness -= int(self.stepsize / 2)
+        if self.lightness < PWM.MIN:
+            self.lightness = PWM.MIN
+        self.set_pwm(self.lightness)
+
+    def immediate_off (self):    
+        self.lightness = PWM.MIN
+        self.set_pwm(self.lightness)
+
+
+###############################################################################
+# Relais ######################################################################
+class Relais (object):
+    def __init__ (self):
+        self.__status = 0
+
+    @property
+    def status (self):
+        return self.__status
+
+    @status.setter
+    def status (self, value):
+        self.__status = value
+
+
+###############################################################################
+# Control #####################################################################
+class Control (threading.Thread):
+    def __init__ (self, channel):
+        threading.Thread.__init__(self)
+        self.leds = LED_Strip(channel)
+        self._running = True
+
+    def run (self):
+        while self._running:
+            if relais.status == 1:
+                self.leds.on()
+            else:
+                self.leds.off()
+            time.sleep(0.05)    
+
+    def stop (self):
+        self._running = False
+        self.leds.immediate_off()
+
+
+###############################################################################
+# Flask stuff #################################################################
 @app.route('/relais')
-def Relais ():
-    relais = request.args.get('status', 'off')
-    print("Request: relais={}".format(relais))
+def API_Relais ():
+    relais_ = request.args.get('status', 'off')
+    print("Request: relais={}".format(relais_))
     # TODO: validate param
 
-    if relais == 'on':
-#        pwm.set_pwm(PWM.MIN)
-        pwm.set_pwm(PWM.MAX)
+    if relais_ == 'on':
+        relais.status = 1
     else:
-        pwm.set_pwm(PWM.MIN)
-    return "ok: {}".format(relais)
+        relais.status = 0
+    return "OK. Status: {}".format(relais_)    
 
+
+###############################################################################
+# Exit ########################################################################
+def _exit ():
+    """cleanup stuff"""
+    control.stop()
+    control.join()
+    sys.exit(0)
+
+def __exit (__s, __f):
+    """cleanup stuff used for signal handler"""
+    _exit()
 
 
 ###############################################################################
 ## main ######################################################################
-pwm = PWM(0)
+signal.signal(signal.SIGTERM, __exit)
+signal.signal(signal.SIGINT, __exit)
 
+relais = Relais()
+control = Control(0)
+control.start()
 
 # eof #
 
