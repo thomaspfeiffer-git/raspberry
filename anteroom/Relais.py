@@ -12,8 +12,13 @@
 
 import RPi.GPIO as io
 import socket
+import sys
 import time
 import urllib
+
+sys.path.append("../libs/")
+from Logging import Log
+
 
 pin_ir = 7
 io.setmode(io.BOARD)
