@@ -104,11 +104,13 @@ class Control (threading.Thread):
                 self.leds.on()
             else:
                 self.leds.off()
-            time.sleep(0.05)    
+            time.sleep(0.05)
+
+        # cleanup on exit
+        self.leds.immediate_off()   # TODO: check in anderen programmen!
 
     def stop (self):
         self._running = False
-        self.leds.immediate_off()
 
 
 ###############################################################################
@@ -130,8 +132,12 @@ def API_Relais ():
 # Exit ########################################################################
 def _exit ():
     """cleanup stuff"""
-    control.stop()
-    control.join()
+
+    for c in controls:
+        c.stop()
+        c.join()
+        print("Shutting down")
+
     sys.exit(0)
 
 def __exit (__s, __f):
@@ -145,8 +151,10 @@ signal.signal(signal.SIGTERM, __exit)
 signal.signal(signal.SIGINT, __exit)
 
 relais = Relais()
-control = Control(0)
-control.start()
+
+controls = [ Control(channel) for channel in range(4) ]
+for c in controls:
+    c.start()
 
 # eof #
 
