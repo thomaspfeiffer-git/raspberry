@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Anteroom.py                                                                 #
@@ -25,18 +25,39 @@
 # sudo pip3 install Flask
 
 
+from enum import Enum
 from flask import Flask, request
+import rrdtool
 import signal
 import sys
 import threading
-import time
+from time import sleep, strftime, time
 
 sys.path.append("../libs/")
 from i2c import I2C
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
+from sensors.CPU import CPU
+
+
+# Misc for rrdtool
+RRDFILE     = "/schild/weather/anteroom.rrd"
+DS_SWITCH   = "ar_switch"
+DS_TEMPCPU  = "ar_tempcpu"
+DS_TEMP     = "ar_temp"
+DS_HUMI     = "ar_humi"
+DS_RES1     = "ar_res1"
+DS_RES2     = "ar_res2"
+DS_RES3     = "ar_res3"
 
 
 app = Flask(__name__)
+
+
+###############################################################################
+# Switch ######################################################################
+class Switch (Enum):
+    OFF = 0
+    ON  = 1
 
 
 ###############################################################################
@@ -65,7 +86,7 @@ class LED_Strip (PWM):
         self.set_pwm(self.lightness)    
 
     def off (self):
-        self.lightness -= int(self.stepsize / 2)
+        self.lightness -= self.stepsize
         if self.lightness < PWM.MIN:
             self.lightness = PWM.MIN
         self.set_pwm(self.lightness)
@@ -79,14 +100,27 @@ class LED_Strip (PWM):
 # Relais ######################################################################
 class Relais (object):
     def __init__ (self):
-        self.__status = 0
+        self.__status = Switch.OFF
+        self._timestretched = time()
+        self._stretchperiod = 100
 
     @property
     def status (self):
         return self.__status
 
+    @property
+    def stretched_status (self):
+        """Enlarge interval of being "on"; otherwise if switch is on
+           for a short period of time only, it would not be seen in RRD."""
+        if time() <= self._timestretched or self.status == Switch.ON:
+            return Switch.ON 
+        else:
+            return Switch.OFF
+
     @status.setter
     def status (self, value):
+        if self.status == Switch.OFF and value == Switch.ON:
+            self._timestretched = time() + self._stretchperiod
         self.__status = value
 
 
@@ -100,14 +134,48 @@ class Control (threading.Thread):
 
     def run (self):
         while self._running:
-            if relais.status == 1:
+            if relais.status == Switch.ON:
                 self.leds.on()
             else:
                 self.leds.off()
-            time.sleep(0.05)
+            sleep(0.05)
 
         # cleanup on exit
         self.leds.immediate_off()   # TODO: check in anderen programmen!
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+# Statistics ##################################################################
+class Statistics (threading.Thread):
+    rrd_template = DS_SWITCH  + ":" + \
+                   DS_TEMPCPU + ":" + \
+                   DS_TEMP    + ":" + \
+                   DS_HUMI    + ":" + \
+                   DS_RES1    + ":" + \
+                   DS_RES2    + ":" + \
+                   DS_RES3
+    cpu = CPU()
+
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self._running = True
+
+    def run (self):    
+        while self._running:
+            rrd_data = "N:{}".format(relais.stretched_status.value)   + \
+                        ":{:.2f}".format(self.cpu.read_temperature()) + \
+                        ":{}".format(0.0)                             + \
+                        ":{}".format(0.0)                             + \
+                        ":{}".format(0.0)                             + \
+                        ":{}".format(0.0)                             + \
+                        ":{}".format(0.0)
+            print(strftime("%Y%m%d %X:"), rrd_data)
+            # rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
+
+            sleep(50)
 
     def stop (self):
         self._running = False
@@ -122,9 +190,9 @@ def API_Relais ():
     # TODO: validate param
 
     if relais_ == 'on':
-        relais.status = 1
+        relais.status = Switch.ON
     else:
-        relais.status = 0
+        relais.status = Switch.OFF
     return "OK. Status: {}".format(relais_)    
 
 
@@ -136,7 +204,9 @@ def _exit ():
     for c in controls:
         c.stop()
         c.join()
-        print("Shutting down")
+
+    statistics.stop()
+    statistics.join()
 
     sys.exit(0)
 
@@ -151,6 +221,8 @@ signal.signal(signal.SIGTERM, __exit)
 signal.signal(signal.SIGINT, __exit)
 
 relais = Relais()
+statistics = Statistics()
+statistics.start()
 
 controls = [ Control(channel) for channel in range(4) ]
 for c in controls:
