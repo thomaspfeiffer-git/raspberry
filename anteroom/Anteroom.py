@@ -35,6 +35,8 @@ from time import sleep, strftime, time
 
 sys.path.append("../libs/")
 from i2c import I2C
+from Logging import Log
+
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
 from sensors.CPU import CPU
 
@@ -77,7 +79,7 @@ class LED_Strip (PWM):
     def __init__ (self, channel):
         super().__init__(channel)
         self.lightness = PWM.MIN
-        self.stepsize  = 25
+        self.stepsize  = 50
 
     def on (self):
         self.lightness += self.stepsize
@@ -172,7 +174,7 @@ class Statistics (threading.Thread):
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)
-            print(strftime("%Y%m%d %X:"), rrd_data)
+            Log(rrd_data)
             # rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
 
             sleep(50)
@@ -186,7 +188,7 @@ class Statistics (threading.Thread):
 @app.route('/relais')
 def API_Relais ():
     relais_ = request.args.get('status', 'off')
-    print("Request: relais={}".format(relais_))
+    Log("Request: relais={}".format(relais_))
     # TODO: validate param
 
     if relais_ == 'on':
