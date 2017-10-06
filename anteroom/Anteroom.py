@@ -175,7 +175,7 @@ class Statistics (threading.Thread):
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)
             Log(rrd_data)
-            # rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
+            rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
 
             sleep(50)
 
