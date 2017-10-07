@@ -5,6 +5,7 @@ RRD=$RRDPATH/weather.rrd
 RRD_K=$RRDPATH/weather_kidsroom.rrd
 RRD_KB=$RRDPATH/weather_kollerberg.rrd
 RRD_WR=$RRDPATH/wardrobe.rrd
+RRD_AR=$RRDPATH/anteroom.rrd
 
 
 PNG_TEMP_D=$RRDPATH/weather_temp_d.png
@@ -36,6 +37,13 @@ PNG_WR_LIGHTNESS_D=$RRDPATH/wr_lightness_d.png
 PNG_WR_LIGHTNESS_W=$RRDPATH/wr_lightness_w.png
 PNG_WR_LIGHTNESS_M=$RRDPATH/wr_lightness_m.png
 PNG_WR_LIGHTNESS_Y=$RRDPATH/wr_lightness_y.png
+
+PNG_ANTEROOM_D=$RRDPATH/anteroom_d.png
+PNG_ANTEROOM_W=$RRDPATH/anteroom_w.png
+PNG_ANTEROOM_M=$RRDPATH/anteroom_m.png
+PNG_ANTEROOM_Y=$RRDPATH/anteroom_y.png
+
+
 
 
 WIDTH=1024
@@ -130,6 +138,7 @@ printCPUTemp ()
     DEF:temp_cpu=$RRD:temp_cpu:AVERAGE                                   \
     DEF:kidsroom_tempcpu=$RRD_K:kidsroom_tempcpu:AVERAGE                 \
     DEF:wr_tempcpu=$RRD_WR:wr_tempcpu:AVERAGE                            \
+    DEF:ar_tempcpu=$RRD_AR:ar_tempcpu:AVERAGE                            \
     DEF:kb_i_tcpu=$RRD_KB:kb_i_tcpu:AVERAGE                              \
     DEF:kb_a_tcpu=$RRD_KB:kb_a_tcpu:AVERAGE                              \
     DEF:kb_k_tcpu=$RRD_KB:kb_k_tcpu:AVERAGE                              \
@@ -143,6 +152,11 @@ printCPUTemp ()
     GPRINT:kidsroom_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"             \
     GPRINT:kidsroom_tempcpu:MAX:"Max\: %5.2lf °C"                        \
     GPRINT:kidsroom_tempcpu:MIN:"Min\: %5.2lf °C\n"                      \
+    LINE1:ar_tempcpu#ff1493:"Temperatur NanoPi NEO Air Vorzimmer      "  \
+    GPRINT:ar_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
+    GPRINT:ar_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
+    GPRINT:ar_tempcpu:MAX:"Max\: %5.2lf °C"                              \
+    GPRINT:ar_tempcpu:MIN:"Min\: %5.2lf °C\n"                            \
     LINE1:wr_tempcpu#ffcc00:"Temperatur Raspberry Pi Kleiderkasten    "  \
     GPRINT:wr_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
     GPRINT:wr_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
@@ -287,6 +301,28 @@ printWardrobe()
 
 
 #######################################################################
+# printAnteroom()                                                     #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printAnteroom()
+  {
+    rrdtool graph $2                                     \
+    --title "Vorzimmer"                                  \
+    --end now --start end-$1                             \
+    -w $WIDTH -h $(($HEIGHT/2)) -a PNG                   \
+    --watermark "$WATERMARK"                             \
+    --alt-y-grid                                         \
+    --right-axis 1:0                                     \
+    DEF:ar_switch=$RRD_AR:ar_switch:AVERAGE              \
+    AREA:ar_switch#ff1493:"Licht ein           "         \
+    GPRINT:ar_switch:LAST:"\t Aktuell\: %5.0lf"          \
+    GPRINT:ar_switch:AVERAGE:"Mittelwert\: %5.2lf\n"     &
+ }
+
+
+#######################################################################
 # printLightness()                                                    #
 # Parameter:                                                          #
 # $1 Time Range                                                       #
@@ -334,6 +370,11 @@ printAirPressure "36h", "$PNG_PRES_D"
 printAirPressure "7d",  "$PNG_PRES_W"
 printAirPressure "30d", "$PNG_PRES_M"
 printAirPressure "365d", "$PNG_PRES_Y"
+
+printAnteroom "36h", "$PNG_ANTEROOM_D"
+printAnteroom "7d", "$PNG_ANTEROOM_W"
+printAnteroom "30d", "$PNG_ANTEROOM_M"
+printAnteroom "365d", "$PNG_ANTEROOM_Y"
 
 printWardrobe "36h", "$PNG_WARDROBE_D"
 printWardrobe "7d", "$PNG_WARDROBE_W"
