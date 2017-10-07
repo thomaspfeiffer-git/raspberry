@@ -285,11 +285,13 @@ class Control (threading.Thread):
             else:
                 self._actuator.off()
             sleep(0.02)
-
-        self._actuator.immediate_off() # Turn light off on exit.
+        self.cleanup()
 
     def stop (self):
         self._running = False
+
+    def cleanup (self):
+        self._actuator.immediate_off() # Turn light off on exit.
         self._sensor.stop()
         self._sensor.join()
 
@@ -308,6 +310,7 @@ class Control_Button (Control):
         while self._running:                       # for blue led in button
             self.switchvalue = self._sensor.value
             sleep(0.02)
+        self.cleanup()
 
 
 ###############################################################################
