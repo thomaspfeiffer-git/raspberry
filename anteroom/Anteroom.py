@@ -144,7 +144,7 @@ class Control (threading.Thread):
             sleep(0.05)
 
         # cleanup on exit
-        self.leds.immediate_off()   # TODO: check in anderen programmen!
+        self.leds.immediate_off() 
 
     def stop (self):
         self._running = False
