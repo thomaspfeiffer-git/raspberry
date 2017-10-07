@@ -42,10 +42,10 @@ class Timer (threading.Thread):
                 self._event = self._scheduler.enter(self._delay, 1, self._delayfunc)
                 self._scheduler.run()
                 self._event = None # clear _event after event has expired
+        self.cancel()
 
     def stop (self):
         self._running = False
-        self.cancel()
 
 
 
