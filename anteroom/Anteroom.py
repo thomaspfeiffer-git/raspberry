@@ -36,6 +36,7 @@ from time import sleep, strftime, time
 sys.path.append("../libs/")
 from i2c import I2C
 from Logging import Log
+from Shutdown import Shutdown
 
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
 from sensors.CPU import CPU
@@ -177,7 +178,9 @@ class Statistics (threading.Thread):
             Log(rrd_data)
             rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
 
-            sleep(50)
+            for _ in range(500): # interruptible sleep
+                if self._running:
+                    sleep(0.1)
 
     def stop (self):
         self._running = False
@@ -200,7 +203,7 @@ def API_Relais ():
 
 ###############################################################################
 # Exit ########################################################################
-def _exit ():
+def shutdown_application ():
     """cleanup stuff"""
 
     for c in controls:
@@ -212,15 +215,10 @@ def _exit ():
 
     sys.exit(0)
 
-def __exit (__s, __f):
-    """cleanup stuff used for signal handler"""
-    _exit()
-
 
 ###############################################################################
-## main ######################################################################
-signal.signal(signal.SIGTERM, __exit)
-signal.signal(signal.SIGINT, __exit)
+## main #######################################################################
+shutdown = Shutdown(shutdown_func=shutdown_application)
 
 relais = Relais()
 statistics = Statistics()
