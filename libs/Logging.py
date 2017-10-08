@@ -6,11 +6,14 @@
 """
 """
 
+import sys
 from datetime import datetime
 
-def Log (logstr):
+def Log (logstr, flush=False):
     """improved log output"""
     print("{}: {}".format(datetime.now().strftime("%Y%m%d %H:%M:%S"), logstr))
+    if flush:
+        sys.stdout.flush()
 
 # eof #
 

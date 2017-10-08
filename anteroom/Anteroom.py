@@ -175,7 +175,7 @@ class Statistics (threading.Thread):
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)
-            Log(rrd_data)
+            Log(rrd_data, True)
             rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
 
             for _ in range(500): # interruptible sleep
@@ -191,7 +191,7 @@ class Statistics (threading.Thread):
 @app.route('/relais')
 def API_Relais ():
     relais_ = request.args.get('status', 'off')
-    Log("Request: relais={}".format(relais_))
+    Log("Request: relais={}".format(relais_), True)
     # TODO: validate param
 
     if relais_ == 'on':
