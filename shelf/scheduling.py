@@ -14,6 +14,8 @@ import threading
 import time
 import sys
 
+sys.path.append("../libs/")
+from Logging import Log
 
 DEFAULT_ACTIVATE_TIME   = "--:--"   # = now()
 DEFAULT_DEACTIVATE_TIME = "22:30"
@@ -147,9 +149,7 @@ class Scheduling (threading.Thread):
                 nonlocal i
                 i += 1
                 if i > log_interval:
-                    print("{}: {}".format(datetime.now(), \
-                                          self._logging_method()))
-                    sys.stdout.flush()
+                    Log(self._logging_method(), True)
                     i = 0
 
             return print_log

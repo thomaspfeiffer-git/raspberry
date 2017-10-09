@@ -30,8 +30,6 @@
 #
 # https://learn.adafruit.com/neopixels-on-raspberry-pi/software
 # note: sudo python setup.py install ===> sudo python3 setup.py install
-#
-
 
 
 from enum import Enum
@@ -43,8 +41,8 @@ import sys
 import threading
 from time import sleep
 
-# sys.path.append
-# from Shutdown import Shutdown
+sys.path.append("../libs/")
+from Shutdown import Shutdown
 
 from scheduling import Scheduling, Scheduling_Params
 from userinterface import Feedback, Status
@@ -310,7 +308,7 @@ def brightness (brightness):
 
 ###############################################################################
 # Exit ########################################################################
-def _exit():
+def shutdown_application ():
     """cleanup stuff"""
     light_off(scheduler_off=True, on_exit=True)
     sleep(0.5)  # give some time to switch off LEDs before threads are stopped
@@ -318,22 +316,12 @@ def _exit():
     control.join()
     scheduler.stop()
     scheduler.join()
-    sys.exit()
-
-def __exit(__s, __f):
-    """cleanup stuff used for signal handler"""
-    _exit()
+    sys.exit(0)
 
 
 ###############################################################################
 # main ########################################################################
-
-# TODO:
-# if __name__ == '__main__':
-#     shutdown = Shutdown(shutdown_func=shutdown_application)
-
-signal.signal(signal.SIGTERM, __exit)
-signal.signal(signal.SIGINT, __exit)
+shutdown = Shutdown(shutdown_func=shutdown_application)
 
 status = Status(brightness=LED_Strip.BRIGHTNESS)
 
