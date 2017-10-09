@@ -121,7 +121,8 @@ class Forecast (threading.Thread):
             self.display.text("{}".format(data.time_text))
             self.display.show()
 
-            time.sleep(1)
+            for _ in range(100):  # interruptible sleep 
+                time.sleep(0.1)
 
     def stop (self):
         self.__running = False
