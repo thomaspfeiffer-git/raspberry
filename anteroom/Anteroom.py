@@ -7,9 +7,7 @@
 """control lighting of our anteroom"""
 
 ### usage ###
-# sudo bash
-# export FLASK_APP=Anteroom.py
-# flask run --host=0.0.0.0 >Anteroom.log 2>&1 &
+# ./Anteroom.py >Anteroom.log 2>&1 &
 
 
 ### setup ###
@@ -218,15 +216,18 @@ def shutdown_application ():
 
 ###############################################################################
 ## main #######################################################################
-shutdown = Shutdown(shutdown_func=shutdown_application)
+if __name__ == "__main__":
+    shutdown = Shutdown(shutdown_func=shutdown_application)
 
-relais = Relais()
-statistics = Statistics()
-statistics.start()
+    relais = Relais()
+    statistics = Statistics()
+    statistics.start()
 
-controls = [ Control(channel) for channel in range(4) ]
-for c in controls:
-    c.start()
+    controls = [ Control(channel) for channel in range(4) ]
+    for c in controls:
+        c.start()
+
+    app.run() 
 
 # eof #
 
