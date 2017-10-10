@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ############################################################################
 # lighting.py                                                              #
@@ -8,10 +8,7 @@
 
 
 ### usage ###
-# sudo bash
-# export FLASK_APP=lighting.py
-# flask run --host=0.0.0.0 >lighting.log 2>&1 &
-
+# sudo ./lighting.py >lighting.log 2>&1 &
 
 # sudo PYTHONPATH=".:build/lib.linux-armv7l-2.7" python tp/strandtest.py &
 
@@ -321,22 +318,25 @@ def shutdown_application ():
 
 ###############################################################################
 # main ########################################################################
-shutdown = Shutdown(shutdown_func=shutdown_application)
+if __name__ == "__main__":
+    shutdown = Shutdown(shutdown_func=shutdown_application)
 
-status = Status(brightness=LED_Strip.BRIGHTNESS)
+    status = Status(brightness=LED_Strip.BRIGHTNESS)
 
-control = Control_Strip()
-control.set_pattern(method=pattern_color, color=Colors.green.value)
+    control = Control_Strip()
+    control.set_pattern(method=pattern_color, color=Colors.green.value)
 
-scheduling_params = Scheduling_Params()
+    scheduling_params = Scheduling_Params()
 
-scheduler = Scheduling()
-scheduler.set_pattern_method(control.set_pattern)
-scheduler.set_method_off(method=pattern_color, color=Colors.black.value)
-scheduler.set_logging_method(status.loginfo)
+    scheduler = Scheduling()
+    scheduler.set_pattern_method(control.set_pattern)
+    scheduler.set_method_off(method=pattern_color, color=Colors.black.value)
+    scheduler.set_logging_method(status.loginfo)
 
-scheduler.start()
-control.start()
+    scheduler.start()
+    control.start()
 
+    app.run(host="0.0.0.0")
+    
 # eof #
 
