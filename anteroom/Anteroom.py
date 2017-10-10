@@ -227,7 +227,7 @@ if __name__ == "__main__":
     for c in controls:
         c.start()
 
-    app.run() 
+    app.run(host="0.0.0.0") 
 
 # eof #
 
