@@ -149,6 +149,20 @@ class Control (threading.Thread):
 
 
 ###############################################################################
+# Fan #########################################################################
+class Fan (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self._running = True
+
+    def run (self):
+        pass
+
+    def stop (self):
+        pass
+
+
+###############################################################################
 # Statistics ##################################################################
 class Statistics (threading.Thread):
     rrd_template = DS_SWITCH  + ":" + \
@@ -174,7 +188,10 @@ class Statistics (threading.Thread):
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)
             Log(rrd_data, True)
-            rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
+            try:
+                rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
+            except rrdtool.OperationalError:
+                Log("Cannot write to rrd: {0[0]} {0[1]}".format(sys.exc_info()))
 
             for _ in range(500): # interruptible sleep
                 if self._running:
@@ -227,7 +244,7 @@ if __name__ == "__main__":
     for c in controls:
         c.start()
 
-    app.run(host="0.0.0.0") 
+    app.run(host="0.0.0.0")
 
 # eof #
 
