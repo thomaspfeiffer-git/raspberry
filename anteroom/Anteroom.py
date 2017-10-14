@@ -25,7 +25,6 @@
 
 from enum import Enum
 from flask import Flask, request
-# import RPi.GPIO as io
 import rrdtool
 import signal
 import sys
@@ -158,16 +157,20 @@ class Fan (threading.Thread):
         threading.Thread.__init__(self)
 
         self.__pin = pin
-        io.setmode(io.BOARD)
-        io.setup(self.__pin, io.OUT) 
+        # FriendlyArm's RPI lib does not work with python3.
+        # http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=921
+        # gpio -1 mode 8 output   
+        # gpio -1 write 8 1
+        # gpio -1 write 8 0
+
         self.off()
         self._running = True
 
     def on (self):
-        io.output(self.pin, 0)
+        pass
 
     def off (self):
-        io.output(self.pin, 1)
+        pass
 
     def run (self):
         while self._running:
@@ -259,8 +262,8 @@ if __name__ == "__main__":
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     relais = Relais()
-#    fan = Fan(pin_fan)
-#    fan.start()
+    fan = Fan(pin_fan)
+    fan.start()
     statistics = Statistics()
     statistics.start()
 
