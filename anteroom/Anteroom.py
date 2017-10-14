@@ -7,7 +7,7 @@
 """control lighting of our anteroom"""
 
 ### usage ###
-# ./Anteroom.py >Anteroom.log 2>&1 &
+# sudo ./Anteroom.py >Anteroom.log 2>&1 &
 
 
 ### setup ###
@@ -25,6 +25,7 @@
 
 from enum import Enum
 from flask import Flask, request
+# import RPi.GPIO as io
 import rrdtool
 import signal
 import sys
@@ -52,6 +53,8 @@ DS_RES3     = "ar_res3"
 
 
 app = Flask(__name__)
+
+pin_fan = 8
 
 
 ###############################################################################
@@ -103,7 +106,7 @@ class Relais (object):
     def __init__ (self):
         self.__status = Switch.OFF
         self._timestretched = time()
-        self._stretchperiod = 100
+        self._stretchperiod = 120
 
     @property
     def status (self):
@@ -151,15 +154,32 @@ class Control (threading.Thread):
 ###############################################################################
 # Fan #########################################################################
 class Fan (threading.Thread):
-    def __init__ (self):
+    def __init__ (self, pin):
         threading.Thread.__init__(self)
+
+        self.__pin = pin
+        io.setmode(io.BOARD)
+        io.setup(self.__pin, io.OUT) 
+        self.off()
         self._running = True
 
+    def on (self):
+        io.output(self.pin, 0)
+
+    def off (self):
+        io.output(self.pin, 1)
+
     def run (self):
-        pass
+        while self._running:
+            if relais.stretched_status == Switch.ON:
+                self.on()
+            else:
+                self.off()
+            sleep(0.1)
+        self.off()
 
     def stop (self):
-        pass
+        self._running = False
 
 
 ###############################################################################
@@ -227,6 +247,8 @@ def shutdown_application ():
 
     statistics.stop()
     statistics.join()
+    fan.stop()
+    fan.join()
 
     sys.exit(0)
 
@@ -237,6 +259,8 @@ if __name__ == "__main__":
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     relais = Relais()
+#    fan = Fan(pin_fan)
+#    fan.start()
     statistics = Statistics()
     statistics.start()
 
