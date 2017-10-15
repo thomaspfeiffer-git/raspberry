@@ -27,6 +27,7 @@ from enum import Enum
 from flask import Flask, request
 import rrdtool
 import signal
+import subprocess
 import sys
 import threading
 from time import sleep, strftime, time
@@ -157,20 +158,26 @@ class Fan (threading.Thread):
         threading.Thread.__init__(self)
 
         self.__pin = pin
-        # FriendlyArm's RPI lib does not work with python3.
+        # FriendlyArm's WiringPI lib does not support python3.
         # http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=921
-        # gpio -1 mode 8 output   
-        # gpio -1 write 8 1
-        # gpio -1 write 8 0
-
+        # Therefore i use shell commands.
+        subprocess.run(["gpio", "-1", "mode", "8", "output"], check=True)
+        self.__last = None
         self.off()
         self._running = True
 
+        # TODO: use self.__pin
+        # TODO: use method for gpio ... on/off"
+
     def on (self):
-        pass
+        if self.__last != Switch.ON:
+            subprocess.run(["gpio", "-1", "write", "8", "0"], check=True)
+            self.__last = Switch.ON
 
     def off (self):
-        pass
+        if self.__last != Switch.OFF:
+            subprocess.run(["gpio", "-1", "write", "8", "1"], check=True)
+            self.__last = Switch.OFF
 
     def run (self):
         while self._running:
