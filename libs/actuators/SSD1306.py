@@ -115,6 +115,7 @@ class SSD1306 (I2C):
             except (IOError, OSError):
                 print(strftime("%Y%m%d %X:"), "error writing i2c bus in SSD1306.__command()i; retry #", retry)
                 sleep(0.5)
+                self.begin()
                 retry += 1
         if retry >= max_retries:
             sys.exit()
