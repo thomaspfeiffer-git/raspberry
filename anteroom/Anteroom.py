@@ -7,7 +7,7 @@
 """control lighting of our anteroom"""
 
 ### usage ###
-# sudo ./Anteroom.py >Anteroom.log 2>&1 &
+# nohup ./Anteroom.py >Anteroom.log 2>&1 &
 
 
 ### setup ###
@@ -157,26 +157,26 @@ class Fan (threading.Thread):
     def __init__ (self, pin):
         threading.Thread.__init__(self)
 
-        self.__pin = pin
+        self.__pin = "{}".format(pin)
         # FriendlyArm's WiringPI lib does not support python3.
         # http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=921
         # Therefore i use shell commands.
-        subprocess.run(["gpio", "-1", "mode", "8", "output"], check=True)
+        subprocess.run(["gpio", "-1", "mode", self.__pin, "output"], check=True)
         self.__last = None
         self.off()
         self._running = True
 
-        # TODO: use self.__pin
-        # TODO: use method for gpio ... on/off"
+    def io_write (self, status):
+        subprocess.run(["gpio", "-1", "write", self.__pin, status], check=True)
 
     def on (self):
         if self.__last != Switch.ON:
-            subprocess.run(["gpio", "-1", "write", "8", "0"], check=True)
+            self.io_write("0")
             self.__last = Switch.ON
 
     def off (self):
         if self.__last != Switch.OFF:
-            subprocess.run(["gpio", "-1", "write", "8", "1"], check=True)
+            self.io_write("1")
             self.__last = Switch.OFF
 
     def run (self):
