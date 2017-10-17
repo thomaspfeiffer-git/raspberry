@@ -81,10 +81,10 @@ class LED_Strip (PWM):
     def __init__ (self, channel):
         super().__init__(channel)
         self.lightness = PWM.MIN
-        self.stepsize  = 50
+        self.stepsize  = 30
 
     def on (self):
-        self.lightness += self.stepsize
+        self.lightness += self.stepsize * 2
         if self.lightness > PWM.MAX:
             self.lightness = PWM.MAX
         self.set_pwm(self.lightness)    
@@ -105,15 +105,24 @@ class LED_Strip (PWM):
 class Relais (object):
     def __init__ (self):
         self.__status = Switch.OFF
-        self._timestretched = time()
-        self._stretchperiod = 120
+        self._timestretched  = time()
+        self._timedelaytooff = time()
+        self._stretchperiod  = 120
 
     @property
     def status (self):
         return self.__status
 
     @property
-    def stretched_status (self):
+    def stretched_status_off (self):
+        """Delay off for a couple of seconds."""
+        if time() <= self._timedelaytooff or self.status == Switch.ON:
+            return Switch.ON 
+        else:
+            return Switch.OFF
+
+    @property
+    def stretched_status_on (self):
         """Enlarge interval of being "on"; otherwise if switch is on
            for a short period of time only, it would not be seen in RRD."""
         if time() <= self._timestretched or self.status == Switch.ON:
@@ -125,6 +134,8 @@ class Relais (object):
     def status (self, value):
         if self.status == Switch.OFF and value == Switch.ON:
             self._timestretched = time() + self._stretchperiod
+        if self.status == Switch.ON and value == Switch.OFF:    
+            self._timedelaytooff = time() + int(self._stretchperiod / 10)
         self.__status = value
 
 
@@ -138,7 +149,7 @@ class Control (threading.Thread):
 
     def run (self):
         while self._running:
-            if relais.status == Switch.ON:
+            if relais.stretched_status_off == Switch.ON:
                 self.leds.on()
             else:
                 self.leds.off()
@@ -181,7 +192,7 @@ class Fan (threading.Thread):
 
     def run (self):
         while self._running:
-            if relais.stretched_status == Switch.ON:
+            if relais.stretched_status_on == Switch.ON:
                 self.on()
             else:
                 self.off()
@@ -210,7 +221,7 @@ class Statistics (threading.Thread):
 
     def run (self):    
         while self._running:
-            rrd_data = "N:{}".format(relais.stretched_status.value)   + \
+            rrd_data = "N:{}".format(relais.stretched_status_on.value)   + \
                         ":{:.2f}".format(self.cpu.read_temperature()) + \
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)                             + \
