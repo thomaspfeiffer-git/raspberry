@@ -107,6 +107,7 @@ class Relais (object):
         self.__status = Switch.OFF
         self._timestretched  = time()
         self._timedelaytooff = time()
+        self._timedelaytooff_fan = time()
         self._stretchperiod  = 120
 
     @property
@@ -117,6 +118,13 @@ class Relais (object):
     def stretched_status_off (self):
         """Delay off for a couple of seconds."""
         if time() <= self._timedelaytooff or self.status == Switch.ON:
+            return Switch.ON 
+        else:
+            return Switch.OFF
+
+    @property
+    def stretched_status_off_fan (self):
+        if time() <= self._timedelaytooff_fan or self.status == Switch.ON:
             return Switch.ON 
         else:
             return Switch.OFF
@@ -136,6 +144,7 @@ class Relais (object):
             self._timestretched = time() + self._stretchperiod
         if self.status == Switch.ON and value == Switch.OFF:    
             self._timedelaytooff = time() + int(self._stretchperiod / 10)
+            self._timedelaytooff_fan = time() + self._stretchperiod
         self.__status = value
 
 
@@ -192,7 +201,7 @@ class Fan (threading.Thread):
 
     def run (self):
         while self._running:
-            if relais.stretched_status_on == Switch.ON:
+            if relais.stretched_status_off_fan == Switch.ON:
                 self.on()
             else:
                 self.off()
