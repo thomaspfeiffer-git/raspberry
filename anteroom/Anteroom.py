@@ -105,35 +105,24 @@ class LED_Strip (PWM):
 class Relais (object):
     def __init__ (self):
         self.__status = Switch.OFF
-        self._timestretched  = time()
-        self._timedelaytooff = time()
-        self._timedelaytooff_fan = time()
-        self._stretchperiod  = 120
+        self._timestamp_on  = 0
+        self._timestamp_off = 0
 
     @property
     def status (self):
         return self.__status
 
-    @property
-    def stretched_status_off (self):
+    def status_stretchoff (self, stretchvalue=120):
         """Delay off for a couple of seconds."""
-        if time() <= self._timedelaytooff or self.status == Switch.ON:
+        if self._timestamp_off + stretchvalue > time() or self.status == Switch.ON:
             return Switch.ON 
         else:
             return Switch.OFF
 
-    @property
-    def stretched_status_off_fan (self):
-        if time() <= self._timedelaytooff_fan or self.status == Switch.ON:
-            return Switch.ON 
-        else:
-            return Switch.OFF
-
-    @property
-    def stretched_status_on (self):
-        """Enlarge interval of being "on"; otherwise if switch is on
+    def status_stretchon (self, stretchvalue=120):
+        """Enlarge interval of being "on"; otherwise if switch would be on
            for a short period of time only, it would not be seen in RRD."""
-        if time() <= self._timestretched or self.status == Switch.ON:
+        if self._timestamp_on + stretchvalue > time() or self.status == Switch.ON:
             return Switch.ON 
         else:
             return Switch.OFF
@@ -141,10 +130,9 @@ class Relais (object):
     @status.setter
     def status (self, value):
         if self.status == Switch.OFF and value == Switch.ON:
-            self._timestretched = time() + self._stretchperiod
+            self._timestamp_on = time()
         if self.status == Switch.ON and value == Switch.OFF:    
-            self._timedelaytooff = time() + int(self._stretchperiod / 10)
-            self._timedelaytooff_fan = time() + self._stretchperiod
+            self._timestamp_off = time()
         self.__status = value
 
 
@@ -158,7 +146,7 @@ class Control (threading.Thread):
 
     def run (self):
         while self._running:
-            if relais.stretched_status_off == Switch.ON:
+            if relais.status_stretchoff(stretchvalue=10) == Switch.ON:
                 self.leds.on()
             else:
                 self.leds.off()
@@ -201,7 +189,7 @@ class Fan (threading.Thread):
 
     def run (self):
         while self._running:
-            if relais.stretched_status_off_fan == Switch.ON:
+            if relais.status_stretchoff() == Switch.ON:
                 self.on()
             else:
                 self.off()
@@ -230,12 +218,12 @@ class Statistics (threading.Thread):
 
     def run (self):    
         while self._running:
-            rrd_data = "N:{}".format(relais.stretched_status_on.value)   + \
-                        ":{:.2f}".format(self.cpu.read_temperature()) + \
-                        ":{}".format(0.0)                             + \
-                        ":{}".format(0.0)                             + \
-                        ":{}".format(0.0)                             + \
-                        ":{}".format(0.0)                             + \
+            rrd_data = "N:{}".format(relais.status_stretchon().value) + \
+                        ":{:.2f}".format(self.cpu.read_temperature())   + \
+                        ":{}".format(0.0)                               + \
+                        ":{}".format(0.0)                               + \
+                        ":{}".format(0.0)                               + \
+                        ":{}".format(0.0)                               + \
                         ":{}".format(0.0)
             Log(rrd_data, True)
             try:
