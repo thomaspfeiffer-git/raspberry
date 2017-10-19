@@ -219,11 +219,11 @@ class Statistics (threading.Thread):
     def run (self):    
         while self._running:
             rrd_data = "N:{}".format(relais.status_stretchon().value) + \
-                        ":{:.2f}".format(self.cpu.read_temperature())   + \
-                        ":{}".format(0.0)                               + \
-                        ":{}".format(0.0)                               + \
-                        ":{}".format(0.0)                               + \
-                        ":{}".format(0.0)                               + \
+                        ":{:.2f}".format(self.cpu.read_temperature()) + \
+                        ":{}".format(0.0)                             + \
+                        ":{}".format(0.0)                             + \
+                        ":{}".format(0.0)                             + \
+                        ":{}".format(0.0)                             + \
                         ":{}".format(0.0)
             Log(rrd_data, True)
             try:
@@ -234,6 +234,8 @@ class Statistics (threading.Thread):
             for _ in range(500): # interruptible sleep
                 if self._running:
                     sleep(0.1)
+                else:
+                    break
 
     def stop (self):
         self._running = False
