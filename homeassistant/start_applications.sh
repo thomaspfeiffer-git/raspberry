@@ -39,5 +39,14 @@ echo "Message of the Day started."
 cd ..
 
 
+echo
+echo "Starting anteroom lighting control"
+cd Anteroom
+nohup ./Anteroom.py &
+echo "Anteroom lighting control started"
+cd ..
+
+
+
 # eof #
 
