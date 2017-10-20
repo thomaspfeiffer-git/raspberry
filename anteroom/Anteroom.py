@@ -253,7 +253,18 @@ def API_Relais ():
         relais.status = Switch.ON
     else:
         relais.status = Switch.OFF
-    return "OK. Status: {}".format(relais_)    
+    return "OK. Status: {}".format(relais_)
+
+
+@app.route('/toggle')
+def API_Toggle ():
+    if relais.status == Switch.ON:
+        relais.status = Switch.OFF
+    else:
+        relais.status = Switch.ON
+    Log("Request: toggle to {}".format(relais.status))
+    return "OK. Status: {}".format(relais.status)
+
 
 
 ###############################################################################
