@@ -14,7 +14,7 @@ ypos   = 0
 
 [Timer]
 width  = 110
-height = 480
+height = 400
 xpos   = 690
 ypos   = 0
 
@@ -23,4 +23,10 @@ width  = 410
 height = 480
 xpos   = 280
 ypos   = 0
+
+[Anteroom]
+width  = 110
+height = 80
+xpos   = 690
+ypos   = 400
 
