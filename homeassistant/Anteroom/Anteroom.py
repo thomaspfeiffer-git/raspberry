@@ -24,8 +24,8 @@ from urllib.request import urlopen
 
 
 sys.path.append('../../libs')
-from Shutdown import Shutdown
 from Logging import Log
+from Shutdown import Shutdown
 
 sys.path.append('../libraries')
 from touchevent import Touchevent
