@@ -29,6 +29,7 @@ from Logging import Log
 
 sys.path.append('../libraries')
 from touchevent import Touchevent
+from sound import Sound
 
 from config import CONFIG
 
@@ -71,6 +72,7 @@ class Control (threading.Thread):
 
     def toggle (self):
         if Touchevent.event():   # brightness control
+            Sound.play(CONFIG.CLICK_SOUND)
             try:
                 urlopen(CONFIG.URL_ANTEROOM_CONTROL, timeout=2)
             except (HTTPError, URLError):
