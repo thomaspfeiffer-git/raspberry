@@ -146,7 +146,7 @@ class Control (threading.Thread):
 
     def run (self):
         while self._running:
-            if relais.status_stretchoff(stretchvalue=10) == Switch.ON:
+            if relais.status_stretchoff(stretchvalue=3) == Switch.ON:
                 self.leds.on()
             else:
                 self.leds.off()
