@@ -15,9 +15,12 @@ import tkinter.ttk as ttk
 from tkinter.font import Font
 
 import os
+import socket
 import sys
 import threading
 import time
+from urllib.error import HTTPError, URLError 
+from urllib.request import urlopen
 
 
 sys.path.append('../../libs')
@@ -68,7 +71,12 @@ class Control (threading.Thread):
 
     def toggle (self):
         if Touchevent.event():   # brightness control
-            Log("Toggle!")
+            try:
+                urlopen(CONFIG.URL_ANTEROOM_CONTROL, timeout=2)
+            except (HTTPError, URLError):
+                Log("HTTPError, URLError: {0[0]} {0[1]}".format(sys.exc_info()))
+            except socket.timeout:
+                Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
 
     def run (self):
         self._running = True
