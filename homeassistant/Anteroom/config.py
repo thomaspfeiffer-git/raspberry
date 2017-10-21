@@ -40,6 +40,7 @@ class CONFIG:
         XPOS   = int(cfg['Anteroom']['xpos'])
         YPOS   = int(cfg['Anteroom']['ypos'])
 
+    URL_ANTEROOM_CONTROL   = "http://nano03:5000/toggle"
     URL_BRIGHTNESS_CONTROL = cfg['Brightness']['URL']
 
 # eof #
