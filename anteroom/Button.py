@@ -45,9 +45,9 @@ def CallToggle ():
 ## main ######################################################################
 last = None
 while True:
-    act = io.input(pin_ir)   # TODO: debounce if necessary
+    act = io.input(pin_ir)
     if act != last:
-        if last == 1 and act == 0:  # falling edge
+        if last == 1 and act == 0: # falling edge indicates button pressed
             CallToggle()
         last = act
 
