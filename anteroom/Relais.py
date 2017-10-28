@@ -5,7 +5,7 @@
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
 ############################################################################
 """control lighting of our anteroom:
-   check relais and send status zu Anteroom main programm"""
+   check relais and send status to Anteroom main programm"""
 
 ### usage ###
 # sudo Relais.py
@@ -24,7 +24,7 @@ pin_ir = 7
 io.setmode(io.BOARD)
 io.setup(pin_ir, io.IN) 
 
-url = "http://localhost:5000/relais?status={}"
+url = "http://localhost:5000/relais?status={}" # TODO config file
 
 ###############################################################################
 def SendRelaisStatus (status):
