@@ -47,7 +47,8 @@ last = None
 while True:
     act = io.input(pin_ir)   # TODO: debounce if necessary
     if act != last:
-        CallToggle()
+        if last == 1 and act == 0:  # falling edge
+            CallToggle()
         last = act
 
     time.sleep(0.05)
