@@ -20,7 +20,7 @@ sys.path.append("../libs/")
 from Logging import Log
 
 
-pin_ir = 8
+pin_ir = 10
 io.setmode(io.BOARD)
 io.setup(pin_ir, io.IN) 
 
