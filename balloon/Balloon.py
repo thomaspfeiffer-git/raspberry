@@ -1,0 +1,115 @@
+#!/usr/bin/python3 -u
+# -*- coding: utf-8 -*-
+###############################################################################
+# Balloon.py                                                                  #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
+###############################################################################
+"""control weather balloon"""
+
+
+### usage ###
+# nohup ./Balloon.py > ballon.log 2>&1 &
+
+# Packages you might install
+# sudo pip3 install Pillow
+
+
+import sys
+import time
+
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+
+sys.path.append("../libs/")
+from i2c import I2C
+from Logging import Log
+from Shutdown import Shutdown
+
+from actuators.SSD1306 import SSD1306
+from sensors.CPU import CPU
+from sensors.BMP180 import BMP180
+
+
+###############################################################################
+# Data ########################################################################
+class Data (object):
+    def __init__ (self, temperature, pressure, t_cpu, timestamp):
+        self.temperature = temperature
+        self.pressure    = pressure
+        self.t_cpu       = t_cpu
+        self.timestamp   = timestamp
+
+
+###############################################################################
+# Sensors #####################################################################
+class Sensors (object):
+    def __init__ (self):
+        self.cpu = CPU()
+        self.bmp180 = BMP180()
+
+    def read (self):
+        return Data(temperature = self.bmp180.read_temperature(),
+                    pressure    = self.bmp180.read_pressure(),
+                    t_cpu       = self.cpu.read_temperature(),
+                    timestamp   = time.strftime("%X"))
+
+
+###############################################################################
+# Display #####################################################################
+class Display (object):
+    def __init__ (self):
+        self.display = SSD1306()
+ 
+        self.display.begin()
+        self.display.clear()
+        self.display.display()
+
+        self.xpos = 6
+        self.ypos = 2
+
+        self.image = Image.new('1', (self.display.width, self.display.height))
+        self.draw  = ImageDraw.Draw(self.image)
+        self.font  = ImageFont.load_default()
+        (_, self.fontheight) = self.font.getsize("A")
+
+    def draw_line (self, text):
+        self.draw.text((self.xpos, self.y), text, font=self.font, fill=0)
+        self.y += self.fontheight
+
+    def print (self, data):
+        self.draw.rectangle((0,0,self.display.width,self.display.height), \
+                            outline=0, fill=255)
+        self.y = self.ypos
+
+        self.draw_line("Temp: {} °C".format(data.temperature))
+        self.draw_line("Press: {} hPa".format(data.pressure / 100.0))
+        self.draw_line("Temp CPU: {} °C".format(data.t_cpu))
+        self.draw_line("Time: {}".format(data.timestamp))
+
+        self.display.image(self.image)
+        self.display.display()
+
+
+###############################################################################
+# Exit ########################################################################
+def shutdown_application ():
+    """cleanup stuff"""
+    sys.exit(0)
+
+
+###############################################################################
+## main #######################################################################
+if __name__ == "__main__":
+    shutdown = Shutdown(shutdown_func=shutdown_application)
+
+    display = Display()
+    sensors = Sensors()
+
+    while True:
+        data = sensors.read()
+        display.print(data)
+        time.sleep(10)
+
+# eof #
+   
