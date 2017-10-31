@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 
@@ -13,9 +13,9 @@ import BMP180
 
 b = BMP180.BMP180()
 
-while true:
-    print "Druck: %s" % (b.read_pressure() / 100.0)
-    print "Temp: %s" % b.read_temperature()
+while True:
+    print("Druck: {}".format(b.read_pressure() / 100.0))
+    print("Temp: {}".format(b.read_temperature()))
     time.sleep(60)
 
 
