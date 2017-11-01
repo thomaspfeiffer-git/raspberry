@@ -1,0 +1,35 @@
+Balloon - my Pi in the sky project
+==================================
+
+Related URLs
+------------
+http://www.daveakerman.com/?p=1154
+http://www.daveakerman.com/?p=1005
+
+
+Governmental topics
+-------------------
+
+http://www.noe.gv.at/noe/Luftfahrt/Steigenlassen_von_Kleinballonen.html
+https://www.wien.gv.at/amtshelfer/verkehr/luft/luftfahrt/luftballon.html
+
+
+List of components
+------------------
+
+- NanoPi NEO Air
+- SD Card (>= 128 GB)
+- BMP180: air pressure and temperature sensor (i2c)
+- PCF8591: a/d converter (i2c) for monitoring battery status
+- SSD1306: display (i2c)
+- ULN2803: darlington transistor array, used as status LED driver
+
+
+- Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3
+- Active GPS antenna with SMA connector
+- Battery box for six AA akkus
+- M8 threaded bar + screw nuts + butterfly nuts
+- Mini360 DC-DC Buck Converter Step Down Module 
+
+
+
