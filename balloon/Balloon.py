@@ -56,7 +56,7 @@ class Sensors (object):
     def read (self):
         return Data(temperature = self.bmp180.read_temperature(),
                     pressure    = self.bmp180.read_pressure(),
-                    voltage     = self.pcf8591.read(channel=0) / 256.0 * self.v_ref,
+                    voltage     = self.pcf8591.read(channel=0) / 255.0 * self.v_ref,
                     t_cpu       = self.cpu.read_temperature(),
                     timestamp   = time.strftime("%X"))
 
@@ -90,7 +90,7 @@ class Display (object):
 
         self.draw_line("Temp: {} °C".format(data.temperature))
         self.draw_line("Press: {} hPa".format(data.pressure / 100.0))
-        self.draw_line("Battery: {} V".format(data.voltage))
+        self.draw_line("Battery: {:.2f} V".format(data.voltage))
         self.draw_line("Temp CPU: {} °C".format(data.t_cpu))
         self.draw_line("Time: {}".format(data.timestamp))
 
