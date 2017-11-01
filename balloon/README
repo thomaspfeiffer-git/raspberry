@@ -1,4 +1,4 @@
-Balloon - my Pi in the sky project
+Balloon - my Pi in the sky projecta
 ==================================
 
 Related URLs
@@ -12,6 +12,14 @@ Governmental topics
 
 http://www.noe.gv.at/noe/Luftfahrt/Steigenlassen_von_Kleinballonen.html
 https://www.wien.gv.at/amtshelfer/verkehr/luft/luftfahrt/luftballon.html
+
+
+Equipment
+---------
+
+https://www.stratoflights.com/shop/fesselballon/
+https://www.stratoflights.com/shop/spezialschnur/
+https://www.stratoflights.com/shop/wetterballon-800/
 
 
 List of components
@@ -31,6 +39,16 @@ List of components
 - Battery box for six AA akkus
 - M8 threaded bar + screw nuts + butterfly nuts
 - Mini360 DC-DC Buck Converter Step Down Module 
+
+
+
+
+Misc
+----
+
+- Monitoring battery
+  https://www.elektronik-kompendium.de/sites/praxis/bausatz_spannungswaechter.htm
+
 
 
 
