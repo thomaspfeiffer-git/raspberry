@@ -11,7 +11,7 @@ from time import localtime
 from i2c import I2C
 
 class PCF8591 (I2C):
-    def __init__ (self, address, lock=None):
+    def __init__ (self, address=0x48, lock=None):
         if sys.version_info >= (3,0):
             super().__init__(lock)
         else:
