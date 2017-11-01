@@ -25,6 +25,7 @@ List of components
 - ULN2803: darlington transistor array, used as status LED driver
 
 
+- Push buttons (for switching camera on/off)
 - Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3
 - Active GPS antenna with SMA connector
 - Battery box for six AA akkus
