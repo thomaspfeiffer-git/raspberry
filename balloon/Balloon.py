@@ -29,14 +29,16 @@ from Shutdown import Shutdown
 from actuators.SSD1306 import SSD1306
 from sensors.CPU import CPU
 from sensors.BMP180 import BMP180
+from sensors.PCF8591 import PCF8591
 
 
 ###############################################################################
 # Data ########################################################################
 class Data (object):
-    def __init__ (self, temperature, pressure, t_cpu, timestamp):
+    def __init__ (self, temperature, pressure, voltage, t_cpu, timestamp):
         self.temperature = temperature
         self.pressure    = pressure
+        self.voltage     = voltage
         self.t_cpu       = t_cpu
         self.timestamp   = timestamp
 
@@ -44,13 +46,17 @@ class Data (object):
 ###############################################################################
 # Sensors #####################################################################
 class Sensors (object):
+    v_ref = 3.3
+
     def __init__ (self):
         self.cpu = CPU()
-        self.bmp180 = BMP180()
+        self.bmp180 = BMP180()   # air pressure, temperature
+        self.pcf8591 = PCF8591() # ADC for measurement of supply voltage
 
     def read (self):
         return Data(temperature = self.bmp180.read_temperature(),
                     pressure    = self.bmp180.read_pressure(),
+                    voltage     = self.pcf8591.read(channel=0) / 256.0 * self.v_ref,
                     t_cpu       = self.cpu.read_temperature(),
                     timestamp   = time.strftime("%X"))
 
@@ -78,12 +84,13 @@ class Display (object):
         self.y += self.fontheight
 
     def print (self, data):
-        self.draw.rectangle((0,0,self.display.width,self.display.height), \
+        self.draw.rectangle((0,0,self.display.width,self.display.height),
                             outline=0, fill=255)
         self.y = self.ypos
 
         self.draw_line("Temp: {} °C".format(data.temperature))
         self.draw_line("Press: {} hPa".format(data.pressure / 100.0))
+        self.draw_line("Battery: {} V".format(data.voltage))
         self.draw_line("Temp CPU: {} °C".format(data.t_cpu))
         self.draw_line("Time: {}".format(data.timestamp))
 
