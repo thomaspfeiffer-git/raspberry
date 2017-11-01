@@ -14,7 +14,10 @@
 # sudo pip3 install Pillow
 
 
+from enum import Enum
+import subprocess
 import sys
+import threading
 import time
 
 from PIL import Image
@@ -30,6 +33,17 @@ from actuators.SSD1306 import SSD1306
 from sensors.CPU import CPU
 from sensors.BMP180 import BMP180
 from sensors.PCF8591 import PCF8591
+
+
+pin_LED_Status  = 24
+pin_LED_Picture = 23
+
+
+###############################################################################
+# Switch ######################################################################
+class Switch (Enum):
+    OFF = 0
+    ON  = 1
 
 
 ###############################################################################
@@ -62,14 +76,63 @@ class Sensors (object):
 
 
 ###############################################################################
+# Camera ######################################################################
+class Camera (threading.Thread):
+    intervall = 30   # take a picture every 30 seconds
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self.statusled = StatusLED(pin_LED_Picture)
+        self._running = True
+
+    def run (self):
+        while self._running:
+            self.statusled.flash()
+            for _ in range(self.intervall*10):
+                if self._running:
+                    time.sleep(0.1)
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+# StatusLED ###################################################################
+class StatusLED (object):
+    def __init__ (self, pin):
+        self.__pin = "{}".format(pin)
+        # FriendlyArm's WiringPI lib does not support python3.
+        # http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=921
+        # Therefore i use shell commands.
+        subprocess.run(["gpio", "-1", "mode", self.__pin, "output"], check=True)
+        self.__last = None
+        self.off()
+
+    def io_write (self, status):
+        subprocess.run(["gpio", "-1", "write", self.__pin, status], check=True)
+
+    def on (self):
+        if self.__last != Switch.ON:
+            self.io_write("1")
+            self.__last = Switch.ON
+
+    def off (self):
+        if self.__last != Switch.OFF:
+            self.io_write("0")
+            self.__last = Switch.OFF
+
+    def flash (self):
+        self.on()
+        self.off()
+
+
+###############################################################################
 # Display #####################################################################
 class Display (object):
     def __init__ (self):
         self.display = SSD1306()
  
         self.display.begin()
-        self.display.clear()
-        self.display.display()
+        self.off()
 
         self.xpos = 6
         self.ypos = 2
@@ -97,11 +160,18 @@ class Display (object):
         self.display.image(self.image)
         self.display.display()
 
+    def off (self):
+        self.display.clear()
+        self.display.display()
+
 
 ###############################################################################
 # Exit ########################################################################
 def shutdown_application ():
     """cleanup stuff"""
+    camera.stop()
+    camera.join()
+    display.off()
     sys.exit(0)
 
 
@@ -112,11 +182,16 @@ if __name__ == "__main__":
 
     display = Display()
     sensors = Sensors()
+    camera  = Camera()
+    camera.start()
+    LED_StatusWorking = StatusLED(pin_LED_Status)
 
     while True:
         data = sensors.read()
         display.print(data)
-        time.sleep(10)
+        for _ in range(10):
+            LED_StatusWorking.flash()
+            time.sleep(2)
 
 # eof #
    
