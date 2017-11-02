@@ -1,10 +1,11 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# Balloon.py                                                                  #
+# Felix.py                                                                    #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
 ###############################################################################
-"""control weather balloon"""
+"""Felix: my Pi in the sky project:
+   control weather balloon"""
 
 
 ### usage ###
