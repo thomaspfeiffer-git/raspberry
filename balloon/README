@@ -32,7 +32,8 @@ List of components
 - SSD1306: display (i2c)
 - ULN2803: darlington transistor array, used as status LED driver
 
-
+- Camera
+  http://www.friendlyarm.com/index.php?route=product/product&product_id=155
 - Push buttons (for switching camera on/off)
 - Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3
 - Active GPS antenna with SMA connector
