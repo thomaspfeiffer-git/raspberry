@@ -5,7 +5,7 @@ cd /home/pi/raspberry/anteroom/
 
 ./Anteroom.py >  anteroom_autostart.log 2>&1 &
                                               
-sleep 5
+sleep 15
                                               
 ./Relais.py > relais_autostart.log 2>&1 &     
 ./Button.py > button_autostart.log 2>&1 &     
