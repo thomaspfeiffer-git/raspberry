@@ -36,8 +36,8 @@ from sensors.BMP180 import BMP180
 from sensors.PCF8591 import PCF8591
 
 
-pin_LED_Status  = 24
-pin_LED_Picture = 23
+pin_LED_Status  = 23
+pin_LED_Picture = 24
 
 
 ###############################################################################
