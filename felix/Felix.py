@@ -9,7 +9,7 @@
 
 
 ### usage ###
-# nohup ./Balloon.py > ballon.log 2>&1 &
+# nohup ./Felix.py > felix.log 2>&1 &
 
 # Packages you might install
 # sudo pip3 install Pillow
