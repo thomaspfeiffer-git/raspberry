@@ -234,6 +234,19 @@ class Control (threading.Thread):
 
 
 ###############################################################################
+# Flask stuff #################################################################
+@app.route('/shutdown')
+def API_Shutdown ():
+    Log("Shutdown requested")
+    return "shutdown ok"
+
+@app.route('/toggle')
+def API_Toggle ():
+    Log("Toggle requested")
+    return "toggle ok"
+
+
+###############################################################################
 # Exit ########################################################################
 def shutdown_application ():
     """cleanup stuff"""
