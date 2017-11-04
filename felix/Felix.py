@@ -39,23 +39,20 @@ from sensors.PCF8591 import PCF8591
 pin_LED_Status  = 23
 pin_LED_Picture = 24
 
+V_TemperatureBox     = "Temperature in box"
+V_TemperatureOutside = "Temperature outside"
+V_Pressure           = "Pressure"
+V_Voltage            = "Voltage"
+V_TemperatureCPU     = "Temperature CPU"
+V_Timestamp          = "Timestamp"
+V_Time               = "Time"
+
 
 ###############################################################################
 # Switch ######################################################################
 class Switch (Enum):
     OFF = 0
     ON  = 1
-
-
-###############################################################################
-# Data ########################################################################
-class Data (object):
-    def __init__ (self, temperature, pressure, voltage, t_cpu, timestamp):
-        self.temperature = temperature
-        self.pressure    = pressure
-        self.voltage     = voltage
-        self.t_cpu       = t_cpu
-        self.timestamp   = timestamp
 
 
 ###############################################################################
@@ -69,11 +66,14 @@ class Sensors (object):
         self.pcf8591 = PCF8591() # ADC for measurement of supply voltage
 
     def read (self):
-        return Data(temperature = self.bmp180.read_temperature(),
-                    pressure    = self.bmp180.read_pressure(),
-                    voltage     = self.pcf8591.read(channel=0) / 255.0 * self.v_ref,
-                    t_cpu       = self.cpu.read_temperature(),
-                    timestamp   = time.strftime("%X"))
+        timestamp = time.time()
+        return{V_TemperatureBox: self.bmp180.read_temperature(),
+               V_TemperatureOutside: -22.22,
+               V_Pressure: self.bmp180.read_pressure(),
+               V_Voltage: self.pcf8591.read(channel=0) / 255.0 * self.v_ref,
+               V_TemperatureCPU: self.cpu.read_temperature(),
+               V_Timestamp: timestamp,
+               V_Time: time.strftime("%X", time.localtime(timestamp))}
 
 
 ###############################################################################
@@ -152,11 +152,11 @@ class Display (object):
                             outline=0, fill=255)
         self.y = self.ypos
 
-        self.draw_line("Temp: {} °C".format(data.temperature))
-        self.draw_line("Press: {} hPa".format(data.pressure / 100.0))
-        self.draw_line("Battery: {:.2f} V".format(data.voltage))
-        self.draw_line("Temp CPU: {} °C".format(data.t_cpu))
-        self.draw_line("Time: {}".format(data.timestamp))
+        self.draw_line("Temp: {} °C".format(data[V_TemperatureBox]))
+        self.draw_line("Press: {} hPa".format(data[V_Pressure] / 100.0))
+        self.draw_line("Battery: {:.2f} V".format(data[V_Voltage]))
+        self.draw_line("Temp CPU: {} °C".format(data[V_TemperatureCPU]))
+        self.draw_line("Time: {}".format(data[V_Time]))
 
         self.display.image(self.image)
         self.display.display()
