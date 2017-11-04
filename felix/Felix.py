@@ -13,10 +13,23 @@
 
 # Packages you might install
 # sudo pip3 install Pillow
+#
+#
+# http://flask.pocoo.org/docs/0.12/
+#
+# http://jinja.pocoo.org/docs/2.9/
+# sudo pip3 install Jinja2
+#
+# http://werkzeug.pocoo.org/docs/0.11/
+# sudo pip3 install Werkzeug
+#
+# http://flask.pocoo.org/docs/0.12/
+# sudo pip3 install Flask
 
 
 import csv
 from enum import Enum
+from flask import Flask, request
 import subprocess
 import sys
 import threading
@@ -47,6 +60,9 @@ V_Voltage            = "Voltage"
 V_TemperatureCPU     = "Temperature CPU"
 V_Timestamp          = "Timestamp"
 V_Time               = "Time"
+
+
+app = Flask(__name__)
 
 
 ###############################################################################
@@ -185,12 +201,46 @@ class CSV (object):
 
 
 ###############################################################################
+# Control #####################################################################
+class Control (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self.csv       = CSV()
+        self.display   = Display()
+        self.sensors   = Sensors()
+        self.statusled = StatusLED(pin_LED_Status)
+        self._running = True
+
+    def run (self):
+        while self._running:
+            data = self.sensors.read()
+            self.display.print(data)
+            self.csv.write(data)
+            for _ in range(15):  # sleep for 15 x 2 = 30 seconds
+                if not self._running:
+                    break
+
+                for i in range(20):  # flash LED every two seconds
+                    if not self._running:
+                        break
+                    if i == 0:
+                        self.statusled.flash()
+                    time.sleep(0.1)
+
+        self.display.off()
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
 # Exit ########################################################################
 def shutdown_application ():
     """cleanup stuff"""
+    control.stop()
+    control.join()
     camera.stop()
     camera.join()
-    display.off()
     sys.exit(0)
 
 
@@ -199,20 +249,13 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    csv_    = CSV()
-    display = Display()
-    sensors = Sensors()
     camera  = Camera()
     camera.start()
-    LED_StatusWorking = StatusLED(pin_LED_Status)
 
-    while True:
-        data = sensors.read()
-        display.print(data)
-        csv_.write(data)
-        for _ in range(10):
-            LED_StatusWorking.flash()
-            time.sleep(2)
+    control = Control()
+    control.start()
+
+    app.run(host="0.0.0.0")
 
 # eof #
    
