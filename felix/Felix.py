@@ -15,6 +15,7 @@
 # sudo pip3 install Pillow
 
 
+import csv
 from enum import Enum
 import subprocess
 import sys
@@ -167,6 +168,23 @@ class Display (object):
 
 
 ###############################################################################
+# CSV #########################################################################
+class CSV (object):
+    fieldnames = [V_Time, V_TemperatureBox, V_TemperatureOutside, 
+                  V_Pressure, V_Voltage, V_TemperatureCPU, V_Timestamp]
+
+    def __init__ (self):
+        with open('felix.csv', 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=';')
+            writer.writeheader()
+
+    def write (self, data):
+        with open('felix.csv', 'a', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=';')
+            writer.writerow(data)
+
+
+###############################################################################
 # Exit ########################################################################
 def shutdown_application ():
     """cleanup stuff"""
@@ -181,6 +199,7 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
+    csv_    = CSV()
     display = Display()
     sensors = Sensors()
     camera  = Camera()
@@ -190,6 +209,7 @@ if __name__ == "__main__":
     while True:
         data = sensors.read()
         display.print(data)
+        csv_.write(data)
         for _ in range(10):
             LED_StatusWorking.flash()
             time.sleep(2)
