@@ -63,7 +63,7 @@ from sensors.PCF8591 import PCF8591
 pin_LED_Status  = 23 # TODO: config-file
 pin_LED_Picture = 24
 
-CSV_File = "./Log/felix.csv" # TODO: config file
+CSV_File = "./Logs/felix.csv" # TODO: config file
 
 
 V_TemperatureBox     = "Temperature in box"
@@ -109,18 +109,34 @@ class Sensors (object):
 ###############################################################################
 # Camera ######################################################################
 class Camera (threading.Thread):
-    intervall = 30   # take a picture every 30 seconds
+    intervall = 30  # TODO: config file # take a picture every 30 seconds
     def __init__ (self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(pin_LED_Picture)
+        self._takingPictures = False
         self._running = True
 
     def run (self):
         while self._running:
+            if self._takingPictures:
+                for _ in range(self.intervall*10):
+                    if self._running:
+                        time.sleep(0.1)
+                self.statusled.flash()
+                Log("taking picture")
+            else:
+                time.sleep(0.1)
+
+    def toggle_takePictures (self):
+        self._takingPictures = not self._takingPictures
+        Log("Camera: {}".format(self._takingPictures))
+        if self._takingPictures:
+            blinks = 4
+        else:
+            blinks = 2
+        for _ in range(blinks):
             self.statusled.flash()
-            for _ in range(self.intervall*10):
-                if self._running:
-                    time.sleep(0.1)
+            time.sleep(0.1)
 
     def stop (self):
         self._running = False
@@ -255,7 +271,8 @@ def API_Shutdown ():
 
 @app.route('/toggle')
 def API_Toggle ():
-    Log("Toggle requested")
+    Log("Camera: toggle requested")
+    camera.toggle_takePictures()
     return "toggle ok"
 
 

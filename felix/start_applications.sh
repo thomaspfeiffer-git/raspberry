@@ -2,7 +2,7 @@
 # starts all needed applications 
 
 
-LogDir=./Log/
+LogDir=./Logs/
 PicDir=./Pictures/
 
 if [ ! -d "$LogDir" ]; then
