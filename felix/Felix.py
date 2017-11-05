@@ -280,10 +280,12 @@ def API_Toggle ():
 # Exit ########################################################################
 def shutdown_application ():
     """cleanup stuff"""
+    Log("stopping application")
     control.stop()
     control.join()
     camera.stop()
     camera.join()
+    Log("application stopped")
     sys.exit(0)
 
 
