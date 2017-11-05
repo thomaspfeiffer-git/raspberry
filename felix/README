@@ -36,6 +36,9 @@ List of components
   http://www.friendlyarm.com/index.php?route=product/product&product_id=155
 - Push buttons (for switching camera on/off)
 - Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3
+  https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi/setting-everything-up
+- USB to TTL converter
+  https://de.aliexpress.com/item/CJMCU-CP2102-MICRO-USB-to-UART-TTL-Module-6Pin-Serial-Converter-UART-STC-Replace-FT232-NEW/32587986095.html
 - Active GPS antenna with SMA connector
 - Battery box for six AA akkus
 - M8 threaded bar + screw nuts + butterfly nuts
