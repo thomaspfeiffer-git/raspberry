@@ -1,10 +1,10 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# Felix.py                                                                    #
+# Pilix.py                                                                    #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
 ###############################################################################
-"""Felix: my Pi in the sky project:
+"""Pilix: my Pi in the sky project:
    control weather balloon"""
 
 
@@ -19,7 +19,7 @@
 
 
 ### usage ###
-# nohup ./Felix.py > felix.log 2>&1 &
+# nohup ./Pilix.py > pilix.log 2>&1 &
 
 # Packages you might install
 # sudo pip3 install Pillow
@@ -63,7 +63,7 @@ from sensors.PCF8591 import PCF8591
 pin_LED_Status  = 23 # TODO: config-file
 pin_LED_Picture = 24
 
-CSV_File = "./Logs/felix.csv" # TODO: config file
+CSV_File = "./Logs/pilix.csv" # TODO: config file
 
 
 V_TemperatureBox     = "Temperature in box"

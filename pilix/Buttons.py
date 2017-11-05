@@ -34,8 +34,8 @@ time_delay_to_reset = 3.0 # TODO: config file
 
 
 ###############################################################################
-def CallFelixControl (param):
-    Log("CallFelixControl: {}".format(param))
+def CallPilixControl (param):
+    Log("CallPilixControl: {}".format(param))
     try:
         response = urllib.urlopen(url.format(param))
         data = response.read().decode("utf-8")
@@ -60,9 +60,9 @@ while True:
             if act == 1:
                 time_released = time.time()
                 if time_released - time_pressed > time_delay_to_reset:
-                    CallFelixControl(url_shutdown)
+                    CallPilixControl(url_shutdown)
                 else:
-                    CallFelixControl(url_toggle)
+                    CallPilixControl(url_toggle)
                 time_pressed = None
                 time_released = None
         last = act
