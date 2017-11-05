@@ -8,6 +8,16 @@
    control weather balloon"""
 
 
+
+# Cam500B is currently not working with a 4.x kernel:
+# http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=1034
+
+# Some ideas on howto solve this:
+# https://forum.armbian.com/topic/3225-nanopi-neo-air-cam500b-issue/?tab=comments#comment-22815
+# https://github.com/avafinger/ov5640
+
+
+
 ### usage ###
 # nohup ./Felix.py > felix.log 2>&1 &
 
