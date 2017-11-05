@@ -72,6 +72,14 @@ sudo pip3 install rrdtool
 
 
 
+Kernel Sources:
+===============
+
+sudo apt-get install linux-source build-essential kernel-package libssl-dev  -y
+mkdir kernel 
+cd kernel
+tar xvjf /usr/src/linux-*tar.bz2
+
 
 
 ####### end of nanopi-neo-air_ubuntu-core-xenial_4.11.2_20170905.img ########
