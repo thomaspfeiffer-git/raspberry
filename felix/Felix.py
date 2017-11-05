@@ -60,8 +60,11 @@ from sensors.BMP180 import BMP180
 from sensors.PCF8591 import PCF8591
 
 
-pin_LED_Status  = 23
+pin_LED_Status  = 23 # TODO: config-file
 pin_LED_Picture = 24
+
+CSV_File = "./Log/felix.csv" # TODO: config file
+
 
 V_TemperatureBox     = "Temperature in box"
 V_TemperatureOutside = "Temperature outside"
@@ -200,12 +203,12 @@ class CSV (object):
                   V_Pressure, V_Voltage, V_TemperatureCPU, V_Timestamp]
 
     def __init__ (self):
-        with open('felix.csv', 'w', newline='') as csvfile:
+        with open(CSV_File, 'w', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=';')
             writer.writeheader()
 
     def write (self, data):
-        with open('felix.csv', 'a', newline='') as csvfile:
+        with open(CSV_File, 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=';')
             writer.writerow(data)
 
