@@ -75,10 +75,23 @@ sudo pip3 install rrdtool
 Kernel Sources:
 ===============
 
+# taken from https://wiki.ubuntuusers.de/Kernel/Kompilierung/
+
 sudo apt-get install linux-source build-essential kernel-package libssl-dev  -y
 mkdir kernel 
 cd kernel
 tar xvjf /usr/src/linux-*tar.bz2
+
+
+Modules:
+--------
+# taken from http://smallbusiness.chron.com/compile-modules-ubuntu-52622.html
+
+sudo apt-get install --yes linux-generic linux-headers-generic linux-image-generic
+
+sudo apt-get install build-essential checkinstall -y
+sudo apt-get install kernel-headers-$(uname -r)
+
 
 
 
