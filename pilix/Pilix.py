@@ -8,7 +8,6 @@
    control weather balloon"""
 
 
-
 # Cam500B is currently not working with a 4.x kernel:
 # http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=1034
 
@@ -21,7 +20,11 @@
 ### usage ###
 # nohup ./Pilix.py > pilix.log 2>&1 &
 
-# Packages you might install
+
+### Packages you might install ###
+#
+# sudo apt-get install gpsd gpsd-clients python-gps -y
+#
 # sudo pip3 install Pillow
 #
 #
@@ -59,11 +62,13 @@ from sensors.CPU import CPU
 from sensors.BMP180 import BMP180
 from sensors.PCF8591 import PCF8591
 
+from config import CONFIG
 
-pin_LED_Status  = 23 # TODO: config-file
-pin_LED_Picture = 24
 
-CSV_File = "./Logs/pilix.csv" # TODO: config file
+pin_LED_Status  = CONFIG.PIN.LED_Status
+pin_LED_Picture = CONFIG.PIN.LED_Picture
+
+CSV_File = CONFIG.File.csv
 
 
 V_TemperatureBox     = "Temperature in box"
@@ -109,7 +114,7 @@ class Sensors (object):
 ###############################################################################
 # Camera ######################################################################
 class Camera (threading.Thread):
-    intervall = 30  # TODO: config file # take a picture every 30 seconds
+    intervall = CONFIG.Camera.Intervall
     def __init__ (self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(pin_LED_Picture)
@@ -249,7 +254,7 @@ class Control (threading.Thread):
                 if not self._running:
                     break
 
-                for i in range(20):  # flash LED every two seconds
+                for i in range(20):  # flash LED every two seconds (heartbeat)
                     if not self._running:
                         break
                     if i == 0:

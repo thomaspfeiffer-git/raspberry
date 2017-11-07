@@ -10,7 +10,7 @@
    
 
 ### usage ###
-# nohup sudo ./Buttons.py > buttons.log 2>&1 &
+# nohup sudo ./Buttons.py > ./Logs/buttons.log 2>&1 &
 
 
 import RPi.GPIO as io
@@ -22,15 +22,17 @@ import urllib
 sys.path.append("../libs/")
 from Logging import Log
 
+from config import CONFIG
 
-pin = 21    # TODO: config file
+
+pin = CONFIG.PIN.BTN_Control
 io.setmode(io.BOARD)
 io.setup(pin, io.IN) 
 
-url = "http://localhost:5000/{}" # TODO config file
+url = CONFIG.API.url
 url_shutdown = "shutdown"
 url_toggle = "toggle"
-time_delay_to_reset = 3.0 # TODO: config file
+delay_to_shutdown = CONFIG.APP.delayToShutdown
 
 
 ###############################################################################
@@ -59,7 +61,7 @@ while True:
                 time_pressed = time.time()
             if act == 1:
                 time_released = time.time()
-                if time_released - time_pressed > time_delay_to_reset:
+                if time_released - time_pressed > delay_to_shutdown:
                     CallPilixControl(url_shutdown)
                 else:
                     CallPilixControl(url_toggle)
