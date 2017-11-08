@@ -65,12 +65,6 @@ from sensors.PCF8591 import PCF8591
 from config import CONFIG
 
 
-pin_LED_Status  = CONFIG.PIN.LED_Status
-pin_LED_Picture = CONFIG.PIN.LED_Picture
-
-CSV_File = CONFIG.File.csv
-
-
 V_TemperatureBox     = "Temperature in box"
 V_TemperatureOutside = "Temperature outside"
 V_Pressure           = "Pressure"
@@ -117,7 +111,7 @@ class Camera (threading.Thread):
     intervall = CONFIG.Camera.Intervall
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.statusled = StatusLED(pin_LED_Picture)
+        self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
         self._takingPictures = False
         self._running = True
 
@@ -224,12 +218,12 @@ class CSV (object):
                   V_Pressure, V_Voltage, V_TemperatureCPU, V_Timestamp]
 
     def __init__ (self):
-        with open(CSV_File, 'w', newline='') as csvfile:
+        with open(CONFIG.File.csv, 'w', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=';')
             writer.writeheader()
 
     def write (self, data):
-        with open(CSV_File, 'a', newline='') as csvfile:
+        with open(CONFIG.File.csv, 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=';')
             writer.writerow(data)
 
@@ -242,7 +236,7 @@ class Control (threading.Thread):
         self.csv       = CSV()
         self.display   = Display()
         self.sensors   = Sensors()
-        self.statusled = StatusLED(pin_LED_Status)
+        self.statusled = StatusLED(CONFIG.PIN.LED_Status)
         self._running = True
 
     def run (self):
