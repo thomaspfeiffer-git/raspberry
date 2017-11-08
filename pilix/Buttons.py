@@ -7,6 +7,9 @@
 """controls the buttons:
    - button 1: toggle camera on/off and shutdown
    - button 2: using battery or main power supply (switch)"""
+
+
+# FriendlyArm's gpio lib works with python 2.x only.
    
 
 ### usage ###
