@@ -18,7 +18,7 @@
 
 
 ### usage ###
-# nohup ./Pilix.py > pilix.log 2>&1 &
+# nohup ./Pilix.py > ./Logs/pilix.log 2>&1 &
 
 
 ### Packages you might install ###
@@ -69,6 +69,7 @@ V_TemperatureBox     = "Temperature in box"
 V_TemperatureOutside = "Temperature outside"
 V_Pressure           = "Pressure"
 V_Voltage            = "Voltage"
+V_RunningOnBattery   = "running on battery"
 V_TemperatureCPU     = "Temperature CPU"
 V_Timestamp          = "Timestamp"
 V_Time               = "Time"
@@ -199,7 +200,7 @@ class Display (object):
 
         self.draw_line("Temp: {} °C".format(data[V_TemperatureBox]))
         self.draw_line("Press: {} hPa".format(data[V_Pressure] / 100.0))
-        self.draw_line("Battery: {:.2f} V".format(data[V_Voltage]))
+        self.draw_line("Voltage: {:.2f} V".format(data[V_Voltage]))
         self.draw_line("Temp CPU: {} °C".format(data[V_TemperatureCPU]))
         self.draw_line("Time: {}".format(data[V_Time]))
 
@@ -215,7 +216,8 @@ class Display (object):
 # CSV #########################################################################
 class CSV (object):
     fieldnames = [V_Time, V_TemperatureBox, V_TemperatureOutside, 
-                  V_Pressure, V_Voltage, V_TemperatureCPU, V_Timestamp]
+                  V_Pressure, V_Voltage, V_RunningOnBattery, V_TemperatureCPU, 
+                  V_Timestamp]
 
     def __init__ (self):
         with open(CONFIG.File.csv, 'w', newline='') as csvfile:
@@ -237,11 +239,14 @@ class Control (threading.Thread):
         self.display   = Display()
         self.sensors   = Sensors()
         self.statusled = StatusLED(CONFIG.PIN.LED_Status)
+
+        self.running_on_battery = False
         self._running = True
 
     def run (self):
         while self._running:
             data = self.sensors.read()
+            data[V_RunningOnBattery] = self.running_on_battery
             self.display.print(data)
             self.csv.write(data)
             for _ in range(15):  # sleep for 15 x 2 = 30 seconds
@@ -273,6 +278,13 @@ def API_Toggle ():
     Log("Camera: toggle requested")
     camera.toggle_takePictures()
     return "toggle ok"
+
+@app.route('/battery')
+def API_Battery ():                  # looks weird, but is fail safe
+    running_on_battery = not (request.args.get('enabled', 'False') != "True")
+    Log("Running on battery: {}".format(running_on_battery))
+    control.running_on_battery = running_on_battery
+    return "battery ok"
 
 
 ###############################################################################

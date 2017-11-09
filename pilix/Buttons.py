@@ -28,21 +28,21 @@ from Logging import Log
 from config import CONFIG
 
 
-pin = CONFIG.PIN.BTN_Control
 io.setmode(io.BOARD)
-io.setup(pin, io.IN) 
+io.setup(CONFIG.PIN.BTN_Control, io.IN) 
+io.setup(CONFIG.PIN.BTN_Battery, io.IN) 
 
-url = CONFIG.API.url
+
 url_shutdown = "shutdown"
 url_toggle = "toggle"
-delay_to_shutdown = CONFIG.APP.delayToShutdown
+url_battery = "battery?enabled={}"
 
 
 ###############################################################################
 def CallPilixControl (param):
     Log("CallPilixControl: {}".format(param))
     try:
-        response = urllib.urlopen(url.format(param))
+        response = urllib.urlopen(CONFIG.API.url.format(param))
         data = response.read().decode("utf-8")
     except IOError:
         Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
@@ -54,23 +54,38 @@ def CallPilixControl (param):
 ## main #######################################################################
 time_pressed = None
 time_released = None
-last = None
+last_btn_control = None
+last_btn_battery = None
+
+i = 0
 
 while True:
-    act = io.input(pin)
-    if act != last:
-        if last != None:
-            if act == 0:
+    act_btn_control = io.input(CONFIG.PIN.BTN_Control)
+    if act_btn_control != last_btn_control:
+        if last_btn_control != None:
+            if act_btn_control == 0:
                 time_pressed = time.time()
-            if act == 1:
+            if act_btn_control == 1:
                 time_released = time.time()
-                if time_released - time_pressed > delay_to_shutdown:
+                if time_released - time_pressed > CONFIG.APP.delayToShutdown: 
                     CallPilixControl(url_shutdown)
                 else:
                     CallPilixControl(url_toggle)
                 time_pressed = None
                 time_released = None
-        last = act
+        last_btn_control = act_btn_control
+
+    act_btn_battery = io.input(CONFIG.PIN.BTN_Battery)
+    if act_btn_battery != last_btn_battery:
+        CallPilixControl(url_battery.format(not bool(act_btn_battery)))
+        last_btn_battery = act_btn_battery
+
+    # resend state every 10 seconds.
+    # just in case PilixControl was not running when switching the button.
+    i += 1
+    if i >= 200:
+        CallPilixControl(url_battery.format(not bool(act_btn_battery)))
+        i = 0
 
     time.sleep(0.05)
 
