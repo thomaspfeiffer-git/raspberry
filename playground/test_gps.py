@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 ############################################################################
-# gps.py                                                                   #
+# test_gps.py                                                              #
 # (c) Thomas Pfeiffer, 2017                                                #
 ############################################################################
 """testing adafruit's ultimate GPS
@@ -39,6 +39,11 @@ for new_data in gps_socket:
         print('Altitude:  ', data_stream.TPV['alt'])
         print('Climb:     ', data_stream.TPV['climb'])
         print('Speed:     ', data_stream.TPV['speed'])
+        print("Track:     ", data_stream.TPV['track'])
+        print("Long Err:  ", data_stream.TPV['epx'])
+        print("Lat Err:   ", data_stream.TPV['epy'])
+        print("Alt Err:   ", data_stream.TPV['epv'])
+        print("")
 
 # eof #
 
