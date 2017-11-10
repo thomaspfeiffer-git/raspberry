@@ -21,7 +21,8 @@ cgps -s
 """
 
 import csv
-import pprint
+import time
+
 
 from gps3 import gps3
 gps_socket = gps3.GPSDSocket()
@@ -57,7 +58,7 @@ for new_data in gps_socket:
                     V_GPS_Lon: data_stream.TPV['lon'],
                     V_GPS_Lat: data_stream.TPV['lat'],
                     V_GPS_Alt: data_stream.TPV['alt'],
-                    V_GPS_Climb: data_stream.TPV['alt'],
+                    V_GPS_Climb: data_stream.TPV['climb'],
                     V_GPS_Speed: data_stream.TPV['speed'],
                     V_GPS_Track: data_stream.TPV['track'],
                     V_GPS_ErrLon: data_stream.TPV['epx'],
@@ -66,7 +67,7 @@ for new_data in gps_socket:
         with open('test_gps.csv', 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
             writer.writerow(gps_data)
- 
+    time.sleep(10) 
 
 # eof #
 
