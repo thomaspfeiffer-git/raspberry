@@ -283,77 +283,21 @@ modprobe w1-therm
 # Armbian
 ############################################################################
 
-Basic setup based on:
-https://docs.armbian.com/User-Guide_Getting-Started/
-
-Steps: 
-1) flash image to SD
-2) boot in nano
-3) wait about 10 min
-4) mount sd or image
-5) update /etc/network/interfaces and /etc/wpa.conf accordingly
-
-# mount image in filesystem:
-mkdir armbian
-fdisk -l Armbian_5.24_Nanopiair_Debian_jessie_3.4.113.img 
-mount -o loop,offset=1048576 Armbian_5.24_Nanopiair_Debian_jessie_3.4.113.img armbian
-
-
-Things that did not work:
-
-1) not all i2c devices detected correctly (no hw issue, ubuntu works fine)
-2) ssh connection often paused
-
-
-
-# i2c
-
-https://forum.armbian.com/index.php/topic/1580-nanopi-neo-air/page-15, post #426
-
-
-# 1-wire 
-# does not run out of the box with Armbian_5.24_Nanopiair_Debian_jessie_3.4.113.img
-# so some nerve-racking manual stuff is necessary.
-
-https://forum.armbian.com/index.php/topic/2503-nanopi-neo-1-wire/
-https://docs.armbian.com/Hardware_Allwinner/  # howto update the fex file
-
-[gpio_para]
-gpio_used = 0
-gpio_num = 19
-# gpio_pin_1 = port:PA06<1><default><default><0>
-gpio_pin_2 = port:PA13<1><default><default><0>
-gpio_pin_3 = port:PA14<1><default><default><0>
-
-
-[w1_para]
-w1_used = 1
-gpio = 6     # <==== old: 20, new: 6
 
 
 
 
+sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
+sudo pip3 install --upgrade pip
+sudo apt-get install python3-dev python3-setuptools
 
-# --- bin2fex, fex2bin ---
-apt-get install pkg-config
-apt-get install libusb-1.0-0-dev
-git clone git://github.com/linux-sunxi/sunxi-tools.git
-cd sunxi-tools
-make
-ln -s sunxi-tools/bin2fex 
-ln -s sunxi-tools/fex2bin 
+# Just libjpeg8-dev might be fine. 
+sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk -y
 
+sudo pip3 install Pillow
 
 
-
-cat /etc/modules  # uncomment these lines
-#   gpio-sunxi
-   w1-sunxi
-   w1-gpio
-   w1-therm
-
-# so far, the DS18B20 cannot be read and disappears after a couple of seconds
-# from the filesystem
+git clone https://github.com/thomaspfeiffer-git/raspberry
 
 
 
