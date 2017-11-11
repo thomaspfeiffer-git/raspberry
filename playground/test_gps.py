@@ -71,7 +71,7 @@ V_GPS_ErrAlt = "GPS Err Altitude"
 fieldnames = [V_GPS_Time, V_GPS_Lon, V_GPS_Lat, V_GPS_Alt, V_GPS_Climb,
               V_GPS_Speed, V_GPS_Track, V_GPS_ErrLon, V_GPS_ErrLat, V_GPS_ErrAlt]
 
-with open('test_gps.csv', 'w', newline='') as csvfile:
+with open('test_gps.csv', 'a', newline='') as csvfile:
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
     writer.writeheader()
 
@@ -102,6 +102,8 @@ for new_data in gps_socket:
         draw.text((xpos, y), "Speed: {} km/h".format(gps_data[V_GPS_Speed]))
         y += fontheight        
         draw.text((xpos, y), "Height: {} m".format(gps_data[V_GPS_Alt]))
+        y += fontheight        
+        draw.text((xpos, y), "{}".format(gps_data[V_GPS_Time]))
         disp.image(image)
         disp.display()
 
