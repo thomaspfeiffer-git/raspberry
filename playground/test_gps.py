@@ -34,11 +34,7 @@ from actuators.SSD1306 import SSD1306
 
 
 disp = SSD1306()
-
-# Initialize library.
 disp.begin()
-
-# Clear display.
 disp.clear()
 disp.display()
 xpos = 4
