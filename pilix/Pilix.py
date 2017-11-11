@@ -272,7 +272,7 @@ class Control (threading.Thread):
         while self._running:
             data = self.sensors.read()
             data[V_RunningOnBattery] = self.running_on_battery
-            data.appand(self.get_gps_data())
+            data.update(self.get_gps_data())
 
             self.display.print(data)
             self.csv.write(data)
