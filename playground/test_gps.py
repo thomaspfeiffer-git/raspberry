@@ -50,10 +50,6 @@ _, fontheight = font.getsize("A")
 from gps3 import gps3
 
 
-print("Miles to km/h: {}".format(gps3.MPS_TO_KPH))
-sys.exit(0)
-
-
 gps_socket = gps3.GPSDSocket()
 data_stream = gps3.DataStream()
 gps_socket.connect()
@@ -81,6 +77,7 @@ with open('test_gps.csv', 'a', newline='') as csvfile:
 for new_data in gps_socket:
     if new_data:
         data_stream.unpack(new_data)
+        # field documentation: http://www.catb.org/gpsd/gpsd_json.html
         gps_data = {V_GPS_Time: data_stream.TPV['time'],
                     V_GPS_Lon: data_stream.TPV['lon'],
                     V_GPS_Lat: data_stream.TPV['lat'],
@@ -101,7 +98,7 @@ for new_data in gps_socket:
         y += fontheight        
         draw.text((xpos, y), "Lat: {}".format(gps_data[V_GPS_Lat]))
         y += fontheight        
-        draw.text((xpos, y), "Speed: {} km/h".format(gps_data[V_GPS_Speed]))
+        draw.text((xpos, y), "Speed: {} km/h".format(gps_data[V_GPS_Speed]*3.6))
         y += fontheight        
         draw.text((xpos, y), "Height: {} m".format(gps_data[V_GPS_Alt]))
         y += fontheight        
