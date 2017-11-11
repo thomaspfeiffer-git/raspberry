@@ -48,6 +48,12 @@ _, fontheight = font.getsize("A")
 
 
 from gps3 import gps3
+
+
+print("Miles to km/h: {}".format(gps3.MPS_TO_KPH))
+sys.exit(0)
+
+
 gps_socket = gps3.GPSDSocket()
 data_stream = gps3.DataStream()
 gps_socket.connect()
@@ -68,7 +74,7 @@ fieldnames = [V_GPS_Time, V_GPS_Lon, V_GPS_Lat, V_GPS_Alt, V_GPS_Climb,
               V_GPS_Speed, V_GPS_Track, V_GPS_ErrLon, V_GPS_ErrLat, V_GPS_ErrAlt]
 
 with open('test_gps.csv', 'a', newline='') as csvfile:
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',')
     writer.writeheader()
 
 
@@ -86,7 +92,7 @@ for new_data in gps_socket:
                     V_GPS_ErrLat: data_stream.TPV['epy'],
                     V_GPS_ErrAlt: data_stream.TPV['epv']}
         with open('test_gps.csv', 'a', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',')
             writer.writerow(gps_data)
 
         draw.rectangle((0,0,width,height), outline=0, fill=255)

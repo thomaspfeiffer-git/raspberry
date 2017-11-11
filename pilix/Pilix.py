@@ -233,12 +233,12 @@ class CSV (object):
 
     def __init__ (self):
         with open(CONFIG.File.csv, 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=';')
+            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
             writer.writeheader()
 
     def write (self, data):
         with open(CONFIG.File.csv, 'a', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=';')
+            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
             writer.writerow(data)
 
 
