@@ -8,10 +8,8 @@
 import sys
 from threading import Lock
 
-sys.path.append('../libs/sensors/')
-sys.path.append('../libs/sensors/Adafruit')
-from Adafruit import Adafruit_I2C as AI2C
-from Adafruit import Adafruit_PureIO_smbus as AIOsmbus
+from sensors.Adafruit import Adafruit_I2C as AI2C
+from sensors.Adafruit import Adafruit_PureIO_smbus as AIOsmbus
 
 class I2C (object):
     _bus  = None
