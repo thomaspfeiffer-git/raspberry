@@ -17,8 +17,9 @@ sleep 10
 
 # shutdown after amount of time in order to save battery
 if [ "$1" == "autostop" ] ; then
-   echo "starting test_gps" >> rclocal.log
-   ./test_gps.py >> rclocal.log & sleep 3600 ; echo "stopping" ;  sudo shutdown -h now
+   echo "starting test_gps" >> test_gps_autostart.log
+   ./test_gps_nmea.py >> test_gps_nmea_autostart.log 2>&1 &
+   ./test_gps.py >> test_gps_autostart.log 2>&1 & sleep 1800 ; echo "stopping" ;  sudo shutdown -h now
    exit
 fi
 
