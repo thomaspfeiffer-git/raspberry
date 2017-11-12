@@ -29,7 +29,7 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-sys.path.append('../libs')
+sys.path.append('../../libs')
 from actuators.SSD1306 import SSD1306
 
 
