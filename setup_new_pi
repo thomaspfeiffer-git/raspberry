@@ -1,4 +1,28 @@
 
+
+
+SSH (Headless):
+===============
+
+mkdir raspi
+sudo mount /dev/sda1 raspi
+cd raspi
+sudo touch ssh
+
+
+WIFI (Headless):
+================
+
+sudo mount /dev/sda2 raspi
+raspi/etc/wpa_supplicant/wpa_supplicant.conf
+
+network={
+    ssid="SSID"
+    psk="PASSWORD"
+}
+
+
+
 WIFI:
 =====
 
@@ -15,11 +39,6 @@ WIFI-Scan:
 sudo chown root.root 8192cu.conf
 sudo chmod 644 8192cu.conf
 
-
-fix rtl8192 driver (not tested, just saving the links here):
-
-sudo apt-get install raspberrypi-kernel-headers
-https://adamscheller.com/systems-administration/rtl8192cu-fix-wifi/
 
 
 
@@ -66,7 +85,6 @@ sudo apt-get install vim
 syntax on
 set number
 set expandtab
-filetype indent plugin on
 set modeline
 set tabstop=8
 set expandtab
@@ -105,13 +123,6 @@ sudo pip3 install cachetools
 Libs:
 =====
 
-wiringPi
---------
-https://github.com/WiringPi/WiringPi-Python/blob/master/README.md
-
-
-... but to be preferred:
-
 RPi.GPIO
 --------
 https://sourceforge.net/p/raspberry-gpio-python/wiki/BasicUsage/
@@ -121,8 +132,6 @@ https://sourceforge.net/p/raspberry-gpio-python/wiki/install/
 
 i2c smb
 -------
-
-https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c
 
 sudo apt-get install python-smbus
 sudo apt-get install python3-smbus
@@ -178,22 +187,12 @@ ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 RRDTool
 =======
 
-python2:
---------
-sudo apt-get install rrdtool python-rrdtool
-
 
 python3:
 --------
 sudo apt-get install python3-dev librrd-dev
 sudo pip3 install rrdtool
 
-
-
-pylint
-======
-
-sudo apt-get install pylint
 
 
 
