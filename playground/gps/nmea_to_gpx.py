@@ -40,6 +40,7 @@ def format_time(value):
     return timeval
 
 def convert(inputfile, outputfile):
+    line = 0
     reader = csv.reader(open(inputfile, "rb"))
     file = open(outputfile, 'w+')
     
@@ -53,14 +54,20 @@ def convert(inputfile, outputfile):
     maxlon = -180
     
     for row in reader:
+        line += 1
+        print "Line: {}".format(line)
+
         type = row[0]
         if type == "$GPGGA":
-            lat = convert_dms_to_dec(row[2], row[3])
-            lon = convert_dms_to_dec(row[4], row[5])
+            try:
+                lat = convert_dms_to_dec(row[2], row[3])
+                lon = convert_dms_to_dec(row[4], row[5])
+            except ValueError:
+                continue
 
                         # ignore dodgy values - safe to do, as it's unlikely I'm going to be in the South Atlantic anytime soon
             if lat == 0.0 and lon == 0.0:
-                 continue
+                continue
 
             points.append([])
             points[count].append(row[1])
