@@ -47,13 +47,11 @@ font = ImageFont.load_default()
 _, fontheight = font.getsize("A")
 
 
-from gps3 import gps3
+from gps3.agps3threaded import AGPS3mechanism
+agps_thread = AGPS3mechanism()
+agps_thread.stream_data() 
+agps_thread.run_thread() 
 
-
-gps_socket = gps3.GPSDSocket()
-data_stream = gps3.DataStream()
-gps_socket.connect()
-gps_socket.watch()
 
 V_GPS_Time   = "GPS Time"
 V_GPS_Lon    = "GPS Longitude"
@@ -74,37 +72,36 @@ with open('test_gps.csv', 'a', newline='') as csvfile:
     writer.writeheader()
 
 
-for new_data in gps_socket:
-    if new_data:
-        data_stream.unpack(new_data)
-        # field documentation: http://www.catb.org/gpsd/gpsd_json.html
-        gps_data = {V_GPS_Time: data_stream.TPV['time'],
-                    V_GPS_Lon: data_stream.TPV['lon'],
-                    V_GPS_Lat: data_stream.TPV['lat'],
-                    V_GPS_Alt: data_stream.TPV['alt'],
-                    V_GPS_Climb: data_stream.TPV['climb'],
-                    V_GPS_Speed: data_stream.TPV['speed'],
-                    V_GPS_Track: data_stream.TPV['track'],
-                    V_GPS_ErrLon: data_stream.TPV['epx'],
-                    V_GPS_ErrLat: data_stream.TPV['epy'],
-                    V_GPS_ErrAlt: data_stream.TPV['epv']}
-        with open('test_gps.csv', 'a', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',')
-            writer.writerow(gps_data)
+while True:
+    # field documentation: http://www.catb.org/gpsd/gpsd_json.html
+    gps_data = {V_GPS_Time: agps_thread.data_stream.time,
+                V_GPS_Lon: agps_thread.data_stream.lon,
+                V_GPS_Lat: agps_thread.data_stream.lat,
+                V_GPS_Alt: agps_thread.data_stream.alt,
+                V_GPS_Climb: agps_thread.data_stream.climb,
+                V_GPS_Speed: agps_thread.data_stream.speed,
+                V_GPS_Track: agps_thread.data_stream.track,
+                V_GPS_ErrLon: agps_thread.data_stream.epx,
+                V_GPS_ErrLat: agps_thread.data_stream.epy,
+                V_GPS_ErrAlt: agps_thread.data_stream.epv}
+    with open('test_gps.csv', 'a', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',')
+        writer.writerow(gps_data)
 
-        draw.rectangle((0,0,width,height), outline=0, fill=255)
-        y = ypos
-        draw.text((xpos, y), "Lon: {}".format(gps_data[V_GPS_Lon]))
-        y += fontheight        
-        draw.text((xpos, y), "Lat: {}".format(gps_data[V_GPS_Lat]))
-        y += fontheight        
-        draw.text((xpos, y), "Speed: {} km/h".format(gps_data[V_GPS_Speed]*3.6))
-        y += fontheight        
-        draw.text((xpos, y), "Height: {} m".format(gps_data[V_GPS_Alt]))
-        y += fontheight        
-        draw.text((xpos, y), "{}".format(gps_data[V_GPS_Time]))
-        disp.image(image)
-        disp.display()
+    draw.rectangle((0,0,width,height), outline=0, fill=255)
+    y = ypos
+    draw.text((xpos, y), "Lon: {}".format(gps_data[V_GPS_Lon]))
+    y += fontheight        
+    draw.text((xpos, y), "Lat: {}".format(gps_data[V_GPS_Lat]))
+    y += fontheight        
+    v = 0 if gps_data[V_GPS_Speed] == "n/a" else gps_data[V_GPS_Speed]
+    draw.text((xpos, y), "Speed: {} km/h".format(v*3.6))
+    y += fontheight        
+    draw.text((xpos, y), "Height: {} m".format(gps_data[V_GPS_Alt]))
+    y += fontheight        
+    draw.text((xpos, y), "{}".format(gps_data[V_GPS_Time]))
+    disp.image(image)
+    disp.display()
 
     time.sleep(10) 
 
