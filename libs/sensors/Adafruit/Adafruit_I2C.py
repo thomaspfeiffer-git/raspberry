@@ -92,7 +92,7 @@ class Device(object):
         self._address = address
         if i2c_interface is None:
             # Use pure python I2C interface if none is specified.
-            from Adafruit import Adafruit_PureIO_smbus
+            from sensors.Adafruit import Adafruit_PureIO_smbus
             self._bus = Adafruit_PureIO_smbus.SMBus(busnum)
         else:
             # Otherwise use the provided class to create an smbus interface.
