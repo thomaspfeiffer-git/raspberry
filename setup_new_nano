@@ -300,7 +300,34 @@ sudo pip3 install Pillow
 git clone https://github.com/thomaspfeiffer-git/raspberry
 
 
+# install wiringPi from FriendlyElec
+
+# boardtype_friendlyelec.c
+BoardHardwareInfo gAllBoardHardwareInfo[] = {
+...
+        {"Allwinnersun8iFamily", 0, NanoPi_NEO, "NanoPi-NEO-Armbian", "-1(-1)"},
+
+static int getAllwinnerBoardID(char* boardId, int boardIdMaxLen )
+{
+        int n,i,j;
+        char lineUntrim[1024], line[1024],*p;
+        const char* sunxi_board_id_fieldname = "sunxi_board_id";
+        FILE *f;
+        int ret = -1;
+
+        p = "2(0)";
+        memset(boardId,0,boardIdMaxLen);
+        strncpy(boardId, p, boardIdMaxLen-1);
+
+        ret = 0;
+        return ret;
 
 
+
+
+
+
+sudo pip install wiringpi --upgrade
+sudo pip install wiringpi2 --upgrade
 
 
