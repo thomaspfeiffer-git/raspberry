@@ -9,7 +9,7 @@
 from time import localtime
 import sys
 
-from Adafruit import Adafruit_BMP085
+from sensors.Adafruit import Adafruit_BMP085
 from i2c import I2C
 
 

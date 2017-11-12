@@ -9,8 +9,7 @@
 import subprocess
 import sys
 
-sys.path.append('../libs/sensors/Adafruit')
-from Adafruit import Adafruit_GPIO_Platform as Platform
+from sensors.Adafruit import Adafruit_GPIO_Platform as Platform
 
 
 class CPU:
