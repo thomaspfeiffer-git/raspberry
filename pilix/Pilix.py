@@ -232,7 +232,7 @@ class CSV (object):
                   V_GPS_ErrLat, V_GPS_ErrAlt]
 
     def __init__ (self):
-        with open(CONFIG.File.csv, 'w', newline='') as csvfile:
+        with open(CONFIG.File.csv, 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
             writer.writeheader()
 
@@ -341,4 +341,4 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0")
 
 # eof #
-   
+
