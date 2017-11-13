@@ -5,6 +5,7 @@ Related URLs
 ------------
 http://www.daveakerman.com/?p=1154
 http://www.daveakerman.com/?p=1005
+http://www.daveakerman.com/?p=873
 
 
 Governmental topics
@@ -23,10 +24,18 @@ https://www.stratoflights.com/shop/wetterballon-800/
 https://www.amazon.de/dp/B01BDLPXEM/_encoding=UTF8?coliid=I3832QXUN64QKV&colid=MTR8X0IKQCVC&th=1
 
 
+Useful Links
+------------
+
+- Flight and landing prediction:
+  http://predict.habhub.org/
+- https://www.stratoflights.com/tutorial/wetterballon-tutorial/
+
+
 List of components
 ------------------
 
-- NanoPi NEO Air
+- Raspberry Pi Zero W
 - SD Card (>= 128 GB)
 - BMP180: air pressure and temperature sensor (i2c)
 - PCF8591: a/d converter (i2c) for monitoring battery status
@@ -34,7 +43,7 @@ List of components
 - ULN2803: darlington transistor array, used as status LED driver
 
 - Camera
-  http://www.friendlyarm.com/index.php?route=product/product&product_id=155
+  Raspberry Pi V2.1, 8 MP 1080P
 - Push buttons (for switching camera on/off)
 - Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3
   https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi/setting-everything-up
