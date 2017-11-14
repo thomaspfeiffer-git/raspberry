@@ -8,26 +8,30 @@
    control weather balloon"""
 
 
-# Cam500B is currently not working with a 4.x kernel:
-# http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=1034
-
-# Some ideas on howto solve this:
-# https://forum.armbian.com/topic/3225-nanopi-neo-air-cam500b-issue/
-# https://github.com/avafinger/ov5640
-
-
-
 ### usage ###
 # nohup ./Pilix.py > ./Logs/pilix.log 2>&1 &
 
 
-### Packages you might install ###
+### Packages you might need to install ###
 #
+# --- GPS ---
 # sudo apt-get install gpsd gpsd-clients python-gps -y
+# sudo -H pip3 install gps3
 #
+# howto start and test gps:
+# sudo systemctl stop gpsd.socket
+# sudo systemctl disable gpsd.socket
+# sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock
+#
+# cgps -s
+#
+#
+# --- Display ---
+# sudo apt-get install libjpeg8-dev -y
 # sudo pip3 install Pillow
 #
 #
+# --- Flask ---
 # http://flask.pocoo.org/docs/0.12/
 #
 # http://jinja.pocoo.org/docs/2.9/
