@@ -23,6 +23,20 @@ network={
 
 
 
+Fast setup of most important modules/libraries:
+===============================================
+
+
+sudo apt-get install nfs-common debian-goodies screen vim python3-pip i2c-tools git -y
+
+sudo apt-get install libjpeg8-dev -Y
+sudo pip3 install Pillow
+sudo pip3 install Jinja2 ; sudo pip3 install Werkzeug ; sudo pip3 install Flask
+
+
+
+
+
 WIFI:
 =====
 
@@ -97,11 +111,8 @@ http://www.vim.org/scripts/script.php?script_id=850
 
 
 # python installer
-sudo apt-get install python-pip
 sudo apt-get install python3-pip
 
-# python2 imaging
-sudo apt-get install python-imaging
 
 # python3 imaging
 sudo apt-get install libjpeg8-dev
