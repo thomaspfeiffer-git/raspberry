@@ -281,7 +281,7 @@ class Control (threading.Thread):
 
             self.display.print(data)
             self.csv.write(data)
-            for _ in range(15):  # sleep for 15 x 2 = 30 seconds
+            for _ in range(5):  # sleep for 5 x 2 = 10 seconds
                 if not self._running:
                     break
 
