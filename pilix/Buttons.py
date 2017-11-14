@@ -1,4 +1,4 @@
-#!/usr/bin/python -u
+#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Buttons.py                                                                  #
@@ -20,7 +20,8 @@ import RPi.GPIO as io
 import socket
 import sys
 import time
-import urllib
+from urllib.error import HTTPError, URLError 
+from urllib.request import urlopen
 
 sys.path.append("../libs/")
 from Logging import Log
@@ -28,6 +29,7 @@ from Logging import Log
 from config import CONFIG
 
 
+io.setwarnings(False)
 io.setmode(io.BOARD)
 io.setup(CONFIG.PIN.BTN_Control, io.IN) 
 io.setup(CONFIG.PIN.BTN_Battery, io.IN) 
@@ -42,8 +44,8 @@ url_battery = "battery?enabled={}"
 def CallPilixControl (param):
     Log("CallPilixControl: {}".format(param))
     try:
-        response = urllib.urlopen(CONFIG.API.url.format(param))
-        data = response.read().decode("utf-8")
+        with urlopen(CONFIG.API.url.format(param)) as response:
+            data = response.read().decode("utf-8")
     except IOError:
         Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
     except socket.timeout:

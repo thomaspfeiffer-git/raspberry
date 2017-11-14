@@ -43,7 +43,7 @@
 import csv
 from enum import Enum
 from flask import Flask, request
-import subprocess
+import RPi.GPIO as io
 import sys
 import threading
 import time
@@ -156,29 +156,29 @@ class Camera (threading.Thread):
 # StatusLED ###################################################################
 class StatusLED (object):
     def __init__ (self, pin):
-        self.__pin = "{}".format(pin)
-        # FriendlyArm's WiringPI lib does not support python3.
-        # http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=921
-        # Therefore i use shell commands.
-        subprocess.run(["gpio", "-1", "mode", self.__pin, "output"], check=True)
+        self.__pin = pin
+        io.setwarnings(False)
+        io.setmode(io.BOARD)
+        io.setup(self.__pin, io.OUT)
         self.__last = None
         self.off()
 
     def io_write (self, status):
-        subprocess.run(["gpio", "-1", "write", self.__pin, status], check=True)
+        io.output(self.__pin, status)
 
     def on (self):
         if self.__last != Switch.ON:
-            self.io_write("1")
+            self.io_write(1)
             self.__last = Switch.ON
 
     def off (self):
         if self.__last != Switch.OFF:
-            self.io_write("0")
+            self.io_write(0)
             self.__last = Switch.OFF
 
     def flash (self):
         self.on()
+        time.sleep(0.05)
         self.off()
 
 
