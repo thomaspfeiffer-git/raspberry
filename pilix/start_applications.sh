@@ -1,9 +1,15 @@
 #!/bin/bash
 # starts all needed applications 
 
-
 LogDir=./Logs/
 PicDir=./Pictures/
+
+
+# starting GPS stuff
+sudo systemctl stop gpsd.socket
+sudo systemctl disable gpsd.socket
+sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock
+
 
 if [ ! -d "$LogDir" ]; then
    mkdir "$LogDir"

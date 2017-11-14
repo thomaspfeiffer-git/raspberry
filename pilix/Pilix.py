@@ -45,6 +45,7 @@
 
 
 import csv
+from gps3.agps3threaded import AGPS3mechanism
 from enum import Enum
 from flask import Flask, request
 import RPi.GPIO as io
@@ -261,16 +262,16 @@ class Control (threading.Thread):
 
 
     def get_gps_data (self):
-        return {V_GPS_Time: "17:17:17",
-                V_GPS_Lon: "18.18",
-                V_GPS_Lat: "48.48",
-                V_GPS_Alt: "222",
-                V_GPS_Climb: "10",
-                V_GPS_Speed: "100",
-                V_GPS_Track: "47",
-                V_GPS_ErrLon: "3",
-                V_GPS_ErrLat: "4",
-                V_GPS_ErrAlt: "5"}
+        return {V_GPS_Time: agps_thread.data_stream.time,
+                V_GPS_Lon: agps_thread.data_stream.lon,
+                V_GPS_Lat: agps_thread.data_stream.lat,
+                V_GPS_Alt: agps_thread.data_stream.alt,
+                V_GPS_Climb: agps_thread.data_stream.climb,
+                V_GPS_Speed: agps_thread.data_stream.speed,
+                V_GPS_Track: agps_thread.data_stream.track,
+                V_GPS_ErrLon: agps_thread.data_stream.epx,
+                V_GPS_ErrLat: agps_thread.data_stream.epy,
+                V_GPS_ErrAlt: agps_thread.data_stream.epv}
 
     def run (self):
         while self._running:
@@ -335,6 +336,10 @@ def shutdown_application ():
 ## main #######################################################################
 if __name__ == "__main__":
     shutdown = Shutdown(shutdown_func=shutdown_application)
+
+    agps_thread = AGPS3mechanism()
+    agps_thread.stream_data() 
+    agps_thread.run_thread() 
 
     camera  = Camera()
     camera.start()
