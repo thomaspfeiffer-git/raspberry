@@ -276,16 +276,16 @@ class Control (threading.Thread):
         self._running = True
 
     def get_gps_data (self):
-        return {V_GPS_Time: agps_thread.data_stream.time,
-                V_GPS_Lon: agps_thread.data_stream.lon,
-                V_GPS_Lat: agps_thread.data_stream.lat,
-                V_GPS_Alt: agps_thread.data_stream.alt,
-                V_GPS_Climb: agps_thread.data_stream.climb,
-                V_GPS_Speed: agps_thread.data_stream.speed,
-                V_GPS_Track: agps_thread.data_stream.track,
-                V_GPS_ErrLon: agps_thread.data_stream.epx,
-                V_GPS_ErrLat: agps_thread.data_stream.epy,
-                V_GPS_ErrAlt: agps_thread.data_stream.epv}
+        return {V_GPS_Time: gps.data_stream.time,
+                V_GPS_Lon: gps.data_stream.lon,
+                V_GPS_Lat: gps.data_stream.lat,
+                V_GPS_Alt: gps.data_stream.alt,
+                V_GPS_Climb: gps.data_stream.climb,
+                V_GPS_Speed: gps.data_stream.speed,
+                V_GPS_Track: gps.data_stream.track,
+                V_GPS_ErrLon: gps.data_stream.epx,
+                V_GPS_ErrLat: gps.data_stream.epy,
+                V_GPS_ErrAlt: gps.data_stream.epv}
 
     def monitor_battery (self):
         if self.running_on_battery:
@@ -375,9 +375,9 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    agps_thread = AGPS3mechanism()
-    agps_thread.stream_data() 
-    agps_thread.run_thread() 
+    gps = AGPS3mechanism()
+    gps.stream_data() 
+    gps.run_thread() 
 
     display = Display()
 
