@@ -12,6 +12,14 @@
 # nohup ./Pilix.py > ./Logs/pilix.log 2>&1 &
 
 
+
+# TODO
+# - Camera
+# - refactoring GPS (own thread)?
+# - Battery Monitoring including shutdown
+# - Sensor DS18B20
+
+
 ### Packages you might need to install ###
 #
 # --- GPS ---
@@ -49,6 +57,7 @@ from gps3.agps3threaded import AGPS3mechanism
 from enum import Enum
 from flask import Flask, request
 import RPi.GPIO as io
+import subprocess
 import sys
 import threading
 import time
@@ -222,6 +231,14 @@ class Display (object):
         self.display.image(self.image)
         self.display.display()
 
+    def shutdown_message (self):
+        self.draw.rectangle((0,0,self.display.width,self.display.height),
+                            outline=0, fill=255)
+        self.y = self.ypos
+        self.draw_line("Shutting down in 5 s ...")
+        self.display.image(self.image)
+        self.display.display()
+
     def off (self):
         self.display.clear()
         self.display.display()
@@ -253,13 +270,11 @@ class Control (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
         self.csv       = CSV()
-        self.display   = Display()
         self.sensors   = Sensors()
         self.statusled = StatusLED(CONFIG.PIN.LED_Status)
 
         self.running_on_battery = False
         self._running = True
-
 
     def get_gps_data (self):
         return {V_GPS_Time: agps_thread.data_stream.time,
@@ -279,8 +294,9 @@ class Control (threading.Thread):
             data[V_RunningOnBattery] = self.running_on_battery
             data.update(self.get_gps_data())
 
-            self.display.print(data)
+            display.print(data)
             self.csv.write(data)
+
             for _ in range(5):  # sleep for 5 x 2 = 10 seconds
                 if not self._running:
                     break
@@ -292,7 +308,7 @@ class Control (threading.Thread):
                         self.statusled.flash()
                     time.sleep(0.1)
 
-        self.display.off()
+        display.off()
 
     def stop (self):
         self._running = False
@@ -303,6 +319,7 @@ class Control (threading.Thread):
 @app.route('/shutdown')
 def API_Shutdown ():
     Log("Shutdown requested")
+    shutdown()
     return "shutdown ok"
 
 @app.route('/toggle')
@@ -320,14 +337,28 @@ def API_Battery ():                  # looks weird, but is fail safe
 
 
 ###############################################################################
-# Exit ########################################################################
-def shutdown_application ():
-    """cleanup stuff"""
-    Log("stopping application")
+# Shutdown stuff ##############################################################
+def stop_threads ():
+    """stops all threads"""
     control.stop()
     control.join()
     camera.stop()
     camera.join()
+
+def shutdown ():
+    """shuts down the OS"""
+    Log("shutting down ...")
+    stop_threads()
+    display.shutdown_message()
+    time.sleep(5)
+    display.off()
+    Log("shutdown now")
+    subprocess.run(["sudo", "shutdown", "-h", "now"])
+
+def shutdown_application ():
+    """cleanup stuff"""
+    Log("stopping application")
+    stop_threads()
     Log("application stopped")
     sys.exit(0)
 
@@ -335,13 +366,15 @@ def shutdown_application ():
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
-    shutdown = Shutdown(shutdown_func=shutdown_application)
+    shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
     agps_thread = AGPS3mechanism()
     agps_thread.stream_data() 
     agps_thread.run_thread() 
 
-    camera  = Camera()
+    display   = Display()
+
+    camera = Camera()
     camera.start()
 
     control = Control()
