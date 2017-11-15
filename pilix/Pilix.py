@@ -288,14 +288,22 @@ class Control (threading.Thread):
                 V_GPS_ErrLat: agps_thread.data_stream.epy,
                 V_GPS_ErrAlt: agps_thread.data_stream.epv}
 
+    def battery (self):
+        if self.data[V_Voltage] < 6.0:
+            Log("Battery low. Shutting down.")
+            shutdown()
+
     def run (self):
         while self._running:
-            data = self.sensors.read()
-            data[V_RunningOnBattery] = self.running_on_battery
-            data.update(self.get_gps_data())
+            self.data = self.sensors.read()
+            self.data[V_RunningOnBattery] = self.running_on_battery
+            self.data.update(self.get_gps_data())
 
-            display.print(data)
-            self.csv.write(data)
+            display.print(self.data)
+            self.csv.write(self.data)
+
+            if self.running_on_battery:
+                self.battery()
 
             for _ in range(5):  # sleep for 5 x 2 = 10 seconds
                 if not self._running:
@@ -347,7 +355,7 @@ def stop_threads ():
 
 def shutdown ():
     """shuts down the OS"""
-    Log("shutting down ...")
+    Log("shutting down in 5 s ...")
     stop_threads()
     display.shutdown_message()
     time.sleep(5)
