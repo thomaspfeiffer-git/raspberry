@@ -12,10 +12,8 @@
 # nohup ./Pilix.py > ./Logs/pilix.log 2>&1 &
 
 
-
 # TODO
 # - Camera
-# - refactoring GPS (own thread)?
 # - Sensor DS18B20
 
 
@@ -272,6 +270,7 @@ class Control (threading.Thread):
         self.sensors   = Sensors()
         self.statusled = StatusLED(CONFIG.PIN.LED_Status)
 
+        self.data = None
         self.running_on_battery = False
         self._running = True
 
