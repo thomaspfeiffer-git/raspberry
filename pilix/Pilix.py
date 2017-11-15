@@ -16,7 +16,6 @@
 # TODO
 # - Camera
 # - refactoring GPS (own thread)?
-# - Battery Monitoring including shutdown
 # - Sensor DS18B20
 
 
@@ -288,10 +287,11 @@ class Control (threading.Thread):
                 V_GPS_ErrLat: agps_thread.data_stream.epy,
                 V_GPS_ErrAlt: agps_thread.data_stream.epv}
 
-    def battery (self):
-        if self.data[V_Voltage] < 6.0:
-            Log("Battery low. Shutting down.")
-            shutdown()
+    def monitor_battery (self):
+        if self.running_on_battery:
+            if self.data[V_Voltage] < 6.0:
+                Log("Battery low. Shutting down.")
+                shutdown()
 
     def run (self):
         while self._running:
@@ -302,8 +302,7 @@ class Control (threading.Thread):
             display.print(self.data)
             self.csv.write(self.data)
 
-            if self.running_on_battery:
-                self.battery()
+            self.monitor_battery()
 
             for _ in range(5):  # sleep for 5 x 2 = 10 seconds
                 if not self._running:
@@ -380,7 +379,7 @@ if __name__ == "__main__":
     agps_thread.stream_data() 
     agps_thread.run_thread() 
 
-    display   = Display()
+    display = Display()
 
     camera = Camera()
     camera.start()
