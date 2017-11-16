@@ -19,6 +19,6 @@ if [ ! -d "$PicDir" ]; then
 fi
 
 
-nohup ./Buttons.py > "$LogDir/buttons.log" 2>&1 &
-nohup ./Pilix.py > "$LogDir/pilix.log" 2>&1 &
+nohup ./Buttons.py >> "$LogDir/buttons.log" 2>>"$LogDir/buttons.err" &
+nohup ./Pilix.py >> "$LogDir/pilix.log" 2>>"$LogDir/pilix.err" &
 

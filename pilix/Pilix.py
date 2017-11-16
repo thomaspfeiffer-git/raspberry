@@ -14,6 +14,7 @@
 
 # TODO
 # - Camera
+# - migrate config.py to python 3
 # - Sensor DS18B20
 
 
@@ -53,6 +54,7 @@ import csv
 from gps3.agps3threaded import AGPS3mechanism
 from enum import Enum
 from flask import Flask, request
+import picamera
 import RPi.GPIO as io
 import subprocess
 import sys
@@ -131,20 +133,34 @@ class Sensors (object):
 # Camera ######################################################################
 class Camera (threading.Thread):
     intervall = CONFIG.Camera.Intervall
+    # camera = picamera.PiCamera()
     def __init__ (self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
+        self.piccount = 0
         self._takingPictures = False
         self._running = True
+
+    def getfilename (self):
+        filename = "{:05d}_{}_{}_{}.jpg".format(self.piccount, 
+                    control.data[V_GPS_Alt],
+                    control.data[V_GPS_Lon],
+                    control.data[V_GPS_Lat]).replace("/", "")
+        return "{}{}".format(CONFIG.File.picdir, filename)
 
     def run (self):
         while self._running:
             if self._takingPictures:
+                filename = self.getfilename()
+                self.statusled.on()
+                Log("taking picture {}".format(filename))
+                # self.camera.capture(filename)
+                self.piccount += 1
+                self.statusled.off()
+
                 for _ in range(self.intervall*10):
                     if self._running:
                         time.sleep(0.1)
-                self.statusled.flash()
-                Log("taking picture")
             else:
                 time.sleep(0.1)
 
@@ -346,10 +362,10 @@ def API_Battery ():                  # looks weird, but is fail safe
 # Shutdown stuff ##############################################################
 def stop_threads ():
     """stops all threads"""
-    control.stop()
-    control.join()
     camera.stop()
     camera.join()
+    control.stop()
+    control.join()
 
 def shutdown ():
     """shuts down the OS"""
@@ -380,13 +396,13 @@ if __name__ == "__main__":
 
     display = Display()
 
-    camera = Camera()
-    camera.start()
-
     control = Control()
     control.start()
 
-    app.run(host="0.0.0.0")
+    camera = Camera()
+    camera.start()
+
+    app.run(host="0.0.0.0", debug=False)
 
 # eof #
 
