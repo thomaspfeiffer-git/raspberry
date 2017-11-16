@@ -14,7 +14,6 @@
 
 # TODO
 # - Camera
-# - migrate config.py to python 3
 # - Sensor DS18B20
 
 
@@ -142,7 +141,8 @@ class Camera (threading.Thread):
         self._running = True
 
     def getfilename (self):
-        filename = "{:05d}_{}_{}_{}.jpg".format(self.piccount, 
+        filename = "{:05d}_{}_{}_{}_{}.jpg".format(self.piccount, 
+                    time.strftime("%Y%m%d%H%M%S"),
                     control.data[V_GPS_Alt],
                     control.data[V_GPS_Lon],
                     control.data[V_GPS_Lat]).replace("/", "")
