@@ -139,7 +139,7 @@ RPi.GPIO
 https://sourceforge.net/p/raspberry-gpio-python/wiki/BasicUsage/
 https://sourceforge.net/p/raspberry-gpio-python/wiki/install/
 
-
+sudo apt-get install python3-rpi.gpio
 
 i2c smb
 -------
