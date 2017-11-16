@@ -388,7 +388,7 @@ def shutdown_application ():
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
-    shutdown_application = Shutdown(shutdown_func=shutdown_application)
+    shutdown_app = Shutdown(shutdown_func=shutdown_application)
 
     gps = AGPS3mechanism()
     gps.stream_data() 
