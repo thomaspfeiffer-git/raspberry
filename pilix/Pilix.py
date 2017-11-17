@@ -135,8 +135,7 @@ class Camera (threading.Thread):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
         self.piccount = 0
-        # self._takingPictures = False
-        self._takingPictures = True
+        self._takingPictures = False
         self._running = True
 
     def getfilename (self):
@@ -154,7 +153,6 @@ class Camera (threading.Thread):
                 filename = self.getfilename()
                 self.statusled.on()
                 Log("taking picture {}".format(filename))
-                # raspistill -w 800 -h 600 -t 5 -v -o `date "+%Y%m%d_%H%M%S"`.jpg 
                 # subprocess.run(["raspistill", "-w", "3280", "-h", "2464", "-t", "5", "-o", filename])
                 subprocess.run(["raspistill", "-w", "1024", "-h", "768", "-t", "5", "-o", filename])
                 self.piccount += 1
@@ -308,7 +306,11 @@ class Control (threading.Thread):
         if self.running_on_battery:
             if self.data[V_Voltage] < 6.0:
                 Log("Battery low. Shutting down.")
-                shutdown()
+                # A thread cannot be stopped/joined by itself.
+                # Therefore shutdown is called in a new thread.
+                shutdown_thread = threading.Thread(target=shutdown)
+                shutdown_thread.start()
+                Log("Shutdown thread started.")
 
     def run (self):
         while self._running:
@@ -371,19 +373,19 @@ def stop_threads ():
 
 def shutdown ():
     """shuts down the OS"""
-    Log("shutting down in 5 s ...")
+    Log("Shutting down in 5 s ...")
     stop_threads()
     display.shutdown_message()
     time.sleep(5)
     display.off()
-    Log("shutdown now")
+    Log("Shutdown now")
     subprocess.run(["sudo", "shutdown", "-h", "now"])
 
 def shutdown_application ():
     """cleanup stuff"""
-    Log("stopping application")
+    Log("Stopping application")
     stop_threads()
-    Log("application stopped")
+    Log("Application stopped")
     sys.exit(0)
 
 
