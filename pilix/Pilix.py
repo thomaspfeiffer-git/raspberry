@@ -132,7 +132,7 @@ class Sensors (object):
 # Camera ######################################################################
 class Camera (threading.Thread):
     intervall = CONFIG.Camera.Intervall
-    # camera = picamera.PiCamera()
+    camera = picamera.PiCamera()
     def __init__ (self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
@@ -154,7 +154,7 @@ class Camera (threading.Thread):
                 filename = self.getfilename()
                 self.statusled.on()
                 Log("taking picture {}".format(filename))
-                # self.camera.capture(filename)
+                self.camera.capture(filename)
                 self.piccount += 1
                 self.statusled.off()
 
@@ -388,7 +388,7 @@ def shutdown_application ():
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
-    shutdown_app = Shutdown(shutdown_func=shutdown_application)
+    shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
     gps = AGPS3mechanism()
     gps.stream_data() 
