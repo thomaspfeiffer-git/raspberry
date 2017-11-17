@@ -53,7 +53,6 @@ import csv
 from gps3.agps3threaded import AGPS3mechanism
 from enum import Enum
 from flask import Flask, request
-import picamera
 import RPi.GPIO as io
 import subprocess
 import sys
@@ -132,12 +131,12 @@ class Sensors (object):
 # Camera ######################################################################
 class Camera (threading.Thread):
     intervall = CONFIG.Camera.Intervall
-    camera = picamera.PiCamera()
     def __init__ (self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
         self.piccount = 0
-        self._takingPictures = False
+        # self._takingPictures = False
+        self._takingPictures = True
         self._running = True
 
     def getfilename (self):
@@ -149,12 +148,15 @@ class Camera (threading.Thread):
         return "{}{}".format(CONFIG.File.picdir, filename)
 
     def run (self):
+        time.sleep(10)
         while self._running:
             if self._takingPictures:
                 filename = self.getfilename()
                 self.statusled.on()
                 Log("taking picture {}".format(filename))
-                self.camera.capture(filename)
+                # raspistill -w 800 -h 600 -t 5 -v -o `date "+%Y%m%d_%H%M%S"`.jpg 
+                # subprocess.run(["raspistill", "-w", "3280", "-h", "2464", "-t", "5", "-o", filename])
+                subprocess.run(["raspistill", "-w", "1024", "-h", "768", "-t", "5", "-o", filename])
                 self.piccount += 1
                 self.statusled.off()
 
