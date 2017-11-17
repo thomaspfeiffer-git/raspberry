@@ -8,13 +8,13 @@ PICDIR=./Pictures/
 
 .PHONY: clean run directories
 
-clean:
-	rm $(LOGDIR)/*
-	rm $(PICDIR)/*
-
 run: directories
 	nohup ./Buttons.py >> $(LOGDIR)/buttons.log 2>>$(LOGDIR)/buttons.err &
 	nohup ./Pilix.py >> $(LOGDIR)/pilix.log 2>>$(LOGDIR)/pilix.err &
+
+clean:
+	rm -f $(LOGDIR)/*
+	rm -f $(PICDIR)/*
 
 directories:
 	if [ ! -d $(LOGDIR) ]; then \
