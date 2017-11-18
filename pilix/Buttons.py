@@ -9,9 +9,6 @@
    - button 2: using battery or main power supply (switch)"""
 
 
-# FriendlyArm's gpio lib works with python 2.x only.
-   
-
 ### usage ###
 # nohup sudo ./Buttons.py > ./Logs/buttons.log 2>&1 &
 
