@@ -24,6 +24,9 @@ class CONFIG:
 
     class Camera:
          Intervall = int(cfg['Camera']['Intervall'])
+         Width     = int(cfg['Camera']['Width'])
+         Height    = int(cfg['Camera']['Height'])
+         Quality   = int(cfg['Camera']['Quality'])
 
     class API:
          url = cfg['Pilix']['urlAPI']

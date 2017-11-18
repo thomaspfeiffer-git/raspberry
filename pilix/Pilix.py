@@ -13,7 +13,6 @@
 
 
 # TODO
-# - Camera
 # - Sensor DS18B20
 
 
@@ -148,13 +147,17 @@ class Camera (threading.Thread):
 
     def run (self):
         time.sleep(10)
+
+        width = str(CONFIG.Camera.Width)
+        height = str(CONFIG.Camera.Height)
+        quality = str(CONFIG.Camera.Quality)
+
         while self._running:
             if self._takingPictures:
                 filename = self.getfilename()
                 self.statusled.on()
                 Log("taking picture {}".format(filename))
-                # subprocess.run(["raspistill", "-w", "3280", "-h", "2464", "-t", "5", "-o", filename])
-                subprocess.run(["raspistill", "-w", "1024", "-h", "768", "-t", "5", "-o", filename])
+                subprocess.run(["raspistill", "-w", width, "-h", height, "-q", quality, "-t", "5", "-o", filename])
                 self.piccount += 1
                 self.statusled.off()
 
