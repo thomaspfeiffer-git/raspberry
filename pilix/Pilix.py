@@ -316,8 +316,7 @@ class Control (threading.Thread):
                 Log("Shutdown thread started.")
 
     def reset_watchdog (self):
-        # sudo bash -c "echo 'hallo' > /dev/watchdog "
-        pass
+        subprocess.run(["sudo", "bash", "-c", "echo 'hi' > /dev/watchdog"])
 
     def run (self):
         while self._running:
