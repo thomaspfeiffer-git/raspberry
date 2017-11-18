@@ -6,9 +6,9 @@
 LOGDIR=./Logs/
 PICDIR=./Pictures/
 
-.PHONY: clean run directories
+.PHONY: clean run directories watchdog
 
-run: directories
+run: directories watchdog
 	nohup ./Buttons.py >> $(LOGDIR)/buttons.log 2>>$(LOGDIR)/buttons.err &
 	nohup ./Pilix.py >> $(LOGDIR)/pilix.log 2>>$(LOGDIR)/pilix.err &
 
@@ -23,6 +23,9 @@ directories:
 	if [ ! -d $(PICDIR) ]; then \
 	   mkdir $(PICDIR);         \
 	fi
+
+watchdog:
+	sudo modprobe bcm2835_wdt
 
 # eof #
 

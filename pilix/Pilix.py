@@ -315,6 +315,10 @@ class Control (threading.Thread):
                 shutdown_thread.start()
                 Log("Shutdown thread started.")
 
+    def reset_watchdog (self):
+        # sudo bash -c "echo 'hallo' > /dev/watchdog "
+        pass
+
     def run (self):
         while self._running:
             self.data = self.sensors.read()
@@ -335,6 +339,7 @@ class Control (threading.Thread):
                         break
                     if i == 0:
                         self.statusled.flash()
+                        self.reset_watchdog()
                     time.sleep(0.1)
 
         display.off()
