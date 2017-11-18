@@ -307,7 +307,7 @@ class Control (threading.Thread):
 
     def monitor_battery (self):
         if self.running_on_battery:
-            if self.data[V_Voltage] < 6.0:
+            if self.data[V_Voltage] < 5.9:
                 Log("Battery low. Shutting down.")
                 # A thread cannot be stopped/joined by itself.
                 # Therefore shutdown is called in a new thread.
