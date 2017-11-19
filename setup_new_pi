@@ -33,7 +33,8 @@ sudo apt-get install libjpeg8-dev -Y
 sudo pip3 install Pillow
 sudo pip3 install Jinja2 ; sudo pip3 install Werkzeug ; sudo pip3 install Flask
 
-
+sudo service dphys-swapfile stop
+sudo apt-get purge dphys-swapfile
 
 
 
