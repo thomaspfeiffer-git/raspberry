@@ -16,6 +16,9 @@ WIFI (Headless):
 sudo mount /dev/sda2 raspi
 raspi/etc/wpa_supplicant/wpa_supplicant.conf
 
+
+######################
+# change SSID and PASSWORD!
 network={
     ssid="SSID"
     psk="PASSWORD"
