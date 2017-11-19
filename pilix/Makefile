@@ -27,5 +27,9 @@ directories:
 watchdog:
 	sudo modprobe bcm2835_wdt
 
+keepalive:
+	( while [ 1 ] ; do sudo bash -c "echo 'hu' > /dev/watchdog" ; sleep 1 ; done ) &
+
+
 # eof #
 
