@@ -133,8 +133,8 @@ class Camera (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
-        self.piccount = 0
-        self._takingPictures = False
+        self.piccount = 0     # start taking pictures immediately on autostart
+        self._takingPictures = CONFIG.APP.autostart 
         self._running = True
 
     def getfilename (self):
@@ -316,7 +316,8 @@ class Control (threading.Thread):
                 Log("Shutdown thread started.")
 
     def reset_watchdog (self):
-        subprocess.run(["sudo", "bash", "-c", "echo 'hi' > /dev/watchdog"])
+        if CONFIG.APP.autostart: # watchdog only in autostart mode
+            subprocess.run(["sudo", "bash", "-c", "echo 'hi' > /dev/watchdog"])
 
     def run (self):
         while self._running:

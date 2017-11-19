@@ -10,7 +10,7 @@ PICDIR=./Pictures/
 
 run: directories watchdog
 	nohup ./Buttons.py >> $(LOGDIR)/buttons.log 2>>$(LOGDIR)/buttons.err &
-	nohup ./Pilix.py >> $(LOGDIR)/pilix.log 2>>$(LOGDIR)/pilix.err &
+	nohup ./Pilix.py $(autostart) >> $(LOGDIR)/pilix.log 2>>$(LOGDIR)/pilix.err &
 
 clean:
 	rm -f $(LOGDIR)/*
