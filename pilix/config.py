@@ -7,6 +7,7 @@
 
 import configparser as cfgparser
 import os
+import sys
 
 
 CONFIGFILE = "pilix.ini"    
@@ -38,6 +39,8 @@ class CONFIG:
 
     class APP:
          delayToShutdown = int(cfg['Pilix']['delayToShutdown'])
+         autostart = True if len(sys.argv) == 2 and sys.argv[1] == "autostart" else False
+
 
 # eof #
 
