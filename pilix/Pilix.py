@@ -51,7 +51,10 @@
 import csv
 from gps3.agps3threaded import AGPS3mechanism
 from enum import Enum
+import errno
 from flask import Flask, request
+import os
+import picamera
 import RPi.GPIO as io
 import subprocess
 import sys
@@ -133,31 +136,45 @@ class Camera (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
-        self.piccount = 0     # start taking pictures immediately on autostart
+        self.piccount = 0  
+
+        self.camera = picamera.PiCamera()
+        self.camera.resolution = (CONFIG.Camera.Width, CONFIG.Camera.Height)
+        # self.camera.quality = CONFIG.Camera.Quality
+        self.camera.annotate_background = picamera.Color('black')
+
+        # on autostart start taking pictures immediately
         self._takingPictures = CONFIG.APP.autostart 
         self._running = True
 
     def getfilename (self):
+        def get_directory ():
+            directory = "{}/{:03d}".format(CONFIG.File.picdir,self.piccount//100)
+            try:
+                os.makedirs(directory)
+            except OSError as exception:
+                if exception.errno != errno.EEXIST:
+                   raise
+            return directory
+
         filename = "{:05d}_{}_{}_{}_{}.jpg".format(self.piccount, 
                     time.strftime("%Y%m%d%H%M%S"),
                     control.data[V_GPS_Alt],
                     control.data[V_GPS_Lon],
                     control.data[V_GPS_Lat]).replace("/", "")
-        return "{}{}".format(CONFIG.File.picdir, filename)
+        return "{}/{}".format(get_directory(), filename)
 
     def run (self):
         time.sleep(10)
-
-        width = str(CONFIG.Camera.Width)
-        height = str(CONFIG.Camera.Height)
-        quality = str(CONFIG.Camera.Quality)
 
         while self._running:
             if self._takingPictures:
                 filename = self.getfilename()
                 self.statusled.on()
                 Log("taking picture {}".format(filename))
-                subprocess.run(["raspistill", "-w", width, "-h", height, "-q", quality, "-t", "5", "-o", filename])
+                # subprocess.run(["raspistill", "-w", width, "-h", height, "-q", quality, "-t", "5", "-o", filename])
+                # self.camera.annotate_text = time.strftime("%Y%m%d %H%M%S")
+                self.camera.capture(filename)
                 self.piccount += 1
                 self.statusled.off()
 
@@ -174,7 +191,8 @@ class Camera (threading.Thread):
             blinks = 4
         else:
             blinks = 2
-        for _ in range(blinks):
+        for _ in range(4 if self._takingPictures else 2):
+            # for _ in range(blinks):
             self.statusled.flash()
             time.sleep(0.1)
 
