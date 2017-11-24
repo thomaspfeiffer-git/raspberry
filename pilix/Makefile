@@ -6,7 +6,7 @@
 LOGDIR=./Logs/
 PICDIR=./Pictures/
 
-.PHONY: clean run directories watchdog
+.PHONY: clean run directories watchdog keepclean
 
 run: directories watchdog
 	nohup ./Buttons.py >> $(LOGDIR)/buttons.log 2>>$(LOGDIR)/buttons.err &
@@ -15,6 +15,7 @@ run: directories watchdog
 clean:
 	rm -f $(LOGDIR)/*
 	rm -f $(PICDIR)/*
+	rm nohup.out
 
 directories:
 	if [ ! -d $(LOGDIR) ]; then \
@@ -29,6 +30,12 @@ watchdog:
 
 keepalive:
 	( while [ 1 ] ; do sudo bash -c "echo 'hi' > /dev/watchdog" ; sleep 1 ; done ) &
+
+keepclean:
+	cd $(PICDIR)
+	nohup bash -c "while [ 1 ] ; do find . -name "*jpg" -cmin +5 -exec rm {} \; ; sleep 60 ; done " & 
+
+
 
 
 # eof #
