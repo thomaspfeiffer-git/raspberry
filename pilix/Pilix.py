@@ -140,7 +140,6 @@ class Camera (threading.Thread):
 
         self.camera = picamera.PiCamera()
         self.camera.resolution = (CONFIG.Camera.Width, CONFIG.Camera.Height)
-        # self.camera.quality = CONFIG.Camera.Quality
         self.camera.annotate_background = picamera.Color('black')
 
         # on autostart start taking pictures immediately
@@ -172,9 +171,8 @@ class Camera (threading.Thread):
                 filename = self.getfilename()
                 self.statusled.on()
                 Log("taking picture {}".format(filename))
-                # subprocess.run(["raspistill", "-w", width, "-h", height, "-q", quality, "-t", "5", "-o", filename])
-                # self.camera.annotate_text = time.strftime("%Y%m%d %H%M%S")
-                self.camera.capture(filename)
+                self.camera.annotate_text = time.strftime("%Y%m%d %H%M%S")
+                self.camera.capture(filename, quality=CONFIG.Camera.Quality)
                 self.piccount += 1
                 self.statusled.off()
 
@@ -187,12 +185,7 @@ class Camera (threading.Thread):
     def toggle_takePictures (self):
         self._takingPictures = not self._takingPictures
         Log("Camera: {}".format(self._takingPictures))
-        if self._takingPictures:
-            blinks = 4
-        else:
-            blinks = 2
         for _ in range(4 if self._takingPictures else 2):
-            # for _ in range(blinks):
             self.statusled.flash()
             time.sleep(0.1)
 
