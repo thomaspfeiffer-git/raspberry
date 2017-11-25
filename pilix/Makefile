@@ -15,7 +15,7 @@ run: directories watchdog
 clean:
 	rm -f $(LOGDIR)/*
 	rm -rf $(PICDIR)/*
-	rm nohup.out
+	rm -f nohup.out
 
 directories:
 	if [ ! -d $(LOGDIR) ]; then \
