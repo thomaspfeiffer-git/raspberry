@@ -133,10 +133,12 @@ class Sensors (object):
 # Camera ######################################################################
 class Camera (threading.Thread):
     intervall = CONFIG.Camera.Intervall
+    size_of_segments = 100
+
     def __init__ (self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
-        self.piccount = 0  
+        self.piccount = self.get_next_segment()
 
         self.camera = picamera.PiCamera()
         self.camera.resolution = (CONFIG.Camera.Width, CONFIG.Camera.Height)
@@ -146,9 +148,21 @@ class Camera (threading.Thread):
         self._takingPictures = CONFIG.APP.autostart 
         self._running = True
 
-    def getfilename (self):
+    def get_next_segment (self): # after restart of application, we continue
+        from os import listdir   # on the next (empty) directory.
+        from os.path import isdir, join
+        dirs = [d for d in listdir(CONFIG.File.picdir)
+                if isdir(join(CONFIG.File.picdir, d))]
+        dirs.sort()
+        try:
+            return (int(dirs.pop())+1) * self.size_of_segments
+        except (IndexError, ValueError):
+            return 0
+
+    def get_filename (self):
         def get_directory ():
-            directory = "{}/{:03d}".format(CONFIG.File.picdir,self.piccount//100)
+            directory = "{}/{:03d}".format(CONFIG.File.picdir,
+                                           self.piccount//self.size_of_segments)
             try:
                 os.makedirs(directory)
             except OSError as exception:
@@ -168,7 +182,7 @@ class Camera (threading.Thread):
 
         while self._running:
             if self._takingPictures:
-                filename = self.getfilename()
+                filename = self.get_filename()
                 self.statusled.on()
                 Log("taking picture {}".format(filename))
                 self.camera.annotate_text = time.strftime("%Y%m%d %H%M%S")
