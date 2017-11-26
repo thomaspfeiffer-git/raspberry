@@ -13,9 +13,9 @@ run: directories watchdog
 	nohup ./Pilix.py $(autostart) >> $(LOGDIR)/pilix.log 2>>$(LOGDIR)/pilix.err &
 
 clean:
-	rm -f $(LOGDIR)/*
-	rm -rf $(PICDIR)/*
-	rm -f nohup.out
+	sudo rm -f $(LOGDIR)/*
+	sudo rm -rf $(PICDIR)/*
+	sudo rm -f nohup.out
 
 directories:
 	if [ ! -d $(LOGDIR) ]; then \
