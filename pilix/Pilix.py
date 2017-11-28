@@ -66,6 +66,7 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 sys.path.append("../libs/")
+from Commons import Singleton
 from i2c import I2C
 from Logging import Log
 from Shutdown import Shutdown
@@ -130,15 +131,54 @@ class Sensors (object):
 
 
 ###############################################################################
+# PictureStore ################################################################
+class PictureStore (metaclass=Singleton):
+    size_of_segment = 100
+
+    def __init__ (self):
+        self.picture_count = self.get_next_segment()
+
+    def get_next_segment (self): 
+        """after restart of the application, we continue on the 
+           next (empty) directory."""
+        from os.path import isdir, join 
+        dirs = [d for d in os.listdir(CONFIG.File.picdir)
+                if isdir(join(CONFIG.File.picdir, d))]
+        dirs.sort()
+        try:
+            return (int(dirs.pop())+1) * self.size_of_segment
+        except (IndexError, ValueError):
+            return 0
+
+    def get_next_filename (self):
+        def get_directory ():
+            directory = "{}/{:03d}".format(CONFIG.File.picdir,
+                                           self.picture_count//self.size_of_segment)
+            try:
+                os.makedirs(directory)
+            except OSError as exception:
+                if exception.errno != errno.EEXIST:
+                   raise
+            return directory
+
+        filename = "{:05d}_{}_{}_{}_{}.jpg".format(self.picture_count, 
+                    time.strftime("%Y%m%d%H%M%S"),
+                    control.data[V_GPS_Alt],
+                    control.data[V_GPS_Lon],
+                    control.data[V_GPS_Lat]).replace("/", "")
+        self.picture_count += 1
+        return "{}/{}".format(get_directory(), filename)
+
+
+###############################################################################
 # Camera ######################################################################
 class Camera (threading.Thread):
     intervall = CONFIG.Camera.Intervall
-    size_of_segments = 100
 
     def __init__ (self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
-        self.piccount = self.get_next_segment()
+        self.picturestore = PictureStore()
 
         self.camera = picamera.PiCamera()
         self.camera.resolution = (CONFIG.Camera.Width, CONFIG.Camera.Height)
@@ -148,46 +188,18 @@ class Camera (threading.Thread):
         self._takingPictures = CONFIG.APP.autostart 
         self._running = True
 
-    def get_next_segment (self): # after restart of application, we continue
-        from os import listdir   # on the next (empty) directory.
-        from os.path import isdir, join
-        dirs = [d for d in listdir(CONFIG.File.picdir)
-                if isdir(join(CONFIG.File.picdir, d))]
-        dirs.sort()
-        try:
-            return (int(dirs.pop())+1) * self.size_of_segments
-        except (IndexError, ValueError):
-            return 0
-
-    def get_filename (self):
-        def get_directory ():
-            directory = "{}/{:03d}".format(CONFIG.File.picdir,
-                                           self.piccount//self.size_of_segments)
-            try:
-                os.makedirs(directory)
-            except OSError as exception:
-                if exception.errno != errno.EEXIST:
-                   raise
-            return directory
-
-        filename = "{:05d}_{}_{}_{}_{}.jpg".format(self.piccount, 
-                    time.strftime("%Y%m%d%H%M%S"),
-                    control.data[V_GPS_Alt],
-                    control.data[V_GPS_Lon],
-                    control.data[V_GPS_Lat]).replace("/", "")
-        return "{}/{}".format(get_directory(), filename)
-
     def run (self):
         time.sleep(10)
 
         while self._running:
             if self._takingPictures:
-                filename = self.get_filename()
+                filename = self.picturestore.get_next_filename()
                 self.statusled.on()
                 Log("taking picture {}".format(filename))
-                self.camera.annotate_text = time.strftime("%Y%m%d %H%M%S")
+                self.camera.annotate_text = \
+                      "{} - Alt: {} m".format(time.strftime("%Y%m%d %H%M%S"),
+                                              control.data[V_GPS_Lat])
                 self.camera.capture(filename, quality=CONFIG.Camera.Quality)
-                self.piccount += 1
                 self.statusled.off()
 
                 for _ in range(self.intervall*10):
