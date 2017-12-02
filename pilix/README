@@ -31,6 +31,22 @@ https://www.amazon.de/dp/B00ZPR1TV2/
 http://www.emmakites.com/
 
 
+
+Communication & Radio Transmitter
+---------------------------------
+
+- https://www.aliexpress.com/item/2016-High-Quality-A8-Mini-GPS-Tracker-Car-Gps-Tracker-GSM-LBS-Tracker-Global-Time-Tracking/32763391088.html
+- http://www.radiometrix.com/conten/mtx2
+- https://www.amazon.de/AZDelivery-NEO-6M-GPS-baugleich-u-blox/dp/B01N38EMBF
+- https://store.uputronics.com/index.php?route=product/product&product_id=52
+
+- http://hab.uggy.org/index.php?article11/ntx2-transmitter
+- http://projects-raspberry.com/raspberry-pi-java-ntx2-radio-transmitter/
+- https://www.raspberrypi.org/forums/viewtopic.php?p=407858
+
+
+
+
 Useful Links
 ------------
 
@@ -58,7 +74,6 @@ List of components
   https://de.aliexpress.com/item/CJMCU-CP2102-MICRO-USB-to-UART-TTL-Module-6Pin-Serial-Converter-UART-STC-Replace-FT232-NEW/32587986095.html
 - Active GPS antenna with uFL connector (if SMA, an adapter uFL - SMA is needed)
 - Battery box for six AA akkus
-- M8 threaded bar + screw nuts + butterfly nuts
 - Mini360 DC-DC Buck Converter Step Down Module 
 - GSM Module
   . https://www.adafruit.com/product/1946
@@ -73,14 +88,6 @@ Misc
 - Monitoring battery
   https://www.elektronik-kompendium.de/sites/praxis/bausatz_spannungswaechter.htm
   https://www.akkuline.de/test/panasonic-eneloop-aa-test.aspx?id=16
-
-
-Radio Transmitter
------------------
-
-- http://hab.uggy.org/index.php?article11/ntx2-transmitter
-- http://projects-raspberry.com/raspberry-pi-java-ntx2-radio-transmitter/
-- https://www.raspberrypi.org/forums/viewtopic.php?p=407858
 
 
 
