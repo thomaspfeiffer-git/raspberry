@@ -137,17 +137,42 @@ class Relais (object):
 
 
 ###############################################################################
+# SaveEnergy ##################################################################
+class SaveEnergy (object):
+    """if LEDs are switched on using the button AND time.hour >= 21:
+       do not switch on all four LED strips
+    """   
+
+    def __init__ (self):
+        self.reset()
+
+    def set (self):
+        self.__active = True
+
+    def reset (self):
+        self.__active = False
+
+    def __call__ (self):
+        return self.__active and (int(strftime("%H")) >= 21 or int(strftime("%H")) <= 4)
+
+
+###############################################################################
 # Control #####################################################################
 class Control (threading.Thread):
-    def __init__ (self, channel):
+    def __init__ (self, channel, powersaving=False):
         threading.Thread.__init__(self)
         self.leds = LED_Strip(channel)
+        self.__powersaving = powersaving
         self._running = True
 
     def run (self):
         while self._running:
             if relais.status_stretchoff(stretchvalue=3) == Switch.ON:
-                self.leds.on()
+                if save_energy():
+                    if not self.__powersaving:
+                        self.leds.on()
+                else:        
+                    self.leds.on()
             else:
                 self.leds.off()
             sleep(0.05)
@@ -249,10 +274,13 @@ def API_Relais ():
     Log("Request: relais={}".format(relais_), True)
     # TODO: validate param
 
+    save_energy.reset()
+
     if relais_ == 'on':
         relais.status = Switch.ON
     else:
         relais.status = Switch.OFF
+
     return "OK. Status: {}".format(relais_)
 
 
@@ -260,10 +288,15 @@ def API_Relais ():
 def API_Toggle ():
     triggered_by_button = request.args.get("button", "0") == "1"
     
+    save_energy.reset()
+
     if relais.status == Switch.ON:
         relais.status = Switch.OFF
     else:
         relais.status = Switch.ON
+        if triggered_by_button:
+            save_energy.set()
+
     Log("Request: toggle to {}; triggered by button: {}".format(relais.status, triggered_by_button))
     return "OK. Status: {}".format(relais.status)
 
@@ -291,13 +324,14 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
+    save_energy = SaveEnergy()
     relais = Relais()
     fan = Fan(pin_fan)
     fan.start()
     statistics = Statistics()
     statistics.start()
 
-    controls = [ Control(channel) for channel in range(4) ]
+    controls = [ Control(channel, powersaving=channel!=1) for channel in range(4) ]
     for c in controls:
         c.start()
 
