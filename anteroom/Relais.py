@@ -30,16 +30,13 @@ url = "http://localhost:5000/relais?status={}" # TODO config file
 def SendRelaisStatus (status):
     url_ = url.format(status)
 
-    Log("SendRelaisStatus: {}".format(status))
     try:
         response = urllib.urlopen(url_)
         data = response.read().decode("utf-8")
     except (IOError):
         Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
-        # raise ValueError
     except socket.timeout:
         Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
-        # raise ValueError
 
 
 ###############################################################################

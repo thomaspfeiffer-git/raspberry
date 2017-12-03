@@ -258,11 +258,13 @@ def API_Relais ():
 
 @app.route('/toggle')
 def API_Toggle ():
+    triggered_by_button = request.args.get("button", "0") == "1"
+    
     if relais.status == Switch.ON:
         relais.status = Switch.OFF
     else:
         relais.status = Switch.ON
-    Log("Request: toggle to {}".format(relais.status))
+    Log("Request: toggle to {}; triggered by button: {}".format(relais.status, triggered_by_button))
     return "OK. Status: {}".format(relais.status)
 
 
