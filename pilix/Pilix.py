@@ -308,10 +308,12 @@ class BatteryControl (object):
         self.run()
 
     def run (self):
+        Log("Battery control: on")
         self.io_write(1)
 
     def stop (self):
         """called on shutdown"""
+        Log("Battery control: off")
         self.io_write(1)
 
 
@@ -441,6 +443,7 @@ def shutdown ():
     display.shutdown_message()
     time.sleep(5)
     display.off()
+    batterycontrol.stop()
     Log("Shutdown now")
     subprocess.run(["sudo", "shutdown", "-h", "now"])
 
@@ -456,6 +459,7 @@ def shutdown_application ():
 ## main #######################################################################
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
+    batterycontrol = BatteryControl()
 
     gps = AGPS3mechanism()
     gps.stream_data() 
