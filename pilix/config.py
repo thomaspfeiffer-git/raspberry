@@ -23,7 +23,7 @@ class CONFIG:
          BTN_Control = int(cfg['Pilix']['pinBTN_Control'])
 
          BTN_Battery = int(cfg['Pilix']['pinBTN_Battery'])  # input
-         BatteryControl = int(cfg(['Pilix']['pinBatteryControl']) # output
+         BatteryControl = int(cfg['Pilix']['pinBatteryControl']) # output
 
     class Camera:
          Intervall = int(cfg['Camera']['Intervall'])

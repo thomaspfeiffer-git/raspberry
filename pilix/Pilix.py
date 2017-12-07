@@ -307,6 +307,9 @@ class BatteryControl (object):
         io.setup(self.__pin, io.OUT)
         self.run()
 
+    def io_write (self, status):   # TODO: mixin
+        io.output(self.__pin, status)
+
     def run (self):
         Log("Battery control: on")
         self.io_write(1)
