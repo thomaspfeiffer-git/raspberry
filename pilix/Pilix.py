@@ -298,6 +298,24 @@ class Display (object):
 
 
 ###############################################################################
+# BatteryControl ##############################################################
+class BatteryControl (object):
+    def __init__ (self, pin=CONFIG.PIN.BatteryControl):
+        self.__pin = pin
+        io.setwarnings(False)
+        io.setmode(io.BOARD)
+        io.setup(self.__pin, io.OUT)
+        self.run()
+
+    def run (self):
+        self.io_write(1)
+
+    def stop (self):
+        """called on shutdown"""
+        self.io_write(1)
+
+
+###############################################################################
 # CSV #########################################################################
 class CSV (object):
     fieldnames = [V_Time, V_TemperatureBox, V_TemperatureOutside, 
