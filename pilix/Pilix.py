@@ -12,6 +12,21 @@
 # nohup ./Pilix.py > ./Logs/pilix.log 2>&1 &
 
 
+### needful things ###
+# --- battery control:
+#     https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=178015 
+#
+#     /boot/config.txt 
+#     dtoverlay=gpio-poweroff,active_low,gpiopin=17
+#
+# --- autostart
+#     /etc/rc.local
+#     echo ds3231 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+#     sudo hwclock -s
+#     ( sleep 60 ; cd /home/pi/raspberry/pilix ; make autostart=autostart ) &
+
+
+
 # TODO
 # - Sensor DS18B20
 
@@ -298,29 +313,6 @@ class Display (object):
 
 
 ###############################################################################
-# BatteryControl ##############################################################
-class BatteryControl (object):
-    def __init__ (self, pin=CONFIG.PIN.BatteryControl):
-        self.__pin = pin
-        io.setwarnings(False)
-        io.setmode(io.BOARD)
-        io.setup(self.__pin, io.OUT)
-        self.run()
-
-    def io_write (self, status):   # TODO: mixin
-        io.output(self.__pin, status)
-
-    def run (self):
-        Log("Battery control: on")
-        self.io_write(1)
-
-    def stop (self):
-        """called on shutdown"""
-        Log("Battery control: off")
-        self.io_write(1)
-
-
-###############################################################################
 # CSV #########################################################################
 class CSV (object):
     fieldnames = [V_Time, V_TemperatureBox, V_TemperatureOutside, 
@@ -446,7 +438,6 @@ def shutdown ():
     display.shutdown_message()
     time.sleep(5)
     display.off()
-    batterycontrol.stop()
     Log("Shutdown now")
     subprocess.run(["sudo", "shutdown", "-h", "now"])
 
@@ -462,7 +453,6 @@ def shutdown_application ():
 ## main #######################################################################
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
-    batterycontrol = BatteryControl()
 
     gps = AGPS3mechanism()
     gps.stream_data() 
