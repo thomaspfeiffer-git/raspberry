@@ -27,6 +27,8 @@ import time
 sys.path.append("../libs/")
 from Logging import Log
 
+from CSV_Fieldnames import *
+
 
 # TODO: Config file! ##
 secret  = "Nichts ist einfacher, als sich schwierig auszudrücken, und nichts ist schwieriger, als sich einfach auszudrücken."
@@ -66,12 +68,11 @@ class Sender (threading.Thread):
     def run (self):
         while self._running:
             if self.data:
-                lon = self.data['GPS Longitude']  # TODO: Use constants
-                lat = self.data['GPS Latitude']
-                alt = self.data['GPS Altitude']
-                voltage = self.data['Voltage']
-                timestamp = self.data['GPS Time']
-                payload = "{},{},{},{},{}".format(timestamp,lon,lat,alt,voltage)
+                payload = "{},{},{},{},{}".format(self.data[V_GPS_Time],
+                                                  self.data[V_GPS_Lon],
+                                                  self.data[V_GPS_Lat],
+                                                  self.data[V_GPS_Alt],
+                                                  self.data[V_Voltage])
 
                 datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
                 # TODO: exception handling
