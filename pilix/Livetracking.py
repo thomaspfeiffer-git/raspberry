@@ -41,6 +41,7 @@ secret  = "Nichts ist einfacher, als sich schwierig auszudrücken, und nichts is
 UDP_IP_ADDRESS_SERVER = socket.gethostbyname("schild.smtp.at")
 print("IP: {}".format(UDP_IP_ADDRESS_SERVER))
 UDP_PORT = 20518
+MAX_PACKET_SIZE = 128
 
 
 ###############################################################################
@@ -78,13 +79,10 @@ class Sender (threading.Thread):
             t   = time.strftime("%Y%m%d%H%M%S")
             payload = "{},{},{},{},{}".format(t,lon,lat,z,v)
 
-            datagram = "{},{}".format(payload,self.digest(payload))
-            global_datagram = datagram
-            datagram = datagram.encode('utf-8')
-            print(datagram)
+            datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
             # TODO: exception handling
             sent = self.socket.sendto(datagram, (UDP_IP_ADDRESS_SERVER, UDP_PORT))
-            print("No of sent bytes: {}".format(sent))
+            Log("sent bytes: {}; data: {}".format(sent,datagram))
 
             for _ in range(50):
                 if self._running:
@@ -100,24 +98,19 @@ class Receiver (object):
     def __init__ (self):
         self.digest = Digest(secret)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # self.socket.bind((self.socket.gethostname(), UDP_PORT))
         self.socket.bind((UDP_IP_ADDRESS_SERVER, UDP_PORT))
         self._running = True
 
     def run (self):
         while self._running:
-            # datagram = # TODO: read from server
-            datagram = self.socket.recv(256)
-            print("datagram: {}".format(datagram))
-            """
+            # TODO: exception handling
+            datagram = self.socket.recv(MAX_PACKET_SIZE).decode('utf-8')
             (payload, digest_received) = datagram.rsplit(',', 1)
             if hmac.compare_digest(digest_received, self.digest(payload)):
                 Log("Received data: {}".format(datagram))
                 # TODO: use payload for whatever ...
             else:
                 Log("Hashes do not match on data: {}".format(datagram))
-            """
-            # time.sleep(5)
 
     def stop (self):
         self._running = False
