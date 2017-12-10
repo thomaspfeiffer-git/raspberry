@@ -37,9 +37,7 @@ from Shutdown import Shutdown
 
 # TODO: Config file! ##
 secret  = "Nichts ist einfacher, als sich schwierig auszudrücken, und nichts ist schwieriger, als sich einfach auszudrücken."
-# UDP_IP_ADDRESS_SERVER = "10.14.1.1" # schild.smtp.at
-UDP_IP_ADDRESS_SERVER = socket.gethostbyname("schild.smtp.at")
-print("IP: {}".format(UDP_IP_ADDRESS_SERVER))
+IP_ADDRESS_SERVER = "213.143.107.230"
 UDP_PORT = 20518
 MAX_PACKET_SIZE = 128
 
@@ -80,7 +78,7 @@ class Sender (threading.Thread):
 
             datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
             # TODO: exception handling
-            sent = self.socket.sendto(datagram, (UDP_IP_ADDRESS_SERVER, UDP_PORT))
+            sent = self.socket.sendto(datagram, (IP_ADDRESS_SERVER, UDP_PORT))
             Log("sent bytes: {}; data: {}".format(sent,datagram))
 
             for _ in range(50):
@@ -97,7 +95,7 @@ class Receiver (object):
     def __init__ (self):
         self.digest = Digest(secret)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((UDP_IP_ADDRESS_SERVER, UDP_PORT))
+        self.socket.bind((IP_ADDRESS_SERVER, UDP_PORT))
         self._running = True
 
     def run (self):
