@@ -37,8 +37,9 @@ from Shutdown import Shutdown
 
 # TODO: Config file! ##
 secret  = "Nichts ist einfacher, als sich schwierig auszudrücken, und nichts ist schwieriger, als sich einfach auszudrücken."
-UDP_IP_ADDRESS_SERVER = "127.0.0.1" # schild.smtp.at
-UDP_IP_ADDRESS_SERVER_LOCAL = "127.0.0.1"
+# UDP_IP_ADDRESS_SERVER = "10.14.1.1" # schild.smtp.at
+UDP_IP_ADDRESS_SERVER = socket.gethostbyname("schild.smtp.at")
+print("IP: {}".format(UDP_IP_ADDRESS_SERVER))
 UDP_PORT = 20518
 
 
@@ -73,14 +74,17 @@ class Sender (threading.Thread):
             lon = 47.1112208 # TODO: use self.gpsdata
             lat = 12.2232443
             z   = 471.2
+            v   = 7.12
             t   = time.strftime("%Y%m%d%H%M%S")
-            payload = "{},{},{},{}".format(t,lon,lat,z)
+            payload = "{},{},{},{},{}".format(t,lon,lat,z,v)
 
             datagram = "{},{}".format(payload,self.digest(payload))
             global_datagram = datagram
+            datagram = datagram.encode('utf-8')
             print(datagram)
             # TODO: exception handling
-            self.socket.sendto(datagram, (UDP_IP_ADDRESS_SERVER, UDP_PORT))
+            sent = self.socket.sendto(datagram, (UDP_IP_ADDRESS_SERVER, UDP_PORT))
+            print("No of sent bytes: {}".format(sent))
 
             for _ in range(50):
                 if self._running:
@@ -95,20 +99,25 @@ class Sender (threading.Thread):
 class Receiver (object):
     def __init__ (self):
         self.digest = Digest(secret)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # self.socket.bind((self.socket.gethostname(), UDP_PORT))
+        self.socket.bind((UDP_IP_ADDRESS_SERVER, UDP_PORT))
         self._running = True
 
     def run (self):
         while self._running:
             # datagram = # TODO: read from server
-            datagram = global_datagram
+            datagram = self.socket.recv(256)
+            print("datagram: {}".format(datagram))
+            """
             (payload, digest_received) = datagram.rsplit(',', 1)
             if hmac.compare_digest(digest_received, self.digest(payload)):
                 Log("Received data: {}".format(datagram))
                 # TODO: use payload for whatever ...
             else:
                 Log("Hashes do not match on data: {}".format(datagram))
-
-            time.sleep(5)
+            """
+            # time.sleep(5)
 
     def stop (self):
         self._running = False
@@ -123,8 +132,8 @@ if __name__ == "__main__":
     s = Sender(None)
     s.start()
 
-    r = Receiver()
-    r.run()
+#    r = Receiver()
+#    r.run()
 
 
 # eof #
