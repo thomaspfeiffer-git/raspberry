@@ -51,28 +51,32 @@ class Digest (object):
 ###############################################################################
 # Sender ######################################################################
 class Sender (threading.Thread):
-    """sends some GPS data (lon, lat, height, timestamp 
+    """sends some GPS data (lon, lat, alt, timestamp 
        to a server using UDP"""
-    def __init__ (self, gpsdata):
+    def __init__ (self):
         threading.Thread.__init__(self)
         self.digest = Digest(secret)
-        self.gpsdata = gpsdata
+        self.data = None
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._running = True
 
+    def setdata (self, data):
+        self.data = data
+
     def run (self):
         while self._running:
-            lon = 47.1112208 # TODO: use self.gpsdata
-            lat = 12.2232443
-            z   = 471.2
-            v   = 7.12
-            t   = time.strftime("%Y%m%d%H%M%S")
-            payload = "{},{},{},{},{}".format(t,lon,lat,z,v)
+            if self.data:
+                lon = self.data['GPS Longitude']  # TODO: Use constants
+                lat = self.data['GPS Latitude']
+                alt = self.data['GPS Altitude']
+                voltage = self.data['Voltage']
+                timestamp = self.data['GPS Time']
+                payload = "{},{},{},{},{}".format(timestamp,lon,lat,alt,voltage)
 
-            datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
-            # TODO: exception handling
-            sent = self.socket.sendto(datagram, (IP_ADDRESS_SERVER, UDP_PORT))
-            Log("sent bytes: {}; data: {}".format(sent,datagram))
+                datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
+                # TODO: exception handling
+                sent = self.socket.sendto(datagram, (IP_ADDRESS_SERVER, UDP_PORT))
+                Log("sent bytes: {}; data: {}".format(sent,datagram))
 
             for _ in range(50):
                 if self._running:

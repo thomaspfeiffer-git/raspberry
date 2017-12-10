@@ -92,6 +92,7 @@ from sensors.BMP180 import BMP180
 from sensors.PCF8591 import PCF8591
 
 from config import CONFIG
+import Livetracking
 
 
 V_TemperatureBox     = "Temperature in box"
@@ -379,6 +380,7 @@ class Control (threading.Thread):
 
             display.print(self.data)
             self.csv.write(self.data)
+            livetracking.setdata(self.data)
 
             self.monitor_battery()
 
@@ -428,6 +430,8 @@ def stop_threads ():
     """stops all threads"""
     camera.stop()
     camera.join()
+    livetracking.stop()
+    livetracking.join()
     control.stop()
     control.join()
 
@@ -459,6 +463,9 @@ if __name__ == "__main__":
     gps.run_thread() 
 
     display = Display()
+
+    livetracking = Livetracking.Sender()
+    livetracking.start()
 
     control = Control()
     control.start()
