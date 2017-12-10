@@ -7,7 +7,7 @@
 """
 ...
 
-This library can be used standalone as a receiver and importetd to
+This library can be used standalone as a receiver and imported into
 another python program as a sender.
 """
 
@@ -25,6 +25,7 @@ another python program as a sender.
 import base64
 import hashlib
 import hmac
+import socket
 import sys
 import threading
 import time
@@ -36,6 +37,9 @@ from Shutdown import Shutdown
 
 # TODO: Config file! ##
 secret  = "Nichts ist einfacher, als sich schwierig auszudrücken, und nichts ist schwieriger, als sich einfach auszudrücken."
+UDP_IP_ADDRESS_SERVER = "127.0.0.1" # schild.smtp.at
+UDP_IP_ADDRESS_SERVER_LOCAL = "127.0.0.1"
+UDP_PORT = 20518
 
 
 ###############################################################################
@@ -60,6 +64,7 @@ class Sender (threading.Thread):
         threading.Thread.__init__(self)
         self.digest = Digest(secret)
         self.gpsdata = gpsdata
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._running = True
 
     def run (self):
@@ -74,6 +79,8 @@ class Sender (threading.Thread):
             datagram = "{},{}".format(payload,self.digest(payload))
             global_datagram = datagram
             print(datagram)
+            # TODO: exception handling
+            self.socket.sendto(datagram, (UDP_IP_ADDRESS_SERVER, UDP_PORT))
 
             for _ in range(50):
                 if self._running:
