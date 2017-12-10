@@ -7,19 +7,13 @@
 """
 ...
 
-This library can be used standalone as a receiver/server and imported into
+This lib can be used standalone as a receiver/server and imported into
 another python program as a sender/client.
 """
 
 
 ### usage ###
-
-
-### needful things ###
-
-
-### Packages you might need to install ###
-
+# nohup ./Livetracking.py >livetracking.log 2>&1 &
 
 
 import base64
@@ -32,7 +26,6 @@ import time
 
 sys.path.append("../libs/")
 from Logging import Log
-from Shutdown import Shutdown
 
 
 # TODO: Config file! ##
@@ -116,15 +109,11 @@ class Receiver (object):
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
-#    shutdown_application = Shutdown(shutdown_func=shutdown_application)
+    # s = Sender(None)
+    # s.start()
 
-
-    s = Sender(None)
-    s.start()
-
-#    r = Receiver()
-#    r.run()
-
+    r = Receiver()
+    r.run()
 
 # eof #
 
