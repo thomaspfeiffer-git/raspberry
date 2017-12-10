@@ -7,8 +7,8 @@
 """
 ...
 
-This library can be used standalone as a receiver and imported into
-another python program as a sender.
+This library can be used standalone as a receiver/server and imported into
+another python program as a sender/client.
 """
 
 
@@ -70,7 +70,6 @@ class Sender (threading.Thread):
         self._running = True
 
     def run (self):
-        global global_datagram
         while self._running:
             lon = 47.1112208 # TODO: use self.gpsdata
             lat = 12.2232443
