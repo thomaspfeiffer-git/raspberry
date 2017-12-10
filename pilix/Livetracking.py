@@ -27,14 +27,8 @@ import time
 sys.path.append("../libs/")
 from Logging import Log
 
+from config import CONFIG
 from csv_fieldnames import *
-
-
-# TODO: Config file! ##
-secret  = "Nichts ist einfacher, als sich schwierig auszudrücken, und nichts ist schwieriger, als sich einfach auszudrücken."
-IP_ADDRESS_SERVER = "213.143.107.230"
-UDP_PORT = 20518
-MAX_PACKET_SIZE = 128
 
 
 ###############################################################################
@@ -57,7 +51,7 @@ class Sender (threading.Thread):
        to a server using UDP"""
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.digest = Digest(secret)
+        self.digest = Digest(CONFIG.Livetracking.SECRET)
         self.data = None
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._running = True
@@ -76,7 +70,9 @@ class Sender (threading.Thread):
 
                 datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
                 # TODO: exception handling
-                sent = self.socket.sendto(datagram, (IP_ADDRESS_SERVER, UDP_PORT))
+                sent = self.socket.sendto(datagram, 
+                                          (CONFIG.Livetracking.IP_ADDRESS_SERVER,
+                                           CONFIG.Livetracking.UDP_PORT))
                 Log("sent bytes: {}; data: {}".format(sent,datagram))
 
             for _ in range(50):
@@ -91,15 +87,16 @@ class Sender (threading.Thread):
 # Receiver ####################################################################
 class Receiver (object):
     def __init__ (self):
-        self.digest = Digest(secret)
+        self.digest = Digest(CONFIG.Livetracking.SECRET)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((IP_ADDRESS_SERVER, UDP_PORT))
+        self.socket.bind((CONFIG.Livetracking.IP_ADDRESS_SERVER, 
+                          CONFIG.Livetracking.UDP_PORT))
         self._running = True
 
     def run (self):
         while self._running:
             # TODO: exception handling
-            datagram = self.socket.recv(MAX_PACKET_SIZE).decode('utf-8')
+            datagram = self.socket.recv(CONFIG.Livetracking.MAX_PACKET_SIZE).decode('utf-8')
             (payload, digest_received) = datagram.rsplit(',', 1)
             if hmac.compare_digest(digest_received, self.digest(payload)):
                 Log("Received data: {}".format(datagram))

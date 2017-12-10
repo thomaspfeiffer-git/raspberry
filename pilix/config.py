@@ -9,15 +9,13 @@ import configparser as cfgparser
 import os
 import sys
 
-
 CONFIGFILE = "pilix.ini"    
 cfg = cfgparser.ConfigParser()
 cfg.read(CONFIGFILE)
 
-CREDENTIALS = os.path.expanduser('~') + "/credientials/pilix.cred"
+CREDENTIALS = os.path.expanduser('~') + "/credentials/pilix.cred"
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
-
 
 class CONFIG:
     class PIN:
