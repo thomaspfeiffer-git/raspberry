@@ -27,7 +27,7 @@ import time
 sys.path.append("../libs/")
 from Logging import Log
 
-from CSV_Fieldnames import *
+from csv_fieldnames import *
 
 
 # TODO: Config file! ##

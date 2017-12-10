@@ -92,7 +92,7 @@ from sensors.BMP180 import BMP180
 from sensors.PCF8591 import PCF8591
 
 from config import CONFIG
-from CSV_Fieldnames import *
+from csv_fieldnames import *
 import Livetracking
 
 
