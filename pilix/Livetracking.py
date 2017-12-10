@@ -51,7 +51,7 @@ class Digest (object):
 ###############################################################################
 # Sender ######################################################################
 class Sender (threading.Thread):
-    """sends some GPS data (lon, lat, alt, timestamp 
+    """sends some GPS data (lon, lat, alt, timestamp, voltage)
        to a server using UDP"""
     def __init__ (self):
         threading.Thread.__init__(self)
