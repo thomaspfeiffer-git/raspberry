@@ -69,11 +69,13 @@ class Sender (threading.Thread):
                                                   self.data[V_Voltage])
 
                 datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
-                # TODO: exception handling
-                sent = self.socket.sendto(datagram, 
-                                          (CONFIG.Livetracking.IP_ADDRESS_SERVER,
-                                           CONFIG.Livetracking.UDP_PORT))
-                Log("sent bytes: {}; data: {}".format(sent,datagram))
+                try:
+                    sent = self.socket.sendto(datagram, 
+                                              (CONFIG.Livetracking.IP_ADDRESS_SERVER,
+                                               CONFIG.Livetracking.UDP_PORT))
+                    Log("sent bytes: {}; data: {}".format(sent,datagram))
+                except OSError as exception:
+                    Log("Cannot send data: {}".format(exception))
 
             for _ in range(50):
                 if self._running:
