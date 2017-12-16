@@ -27,10 +27,6 @@
 
 
 
-# TODO
-# - Sensor DS18B20
-
-
 ### Packages you might need to install ###
 #
 # --- GPS ---
@@ -109,7 +105,7 @@ class Switch (Enum):
 ###############################################################################
 # Sensors #####################################################################
 class Sensors (object):
-    v_ref = 8.14
+    v_ref = 8.77
 
     def __init__ (self):
         self.cpu = CPU()
@@ -341,7 +337,7 @@ class Control (threading.Thread):
 
     def monitor_battery (self):
         if self.running_on_battery:
-            if self.data[V_Voltage] < 5.9:
+            if self.data[V_Voltage] < 6.0:
                 Log("Battery low. Shutting down.")
                 # A thread cannot be stopped/joined by itself.
                 # Therefore shutdown is called in a new thread.
