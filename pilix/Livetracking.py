@@ -74,8 +74,8 @@ class Sender (threading.Thread):
                                               (CONFIG.Livetracking.IP_ADDRESS_SERVER,
                                                CONFIG.Livetracking.UDP_PORT))
                     Log("sent bytes: {}; data: {}".format(sent,datagram))
-                except OSError as exception:
-                    Log("Cannot send data: {}".format(exception))
+                except:
+                    Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
 
             for _ in range(50):
                 if self._running:
