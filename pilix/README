@@ -70,15 +70,14 @@ List of components
 - Push buttons (for switching camera on/off)
 - Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3
   https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi/setting-everything-up
-- USB to TTL converter
+- USB to TTL converter (used for GPS and GSM modules)
   https://de.aliexpress.com/item/CJMCU-CP2102-MICRO-USB-to-UART-TTL-Module-6Pin-Serial-Converter-UART-STC-Replace-FT232-NEW/32587986095.html
 - Active GPS antenna with uFL connector (if SMA, an adapter uFL - SMA is needed)
 - Battery box for six AA akkus
 - Mini360 DC-DC Buck Converter Step Down Module 
 - GSM Module
-  . https://www.adafruit.com/product/1946
-    https://learn.adafruit.com/fona-tethering-to-raspberry-pi-or-beaglebone-black
   . https://www.aliexpress.com/item/SIM800L-Quad-band-Network-Mini-GPRS-GSM-Breakout-Module/32431547125.html
+  . https://learn.adafruit.com/fona-tethering-to-raspberry-pi-or-beaglebone-black
   . https://www.rhydolabz.com/wiki/?p=16325
 
 
@@ -88,8 +87,6 @@ Misc
 - Monitoring battery
   https://www.elektronik-kompendium.de/sites/praxis/bausatz_spannungswaechter.htm
   https://www.akkuline.de/test/panasonic-eneloop-aa-test.aspx?id=16
-
-
 
 # eof #
 
