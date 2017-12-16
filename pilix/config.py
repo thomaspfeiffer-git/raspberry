@@ -13,7 +13,7 @@ CONFIGFILE = "pilix.ini"
 cfg = cfgparser.ConfigParser()
 cfg.read(CONFIGFILE)
 
-CREDENTIALS = os.path.expanduser('~') + "/credentials/pilix.cred"
+CREDENTIALS = "/home/pi/credentials/pilix.cred"
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
 
