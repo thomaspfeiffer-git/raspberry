@@ -23,15 +23,11 @@
 #     /etc/rc.local
 #     echo ds3231 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
 #     sudo hwclock -s
-#     ( sleep 60 ; cd /home/pi/raspberry/pilix ; make autostart=autostart ) &
-
+#     cd /home/pi/rasperry/pilix ; ./autostart.sh
 
 
 # TODO:
 # Environment Sensor (BME680, CCS811)
-# Livertracking-Intervall:
-#    if OnBattery: 30 s (maybe even 60 s)
-#    else: 5 s
 
 
 ### Packages you might need to install ###

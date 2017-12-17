@@ -60,8 +60,12 @@ class Sender (threading.Thread):
         self.data = data
 
     def run (self):
+        interval = CONFIG.Livetracking.Interval_OnBattery
         while self._running:
             if self.data:
+                interval = CONFIG.Livetracking.Interval_OnBattery \
+                           if self.data[V_RunningOnBattery] \
+                           else CONFIG.Livetracking.Interval_OnPowersupply
                 payload = "{},{},{},{},{}".format(self.data[V_GPS_Time],
                                                   self.data[V_GPS_Lon],
                                                   self.data[V_GPS_Lat],
@@ -77,7 +81,7 @@ class Sender (threading.Thread):
                 except:
                     Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
 
-            for _ in range(50):
+            for _ in range(interval * 10):
                 if self._running:
                     time.sleep(0.1)
 
