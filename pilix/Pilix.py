@@ -27,6 +27,13 @@
 
 
 
+# TODO:
+# Environment Sensor (BME680, CCS811)
+# Livertracking-Intervall:
+#    if OnBattery: 30 s (maybe even 60 s)
+#    else: 5 s
+
+
 ### Packages you might need to install ###
 #
 # --- GPS ---
