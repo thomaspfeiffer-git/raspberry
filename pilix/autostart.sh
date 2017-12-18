@@ -4,20 +4,14 @@
 # shall be called in /etc/rc.local
 
 
-
-# switchin wifi on (in case it was turned off)
-sudo iwconfig wlan0 txpower auto ; sleep 1 ; sudo iwconfig wlan0 txpower auto
-
-
+# switching wifi off 3 mins after startup (safe battery)
 # starting internet access (GSM/GPRS using SIM800L)
-sudo pon fona
+(sleep 60 ; sudo ifconfig wlan0 down ; sleep 10 ; sudo pon fona ) &
 
 # starting all pilix stuff
-( sleep 60 ; cd /home/pi/raspberry/pilix ; make autostart=autostart ) &
+( sleep 120 ; cd /home/pi/raspberry/pilix ; make autostart=autostart ) &
 
 
-# switching wifi off 3 mins after startup (safe battery)
-(sleep 180 ; sudo iwconfig wlan0 txpower off ) &
 
 
 
