@@ -36,18 +36,24 @@ http://www.emmakites.com/
 Communication & Radio Transmitter
 ---------------------------------
 
-- https://www.aliexpress.com/item/2016-High-Quality-A8-Mini-GPS-Tracker-Car-Gps-Tracker-GSM-LBS-Tracker-Global-Time-Tracking/32763391088.html
-- http://www.radiometrix.com/conten/mtx2
-- https://www.amazon.de/AZDelivery-NEO-6M-GPS-baugleich-u-blox/dp/B01N38EMBF
-- https://store.uputronics.com/index.php?route=product/product&product_id=52
-
-- http://hab.uggy.org/index.php?article11/ntx2-transmitter
-- http://projects-raspberry.com/raspberry-pi-java-ntx2-radio-transmitter/
-- https://www.raspberrypi.org/forums/viewtopic.php?p=407858
-
 - http://www.kh-gps.de/lora.htm
-
 - https://ukhas.org.uk/guides:payload_antenna
+
+- RFM96W-Radio-Transceiver
+  http://www.hoperf.com/upload/rf/RFM95_96_97_98W.pdf
+  https://www.amazon.de/Adafruit-RFM96W-Radio-Transceiver-Breakout/dp/B01EQ8GHAS/
+  https://learn.adafruit.com/adafruit-rfm69hcw-and-rfm96-rfm95-rfm98-lora-packet-padio-breakouts/overview
+
+- https://github.com/ladecadence/pyRF95
+- https://github.com/mayeranalytics/pySX127x
+
+
+GPS
+---
+
+- https://www.amazon.de/AZDelivery-NEO-6M-GPS-baugleich-u-blox/dp/B01N38EMBF
+- https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi/setting-everything-up
+  (Att: only up to 16.000 m!)
 
 
 Useful Links
