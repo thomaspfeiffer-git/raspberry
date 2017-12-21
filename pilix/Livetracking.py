@@ -95,7 +95,7 @@ class Sender (threading.Thread):
 # Database ####################################################################
 class Database (object):
     """
-CREATE USER 'pilix'@'localhost' IDENTIFIED BY 'UF5zz3sVVakq_a';
+CREATE USER 'pilix'@'localhost' IDENTIFIED BY 'password';
 CREATE DATABASE pilix;
 GRANT ALL PRIVILEGES ON pilix.* to 'pilix'@'localhost';
 FLUSH PRIVILEGES;
@@ -116,8 +116,8 @@ CREATE TABLE telemetry (
 
     def __init__ (self):
         self.connection = mc.connect(host="localhost",
-                                     user="pilix",
-                                     passwd="UF5zz3sVVakq_a",
+                                     user=CONFIG.Livetracking.SQL_USER,
+                                     passwd=CONFIG.Livetracking.SQL_PASSWORD,
                                      db="pilix")
         self.cursor = self.connection.cursor()
 
@@ -141,15 +141,22 @@ class Receiver (object):
         self._running = True
 
     def store (self, source, data):
-        (timestamp, lon, lat, alt, voltage) = data.split(',')
+        def int_ (string):
+            try:
+                i = int(string)
+            except:
+                i = -8888.8
+            return i    
 
-        lon = lat = alt = -99999.99
+        (timestamp, lon, lat, alt, voltage) = data.split(',')
+        lon = int_(lon)
+        lat = int_(lat)
+        alt = int_(alt)
 
         sql = """INSERT INTO telemetry (timestamp, source, lon, lat, alt, voltage)
                  VALUES ('{timestamp}', '{source}', {lon}, {lat}, {alt}, {voltage});"""
         sql = sql.format(timestamp=timestamp, source=source, lon=lon, lat=lat,
                          alt=alt, voltage=voltage)
-        print("SQL: {}".format(sql))
         db.execute(sql)
 
     def run (self):
