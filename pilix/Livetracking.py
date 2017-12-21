@@ -161,14 +161,17 @@ class Receiver (object):
 
     def run (self):
         while self._running:
-            # TODO: exception handling
-            datagram = self.socket.recv(CONFIG.Livetracking.MAX_PACKET_SIZE).decode('utf-8')
-            (payload, digest_received) = datagram.rsplit(',', 1)
-            if hmac.compare_digest(digest_received, self.digest(payload)):
-                Log("Received data: {}".format(datagram))
-                self.store(source='gsm', data=payload)
-            else:
-                Log("Hashes do not match on data: {}".format(datagram))
+            try:
+                datagram = self.socket.recv(CONFIG.Livetracking.MAX_PACKET_SIZE).decode('utf-8')
+            except KeyboardInterrupt:
+                self._running = False
+            else:    
+                (payload, digest_received) = datagram.rsplit(',', 1)
+                if hmac.compare_digest(digest_received, self.digest(payload)):
+                    Log("Received data: {}".format(datagram))
+                    self.store(source='gsm', data=payload)
+                else:
+                    Log("Hashes do not match on data: {}".format(datagram))
 
         db.close()        
 
@@ -176,16 +179,22 @@ class Receiver (object):
         self._running = False
 
 
-# TODO
-# signal handling shutdown application
-# close database on shutdown
-
-
+###############################################################################
+# shutdown ####################################################################
+def shutdown_application ():
+    """cleanup stuff"""
+    Log("Stopping application")
+    db.close() 
+    Log("Application stopped")
+    sys.exit(0)
 
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
     import mysql.connector as mc
+    from Shutdown import Shutdown
+    shutdown_application = Shutdown(shutdown_func=shutdown_application)
+
     db = Database()
     r = Receiver()
     r.run()
