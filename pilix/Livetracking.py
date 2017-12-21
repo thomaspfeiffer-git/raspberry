@@ -89,6 +89,47 @@ class Sender (threading.Thread):
         self._running = False
 
 
+
+
+###############################################################################
+# Database ####################################################################
+class Database (object):
+    """
+CREATE USER 'pilix'@'localhost' IDENTIFIED BY 'UF5zz3sVVakq_a';
+CREATE DATABASE pilix;
+GRANT ALL PRIVILEGES ON pilix.* to 'pilix'@'localhost';
+FLUSH PRIVILEGES;
+
+USE pilix;
+CREATE TABLE telemetry (
+    id BIGINT(20) PRIMARY KEY NOT NULL auto_increment,
+    ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    timestamp VARCHAR(32) NOT NULL,
+    source SET('gsm', 'lora'),
+    lon FLOAT,
+    lat FLOAT,
+    alt FLOAT,
+    voltage FLOAT,
+    KEY timestamp (timestamp)
+); 
+    """
+
+    def __init__ (self):
+        self.connection = mc.connect(host="localhost",
+                                     user="pilix",
+                                     passwd="UF5zz3sVVakq_a",
+                                     db="pilix")
+        self.cursor = self.connection.cursor()
+
+    def execute (self, sql_command):
+        self.cursor.execute(sql_command)
+        self.connection.commit()
+
+    def close (self):
+        self.cursor.close()
+        self.connection.close()
+
+
 ###############################################################################
 # Receiver ####################################################################
 class Receiver (object):
@@ -99,6 +140,18 @@ class Receiver (object):
                           CONFIG.Livetracking.UDP_PORT))
         self._running = True
 
+    def store (self, source, data):
+        (timestamp, lon, lat, alt, voltage) = data.split(',')
+
+        lon = lat = alt = -99999.99
+
+        sql = """INSERT INTO telemetry (timestamp, source, lon, lat, alt, voltage)
+                 VALUES ('{timestamp}', '{source}', {lon}, {lat}, {alt}, {voltage});"""
+        sql = sql.format(timestamp=timestamp, source=source, lon=lon, lat=lat,
+                         alt=alt, voltage=voltage)
+        print("SQL: {}".format(sql))
+        db.execute(sql)
+
     def run (self):
         while self._running:
             # TODO: exception handling
@@ -106,20 +159,27 @@ class Receiver (object):
             (payload, digest_received) = datagram.rsplit(',', 1)
             if hmac.compare_digest(digest_received, self.digest(payload)):
                 Log("Received data: {}".format(datagram))
-                # TODO: use payload for whatever ...
+                self.store(source='gsm', data=payload)
             else:
                 Log("Hashes do not match on data: {}".format(datagram))
+
+        db.close()        
 
     def stop (self):
         self._running = False
 
 
+# TODO
+# signal handling shutdown application
+# close database on shutdown
+
+
+
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
-    # s = Sender(None)
-    # s.start()
-
+    import mysql.connector as mc
+    db = Database()
     r = Receiver()
     r.run()
 
