@@ -194,7 +194,7 @@ class Camera (threading.Thread):
                 Log("taking picture {}".format(filename))
                 self.camera.annotate_text = \
                       "{} - Alt: {} m".format(time.strftime("%Y%m%d %H%M%S"),
-                                              control.data[V_GPS_Lat])
+                                              control.data[V_GPS_Alt])
                 self.camera.capture(filename, quality=CONFIG.Camera.Quality)
                 self.statusled.off()
 
