@@ -139,17 +139,18 @@ class Receiver (object):
         self._running = True
 
     def store (self, source, data):
-        def int_ (string):
+        def float_ (string):
+            print("int_: string: {}".format(string))
             try:
-                i = int(string)
+                i = float(string)
             except:
                 i = -8888.8
             return i    
 
         (timestamp, lon, lat, alt, voltage) = data.split(',')
-        lon = int_(lon)
-        lat = int_(lat)
-        alt = int_(alt)
+        lon = float_(lon)
+        lat = float_(lat)
+        alt = float_(alt)
 
         sql = """INSERT INTO telemetry (timestamp, source, lon, lat, alt, voltage)
                  VALUES ('{timestamp}', '{source}', {lon}, {lat}, {alt}, {voltage});"""
