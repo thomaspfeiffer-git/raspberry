@@ -54,6 +54,18 @@ GPS
 ---
 
 - Ublox NEO 6M GPS Modul
+
+  Specification:
+  https://www.u-blox.com/sites/default/files/products/documents/u-blox6_ReceiverDescrProtSpec_%28GPS.G6-SW-10018%29_Public.pdf
+    31.10.2 Get/Set Navigation Engine Settings (CFG-NAV5)
+  
+  Set Flight Mode:
+  https://github.com/Korving-F/ublox
+  https://github.com/PiInTheSky/pits/blob/master/tracker/gps.c#L423
+  https://ava.upuaut.net/?p=738
+
+
+
 - https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi/setting-everything-up
   (Att: only up to 16.000 m!)
 
