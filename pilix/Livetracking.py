@@ -140,7 +140,6 @@ class Receiver (object):
 
     def store (self, source, data):
         def float_ (string):
-            print("int_: string: {}".format(string))
             try:
                 i = float(string)
             except:
