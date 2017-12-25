@@ -155,6 +155,7 @@ class Receiver (object):
                  VALUES ('{timestamp}', '{source}', {lon}, {lat}, {alt}, {voltage});"""
         sql = sql.format(timestamp=timestamp, source=source, lon=lon, lat=lat,
                          alt=alt, voltage=voltage)
+        Log("SQL: {}".format(sql))
         db.execute(sql)
 
     def run (self):
