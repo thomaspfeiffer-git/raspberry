@@ -120,8 +120,11 @@ CREATE TABLE telemetry (
         self.cursor = self.connection.cursor()
 
     def execute (self, sql_command):
-        self.cursor.execute(sql_command)
-        self.connection.commit()
+        try:
+            self.cursor.execute(sql_command)
+            self.connection.commit()
+        except:   
+            Log("Cannot execute sql: {0[0]} {0[1]}".format(sys.exc_info()))
 
     def close (self):
         self.cursor.close()
