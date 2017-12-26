@@ -15,10 +15,12 @@ import time
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
+from i2c import I2C
 from BME680_constants import *
 
 
-class BME680(BME680Data):
+
+class BME680(BME680Data, I2C):
     """BOSCH BME680
 
     Gas, pressure, temperature and humidity sensor.
@@ -27,14 +29,11 @@ class BME680(BME680Data):
     :param i2c_device: Optional smbus or compatible instance for facilitating i2c communications.
 
     """
-    def __init__(self, i2c_addr=BME_680_BASEADDR, i2c_device=None):
+    def __init__(self, i2c_addr=BME_680_BASEADDR, lock=None):
         BME680Data.__init__(self)
+        I2C.__init__(self, lock)
 
         self.i2c_addr = i2c_addr
-        self._i2c = i2c_device
-        if self._i2c is None:
-            import smbus
-            self._i2c = smbus.SMBus(1)
 
         self.chip_id = self._get_regs(CHIP_ID_ADDR, 1)
         if self.chip_id != CHIP_ID:
@@ -288,17 +287,19 @@ class BME680(BME680Data):
 
     def _set_regs(self, register, value):
         """Set one or more registers"""
-        if isinstance(value, int):
-            self._i2c.write_byte_data(self.i2c_addr, register, value)
-        else:
-            self._i2c.write_i2c_block_data(self.i2c_addr, register, value)
+        with I2C._lock:
+            if isinstance(value, int):
+                I2C._bus.write_byte_data(self.i2c_addr, register, value)
+            else:
+                I2C._bus.write_i2c_block_data(self.i2c_addr, register, value)
 
     def _get_regs(self, register, length):
         """Get one or more registers"""
-        if length == 1:
-            return self._i2c.read_byte_data(self.i2c_addr, register)
-        else:
-            return self._i2c.read_i2c_block_data(self.i2c_addr, register, length)
+        with I2C._lock:
+            if length == 1:
+                return I2C._bus.read_byte_data(self.i2c_addr, register)
+            else:
+                return I2C._bus.read_i2c_block_data(self.i2c_addr, register, length)
         
     def _calc_temperature(self, temperature_adc):
         var1 = (temperature_adc >> 3) - (self.calibration_data.par_t1 << 1)
