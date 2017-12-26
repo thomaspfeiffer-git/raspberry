@@ -16,6 +16,10 @@ WIFI (Headless):
 sudo mount /dev/sda2 raspi
 raspi/etc/wpa_supplicant/wpa_supplicant.conf
 
+/etc/rc.local:
+sudo iw wlan0 set power_save off
+
+
 
 ######################
 # change SSID and PASSWORD!
