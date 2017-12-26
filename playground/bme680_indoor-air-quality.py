@@ -1,7 +1,12 @@
 #!/usr/bin/python3 -u
 
-import BME680
+
+import sys
 import time
+
+sys.path.append("../libs/")
+from sensors.BME680 import BME680
+from sensors.BME680_constants import *
 
 print("""Estimate indoor air quality
 
@@ -13,17 +18,18 @@ Press Ctrl+C to exit
 
 """)
 
-sensor = BME680.BME680(i2c_addr=BME680.BME_680_SECONDARYADDR)
+# sensor = BME680(i2c_addr=BME680.BME_680_SECONDARYADDR)
+sensor = BME680(i2c_addr=BME_680_SECONDARYADDR)
 
 # These oversampling settings can be tweaked to 
 # change the balance between accuracy and noise in
 # the data.
 
-sensor.set_humidity_oversample(BME680.OS_2X)
-sensor.set_pressure_oversample(BME680.OS_4X)
-sensor.set_temperature_oversample(BME680.OS_8X)
-sensor.set_filter(BME680.FILTER_SIZE_3)
-sensor.set_gas_status(BME680.ENABLE_GAS_MEAS)
+sensor.set_humidity_oversample(OS_2X)
+sensor.set_pressure_oversample(OS_4X)
+sensor.set_temperature_oversample(OS_8X)
+sensor.set_filter(FILTER_SIZE_3)
+sensor.set_gas_status(ENABLE_GAS_MEAS)
 
 sensor.set_gas_heater_temperature(320)
 sensor.set_gas_heater_duration(150)
