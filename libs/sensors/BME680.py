@@ -11,11 +11,14 @@
 
 import math
 import sys
+import threading
 import time
 
 sys.path.append('../libs')
 sys.path.append('../libs/sensors')
 from i2c import I2C
+from Logging import Log
+
 from BME680_constants import *
 
 
@@ -54,8 +57,10 @@ class BME680(BME680Data, I2C):
         self.set_filter(FILTER_SIZE_3)
         self.set_gas_status(ENABLE_GAS_MEAS)
 
+        self.get_sensor_data_lock = threading.Lock()
         self.get_sensor_data()
 
+        self.baselinethread = None
         if self.gas_measurement:
             self._calculate_air_quality_baseline()
 
@@ -65,26 +70,34 @@ class BME680(BME680Data, I2C):
         self.set_gas_heater_duration(150)
         self.select_gas_heater_profile(0)
 
-        start_time = time.time()
-        curr_time = time.time()
-        burn_in_time = 300
-        burn_in_data = []
-
-        # print("Collecting gas resistance burn-in data for 5 mins\n")
-        while curr_time - start_time < burn_in_time:
+        def calculate_baseline ():
+            start_time = time.time()
             curr_time = time.time()
-            if self.get_sensor_data() and self.data.heat_stable:
-                 gas = self.data.gas_resistance
-                 burn_in_data.append(gas)
-                 # print("Gas: {0} Ohms".format(gas))
-                 time.sleep(1)
+            burn_in_time = 300
+            burn_in_data = []
 
-        self.data.gas_baseline = sum(burn_in_data[-50:]) / 50.0
-        # print("self.data.gas_baseline: {}".format(self.data.gas_baseline))
+            Log("BME680: Calculating gas baseline for 5 mins")
+            while curr_time - start_time < burn_in_time:
+                curr_time = time.time()
+                if self.get_sensor_data() and self.data.heat_stable:
+                    gas = self.data.gas_resistance
+                    burn_in_data.append(gas)
+                    time.sleep(1)
+
+            self.data.gas_baseline = sum(burn_in_data[-50:]) / 50.0
+            Log("BME680: Gas baseline calculated: {}".format(self.data.gas_baseline))
+          
+        self.baselinethread = threading.Thread(target=calculate_baseline)  
+        self.baselinethread.start()
+
 
     def _calculate_air_quality (self):
         if self.data.gas_baseline is None:
             return None
+        else:
+            if self.baselinethread is not None:
+                self.baselinethread.join()
+                self.baselinethread = None
 
         hum_baseline = 40.0
         hum_weighting = 0.25
@@ -281,7 +294,7 @@ class BME680(BME680Data, I2C):
     def set_power_mode(self, value, blocking=True):
         """Set power mode"""
         if value not in (SLEEP_MODE, FORCED_MODE):
-            print("Power mode should be one of SLEEP_MODE or FORCED_MODE")
+            Log("BME680 Error: Power mode should be one of SLEEP_MODE or FORCED_MODE")
 
         self.power_mode = value
 
@@ -301,46 +314,46 @@ class BME680(BME680Data, I2C):
         Stores data in .data and returns True upon success.
 
         """
-        self.set_power_mode(FORCED_MODE)
+        with self.get_sensor_data_lock:
+            self.set_power_mode(FORCED_MODE)
 
-        for attempt in range(10):
-            status = self._get_regs(FIELD0_ADDR, 1)
+            for attempt in range(10):
+                status = self._get_regs(FIELD0_ADDR, 1)
 
-            if (status & NEW_DATA_MSK) == 0:
-                time.sleep(POLL_PERIOD_MS / 1000.0)
-                continue
+                if (status & NEW_DATA_MSK) == 0:
+                    time.sleep(POLL_PERIOD_MS / 1000.0)
+                    continue
 
-            regs = self._get_regs(FIELD0_ADDR, FIELD_LENGTH)
+                regs = self._get_regs(FIELD0_ADDR, FIELD_LENGTH)
+    
+                self.data.status = regs[0] & NEW_DATA_MSK
+                # Contains the nb_profile used to obtain the current measurement
+                self.data.gas_index = regs[0] & GAS_INDEX_MSK
+                self.data.meas_index = regs[1]
 
-            self.data.status = regs[0] & NEW_DATA_MSK
-            # Contains the nb_profile used to obtain the current measurement
-            self.data.gas_index = regs[0] & GAS_INDEX_MSK
-            self.data.meas_index = regs[1]
+                adc_pres = (regs[2] << 12) | (regs[3] << 4) | (regs[4] >> 4)
+                adc_temp = (regs[5] << 12) | (regs[6] << 4) | (regs[7] >> 4)
+                adc_hum = (regs[8] << 8) | regs[9]
+                adc_gas_res = (regs[13] << 2) | (regs[14] >> 6)
+                gas_range = regs[14] & GAS_RANGE_MSK
 
-            adc_pres = (regs[2] << 12) | (regs[3] << 4) | (regs[4] >> 4)
-            adc_temp = (regs[5] << 12) | (regs[6] << 4) | (regs[7] >> 4)
-            adc_hum = (regs[8] << 8) | regs[9]
-            adc_gas_res = (regs[13] << 2) | (regs[14] >> 6)
-            gas_range = regs[14] & GAS_RANGE_MSK
+                self.data.status |= regs[14] & GASM_VALID_MSK
+                self.data.status |= regs[14] & HEAT_STAB_MSK
 
-            self.data.status |= regs[14] & GASM_VALID_MSK
-            self.data.status |= regs[14] & HEAT_STAB_MSK
+                self.data.heat_stable = (self.data.status & HEAT_STAB_MSK) > 0
 
-            self.data.heat_stable = (self.data.status & HEAT_STAB_MSK) > 0
+                temperature = self._calc_temperature(adc_temp)
+                self.data.temperature = temperature / 100.0
+                self.ambient_temperature = temperature # Saved for heater calc
 
-            temperature = self._calc_temperature(adc_temp)
-            self.data.temperature = temperature / 100.0
-            self.ambient_temperature = temperature # Saved for heater calc
+                self.data.pressure = self._calc_pressure(adc_pres) / 100.0
+                self.data.humidity = self._calc_humidity(adc_hum) / 1000.0
+                self.data.gas_resistance = self._calc_gas_resistance(adc_gas_res, gas_range)
 
-            self.data.pressure = self._calc_pressure(adc_pres) / 100.0
-            self.data.humidity = self._calc_humidity(adc_hum) / 1000.0
-            self.data.gas_resistance = self._calc_gas_resistance(adc_gas_res, gas_range)
+                self.data.air_quality_score = self._calculate_air_quality()
+                return True
 
-            self.data.air_quality_score = self._calculate_air_quality()
-            # print("self.data.air_quality_score: {}".format(self.data.air_quality_score))
-            return True
-
-        return False
+            return False
 
     def _set_bits(self, register, mask, position, value):
         """Mask out and set one or more bits in a register"""
