@@ -324,6 +324,7 @@ class Control (threading.Thread):
 
         self.data = None
         self.running_on_battery = False
+        self.last_timestamp_voltage_over_limit = time.time()
         self._running = True
 
     def get_gps_data (self):
@@ -340,13 +341,18 @@ class Control (threading.Thread):
 
     def monitor_battery (self):
         if self.running_on_battery:
-            if self.data[V_Voltage] < 6.0:
+            if self.data[V_Voltage] >= 6.0: # Battery under 6 V for more than 60 s.
+                self.last_timestamp_voltage_over_limit = time.time()
+                Log("self.last_timestamp_voltage_over_limit: {}".format(self.last_timestamp_voltage_over_limit))
+            if self.last_timestamp_voltage_over_limit + 60 <= time.time():
                 Log("Battery low. Shutting down.")
                 # A thread cannot be stopped/joined by itself.
                 # Therefore shutdown is called in a new thread.
                 shutdown_thread = threading.Thread(target=shutdown)
                 shutdown_thread.start()
                 Log("Shutdown thread started.")
+        else:
+            self.last_timestamp_voltage_over_limit = time.time()
 
     def reset_watchdog (self):
         if CONFIG.APP.autostart: # watchdog only in autostart mode
