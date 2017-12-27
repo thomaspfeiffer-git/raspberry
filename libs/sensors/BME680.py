@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
-# BME680_constants.py                                                        #
+# BME680.py                                                                  #
 # Constants for BME680                                                       #
 # taken from https://github.com/pimoroni/bme680                              #
 # (c) https://github.com/thomaspfeiffer-git 2017, 2018                       #
@@ -19,6 +19,9 @@ from i2c import I2C
 from BME680_constants import *
 
 
+BME_680_BASEADDR = 0x76
+BME_680_SECONDARYADDR = 0x77
+
 
 class BME680(BME680Data, I2C):
     """BOSCH BME680
@@ -29,15 +32,16 @@ class BME680(BME680Data, I2C):
     :param i2c_device: Optional smbus or compatible instance for facilitating i2c communications.
 
     """
-    def __init__(self, i2c_addr=BME_680_BASEADDR, lock=None):
+    def __init__(self, i2c_addr=BME_680_BASEADDR, gas_measurement=True, lock=None):
         BME680Data.__init__(self)
         I2C.__init__(self, lock)
 
         self.i2c_addr = i2c_addr
+        self.gas_measurement = gas_measurement
 
         self.chip_id = self._get_regs(CHIP_ID_ADDR, 1)
         if self.chip_id != CHIP_ID:
-            raise RuntimeError("BME680 Not Found. Invalid CHIP ID: 0x{0:02x}".format(self.chip_id))
+            raise RuntimeError("BME680 not found. Invalid CHIP ID: 0x{0:02x}".format(self.chip_id))
 
         self.soft_reset()
         self.set_power_mode(SLEEP_MODE)
@@ -51,6 +55,63 @@ class BME680(BME680Data, I2C):
         self.set_gas_status(ENABLE_GAS_MEAS)
 
         self.get_sensor_data()
+
+        if self.gas_measurement:
+            self.calculate_air_quality_baseline()
+
+
+    def calculate_air_quality_baseline (self):
+        self.set_gas_heater_temperature(320)
+        self.set_gas_heater_duration(150)
+        self.select_gas_heater_profile(0)
+
+        start_time = time.time()
+        curr_time = time.time()
+        burn_in_time = 300
+        burn_in_data = []
+
+        # print("Collecting gas resistance burn-in data for 5 mins\n")
+        while curr_time - start_time < burn_in_time:
+            curr_time = time.time()
+            if self.get_sensor_data() and self.data.heat_stable:
+                 gas = self.data.gas_resistance
+                 burn_in_data.append(gas)
+                 # print("Gas: {0} Ohms".format(gas))
+                 time.sleep(1)
+
+        self.data.gas_baseline = sum(burn_in_data[-50:]) / 50.0
+        # print("self.data.gas_baseline: {}".format(self.data.gas_baseline))
+
+    def _calculate_air_quality (self):
+        if self.data.gas_baseline is None:
+            return None
+
+        hum_baseline = 40.0
+        hum_weighting = 0.25
+        if self.data.heat_stable:
+            gas = self.data.gas_resistance
+            gas_offset = self.data.gas_baseline - gas
+
+            hum = self.data.humidity
+            hum_offset = hum - hum_baseline
+
+            if hum_offset > 0:
+                hum_score = (100 - hum_baseline - hum_offset) /  \
+                            (100 - hum_baseline) * (hum_weighting * 100)
+            else:
+                hum_score = (hum_baseline + hum_offset) /        \
+                            hum_baseline * (hum_weighting * 100)
+
+            if gas_offset > 0:
+                gas_score = (gas / self.data.gas_baseline) * \
+                            (100 - (hum_weighting * 100))
+            else:
+                gas_score = 100 - (hum_weighting * 100)
+
+            return hum_score + gas_score
+        else:
+            return None
+
 
     def _get_calibration_data(self):
         """Retrieves the sensor calibration data and stores it in .calibration_data"""
@@ -274,6 +335,9 @@ class BME680(BME680Data, I2C):
             self.data.pressure = self._calc_pressure(adc_pres) / 100.0
             self.data.humidity = self._calc_humidity(adc_hum) / 1000.0
             self.data.gas_resistance = self._calc_gas_resistance(adc_gas_res, gas_range)
+
+            self.data.air_quality_score = self._calculate_air_quality()
+            # print("self.data.air_quality_score: {}".format(self.data.air_quality_score))
             return True
 
         return False

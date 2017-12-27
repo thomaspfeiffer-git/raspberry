@@ -14,8 +14,8 @@
 POLL_PERIOD_MS = 10
 
 # BME680 I2C addresses
-BME_680_BASEADDR = 0x76
-BME_680_SECONDARYADDR = 0x77
+# BME_680_BASEADDR = 0x76
+# BME_680_SECONDARYADDR = 0x77
 
 # BME680 unique chip identifier
 CHIP_ID = 0x61
@@ -265,6 +265,10 @@ class FieldData:
         self.humidity = None
         # Gas resistance in Ohms
         self.gas_resistance = None
+        # Calculated gas baseline
+        self.gas_baseline = None
+        # Air quality score in %
+        self.air_quality_score = None
 
 # Structure to hold the Calibration data
 
