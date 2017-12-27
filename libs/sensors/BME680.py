@@ -57,10 +57,10 @@ class BME680(BME680Data, I2C):
         self.get_sensor_data()
 
         if self.gas_measurement:
-            self.calculate_air_quality_baseline()
+            self._calculate_air_quality_baseline()
 
 
-    def calculate_air_quality_baseline (self):
+    def _calculate_air_quality_baseline (self):
         self.set_gas_heater_temperature(320)
         self.set_gas_heater_duration(150)
         self.select_gas_heater_profile(0)
