@@ -343,7 +343,6 @@ class Control (threading.Thread):
         if self.running_on_battery:
             if self.data[V_Voltage] >= 6.0: # Battery under 6 V for more than 60 s.
                 self.last_timestamp_voltage_over_limit = time.time()
-                Log("self.last_timestamp_voltage_over_limit: {}".format(self.last_timestamp_voltage_over_limit))
             if self.last_timestamp_voltage_over_limit + 60 <= time.time():
                 Log("Battery low. Shutting down.")
                 # A thread cannot be stopped/joined by itself.
