@@ -248,7 +248,8 @@ class RF95:
         self.spi.close()
 
         # set interrupt pin
-        GPIO.setmode(GPIO.BCM)
+        # GPIO.setmode(GPIO.BCM)   # old: BCM
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.int_pin, GPIO.IN)
         GPIO.add_event_detect(self.int_pin, GPIO.RISING, callback=self.handle_interrupt)
         
@@ -483,7 +484,7 @@ class RF95:
 
 # Example, send two strings and (uncomment to) receive and print a reply
 if __name__ == "__main__":
-    rf95 = RF95(0, 25, 22)    # TODO: Check pins (board phys?)
+    rf95 = RF95(0, 31, 32) 
     if not rf95.init():
         print("RF95 not found")
         rf95.cleanup()
@@ -504,6 +505,8 @@ if __name__ == "__main__":
         # Custom predefined mode
     #rf95.set_modem_config(Bw31_25Cr48Sf512)
 
+
+    # Sender ##############################################
     count = 0
     while True:
         payload = "ID: {}; {}".format(count, time.strftime("%H%M%S"))
@@ -514,6 +517,9 @@ if __name__ == "__main__":
         print("Sent!")
         count += 1
         time.sleep(30);
+
+
+    # Receiver ###########################################
 
     # now wait for reply
         #while not rf95.available():
