@@ -501,7 +501,7 @@ if __name__ == "__main__":
 
         # set frequency and power
     rf95.set_frequency(433.5)
-    rf95.set_tx_power(5)         # TODO: increase power
+    rf95.set_tx_power(15)         # TODO: increase power
         # Custom predefined mode
     #rf95.set_modem_config(Bw31_25Cr48Sf512)
 
