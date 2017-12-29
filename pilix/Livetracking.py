@@ -125,6 +125,9 @@ CREATE TABLE telemetry (
             self.connection.commit()
         except:   
             Log("Cannot execute sql: {0[0]} {0[1]}".format(sys.exc_info()))
+            # TODO: reconnect
+            # Cannot execute sql: <class 'mysql.connector.errors.InterfaceError'> 2013: Lost connection to MySQL server during query
+            # Cannot execute sql: <class 'mysql.connector.errors.OperationalError'> 2055: Lost connection to MySQL server at 'localhost:3306', system error: 32 Broken pipe
 
     def close (self):
         self.cursor.close()
