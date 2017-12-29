@@ -1,4 +1,4 @@
-#!/usr/bin/env python3 -u
+#!/usr/bin/python3 -u
 
 # (C) 2016 David Pello Gonzalez for ASHAB
 # Based on code from the RadioHead Library:
