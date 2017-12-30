@@ -276,7 +276,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(Bw31_25Cr48Sf512)
+        self.set_modem_config(Bw125Cr45Sf128)
         self.set_preamble_length(8)
         
         return True
@@ -508,7 +508,7 @@ if __name__ == "__main__":
     # Sender ##############################################
     count = 0
     while True:
-        payload = "ID: {}; {} finster wars".format(count, time.strftime("%H%M%S"))
+        payload = "ID: {}; {} finster war's, der Mond schien helle, als ein Wagen blitzeschnelle langsam um die runde Ecke fuhr.".format(count, time.strftime("%H%M%S"))
 
         print("{}: Sending Data ({})".format(time.strftime("%H%M%S"), payload))
         rf95.send(rf95.str_to_data(payload))

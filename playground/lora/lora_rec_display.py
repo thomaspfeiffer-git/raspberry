@@ -286,7 +286,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(Bw31_25Cr48Sf512)
+        self.set_modem_config(Bw125Cr45Sf128)
         self.set_preamble_length(8)
         
         return True
