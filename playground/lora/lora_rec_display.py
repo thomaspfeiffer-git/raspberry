@@ -286,7 +286,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(Bw125Cr48Sf4096)
+        self.set_modem_config(Bw31_25Cr48Sf512)
         self.set_preamble_length(8)
         
         return True
@@ -300,7 +300,7 @@ class RF95:
         elif self.mode == RADIO_MODE_RX and irq_flags & RX_DONE:
             # packet received
             length = self.spi_read(REG_13_RX_NB_BYTES)
-            # print(length)
+            print("received {} bytes".format(length))
             # Reset the fifo read ptr to the beginning of the packet
             self.spi_write(REG_0D_FIFO_ADDR_PTR, self.spi_read(REG_10_FIFO_RX_CURRENT_ADDR))
             self.buf = self.spi_read_data(REG_00_FIFO, length)
@@ -557,16 +557,14 @@ if __name__ == "__main__":
 
         data = rf95.recv()
         print("RSSI: {}".format(rf95.last_rssi))
-        for i in data:
-            print(chr(i), end="")
-        print()
 
         str = "".join(map(chr, data))
+        print(str)
 
         y += textheight
         draw.text((xpos, y), "RSSI: {}".format(rf95.last_rssi))
         y += textheight
-        draw.text((xpos, y), "{}".format(str))
+        draw.text((xpos, y), "{}".format(str[:18]))
 
         disp.image(image)
         disp.display()
