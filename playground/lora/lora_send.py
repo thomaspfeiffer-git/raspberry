@@ -223,6 +223,12 @@ Bw125Cr48Sf4096 = (0x78,   0xc4,    0x00)
 #   Codingrate: 4 (4/8)
 #   Signalbandwidth: 125
 TP_1 = (0x78, 0xA4, 0x00)
+
+#   Chips/Symbol: 4096
+#   Codingrate: 4 (4/8)
+#   Signalbandwidth: 125
+TP_2 = (0x78, 0xC4, 0x00)
+
 # set_modem_mode
 
 
