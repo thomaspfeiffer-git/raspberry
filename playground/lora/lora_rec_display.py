@@ -254,7 +254,8 @@ class RF95:
     def init(self):
         # open SPI and initialize RF95
         self.spi.open(0,self.cs)
-        self.spi.max_speed_hz = 488000
+        # self.spi.max_speed_hz = 488000
+        self.spi.max_speed_hz = 244000
         self.spi.close()
 
         # set interrupt pin
