@@ -276,6 +276,7 @@ class RF95:
         # set interrupt pin
         # GPIO.setmode(GPIO.BCM)   # old: BCM
         GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
         GPIO.setup(self.int_pin, GPIO.IN)
         GPIO.add_event_detect(self.int_pin, GPIO.RISING, callback=self.handle_interrupt)
         
@@ -301,7 +302,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(TP_3)
+        self.set_modem_config(TP_1)
         self.set_preamble_length(8)
         
         return True
