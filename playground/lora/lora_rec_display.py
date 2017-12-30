@@ -285,7 +285,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(Bw125Cr45Sf128)
+        self.set_modem_config(Bw125Cr48Sf4096)
         self.set_preamble_length(8)
         
         return True
@@ -512,8 +512,6 @@ if __name__ == "__main__":
         # set frequency and power
     rf95.set_frequency(433.5)
     rf95.set_tx_power(5)         # TODO: increase power
-        # Custom predefined mode
-    #rf95.set_modem_config(Bw31_25Cr48Sf512)
 
 
     # Sender ##############################################
