@@ -223,6 +223,19 @@ Bw500Cr45Sf128 = (0x92,   0x74,    0x00)
 Bw31_25Cr48Sf512 = (0x48,   0x94,    0x00)
 Bw125Cr48Sf4096 = (0x78,   0xc4,    0x00)
 
+
+# Bw125Cr45Sf128 : Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on. Default medium range.
+# Bw500Cr45Sf128 : Bw = 500 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on. Fast+short range.
+# Bw31_25Cr48Sf512 : Bw = 31.25 kHz, Cr = 4/8, Sf = 512chips/symbol, CRC on. Slow+long range.
+# Bw125Cr48Sf4096 : Bw = 125 kHz, Cr = 4/8, Sf = 4096chips/symbol, CRC on. Slow+long range.
+
+#   Chips/Symbol: 1024
+#   Codingrate: 4 (4/8)
+#   Signalbandwidth: 125
+TP_1 = (0x78, 0xA4, 0x00)
+# set_modem_mode
+
+
 # SPI
 SPI_WRITE_MASK=0x80
 
@@ -286,7 +299,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(Bw125Cr45Sf128)
+        self.set_modem_config(TP_1)
         self.set_preamble_length(8)
         
         return True
