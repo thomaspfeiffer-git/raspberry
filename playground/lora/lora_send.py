@@ -516,7 +516,7 @@ if __name__ == "__main__":
         rf95.wait_packet_sent()
         print("Sent!")
         count += 1
-        time.sleep(30);
+        time.sleep(15);
 
 
     # Receiver ###########################################

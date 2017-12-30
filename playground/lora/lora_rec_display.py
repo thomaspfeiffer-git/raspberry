@@ -542,7 +542,7 @@ if __name__ == "__main__":
     image = Image.new('1', (width, height))
     draw = ImageDraw.Draw(image)
     font = ImageFont.load_default()
-    textheight = draw.textsize("Text", font=font)
+    (_, textheight) = draw.textsize("Text", font=font)
 
 
     # Receiver ###########################################
@@ -562,10 +562,12 @@ if __name__ == "__main__":
             print(chr(i), end="")
         print()
 
+        str = "".join(map(chr, data))
+
         y += textheight
         draw.text((xpos, y), "RSSI: {}".format(rf95.last_rssi))
         y += textheight
-        draw.text((xpos, y), "Data: {}".format(data))
+        draw.text((xpos, y), "{}".format(str))
 
         disp.image(image)
         disp.display()
