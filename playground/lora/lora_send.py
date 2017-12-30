@@ -509,12 +509,12 @@ if __name__ == "__main__":
     while True:
         payload = "ID: {}; {}".format(count, time.strftime("%H%M%S"))
 
-        print("Sending Data ({})".format(payload))
+        print("{}: Sending Data ({})".format(time.strftime("%H%M%S"), payload))
         rf95.send(rf95.str_to_data(payload))
         rf95.wait_packet_sent()
-        print("Sent!")
+        print("{}: Sent!".format(time.strftime("%H%M%S")))
         count += 1
-        time.sleep(15);
+        time.sleep(30);
 
 
     # Receiver ###########################################
