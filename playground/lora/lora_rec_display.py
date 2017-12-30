@@ -242,7 +242,7 @@ TP_2 = (0x78, 0xC4, 0x00)
 #   Chips/Symbol: 1024
 #   Codingrate: 4 (4/8)
 #   Signalbandwidth: 20.8 kHz
-TP_3 (0x38, 0xA4, 0x00)
+TP_3 = (0x38, 0xA4, 0x00)
 
 # set_modem_mode
 
