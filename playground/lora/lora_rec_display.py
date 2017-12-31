@@ -316,7 +316,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(TP_1)
+        self.set_modem_config(TP_3)
         self.set_preamble_length(8)
         
         return True
@@ -327,6 +327,7 @@ class RF95:
 
         if self.mode == RADIO_MODE_RX and irq_flags & (RX_TIMEOUT | PAYLOAD_CRC_ERROR):
             self.rx_bad = self.rx_bad + 1
+            print("bad packet; irq_flags: {:x}".format(irq_flags))
         elif self.mode == RADIO_MODE_RX and irq_flags & RX_DONE:
             # packet received
             length = self.spi_read(REG_13_RX_NB_BYTES)
@@ -347,9 +348,11 @@ class RF95:
 
 
         elif self.mode == RADIO_MODE_TX and irq_flags & TX_DONE:
+            print("good packet, TX_DONE")
             self.tx_good = self.tx_good + 1
             self.set_mode_idle()
         elif self.mode == RADIO_MODE_CAD and irq_flags & CAD_DONE:
+            print("CAD_DONE")
             self.cad = irq_flags & CAD_DETECTED
             self.set_mode_idle()
     
