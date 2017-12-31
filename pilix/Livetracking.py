@@ -113,11 +113,20 @@ CREATE TABLE telemetry (
     """
 
     def __init__ (self):
+        self.connect()
+
+    def connect (self):
         self.connection = mc.connect(host="localhost",
                                      user=CONFIG.Livetracking.SQL_USER,
                                      passwd=CONFIG.Livetracking.SQL_PASSWORD,
                                      db="pilix")
         self.cursor = self.connection.cursor()
+
+    def reconnect (self):
+        Log("reconnecting")
+        self.close()
+        self.connect()
+        Log("reconnected")
 
     def execute (self, sql_command):
         try:
@@ -125,9 +134,12 @@ CREATE TABLE telemetry (
             self.connection.commit()
         except:   
             Log("Cannot execute sql: {0[0]} {0[1]}".format(sys.exc_info()))
-            # TODO: reconnect
-            # Cannot execute sql: <class 'mysql.connector.errors.InterfaceError'> 2013: Lost connection to MySQL server during query
-            # Cannot execute sql: <class 'mysql.connector.errors.OperationalError'> 2055: Lost connection to MySQL server at 'localhost:3306', system error: 32 Broken pipe
+            self.reconnect()
+            try:
+                self.cursor.execute(sql_command)    # TODO improve code. DRY!
+                self.connection.commit()
+            except:    
+                Log("Cannot re-execute sql: {0[0]} {0[1]}".format(sys.exc_info()))
 
     def close (self):
         self.cursor.close()
