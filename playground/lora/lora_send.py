@@ -239,6 +239,11 @@ TP_3 = (0x38, 0xA4, 0x00)
 #   Signalbandwidth: 125 kHz
 TP_4 = (0x78, 0xB4, 0x00)
 
+#   Chips/Symbol: 2048
+#   Codingrate: 4 (4/8)
+#   Signalbandwidth: 62.5 kHz
+TP_5 = (0x68, 0xB4, 0x00)
+
 # set_modem_mode
 
 
@@ -307,7 +312,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(TP_1)
+        self.set_modem_config(TP_5)
         self.set_preamble_length(8)
         
         return True
