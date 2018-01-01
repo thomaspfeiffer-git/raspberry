@@ -603,7 +603,7 @@ if __name__ == "__main__":
         y += textheight
         draw.text((xpos, y), "RSSI: {}".format(rf95.last_rssi))
         y += textheight
-        draw.text((xpos, y), "{}".format(str[:15]))
+        draw.text((xpos, y), "{}".format(str[:17]))
 
         disp.image(image)
         disp.display()
