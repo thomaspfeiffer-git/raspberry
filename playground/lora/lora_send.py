@@ -219,40 +219,16 @@ Bw125Cr48Sf4096 = (0x78,   0xc4,    0x00)
 # Bw31_25Cr48Sf512 : Bw = 31.25 kHz, Cr = 4/8, Sf = 512chips/symbol, CRC on. Slow+long range.
 # Bw125Cr48Sf4096 : Bw = 125 kHz, Cr = 4/8, Sf = 4096chips/symbol, CRC on. Slow+long range.
 
-#   Chips/Symbol: 1024
-#   Codingrate: 4 (4/8)
-#   Signalbandwidth: 125
-TP_1 = (0x78, 0xA4, 0x00)
 
-#   Chips/Symbol: 4096
-#   Codingrate: 4 (4/8)
-#   Signalbandwidth: 125
-TP_2 = (0x78, 0xC4, 0x00)
-
-#   Chips/Symbol: 1024
+#   Chips/Symbol: 2048
 #   Codingrate: 4 (4/8)
 #   Signalbandwidth: 20.8 kHz
-TP_3 = (0x38, 0xA4, 0x04|0x08)
-
-#   Chips/Symbol: 2048
-#   Codingrate: 4 (4/8)
-#   Signalbandwidth: 125 kHz
-TP_4 = (0x78, 0xB4, 0x00)
-
-#   Chips/Symbol: 2048
-#   Codingrate: 4 (4/8)
-#   Signalbandwidth: 62.5 kHz
-TP_5 = (0x68, 0xB4, 0x00)
+TP_1 = (0x38, 0xB4, 0x04|0x08)
 
 #   Chips/Symbol: 4096
 #   Codingrate: 4 (4/8)
-#   Signalbandwidth: 500 kHz
-TP_6 = (0x98, 0xC4, 0x00)
-
-#   Chips/Symbol: 2048
-#   Codingrate: 4 (4/8)
-#   Signalbandwidth: 500 kHz
-TP_7 = (0x98, 0xB4, 0x00)
+#   Signalbandwidth: 20.8 kHz
+TP_2 = (0x38, 0xC4, 0x04|0x08)
 
 # set_modem_mode
 
@@ -322,7 +298,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(TP_3)
+        self.set_modem_config(TP_2)
         self.set_preamble_length(8)
         
         return True
@@ -567,7 +543,7 @@ if __name__ == "__main__":
         rf95.wait_packet_sent()
         print("{}: Sent!".format(time.strftime("%H%M%S")))
         count += 1
-        time.sleep(120);
+        time.sleep(15);
 
 
     # Receiver ###########################################
