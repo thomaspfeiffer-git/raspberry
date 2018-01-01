@@ -331,7 +331,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(TP_7)
+        self.set_modem_config(TP_6)
         self.set_preamble_length(8)
         
         return True
