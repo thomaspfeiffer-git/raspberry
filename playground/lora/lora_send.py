@@ -567,7 +567,7 @@ if __name__ == "__main__":
         rf95.wait_packet_sent()
         print("{}: Sent!".format(time.strftime("%H%M%S")))
         count += 1
-        time.sleep(15);
+        time.sleep(120);
 
 
     # Receiver ###########################################
