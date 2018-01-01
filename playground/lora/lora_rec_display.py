@@ -139,6 +139,8 @@ LNA_GAIN=0xe0
 LNA_BOOST=0x03
 LNA_BOOST_DEFAULT=0x00
 LNA_BOOST_150PC=0x11
+LNA_BOOST_MAX=0x23  # Added by TP; TODO ---> bring to production
+                    # taken from https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c#L118
 
 # REG_11_IRQ_FLAGS_MASK                      0x11
 RX_TIMEOUT_MASK=0x80
@@ -432,6 +434,7 @@ class RF95:
         self.spi_write(REG_1D_MODEM_CONFIG1, config[0])
         self.spi_write(REG_1E_MODEM_CONFIG2, config[1])
         self.spi_write(REG_26_MODEM_CONFIG3, config[2])
+        self.spi_write(REG_0C_LNA, LNA_BOOST_MAX) # TODO only in receiver mode!
         
     # set custom mode
     def set_modem_config_custom(self, \
