@@ -544,14 +544,20 @@ if __name__ == "__main__":
     # Sender ##############################################
     count = 0
     while True:
-        payload = "ID: {}; {} finster war's, der Mond schien helle, als ein Wagen blitzeschnelle langsam um die runde Ecke fuhr.".format(count, time.strftime("%H%M%S"))
+        payload1 = "ID: {}; {} finster war's, der Mond schien helle, als ein Wagen blitzeschnelle langsam um die runde Ecke fuhr.".format(count, time.strftime("%H%M%S"))
+        payload2 = "ID: {}; {} kurz".format(count, time.strftime("%H%M%S"))
+
+        if count % 2 == 0:
+            payload = payload1
+        else:
+            payload = payload2
 
         print("{}: Sending Data ({})".format(time.strftime("%H%M%S"), payload))
         rf95.send(rf95.str_to_data(payload))
         rf95.wait_packet_sent()
         print("{}: Sent!".format(time.strftime("%H%M%S")))
         count += 1
-        time.sleep(30);
+        time.sleep(15);
 
 
     # Receiver ###########################################
