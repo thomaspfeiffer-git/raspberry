@@ -239,10 +239,10 @@ TP_0 = Bw125Cr45Sf128
 #   Signalbandwidth: 20.8 kHz
 TP_1 = (0x38, 0xB4, 0x04|0x08)
 
-#   Chips/Symbol: 4096
+#   Chips/Symbol: 1024
 #   Codingrate: 4 (4/8)
 #   Signalbandwidth: 20.8 kHz
-TP_2 = (0x38, 0xC4, 0x04|0x08)
+TP_2 = (0x38, 0xA4, 0x04|0x08)
 
 # set_modem_mode
 
@@ -311,7 +311,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(TP_1)
+        self.set_modem_config(TP_2)
         self.set_preamble_length(8)
         
         return True
