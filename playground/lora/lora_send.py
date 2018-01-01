@@ -220,6 +220,9 @@ Bw125Cr48Sf4096 = (0x78,   0xc4,    0x00)
 # Bw125Cr48Sf4096 : Bw = 125 kHz, Cr = 4/8, Sf = 4096chips/symbol, CRC on. Slow+long range.
 
 
+
+TP_0 = Bw125Cr45Sf128
+
 #   Chips/Symbol: 2048
 #   Codingrate: 4 (4/8)
 #   Signalbandwidth: 20.8 kHz
@@ -298,7 +301,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(TP_1)
+        self.set_modem_config(TP_0)
         self.set_preamble_length(8)
         
         return True
