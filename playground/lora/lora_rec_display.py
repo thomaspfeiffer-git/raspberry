@@ -254,6 +254,10 @@ TP_3 = (0x68, 0xA4, 0x04|0x08)
 #   Signalbandwidth: 62.5 kHz
 TP_4 = (0x68, 0xC4, 0x04|0x08)
 
+#   Chips/Symbol: 4096
+#   Codingrate: 4 (4/8)
+#   Signalbandwidth: 41.7 kHz
+TP_5 = (0x58, 0xC4, 0x04|0x08)
 
 # set_modem_mode
 
@@ -284,6 +288,7 @@ class RF95:
         self.tx_good = 0    # tx packets sent
         self.rx_good = 0    # rx packets recv
         self.rx_buf_valid = False 
+        self.frequency    = None
     
 
     def init(self):
@@ -322,7 +327,7 @@ class RF95:
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(TP_4)
+        self.set_modem_config(TP_5)
         self.set_preamble_length(8)
         
         return True
@@ -344,6 +349,28 @@ class RF95:
             self.buflen = length
             # clear IRQ flags
             self.spi_write(REG_12_IRQ_FLAGS, 0xff)
+
+            # Taken from https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c
+            r28 = self.spi_read(REG_28_FREQ_ERROR)
+            r29 = self.spi_read(REG_28_FREQ_ERROR+1)
+            r30 = self.spi_read(REG_28_FREQ_ERROR+2)
+            r28_2 = self.spi_read(REG_28_FREQ_ERROR)
+            # print("Frequency Error Registers: {:x} {:x} {:x} {:x}".format(r28,r29,r30,r28_2))
+            
+            t = r28 & 7
+            t = t << 8
+            t += r29
+            t = t << 8
+            t += r30
+
+            if r28_2 & 8:
+                t -= 524288
+
+            f_err = -(t * (1 << 24) / 32000000.0) * ( 62.5 / 500.0)
+            print("Frequency Error: {}".format(f_err))
+
+            self.set_frequency(self.frequency+f_err)
+
 
             # save RSSI
             self.last_rssi = self.spi_read(REG_1A_PKT_RSSI_VALUE) - 137
@@ -393,7 +420,9 @@ class RF95:
         return data[1:] # all but first byte
 
     def set_frequency(self, freq):
-        freq_value = int((freq * 1000000.0) / FSTEP)
+        self.frequency = freq
+        print("set frequency to {} Hz".format(freq))
+        freq_value = int(freq / FSTEP)
         
         self.spi_write(REG_06_FRF_MSB, (freq_value>>16)&0xff)
         self.spi_write(REG_07_FRF_MID, (freq_value>>8)&0xff)
@@ -548,11 +577,8 @@ if __name__ == "__main__":
 # http://wiki.dragino.com/index.php?title=LoRa_Questions#Check_the_Modem_Setting_in_Software
 
 
-
-
         # set frequency and power
-    rf95.set_frequency(433.5)
-    rf95.set_tx_power(5)         # TODO: increase power
+    rf95.set_frequency(433500000)
 
 
     # Sender ##############################################
