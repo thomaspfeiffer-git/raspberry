@@ -17,6 +17,11 @@
 # http://wiki.dragino.com/index.php?title=LoRa_Questions#Check_the_Modem_Setting_in_Software
 
 
+config = TP_5
+interval = 15
+frequency = 433500000
+
+
 import argparse
 import RPi.GPIO as GPIO
 import spidev
@@ -145,7 +150,7 @@ class RF95 (object):
         if r28_2 & 8:
             t -= 524288
 
-        f_err = -(t * (1 << 24) / 32000000.0) * ( 62.5 / 500.0)
+        f_err = -(t * (1 << 24) / 32000000.0) * ( 62.5 / 500.0) # TODO 62.5 as variable!!!!
         Log("Frequency Error: {:.2f} Hz".format(f_err))
         self.set_frequency(self.frequency+f_err)
 
@@ -362,7 +367,6 @@ def Receiver ():
         disp.display()
 
 
-
 ###############################################################################
 # MyParser #################################################################### 
 class MyParser(argparse.ArgumentParser):
@@ -380,7 +384,7 @@ if __name__ == "__main__":
 
     disp = None
 
-    rf95 = RF95(config=TP_5, frequency=433500000, int_pin=31, reset_pin=32) 
+    rf95 = RF95(config=config, frequency=frequency, int_pin=31, reset_pin=32) 
     if not rf95.init():
         Log("Error: RF95 not found")
         rf95.cleanup()
