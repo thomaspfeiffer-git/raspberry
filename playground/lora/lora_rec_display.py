@@ -50,7 +50,6 @@ class RF95 (object):
         self.tx_good = 0    # tx packets sent
         self.rx_good = 0    # rx packets recv
         self.rx_buf_valid = False 
-    
 
     def init (self):
         """open SPI and initialize RF95"""
@@ -99,11 +98,10 @@ class RF95 (object):
 
         if self.mode == RADIO_MODE_RX and irq_flags & (RX_TIMEOUT | PAYLOAD_CRC_ERROR):
             self.rx_bad = self.rx_bad + 1
-            print("bad packet; irq_flags: {:x}".format(irq_flags))
+            Log("Error: Bad packet received; irq_flags: {:x}".format(irq_flags))
         elif self.mode == RADIO_MODE_RX and irq_flags & RX_DONE:
             # packet received
             length = self.spi_read(REG_13_RX_NB_BYTES)
-            print("received {} bytes".format(length))
             # Reset the fifo read ptr to the beginning of the packet
             self.spi_write(REG_0D_FIFO_ADDR_PTR, self.spi_read(REG_10_FIFO_RX_CURRENT_ADDR))
             self.buf = self.spi_read_data(REG_00_FIFO, length)
@@ -111,27 +109,7 @@ class RF95 (object):
             # clear IRQ flags
             self.spi_write(REG_12_IRQ_FLAGS, 0xff)
 
-            # Taken from https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c
-            r28 = self.spi_read(REG_28_FREQ_ERROR)
-            r29 = self.spi_read(REG_28_FREQ_ERROR+1)
-            r30 = self.spi_read(REG_28_FREQ_ERROR+2)
-            r28_2 = self.spi_read(REG_28_FREQ_ERROR)
-            # print("Frequency Error Registers: {:x} {:x} {:x} {:x}".format(r28,r29,r30,r28_2))
-            
-            t = r28 & 7
-            t = t << 8
-            t += r29
-            t = t << 8
-            t += r30
-
-            if r28_2 & 8:
-                t -= 524288
-
-            f_err = -(t * (1 << 24) / 32000000.0) * ( 62.5 / 500.0)
-            print("Frequency Error: {}".format(f_err))
-
-            self.set_frequency(self.frequency+f_err)
-
+            self.afc()
 
             # save RSSI
             self.last_rssi = self.spi_read(REG_1A_PKT_RSSI_VALUE) - 137
@@ -140,18 +118,36 @@ class RF95 (object):
             self.rx_buf_valid = True
             self.set_mode_idle()
 
-
         elif self.mode == RADIO_MODE_TX and irq_flags & TX_DONE:
-            print("good packet, TX_DONE")
             self.tx_good = self.tx_good + 1
             self.set_mode_idle()
+
         elif self.mode == RADIO_MODE_CAD and irq_flags & CAD_DONE:
-            print("CAD_DONE")
             self.cad = irq_flags & CAD_DETECTED
             self.set_mode_idle()
     
         self.spi_write(REG_12_IRQ_FLAGS, 0xff) # Clear all IRQ flags
 
+    def afc (self):
+        """automatic frequency control; taken from
+           https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c"""
+
+        r28 = self.spi_read(REG_28_FREQ_ERROR)
+        r29 = self.spi_read(REG_28_FREQ_ERROR+1)
+        r30 = self.spi_read(REG_28_FREQ_ERROR+2)
+        r28_2 = self.spi_read(REG_28_FREQ_ERROR)
+
+        t = r28 & 7
+        t = t << 8
+        t += r29
+        t = t << 8
+        t += r30
+        if r28_2 & 8:
+            t -= 524288
+
+        f_err = -(t * (1 << 24) / 32000000.0) * ( 62.5 / 500.0)
+        Log("Frequency Error: {:.2f} Hz".format(f_err))
+        self.set_frequency(self.frequency+f_err)
 
     def spi_write(self, reg, data):
         self.spi.open(0,self.spi_cs)
@@ -181,7 +177,7 @@ class RF95 (object):
 
     def set_frequency(self, freq):
         self.frequency = freq
-        print("set frequency to {} Hz".format(freq))
+        Log("Setting frequency to {:.2f} Hz".format(freq))
         freq_value = int(freq / FSTEP)
         
         self.spi_write(REG_06_FRF_MSB, (freq_value>>16)&0xff)
@@ -352,10 +348,10 @@ if __name__ == "__main__":
         draw.text((xpos, y), "Zeit: {}".format(time.strftime("%X")), font=font, fill=0)
 
         data = rf95.recv()
-        print("RSSI: {}".format(rf95.last_rssi))
+        Log("RSSI: {}".format(rf95.last_rssi))
 
         str = "".join(map(chr, data))
-        print(str)
+        Log("{}\n".format(str))
 
         y += textheight
         draw.text((xpos, y), "RSSI: {}".format(rf95.last_rssi))
