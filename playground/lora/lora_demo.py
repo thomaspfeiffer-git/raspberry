@@ -1,23 +1,23 @@
 #!/usr/bin/python3 -u
+# -*- coding: utf-8 -*-
+###############################################################################
+# lora_rec_display.py                                                         #
+# Demo for sending and receiving data with the RFM96W LoRa module.            #
+# Sourcecode taken and modified from:                                         #
+# * https://github.com/ladecadence/pyRF95                                     #
+# * https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c          #
+# (c) https://github.com/thomaspfeiffer-git 2018                              #
+###############################################################################
+"""Demo for sending and receiving data with the RFM96W LoRa module."""
 
-# (C) 2016 David Pello Gonzalez for ASHAB
-# Based on code from the RadioHead Library:
-# http://www.airspayce.com/mikem/arduino/RadioHead/
-#
-# This program is free software: you can redistribute it
-# and/or modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation, either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  
-# If not, see <http://www.gnu.org/licenses/>.
+# Useful links:
+# * Data sheet: http://www.hoperf.com/upload/rf/RFM95_96_97_98W.pdf
+# * Adafruit: https://learn.adafruit.com/adafruit-rfm69hcw-and-rfm96-rfm95-rfm98-lora-packet-padio-breakouts
+# Hints on distance tuning:
+# http://wiki.dragino.com/index.php?title=LoRa_Questions#Check_the_Modem_Setting_in_Software
 
+
+import argparse
 import RPi.GPIO as GPIO
 import spidev
 import sys
@@ -307,21 +307,23 @@ def shutdown_application ():
     rf95.set_mode_idle()
     rf95.cleanup()
 
+    if disp:
+        disp.clear()
+        disp.display()
+
     sys.exit(0)
 
 
 ###############################################################################
-# Main ########################################################################
-if __name__ == "__main__":
-    shutdown = Shutdown(shutdown_func=shutdown_application)
+###############################################################################
+def Sender ():
+    pass
 
-    rf95 = RF95(config=TP_5, frequency=433500000, int_pin=31, reset_pin=32) 
-    if not rf95.init():
-        Log("Error: RF95 not found")
-        rf95.cleanup()
-        sys.exit(1)
-    else:
-        Log("RF95 LoRa mode ok")
+
+###############################################################################
+# Receiver ####################################################################
+def Receiver ():
+    global disp
 
     disp = SSD1306()
     disp.begin()
@@ -337,8 +339,6 @@ if __name__ == "__main__":
     font = ImageFont.load_default()
     (_, textheight) = draw.textsize("Text", font=font)
 
-
-    # Receiver ###########################################
     while True:
         while not rf95.available():
             pass
@@ -360,6 +360,43 @@ if __name__ == "__main__":
 
         disp.image(image)
         disp.display()
+
+
+
+###############################################################################
+# MyParser #################################################################### 
+class MyParser(argparse.ArgumentParser):
+    def error(self, message):
+        """override error() in order to get a proper cleanup"""
+        sys.stderr.write('error: %s\n' % message)
+        self.print_help()
+        shutdown_application()
+
+
+###############################################################################
+# Main ########################################################################
+if __name__ == "__main__":
+    shutdown = Shutdown(shutdown_func=shutdown_application)
+
+    disp = None
+
+    rf95 = RF95(config=TP_5, frequency=433500000, int_pin=31, reset_pin=32) 
+    if not rf95.init():
+        Log("Error: RF95 not found")
+        rf95.cleanup()
+        sys.exit(1)
+    else:
+        Log("RF95 LoRa mode ok")
+
+    parser = MyParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-r", "--receive", help="receive data", action="store_true")
+    group.add_argument("-s", "--send", help="send data", action="store_true")
+    args = parser.parse_args()
+    if args.receive:
+        Receiver()
+    if args.send:
+        Sender()
 
 # eof #
 
