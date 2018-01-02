@@ -527,7 +527,7 @@ if __name__ == "__main__":
 
         # set frequency and power
     rf95.set_frequency(433.5)
-    rf95.set_tx_power(23)         # TODO: increase power
+    rf95.set_tx_power(13)         # TODO: increase power
 
 
     # Sender ##############################################
