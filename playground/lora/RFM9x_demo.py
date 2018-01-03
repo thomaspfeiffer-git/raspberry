@@ -235,7 +235,6 @@ class RF95 (object):
         self.spi_write(REG_1D_MODEM_CONFIG1, config[0])
         self.spi_write(REG_1E_MODEM_CONFIG2, config[1])
         self.spi_write(REG_26_MODEM_CONFIG3, config[2])
-        # self.spi_write(REG_0C_LNA, LNA_BOOST_MAX) # TODO only in receiver mode!
         
     def set_preamble_length(self, length):
         self.spi_write(REG_20_PREAMBLE_MSB, length >> 8)
@@ -341,6 +340,8 @@ def Sender ():
 # Receiver ####################################################################
 def Receiver ():
     global disp
+
+    rf95.spi_write(REG_0C_LNA, LNA_BOOST_MAX) # TODO: find a better place for this
 
     disp = SSD1306()
     disp.begin()
