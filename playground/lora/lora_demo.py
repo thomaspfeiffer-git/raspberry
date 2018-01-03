@@ -17,11 +17,6 @@
 # http://wiki.dragino.com/index.php?title=LoRa_Questions#Check_the_Modem_Setting_in_Software
 
 
-config = TP_5
-interval = 15
-frequency = 433500000
-
-
 import argparse
 import RPi.GPIO as GPIO
 import spidev
@@ -37,6 +32,12 @@ from Logging import Log
 from Shutdown import Shutdown
 from actuators.SSD1306 import SSD1306
 from RFM9x_constants import *
+
+
+config = TP_5
+interval = 15
+frequency = 433500000
+tx_power = 13
 
 
 class RF95 (object):
@@ -322,7 +323,18 @@ def shutdown_application ():
 ###############################################################################
 ###############################################################################
 def Sender ():
-    pass
+    rf95.set_tx_power(tx_power)
+    msg = ["finster war's, der Mond schien helle, als ein Wagen blitzeschnelle langsam um die runde Ecke fuhr.", "kurz"]
+
+    count = 0
+    while True:
+        payload = "ID: {}@{} {}".format(count, time.strftime("%H%M%S"), msg[count % 2])
+        Log("Sending Data \"{}\"".format(payload))
+        rf95.send(rf95.str_to_data(payload))
+        rf95.wait_packet_sent()
+        Log("Data sent!\n")
+        count += 1
+        time.sleep(interval);
 
 
 ###############################################################################
