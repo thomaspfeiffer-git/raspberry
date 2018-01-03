@@ -222,7 +222,7 @@ TP_0 = Bw125Cr45Sf128
 #   Chips/Symbol: 4096
 #   Codingrate: 4 (4/8)
 #   Signalbandwidth: 41.7 kHz
-TP_5 = (0x58, 0xC4, 0x04|0x08)
+TP_5 = (0x58, 0xC4, 0x04|0x08)  # TODO: use constants
 
 
 
