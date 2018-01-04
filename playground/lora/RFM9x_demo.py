@@ -342,6 +342,7 @@ def Receiver ():
     global disp
 
     rf95.spi_write(REG_0C_LNA, LNA_BOOST_MAX) # TODO: find a better place for this
+    # taken from https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c#L118
 
     disp = SSD1306()
     disp.begin()

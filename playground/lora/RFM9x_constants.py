@@ -123,8 +123,7 @@ LNA_GAIN=0xe0
 LNA_BOOST=0x03
 LNA_BOOST_DEFAULT=0x00
 LNA_BOOST_150PC=0x11
-LNA_BOOST_MAX=0x23  # Added by TP; TODO ---> bring to production
-                    # taken from https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c#L118
+LNA_BOOST_MAX=0x23 
 
 # REG_11_IRQ_FLAGS_MASK                      0x11
 RX_TIMEOUT_MASK=0x80
