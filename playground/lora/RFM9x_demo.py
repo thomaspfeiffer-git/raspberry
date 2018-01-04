@@ -34,8 +34,12 @@ from actuators.SSD1306 import SSD1306
 from RFM9x_constants import *
 
 
-LoRa_Cfg = LoRa_Telemetry
-LoRa_BW  = LoRa_Telemetry_BW
+# LoRa_Cfg = LoRa_Medium
+# LoRa_BW  = LoRa_Medium_BW
+# LoRa_Cfg = LoRa_Telemetry
+# LoRa_BW  = LoRa_Telemetry_BW
+LoRa_Cfg = LoRa_Telemetry_Stable
+LoRa_BW  = LoRa_Telemetry_Stable_BW
 
 tx_interval = 15
 frequency = 433500000

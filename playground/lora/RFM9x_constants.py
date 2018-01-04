@@ -214,6 +214,10 @@ LoRa_Telemetry    = (BW_41K7HZ | CODING_RATE_4_8,
                      SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
                      MOBILE_NODE_MOBILE | AGC_AUTO_ON)
 LoRa_Telemetry_BW = 41.7
+LoRa_Telemetry_Stable = (BW_62K5HZ | CODING_RATE_4_8,
+                         SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
+                         MOBILE_NODE_MOBILE | AGC_AUTO_ON)
+LoRa_Telemetry_Stable_BW = 62.5
 
 
 # SPI
