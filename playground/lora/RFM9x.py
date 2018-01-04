@@ -1,14 +1,13 @@
-#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# lora_rec_display.py                                                         #
-# Demo for sending and receiving data with the RFM96W LoRa module.            #
+# RFM9x.py                                                                    #
+# Library for the RFM9x LoRa Module.                                          #
 # Sourcecode taken and modified from:                                         #
 # * https://github.com/ladecadence/pyRF95                                     #
 # * https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c          #
 # (c) https://github.com/thomaspfeiffer-git 2018                              #
 ###############################################################################
-"""Demo for sending and receiving data with the RFM96W LoRa module."""
+"""Library for the RFM9x LoRa Module."""
 
 # Useful links:
 # * Data sheet: http://www.hoperf.com/upload/rf/RFM95_96_97_98W.pdf
@@ -17,41 +16,24 @@
 # http://wiki.dragino.com/index.php?title=LoRa_Questions#Check_the_Modem_Setting_in_Software
 
 
-import argparse
 import RPi.GPIO as GPIO
 import spidev
 import sys
 import time
 
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
 
 sys.path.append('../../libs')
 from Logging import Log
-from Shutdown import Shutdown
-from actuators.SSD1306 import SSD1306
 from RFM9x_constants import *
 
 
-# LoRa_Cfg = LoRa_Medium
-# LoRa_BW  = LoRa_Medium_BW
-# LoRa_Cfg = LoRa_Telemetry
-# LoRa_BW  = LoRa_Telemetry_BW
-LoRa_Cfg = LoRa_Telemetry_Stable
-LoRa_BW  = LoRa_Telemetry_Stable_BW
-
-tx_interval = 15
-frequency = 433500000
-tx_power = 13
-
-
-class RF95 (object):
-    def __init__ (self, config, frequency, int_pin, reset_pin, cs=0):
+class RFM9x (object):
+    def __init__ (self, config, frequency, bandwidth, int_pin, reset_pin, cs=0):
         self.spi = spidev.SpiDev()
         self.spi_cs = cs
         self.config = config
         self.frequency = frequency
+        self.bandwidth = bandwidth
         self.int_pin = int_pin
         self.reset_pin = reset_pin
         self.mode = RADIO_MODE_INITIALISING
@@ -157,7 +139,7 @@ class RF95 (object):
         if r28_2 & 8:
             t -= 524288
 
-        f_err = -(t * (1 << 24) / 32000000.0) * ( LoRa_BW / 500.0)
+        f_err = -(t * (1 << 24) / 32000000.0) * (self.bandwidth / 500.0)
         Log("Frequency Error: {:.2f} Hz".format(f_err))
         self.set_frequency(self.frequency+f_err)
 
@@ -309,118 +291,6 @@ class RF95 (object):
             GPIO.cleanup(self.reset_pin)
         if self.int_pin:
             GPIO.cleanup(self.int_pin)
-
-
-###############################################################################
-# Exit ########################################################################
-def shutdown_application ():
-    """cleanup stuff"""
-    rf95.set_mode_idle()
-    rf95.cleanup()
-
-    if disp:
-        disp.clear()
-        disp.display()
-
-    sys.exit(0)
-
-
-###############################################################################
-###############################################################################
-def Sender ():
-    rf95.set_tx_power(tx_power)
-    msg = ["finster war's, der Mond schien helle, als ein Wagen blitzeschnelle langsam um die runde Ecke fuhr.", "kurz"]
-
-    count = 0
-    while True:
-        payload = "ID: {}@{} {}".format(count, time.strftime("%H%M%S"), msg[count % 2])
-        Log("Sending Data \"{}\"".format(payload))
-        rf95.send(rf95.str_to_data(payload))
-        rf95.wait_packet_sent()
-        Log("Data sent!\n")
-        count += 1
-        time.sleep(tx_interval);
-
-
-###############################################################################
-# Receiver ####################################################################
-def Receiver ():
-    global disp
-
-    rf95.spi_write(REG_0C_LNA, LNA_BOOST_MAX) # TODO: find a better place for this
-    # taken from https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c#L118
-
-    disp = SSD1306()
-    disp.begin()
-    disp.clear()
-    disp.display()
-
-    xpos = 4
-    ypos = 4
-    width = disp.width
-    height = disp.height
-    image = Image.new('1', (width, height))
-    draw = ImageDraw.Draw(image)
-    font = ImageFont.load_default()
-    (_, textheight) = draw.textsize("Text", font=font)
-
-    while True:
-        while not rf95.available():
-            pass
-
-        draw.rectangle((0,0,width,height), outline=0, fill=255)
-        y = ypos
-        draw.text((xpos, y), "Zeit: {}".format(time.strftime("%X")), font=font, fill=0)
-
-        data = rf95.recv()
-        Log("RSSI: {}".format(rf95.last_rssi))
-
-        str = "".join(map(chr, data))
-        Log("{}\n".format(str))
-
-        y += textheight
-        draw.text((xpos, y), "RSSI: {}".format(rf95.last_rssi))
-        y += textheight
-        draw.text((xpos, y), "{}".format(str[:20]))
-
-        disp.image(image)
-        disp.display()
-
-
-###############################################################################
-# MyParser #################################################################### 
-class MyParser(argparse.ArgumentParser):
-    def error(self, message):
-        """override error() in order to get a proper cleanup"""
-        sys.stderr.write('error: %s\n' % message)
-        self.print_help()
-        shutdown_application()
-
-
-###############################################################################
-# Main ########################################################################
-if __name__ == "__main__":
-    shutdown = Shutdown(shutdown_func=shutdown_application)
-
-    disp = None
-
-    rf95 = RF95(config=LoRa_Cfg, frequency=frequency, int_pin=31, reset_pin=32) 
-    if not rf95.init():
-        Log("Error: RF95 not found")
-        rf95.cleanup()
-        sys.exit(1)
-    else:
-        Log("RF95 LoRa mode ok")
-
-    parser = MyParser()
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-r", "--receive", help="receive data", action="store_true")
-    group.add_argument("-s", "--send", help="send data", action="store_true")
-    args = parser.parse_args()
-    if args.receive:
-        Receiver()
-    if args.send:
-        Sender()
 
 # eof #
 
