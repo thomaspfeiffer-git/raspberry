@@ -34,8 +34,10 @@ from actuators.SSD1306 import SSD1306
 from RFM9x_constants import *
 
 
-config = TP_5
-interval = 15
+LoRa_Cfg = LoRa_Telemetry
+LoRa_BW  = LoRa_Telemetry_BW
+
+tx_interval = 15
 frequency = 433500000
 tx_power = 13
 
@@ -151,7 +153,7 @@ class RF95 (object):
         if r28_2 & 8:
             t -= 524288
 
-        f_err = -(t * (1 << 24) / 32000000.0) * ( 62.5 / 500.0) # TODO 62.5 as variable!!!!
+        f_err = -(t * (1 << 24) / 32000000.0) * ( LoRa_BW / 500.0)
         Log("Frequency Error: {:.2f} Hz".format(f_err))
         self.set_frequency(self.frequency+f_err)
 
@@ -333,7 +335,7 @@ def Sender ():
         rf95.wait_packet_sent()
         Log("Data sent!\n")
         count += 1
-        time.sleep(interval);
+        time.sleep(tx_interval);
 
 
 ###############################################################################
@@ -398,7 +400,7 @@ if __name__ == "__main__":
 
     disp = None
 
-    rf95 = RF95(config=config, frequency=frequency, int_pin=31, reset_pin=32) 
+    rf95 = RF95(config=LoRa_Cfg, frequency=frequency, int_pin=31, reset_pin=32) 
     if not rf95.init():
         Log("Error: RF95 not found")
         rf95.cleanup()

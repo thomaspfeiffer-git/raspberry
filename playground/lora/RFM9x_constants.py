@@ -188,11 +188,13 @@ SPREADING_FACTOR_2048CPS=0xb0
 SPREADING_FACTOR_4096CPS=0xc0
 TX_CONTINUOUS_MODE_ON=0x08
 TX_CONTINUOUS_MODE_OFF=0x00
-RX_PAYLOAD_CRC_ON=0x02
+RX_PAYLOAD_CRC_ON=0x04
 RX_PAYLOAD_CRC_OFF=0x00
 SYM_TIMEOUT_MSB=0x03
 
-# REG_26_MODEM_CONFIG3
+# REG_26_MODEM_CONFIG3                      0x26
+MOBILE_NODE_MOBILE=0x08
+MOBILE_NODE_STATIC=0x00
 AGC_AUTO_ON=0x04
 AGC_AUTO_OFF=0x00
 
@@ -203,26 +205,15 @@ PA_DAC_ENABLE=0x07
 MAX_MESSAGE_LEN=255
 
 # default params
-Bw125Cr45Sf128 = (0x72,   0x74,    0x00)
-Bw500Cr45Sf128 = (0x92,   0x74,    0x00)
-Bw31_25Cr48Sf512 = (0x48,   0x94,    0x00)
-Bw125Cr48Sf4096 = (0x78,   0xc4,    0x00)
 
-
-# Bw125Cr45Sf128 : Bw = 125 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on. Default medium range.
-# Bw500Cr45Sf128 : Bw = 500 kHz, Cr = 4/5, Sf = 128chips/symbol, CRC on. Fast+short range.
-# Bw31_25Cr48Sf512 : Bw = 31.25 kHz, Cr = 4/8, Sf = 512chips/symbol, CRC on. Slow+long range.
-# Bw125Cr48Sf4096 : Bw = 125 kHz, Cr = 4/8, Sf = 4096chips/symbol, CRC on. Slow+long range.
-
-
-TP_0 = Bw125Cr45Sf128
-
-
-#   Chips/Symbol: 4096
-#   Codingrate: 4 (4/8)
-#   Signalbandwidth: 41.7 kHz
-TP_5 = (0x58, 0xC4, 0x04|0x08)  # TODO: use constants
-
+LoRa_Medium       = (BW_125KHZ | CODING_RATE_4_5,
+                     SPREADING_FACTOR_128CPS | RX_PAYLOAD_CRC_ON,
+                     MOBILE_NODE_MOBILE | AGC_AUTO_ON)
+LoRa_Medium_BW    = 125
+LoRa_Telemetry    = (BW_41K7HZ | CODING_RATE_4_8,
+                     SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
+                     MOBILE_NODE_MOBILE | AGC_AUTO_ON)
+LoRa_Telemetry_BW = 41.7
 
 
 # SPI
