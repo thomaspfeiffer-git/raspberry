@@ -235,8 +235,6 @@ class RFM9x (object):
     
         self.wait_packet_sent() 
         self.set_mode_idle()
-        # beginning of FIFO
-        #self.spi_write(REG_0E_FIFO_TX_BASE_ADDR, 0)
         self.spi_write(REG_0D_FIFO_ADDR_PTR, 0)
 
         # write data
