@@ -33,8 +33,8 @@ from Logging import Log
 from Shutdown import Shutdown
 from actuators.SSD1306 import SSD1306
 
-from RFM9x import RFM9x
-from RFM9x_constants import *
+from actuators.RFM9x import RFM9x
+from actuators.RFM9x_constants import *
 
 
 
