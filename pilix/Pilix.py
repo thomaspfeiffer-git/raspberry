@@ -365,7 +365,7 @@ class Control (threading.Thread):
 
             display.print(self.data)
             self.csv.write(self.data)
-            livetracking.setdata(self.data)
+            livetracking_udp.setdata(self.data)
 
             self.monitor_battery()
 
@@ -415,8 +415,8 @@ def stop_threads ():
     """stops all threads"""
     camera.stop()
     camera.join()
-    livetracking.stop()
-    livetracking.join()
+    livetracking_udp.stop()
+    livetracking_udp.join()
     control.stop()
     control.join()
 
@@ -449,8 +449,8 @@ if __name__ == "__main__":
 
     display = Display()
 
-    livetracking = Livetracking.Sender()
-    livetracking.start()
+    livetracking_udp = Livetracking.Sender_UDP()
+    livetracking_udp.start()
 
     control = Control()
     control.start()
