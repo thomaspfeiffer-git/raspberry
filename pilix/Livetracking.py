@@ -2,13 +2,17 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Livetracking.py                                                             #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2018             #
 ###############################################################################
 """
-...
+... TODO: add some useful comments here
 
-This lib can be used standalone as a receiver/server and imported into
-another python program as a sender/client.
+This lib can be used:
+- standalone as a receiver/server on UDP/Internet (command line: --receiver)
+- standalone as a relais from LoRa to UDP/GSM     (command line: --relais)
+- imported into another python program as a sender/client:
+    . sender of telemetry data on UDP/GSM
+    . sender of telemetry data on LoRa
 """
 
 
@@ -46,9 +50,9 @@ class Digest (object):
 
 ###############################################################################
 # Sender ######################################################################
-class Sender (threading.Thread):
+class Sender_UDP (threading.Thread):
     """sends some GPS data (lon, lat, alt, timestamp, voltage)
-       to a server using UDP"""
+       to a server using UDP on a GSM connection"""
     def __init__ (self):
         threading.Thread.__init__(self)
         self.digest = Digest(CONFIG.Livetracking.SECRET)
@@ -60,17 +64,18 @@ class Sender (threading.Thread):
         self.data = data
 
     def run (self):
-        interval = CONFIG.Livetracking.Interval_OnBattery
+        interval = CONFIG.Livetracking.Interval_UDP_OnBattery
         while self._running:
             if self.data:
-                interval = CONFIG.Livetracking.Interval_OnBattery \
+                interval = CONFIG.Livetracking.Interval_UDP_OnBattery \
                            if self.data[V_RunningOnBattery] \
-                           else CONFIG.Livetracking.Interval_OnPowersupply
-                payload = "{},{},{},{},{}".format(self.data[V_GPS_Time],
-                                                  self.data[V_GPS_Lon],
-                                                  self.data[V_GPS_Lat],
-                                                  self.data[V_GPS_Alt],
-                                                  self.data[V_Voltage])
+                           else CONFIG.Livetracking.Interval_UDP_OnPowersupply
+                payload = "{},{},{},{},{:.3f},{}".format(self.data[V_GPS_Time],
+                                                         self.data[V_GPS_Lon],
+                                                         self.data[V_GPS_Lat],
+                                                         self.data[V_GPS_Alt],
+                                                         self.data[V_Voltage],
+                                                         "gsm")
 
                 datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
                 try:
@@ -147,7 +152,7 @@ CREATE TABLE telemetry (
 
 
 ###############################################################################
-# Receiver ####################################################################
+# Receiver_UDP ################################################################
 class Receiver (object):
     def __init__ (self):
         self.digest = Digest(CONFIG.Livetracking.SECRET)
@@ -156,7 +161,7 @@ class Receiver (object):
                           CONFIG.Livetracking.UDP_PORT))
         self._running = True
 
-    def store (self, source, data):
+    def store (self, data):
         def float_ (string):
             try:
                 i = float(string)
@@ -164,7 +169,7 @@ class Receiver (object):
                 i = -8888.8
             return i    
 
-        (timestamp, lon, lat, alt, voltage) = data.split(',')
+        (timestamp, lon, lat, alt, voltage, source) = data.split(',')
         lon = float_(lon)
         lat = float_(lat)
         alt = float_(alt)
@@ -186,7 +191,7 @@ class Receiver (object):
                 (payload, digest_received) = datagram.rsplit(',', 1)
                 if hmac.compare_digest(digest_received, self.digest(payload)):
                     Log("Received data: {}".format(datagram))
-                    self.store(source='gsm', data=payload)
+                    self.store(data=payload)
                 else:
                     Log("Hashes do not match on data: {}".format(datagram))
 

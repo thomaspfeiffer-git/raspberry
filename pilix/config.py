@@ -50,8 +50,11 @@ class CONFIG:
         IP_ADDRESS_SERVER = cred['Livetracking']['IP_ADDRESS_SERVER']
         UDP_PORT = int(cred['Livetracking']['UDP_PORT'])
         MAX_PACKET_SIZE = int(cred['Livetracking']['MAX_PACKET_SIZE'])
-        Interval_OnBattery = int(cfg['Livetracking']['Interval_OnBattery'])
-        Interval_OnPowersupply = int(cfg['Livetracking']['Interval_OnPowersupply'])
+        Interval_UDP_OnBattery = int(cfg['Livetracking']['Interval_UDP_OnBattery'])
+        Interval_UDP_OnPowersupply = int(cfg['Livetracking']['Interval_UDP_OnPowersupply'])
+        MaxHeight_UDP = int(cfg['Livetracking']['MaxHeight_UDP'])
+        Interval_LoRa_OnBattery = int(cfg['Livetracking']['Interval_LoRa_OnBattery'])
+        Interval_LoRa_OnPowersupply = int(cfg['Livetracking']['Interval_LoRa_OnPowersupply'])
         SQL_USER = cred['Livetracking']['SQL_USER']
         SQL_PASSWORD = cred['Livetracking']['SQL_PASSWORD']
 
