@@ -31,8 +31,33 @@ import time
 sys.path.append("../libs/")
 from Logging import Log
 
+from actuators.RFM9x import RFM9x
+from actuators.RFM9x_constants import *
+
 from config import CONFIG
 from csv_fieldnames import *
+
+
+LoRa_Cfg_Medium = { LR_Cfg_Reg1: BW_125KHZ | CODING_RATE_4_5,
+                    LR_Cfg_Reg2: SPREADING_FACTOR_128CPS | RX_PAYLOAD_CRC_ON,
+                    LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
+                    LR_Cfg_BW:   125.0 }
+
+LoRa_Cfg_Telemetry = { LR_Cfg_Reg1: BW_41K7HZ | CODING_RATE_4_8,
+                       LR_Cfg_Reg2: SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
+                       LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
+                       LR_Cfg_BW:   41.7 }
+
+LoRa_Cfg_Telemetry_Stable = { LR_Cfg_Reg1: BW_62K5HZ | CODING_RATE_4_8,
+                              LR_Cfg_Reg2: SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
+                              LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
+                              LR_Cfg_BW:   62.5 }
+
+# LoRa_Cfg = LoRa_Cfg_Medium
+LoRa_Cfg = LoRa_Cfg_Telemetry
+# LoRa_Cfg = LoRa_Cfg_Telemetry_Stable
+
+
 
 
 ###############################################################################
@@ -49,7 +74,7 @@ class Digest (object):
 
 
 ###############################################################################
-# Sender ######################################################################
+# Sender_UDP ##################################################################
 class Sender_UDP (threading.Thread):
     """sends some GPS data (lon, lat, alt, timestamp, voltage)
        to a server using UDP on a GSM connection"""
@@ -79,12 +104,68 @@ class Sender_UDP (threading.Thread):
 
                 datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
                 try:
+                    Log("Sending bytes (UDP): {}".format(datagram))
                     sent = self.socket.sendto(datagram, 
                                               (CONFIG.Livetracking.IP_ADDRESS_SERVER,
                                                CONFIG.Livetracking.UDP_PORT))
-                    Log("sent bytes: {}; data: {}".format(sent,datagram))
+                    Log("Sent bytes (UDP): {}; data: {}".format(sent,datagram))
                 except:
-                    Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
+                    Log("Cannot send data (UDP): {0[0]} {0[1]}".format(sys.exc_info()))
+
+            for _ in range(interval * 10):
+                if self._running:
+                    time.sleep(0.1)
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+# Sender_LoRa #################################################################
+class Sender_LoRa (threading.Thread):
+    """sends some GPS data (lon, lat, alt, timestamp, voltage)
+       to a server using LoRa"""
+
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self.digest = Digest(CONFIG.Livetracking.SECRET)
+        self.data = None
+        self.rfm96w = RFM9x(config=LoRa_Cfg, 
+                                   frequency=CONFIG.Livetracking.LoRa_Frequency,
+                                   int_pin=CONFIG.Livetracking.LoRa_pinInterrupt,
+                                   reset_pin=CONFIG.Livetracking.LoRa_pinReset)
+        if not self.rfm96w.init():
+            Log("Error: RFM96W not found!")  
+            self.rfm96w.cleanup()    # TODO: show some message on SSD1306!
+            sys.exit()
+        else:
+            Log("RFM96W LoRa mode ok!")
+            self.rfm96w.set_tx_power(CONFIG.Livetracking.LoRa_TX_Power)
+
+        self._running = True
+
+    def setdata (self, data):
+        self.data = data
+
+    def run (self):
+        interval = CONFIG.Livetracking.Interval_LoRa_OnBattery
+        while self._running:
+            if self.data:
+                interval = CONFIG.Livetracking.Interval_LoRa_OnBattery \
+                           if self.data[V_RunningOnBattery] \
+                           else CONFIG.Livetracking.Interval_LoRa_OnPowersupply
+                payload = "{},{},{},{},{:.3f},{}".format(self.data[V_GPS_Time],
+                                                         self.data[V_GPS_Lon],
+                                                         self.data[V_GPS_Lat],
+                                                         self.data[V_GPS_Alt],
+                                                         self.data[V_Voltage],
+                                                         "lora")
+
+                datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
+                Log("Sending bytes (LoRa): {}".format(datagram))
+                self.rfm96w.send(self.rfm96w.str_to_data(payload))
+                self.rfm96w.wait_packet_sent()
+                Log("Sent bytes (LoRa): {}".format(datagram))
 
             for _ in range(interval * 10):
                 if self._running:
