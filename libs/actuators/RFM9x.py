@@ -22,9 +22,8 @@ import sys
 import time
 
 
-sys.path.append('../../libs')
 from Logging import Log
-from RFM9x_constants import *
+from actuators.RFM9x_constants import *
 
 
 class RFM9x (object):
