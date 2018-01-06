@@ -205,38 +205,11 @@ PA_DAC_ENABLE=0x07
 MAX_MESSAGE_LEN=255
 
 
-# default params
-LoRa_Medium    = (BW_125KHZ | CODING_RATE_4_5,
-                  SPREADING_FACTOR_128CPS | RX_PAYLOAD_CRC_ON,
-                  MOBILE_NODE_MOBILE | AGC_AUTO_ON)
-LoRa_Medium_BW = 125
-
-LoRa_Telemetry    = (BW_41K7HZ | CODING_RATE_4_8,
-                     SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
-                     MOBILE_NODE_MOBILE | AGC_AUTO_ON)
-LoRa_Telemetry_BW = 41.7
-
-LoRa_Telemetry_Stable    = (BW_62K5HZ | CODING_RATE_4_8,
-                            SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
-                            MOBILE_NODE_MOBILE | AGC_AUTO_ON)
-LoRa_Telemetry_Stable_BW = 62.5
-
-
-
+# for default configs
 LR_Cfg_Reg1 = "reg1"
 LR_Cfg_Reg2 = "reg2"
 LR_Cfg_Reg3 = "reg3"
 LR_Cfg_BW   = "bw"
-
-LoRa_Cfg_Medium = { LR_Cfg_Reg1: BW_125KHZ | CODING_RATE_4_5,
-                    LR_Cfg_Reg2: SPREADING_FACTOR_128CPS | RX_PAYLOAD_CRC_ON,
-                    LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
-                    LR_Cfg_BW:   125.0 }
-
-LoRa_Cfg_Telemetry = { LR_Cfg_Reg1: BW_41K7HZ | CODING_RATE_4_8,
-                       LR_Cfg_Reg2: SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
-                       LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
-                       LR_Cfg_BW:   41.7 }
 
 
 # SPI

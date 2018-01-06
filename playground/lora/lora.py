@@ -37,12 +37,26 @@ from RFM9x import RFM9x
 from RFM9x_constants import *
 
 
-# LoRa_Cfg = LoRa_Medium
-# LoRa_BW  = LoRa_Medium_BW
-LoRa_Cfg = LoRa_Telemetry
-LoRa_BW  = LoRa_Telemetry_BW
-# LoRa_Cfg = LoRa_Telemetry_Stable
-# LoRa_BW  = LoRa_Telemetry_Stable_BW
+
+LoRa_Cfg_Medium = { LR_Cfg_Reg1: BW_125KHZ | CODING_RATE_4_5,
+                    LR_Cfg_Reg2: SPREADING_FACTOR_128CPS | RX_PAYLOAD_CRC_ON,
+                    LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
+                    LR_Cfg_BW:   125.0 }
+
+LoRa_Cfg_Telemetry = { LR_Cfg_Reg1: BW_41K7HZ | CODING_RATE_4_8,
+                       LR_Cfg_Reg2: SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
+                       LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
+                       LR_Cfg_BW:   41.7 }
+
+LoRa_Cfg_Telemetry_Stable = { LR_Cfg_Reg1: BW_62K5HZ | CODING_RATE_4_8,
+                              LR_Cfg_Reg2: SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
+                              LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
+                              LR_Cfg_BW:   62.5 }
+
+
+# LoRa_Cfg = LoRa_Cfg_Medium
+LoRa_Cfg = LoRa_Cfg_Telemetry
+# LoRa_Cfg = LoRa_Cfg_Telemetry_Stable
 
 tx_interval = 15
 frequency = 433500000
@@ -143,7 +157,7 @@ if __name__ == "__main__":
 
     disp = None
 
-    rf95 = RFM9x(config=LoRa_Cfg, frequency=frequency, bandwidth=LoRa_BW, int_pin=31, reset_pin=32) 
+    rf95 = RFM9x(config=LoRa_Cfg, frequency=frequency, int_pin=31, reset_pin=32) 
     if not rf95.init():
         Log("Error: RFM9x not found")
         rf95.cleanup()

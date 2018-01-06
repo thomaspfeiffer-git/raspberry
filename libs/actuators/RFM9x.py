@@ -28,12 +28,11 @@ from RFM9x_constants import *
 
 
 class RFM9x (object):
-    def __init__ (self, config, frequency, bandwidth, int_pin, reset_pin, cs=0):
+    def __init__ (self, config, frequency, int_pin, reset_pin, cs=0):
         self.spi = spidev.SpiDev()
         self.spi_cs = cs
         self.config = config
         self.frequency = frequency
-        self.bandwidth = bandwidth
         self.int_pin = int_pin
         self.reset_pin = reset_pin
         self.mode = RADIO_MODE_INITIALISING
@@ -80,7 +79,7 @@ class RFM9x (object):
         # default mode
         self.set_mode_idle()
 
-        self.set_modem_config(self.config)
+        self.set_modem_config()
         self.set_preamble_length(8)
         self.set_frequency(self.frequency)
         
@@ -139,7 +138,7 @@ class RFM9x (object):
         if r28_2 & 8:
             t -= 524288
 
-        f_err = -(t * (1 << 24) / 32000000.0) * (self.bandwidth / 500.0)
+        f_err = -(t * (1 << 24) / 32000000.0) * (self.config[LR_Cfg_BW] / 500.0)
         Log("Frequency Error: {:.2f} Hz".format(f_err))
         self.set_frequency(self.frequency+f_err)
 
@@ -219,10 +218,10 @@ class RFM9x (object):
         self.spi_write(REG_09_PA_CONFIG, PA_SELECT | (power-5))
 
     # set a default mode
-    def set_modem_config(self, config):
-        self.spi_write(REG_1D_MODEM_CONFIG1, config[0])
-        self.spi_write(REG_1E_MODEM_CONFIG2, config[1])
-        self.spi_write(REG_26_MODEM_CONFIG3, config[2])
+    def set_modem_config(self):
+        self.spi_write(REG_1D_MODEM_CONFIG1, self.config[LR_Cfg_Reg1])
+        self.spi_write(REG_1E_MODEM_CONFIG2, self.config[LR_Cfg_Reg2])
+        self.spi_write(REG_26_MODEM_CONFIG3, self.config[LR_Cfg_Reg3])
         
     def set_preamble_length(self, length):
         self.spi_write(REG_20_PREAMBLE_MSB, length >> 8)
