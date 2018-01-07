@@ -171,31 +171,25 @@ class Sender_LoRa (threading.Thread):
 
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.digest = Digest(CONFIG.Livetracking.SECRET)
-        self.data = None
+        self.payload = Payload(source="lora")
         self.rfm96w = Pilix_RFM96W(sender=True)
+        self.runningonbattery = True
         self._running = True
 
     def setdata (self, data):
-        self.data = data
+        self.payload.data = data
+        self.runningonbattery = data[V_RunningOnBattery]
 
     def run (self):
         interval = CONFIG.Livetracking.Interval_LoRa_OnBattery
         while self._running:
-            if self.data:
+            datagram = self.payload()
+            if datagram:
                 interval = CONFIG.Livetracking.Interval_LoRa_OnBattery \
-                           if self.data[V_RunningOnBattery] \
+                           if self.runningonbattery \
                            else CONFIG.Livetracking.Interval_LoRa_OnPowersupply
-                payload = "{},{},{},{},{:.3f},{}".format(self.data[V_GPS_Time],
-                                                         self.data[V_GPS_Lon],
-                                                         self.data[V_GPS_Lat],
-                                                         self.data[V_GPS_Alt],
-                                                         self.data[V_Voltage],
-                                                         "lora")
-
-                datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
                 Log("Sending bytes (LoRa): {}".format(datagram))
-                self.rfm96w.send(self.rfm96w.str_to_data(payload))
+                self.rfm96w.send(self.rfm96w.bytes_to_data(datagram))
                 self.rfm96w.wait_packet_sent()
                 Log("Sent bytes (LoRa): {}".format(datagram))
 
