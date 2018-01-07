@@ -9,7 +9,9 @@
 
 This lib can be used:
 - standalone as a receiver/server on UDP/Internet (command line: --receiver)
+  nohup ./Livetracking.py --receiver >livetracking.log 2>&1 &
 - standalone as a relais from LoRa to UDP/GSM     (command line: --relais)
+  nohup ./Livetracking.py --relais >livetracking.log 2>&1 &
 - imported into another python program as a sender/client:
     . sender of telemetry data on UDP/GSM
     . sender of telemetry data on LoRa
@@ -212,14 +214,59 @@ class Sender_LoRa (threading.Thread):
 
 
 ###############################################################################
-# Ralais ######################################################################
-class Relais (object):
+# Display #####################################################################
+class Display (object):
     def __init__ (self):
         from actuators.SSD1306 import SSD1306
 
+        from PIL import Image
+        from PIL import ImageDraw
+        from PIL import ImageFont
+
+        self.display = SSD1306()
+        self.display.begin()
+        self.display.clear()
+        self.display.display()
+
+        self.xpos = 4
+        self.ypos = 4
+        self.width = self.display.width
+        self.height = self.display.height
+        self.image = Image.new('1', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.image)
+        self.font = ImageFont.load_default()
+        (_, self.textheight) = self.draw.textsize("Text", font=self.font)
+
+    def showdata (self, data, rssi):        
+        (timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
+        self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
+        y = self.ypos
+        self.draw.text((self.xpos, y), "{}".format(timestamp))
+        y += self.textheight
+        self.draw.text((self.xpos, y), "X: {}".format(lon))
+        y += self.textheight
+        self.draw.text((self.xpos, y), "Y: {}".format(lat))
+        y += self.textheight
+        self.draw.text((self.xpos, y), "Z: {}".format(alt))
+        y += self.textheight
+        self.draw.text((self.xpos, y), "V: {} RSSI: {} ".format(voltage, rssi))
+
+        self.display.image(self.image)
+        self.display.display()
+
+    def close (self):    
+        self.display.clear()
+        self.display.display()
+
+
+###############################################################################
+# Ralais ######################################################################
+class Relais (object):
+    def __init__ (self):
+
         self.rfm96w  = Pilix_RFM96W(sender=False)
         self.udp     = UDP()
-        self.display = SSD1306()
+        self.display = Display()
 
         self._running = True
 
@@ -231,14 +278,16 @@ class Relais (object):
             data = self.rfm96w.recv()
             str = "".join(map(chr, data))
             Log("RFM96W: Data received: {}".format(str))
-            Log("RSSI: {}".format(self.rfm96w.last_rssi))
+            rssi = self.rfm96w.last_rssi
+            Log("RSSI: {}".format(rssi))
             self.udp.send(str.encode('utf-8'))
-
-        self.rfm96w.set_mode_idle()
-        self.rfm96w.cleanup()
+            self.display.showdata(str, rssi)
 
     def stop (self):
         self._running = False
+        self.rfm96w.set_mode_idle()
+        self.rfm96w.cleanup()
+        self.display.close()
 
 
 ###############################################################################
@@ -342,10 +391,10 @@ class Receiver (object):
                 else:
                     Log("Hashes do not match on data: {}".format(datagram))
 
-        db.close()        
 
     def stop (self):
         self._running = False
+        db.close()        
 
 
 ###############################################################################
@@ -353,7 +402,7 @@ class Receiver (object):
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
-    db.close() 
+    r.stop()
     Log("Application stopped")
     sys.exit(0)
 
