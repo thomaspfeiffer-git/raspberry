@@ -104,6 +104,23 @@ class Payload (object):
 
 
 ###############################################################################
+# UDP #########################################################################
+class UDP (object):
+    def __init__ (self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    def send (self, datagram):
+        try:
+            Log("Sending bytes (UDP): {}".format(datagram))
+            sent = self.socket.sendto(datagram, 
+                                      (CONFIG.Livetracking.IP_ADDRESS_SERVER,
+                                       CONFIG.Livetracking.UDP_PORT))
+            Log("Sent bytes (UDP): {}; data: {}".format(sent,datagram))
+        except:
+            Log("Cannot send data (UDP): {0[0]} {0[1]}".format(sys.exc_info()))
+
+
+###############################################################################
 # Sender_UDP ##################################################################
 class Sender_UDP (threading.Thread):
     """sends some GPS data (lon, lat, alt, timestamp, voltage)
@@ -111,7 +128,7 @@ class Sender_UDP (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
         self.payload = Payload(source="gsm")
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.udp = UDP()
         self.runningonbattery = True
         self._running = True
 
@@ -127,14 +144,7 @@ class Sender_UDP (threading.Thread):
                 interval = CONFIG.Livetracking.Interval_UDP_OnBattery \
                            if self.runningonbattery \
                            else CONFIG.Livetracking.Interval_UDP_OnPowersupply
-                try:
-                    Log("Sending bytes (UDP): {}".format(datagram))
-                    sent = self.socket.sendto(datagram, 
-                                              (CONFIG.Livetracking.IP_ADDRESS_SERVER,
-                                               CONFIG.Livetracking.UDP_PORT))
-                    Log("Sent bytes (UDP): {}; data: {}".format(sent,datagram))
-                except:
-                    Log("Cannot send data (UDP): {0[0]} {0[1]}".format(sys.exc_info()))
+                self.udp.send(datagram)           
 
             for _ in range(interval * 10):
                 if self._running:
@@ -207,7 +217,8 @@ class Relais (object):
     def __init__ (self):
         from actuators.SSD1306 import SSD1306
 
-        self.rfm96w = Pilix_RFM96W(sender=False)
+        self.rfm96w  = Pilix_RFM96W(sender=False)
+        self.udp     = UDP()
         self.display = SSD1306()
 
         self._running = True
@@ -221,6 +232,7 @@ class Relais (object):
             str = "".join(map(chr, data))
             Log("RFM96W: Data received: {}".format(str))
             Log("RSSI: {}".format(self.rfm96w.last_rssi))
+            self.udp.send(data)
 
         self.rfm96w.set_mode_idle()
         self.rfm96w.cleanup()
