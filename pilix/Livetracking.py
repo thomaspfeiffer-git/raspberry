@@ -202,6 +202,24 @@ class Sender_LoRa (threading.Thread):
 
 
 ###############################################################################
+# Ralais ######################################################################
+class Relais (object):
+    from actuators.SSD1306 import SSD1306
+
+    def __init__ (self):
+        self.rfm96w = Pilix_RFM96W(sender=False)
+        self.display = SSD1306()
+
+        self._running = True
+
+    def run (self):
+        while self._running:
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
 # Database ####################################################################
 class Database (object):
     """
