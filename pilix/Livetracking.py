@@ -208,12 +208,22 @@ class Relais (object):
 
     def __init__ (self):
         self.rfm96w = Pilix_RFM96W(sender=False)
-        self.display = SSD1306()
+        # self.display = SSD1306()
 
         self._running = True
 
     def run (self):
         while self._running:
+            while not self.rfm96w.available():
+                pass
+            
+            data = self.rfm96w.recv()
+            str = "".join(map(chr, data))
+            Log("RFM96W: Data received: {}\n".format(str))
+            Log("RSSI: {}".format(self.rfm96w.last_rssi))
+
+        self.rfm96w.set_mode_idle()
+        self.rfm96w.cleanup()
 
     def stop (self):
         self._running = False
@@ -338,13 +348,21 @@ def shutdown_application ():
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
-    import mysql.connector as mc
     from Shutdown import Shutdown
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
+    # --receiver #    
+    """
+    import mysql.connector as mc
     db = Database()
     r = Receiver()
     r.run()
+    """
+
+    # --relais #
+    r = Relais()
+    r.run()
+
 
 # eof #
 
