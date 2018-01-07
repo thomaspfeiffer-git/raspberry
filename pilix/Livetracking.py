@@ -204,11 +204,11 @@ class Sender_LoRa (threading.Thread):
 ###############################################################################
 # Ralais ######################################################################
 class Relais (object):
-    from actuators.SSD1306 import SSD1306
-
     def __init__ (self):
+        from actuators.SSD1306 import SSD1306
+
         self.rfm96w = Pilix_RFM96W(sender=False)
-        # self.display = SSD1306()
+        self.display = SSD1306()
 
         self._running = True
 
@@ -219,7 +219,7 @@ class Relais (object):
             
             data = self.rfm96w.recv()
             str = "".join(map(chr, data))
-            Log("RFM96W: Data received: {}\n".format(str))
+            Log("RFM96W: Data received: {}".format(str))
             Log("RSSI: {}".format(self.rfm96w.last_rssi))
 
         self.rfm96w.set_mode_idle()
