@@ -232,7 +232,7 @@ class Relais (object):
             str = "".join(map(chr, data))
             Log("RFM96W: Data received: {}".format(str))
             Log("RSSI: {}".format(self.rfm96w.last_rssi))
-            self.udp.send(data)
+            self.udp.send(str)
 
         self.rfm96w.set_mode_idle()
         self.rfm96w.cleanup()
