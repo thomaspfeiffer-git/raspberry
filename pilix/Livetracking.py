@@ -262,8 +262,8 @@ class Display (object):
 ###############################################################################
 # Ralais ######################################################################
 class Relais (object):
+    """receives LoRa data and forwards them to the server using UDP"""
     def __init__ (self):
-
         self.rfm96w  = Pilix_RFM96W(sender=False)
         self.udp     = UDP()
         self.display = Display()
@@ -391,7 +391,6 @@ class Receiver (object):
                 else:
                     Log("Hashes do not match on data: {}".format(datagram))
 
-
     def stop (self):
         self._running = False
         db.close()        
@@ -405,6 +404,7 @@ def shutdown_application ():
     r.stop()
     Log("Application stopped")
     sys.exit(0)
+
 
 ###############################################################################
 ## main #######################################################################
@@ -423,7 +423,6 @@ if __name__ == "__main__":
     # --relais #
     r = Relais()
     r.run()
-
 
 # eof #
 
