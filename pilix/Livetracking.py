@@ -74,35 +74,59 @@ class Digest (object):
 
 
 ###############################################################################
+# Payload #####################################################################
+class Payload (object):
+    def __init__ (self, source):
+        self.digest = Digest(CONFIG.Livetracking.SECRET)
+        self.__data = None
+        self.__source = source
+
+    def __call__ (self):
+        return self.data
+
+    @property
+    def data (self):
+        if self.__data:
+            payload = "{},{},{},{},{:.3f},{}".format(self.__data[V_GPS_Time],
+                                                     self.__data[V_GPS_Lon],
+                                                     self.__data[V_GPS_Lat],
+                                                     self.__data[V_GPS_Alt],
+                                                     self.__data[V_Voltage],
+                                                     self.__source)
+            payload = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
+            return payload
+        else:
+            return None
+
+    @data.setter
+    def data (self, data):
+        self.__data = data
+
+
+###############################################################################
 # Sender_UDP ##################################################################
 class Sender_UDP (threading.Thread):
     """sends some GPS data (lon, lat, alt, timestamp, voltage)
        to a server using UDP on a GSM connection"""
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.digest = Digest(CONFIG.Livetracking.SECRET)
-        self.data = None
+        self.payload = Payload(source="gsm")
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.runningonbattery = True
         self._running = True
 
     def setdata (self, data):
-        self.data = data
+        self.payload.data = data
+        self.runningonbattery = data[V_RunningOnBattery]
 
     def run (self):
         interval = CONFIG.Livetracking.Interval_UDP_OnBattery
         while self._running:
-            if self.data:
+            datagram = self.payload()
+            if datagram:
                 interval = CONFIG.Livetracking.Interval_UDP_OnBattery \
-                           if self.data[V_RunningOnBattery] \
+                           if self.runningonbattery \
                            else CONFIG.Livetracking.Interval_UDP_OnPowersupply
-                payload = "{},{},{},{},{:.3f},{}".format(self.data[V_GPS_Time],
-                                                         self.data[V_GPS_Lon],
-                                                         self.data[V_GPS_Lat],
-                                                         self.data[V_GPS_Alt],
-                                                         self.data[V_Voltage],
-                                                         "gsm")
-
-                datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
                 try:
                     Log("Sending bytes (UDP): {}".format(datagram))
                     sent = self.socket.sendto(datagram, 
