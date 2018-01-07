@@ -121,6 +121,25 @@ class Sender_UDP (threading.Thread):
 
 
 ###############################################################################
+# Pilix_RFM96W ################################################################
+class Pilix_RFM96W (RFM9x):
+    def __init__ (self, sender=True):
+        super().__init__(config=LoRa_Cfg, 
+                         frequency=CONFIG.Livetracking.LoRa_Frequency,
+                         int_pin=CONFIG.Livetracking.LoRa_pinInterrupt,
+                         reset_pin=CONFIG.Livetracking.LoRa_pinReset)
+        if not self.init():
+            Log("Error: RFM96W not found!")  
+            self.cleanup()    # TODO: show some message on SSD1306!
+            sys.exit()
+        else:
+            Log("RFM96W LoRa mode ok!")
+
+        if sender:    
+            self.set_tx_power(CONFIG.Livetracking.LoRa_TX_Power)
+
+
+###############################################################################
 # Sender_LoRa #################################################################
 class Sender_LoRa (threading.Thread):
     """sends some GPS data (lon, lat, alt, timestamp, voltage)
@@ -130,18 +149,7 @@ class Sender_LoRa (threading.Thread):
         threading.Thread.__init__(self)
         self.digest = Digest(CONFIG.Livetracking.SECRET)
         self.data = None
-        self.rfm96w = RFM9x(config=LoRa_Cfg, 
-                                   frequency=CONFIG.Livetracking.LoRa_Frequency,
-                                   int_pin=CONFIG.Livetracking.LoRa_pinInterrupt,
-                                   reset_pin=CONFIG.Livetracking.LoRa_pinReset)
-        if not self.rfm96w.init():
-            Log("Error: RFM96W not found!")  
-            self.rfm96w.cleanup()    # TODO: show some message on SSD1306!
-            sys.exit()
-        else:
-            Log("RFM96W LoRa mode ok!")
-            self.rfm96w.set_tx_power(CONFIG.Livetracking.LoRa_TX_Power)
-
+        self.rfm96w = Pilix_RFM96W(sender=True)
         self._running = True
 
     def setdata (self, data):
