@@ -314,6 +314,7 @@ CREATE TABLE telemetry (
     """
 
     def __init__ (self):
+        import mysql.connector as mc
         self.connect()
 
     def connect (self):
@@ -351,6 +352,8 @@ CREATE TABLE telemetry (
 # Receiver_UDP ################################################################
 class Receiver (object):
     def __init__ (self):
+        db = Database()
+
         self.digest = Digest(CONFIG.Livetracking.SECRET)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((CONFIG.Livetracking.IP_ADDRESS_SERVER, 
@@ -409,19 +412,21 @@ def shutdown_application ():
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
+    import argparse
     from Shutdown import Shutdown
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    # --receiver #    
-    """
-    import mysql.connector as mc
-    db = Database()
-    r = Receiver()
-    r.run()
-    """
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--receiver", help="receive data", action="store_true")
+    group.add_argument("--relais", help="relais data", action="store_true")
+    args = parser.parse_args()
 
-    # --relais #
-    r = Relais()
+    if args.receiver:
+        r = Receiver()
+    if args.relais:
+        r = Relais()
+
     r.run()
 
 # eof #
