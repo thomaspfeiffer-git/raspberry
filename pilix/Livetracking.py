@@ -33,7 +33,14 @@ import time
 sys.path.append("../libs/")
 from Logging import Log
 
-from actuators.RFM9x import RFM9x
+try:
+    from actuators.RFM9x import RFM9x
+except ImportError:
+    """in case of no hardware present (receiver/server on UDP),
+       we fake this class"""
+    class RFM9x (object):
+        pass
+
 from actuators.RFM9x_constants import *
 
 from config import CONFIG
@@ -314,7 +321,6 @@ CREATE TABLE telemetry (
     """
 
     def __init__ (self):
-        import mysql.connector as mc
         self.connect()
 
     def connect (self):
@@ -352,7 +358,7 @@ CREATE TABLE telemetry (
 # Receiver_UDP ################################################################
 class Receiver (object):
     def __init__ (self):
-        db = Database()
+        self.db = Database()
 
         self.digest = Digest(CONFIG.Livetracking.SECRET)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -378,7 +384,7 @@ class Receiver (object):
         sql = sql.format(timestamp=timestamp, source=source, lon=lon, lat=lat,
                          alt=alt, voltage=voltage)
         Log("SQL: {}".format(sql))
-        db.execute(sql)
+        self.db.execute(sql)
 
     def run (self):
         while self._running:
@@ -396,7 +402,7 @@ class Receiver (object):
 
     def stop (self):
         self._running = False
-        db.close()        
+        self.db.close()        
 
 
 ###############################################################################
@@ -423,6 +429,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.receiver:
+        import mysql.connector as mc
         r = Receiver()
     if args.relais:
         r = Relais()
