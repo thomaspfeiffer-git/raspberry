@@ -127,6 +127,8 @@ class RFM9x (object):
         """automatic frequency control; taken from
            https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c"""
 
+        self.set_mode_rx()
+
         r28 = self.spi_read(REG_28_FREQ_ERROR)
         r29 = self.spi_read(REG_28_FREQ_ERROR+1)
         r30 = self.spi_read(REG_28_FREQ_ERROR+2)
@@ -143,6 +145,8 @@ class RFM9x (object):
         f_err = -(t * (1 << 24) / 32000000.0) * (self.config[LR_Cfg_BW] / 500.0)
         Log("Frequency Error: {:.2f} Hz".format(f_err))
         self.set_frequency(self.frequency+f_err)
+
+        self.set_mode_idle()
 
     def spi_write(self, reg, data):
         self.spi.open(0,self.spi_cs)
