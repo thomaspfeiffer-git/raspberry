@@ -62,8 +62,8 @@ LoRa_Cfg_Telemetry_Stable = { LR_Cfg_Reg1: BW_62K5HZ | CODING_RATE_4_8,
                               LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
                               LR_Cfg_BW:   62.5 }
 
-# LoRa_Cfg = LoRa_Cfg_Medium
-LoRa_Cfg = LoRa_Cfg_Telemetry
+LoRa_Cfg = LoRa_Cfg_Medium
+# LoRa_Cfg = LoRa_Cfg_Telemetry
 # LoRa_Cfg = LoRa_Cfg_Telemetry_Stable
 
 
@@ -110,6 +110,15 @@ class Payload (object):
     @data.setter
     def data (self, data):
         self.__data = data
+
+    @staticmethod
+    def check_syntax (payload):
+        try:
+            (timestamp, lon, lat, alt, voltage, source, digest) = payload.split(',')
+        except ValueError:
+            return False
+        else:
+            return True
 
 
 ###############################################################################
@@ -287,11 +296,15 @@ class Relais (object):
             
             data = self.rfm96w.recv()
             str = "".join(map(chr, data))
-            Log("RFM96W: Data received: {}".format(str))
-            rssi = self.rfm96w.last_rssi
-            Log("RSSI: {}".format(rssi))
-            self.udp.send(str.encode('utf-8'))
-            self.display.showdata(str, rssi)
+            if Payload.check_syntax(str):  # TODO: compare digest
+                Log("RFM96W: Data received: {}".format(str))
+                rssi = self.rfm96w.last_rssi
+                Log("RSSI: {}".format(rssi))
+                self.udp.send(str.encode('utf-8'))
+                self.display.showdata(str, rssi)
+            else:
+                Log("WARN: RFM96W: received bad packet")
+                Log("RSSI: {}".format(rssi))
 
     def stop (self):
         self._running = False
