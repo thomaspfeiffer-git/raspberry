@@ -81,7 +81,7 @@ class RFM9x (object):
         self.set_modem_config()
         self.set_preamble_length(8)
         self.set_frequency(self.frequency)
-        
+
         return True
 
     def handle_interrupt(self, channel):
@@ -201,20 +201,10 @@ class RFM9x (object):
         return True
 
     def set_tx_power(self, power):
-        if power>23:
-            power=23
-        if power<5:
-            power=5
-        # A_DAC_ENABLE actually adds about 3dBm to all 
-        # power levels. We will us it for 21, 22 and 23dBm
+        self.spi_write(REG_09_PA_CONFIG, power)
 
-        if power>20:
-            self.spi_write(REG_4D_PA_DAC, PA_DAC_ENABLE)
-            power = power -3
-        else:
-            self.spi_write(REG_4D_PA_DAC, PA_DAC_DISABLE)
-
-        self.spi_write(REG_09_PA_CONFIG, PA_SELECT | (power-5))
+    def set_lna(self, lna):
+        self.spi_write(REG_0C_LNA, lna)
 
     # set a default mode
     def set_modem_config(self):
