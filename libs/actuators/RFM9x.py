@@ -101,7 +101,10 @@ class RFM9x (object):
             # clear IRQ flags
             self.spi_write(REG_12_IRQ_FLAGS, 0xff)
 
-            self.afc()
+            # AFC shall be done only if a correct packet was receveived.
+            # Therefore AFC shall be called by after verification of 
+            # the received data.
+            # self.afc()
 
             # save RSSI
             self.last_rssi = self.spi_read(REG_1A_PKT_RSSI_VALUE) - 137

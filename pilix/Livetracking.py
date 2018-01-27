@@ -112,7 +112,7 @@ class Payload (object):
         self.__data = data
 
     @staticmethod
-    def check_syntax (payload):
+    def verify (payload):  # TODO: check/compare digest
         try:
             (timestamp, lon, lat, alt, voltage, source, digest) = payload.split(',')
         except ValueError:
@@ -296,7 +296,8 @@ class Relais (object):
             
             data = self.rfm96w.recv()
             str = "".join(map(chr, data))
-            if Payload.check_syntax(str):  # TODO: compare digest
+            if Payload.verify(str):
+                self.rfm96w.afc() # AFC only on good data
                 Log("RFM96W: Data received: {}".format(str))
                 rssi = self.rfm96w.last_rssi
                 Log("RSSI: {}".format(rssi))
@@ -406,6 +407,7 @@ class Receiver (object):
         while self._running:
             try:
                 datagram = self.socket.recv(CONFIG.Livetracking.MAX_PACKET_SIZE).decode('utf-8')
+                # TODO: Payload.verify()
             except KeyboardInterrupt:
                 self._running = False
             else:    
