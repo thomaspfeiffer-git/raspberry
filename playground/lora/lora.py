@@ -55,8 +55,8 @@ LoRa_Cfg_Telemetry_Stable = { LR_Cfg_Reg1: BW_62K5HZ | CODING_RATE_4_8,
 
 
 # LoRa_Cfg = LoRa_Cfg_Medium
-LoRa_Cfg = LoRa_Cfg_Telemetry
-# LoRa_Cfg = LoRa_Cfg_Telemetry_Stable
+# LoRa_Cfg = LoRa_Cfg_Telemetry
+LoRa_Cfg = LoRa_Cfg_Telemetry_Stable
 
 tx_interval = 15
 frequency = 433500000
