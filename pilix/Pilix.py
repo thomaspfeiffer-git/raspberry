@@ -342,7 +342,7 @@ class Control (threading.Thread):
 
     def monitor_battery (self):
         if self.running_on_battery:
-            if self.data[V_Voltage] >= 6.0: # Battery under 6 V for more than 60 s.
+            if self.data[V_Voltage] >= 6.2: # Battery under 6.2 V for more than 60 s.
                 self.last_timestamp_voltage_over_limit = time.time()
             if self.last_timestamp_voltage_over_limit + 60 <= time.time():
                 Log("Battery low. Shutting down.")
