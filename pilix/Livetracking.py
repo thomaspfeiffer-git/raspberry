@@ -114,10 +114,20 @@ class Payload (object):
     @staticmethod
     def verify (payload):  # TODO: check/compare digest
         try:
+            (data, digest) = payload.rsplit(',', 1)
             (timestamp, lon, lat, alt, voltage, source, digest) = payload.split(',')
         except ValueError:
+            # TODO
+            # Log("WARN: ...")
             return False
         else:
+            """
+            if hmac.compare_digest(digest, self.digest(data)):
+                return True
+            else:
+                Log("WARN: Hashes do not match on data: {}".format(payload))
+                return False
+            """
             return True
 
 
@@ -409,7 +419,7 @@ class Receiver (object):
                 # TODO: Payload.verify()
             except KeyboardInterrupt:
                 self._running = False
-            else:    
+            else:    # TODO: Payload.verify
                 (payload, digest_received) = datagram.rsplit(',', 1)
                 if hmac.compare_digest(digest_received, self.digest(payload)):
                     Log("Received data: {}".format(datagram))
