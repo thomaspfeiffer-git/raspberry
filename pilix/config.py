@@ -56,7 +56,7 @@ class CONFIG:
         Interval_LoRa_OnBattery = int(cfg['Livetracking']['Interval_LoRa_OnBattery'])
         Interval_LoRa_OnPowersupply = int(cfg['Livetracking']['Interval_LoRa_OnPowersupply'])
         LoRa_Frequency=int(cfg['Livetracking']['LoRa_Frequency'])
-        LoRa_TX_Power=int(cfg['Livetracking']['LoRa_TX_Power'])
+        LoRa_TX_Power=cfg['Livetracking']['LoRa_TX_Power']
         LoRa_pinInterrupt=int(cfg['Livetracking']['LoRa_pinInterrupt'])
         LoRa_pinReset=int(cfg['Livetracking']['LoRa_pinReset'])
         SQL_USER = cred['Livetracking']['SQL_USER']
