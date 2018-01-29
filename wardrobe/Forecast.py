@@ -54,6 +54,8 @@ class OWM (object):
             Log("HTTPError, URLError: {0[0]} {0[1]}".format(sys.exc_info()))
         except socket.timeout:
             Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+        except ConnectionResetError:
+            Log("ConnectionError: {0[0]} {0[1]}".format(sys.exc_info()))
         else:
             self.last_changed = datetime.now().timestamp()
 
