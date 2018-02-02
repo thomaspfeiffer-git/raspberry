@@ -73,10 +73,12 @@ LoRa_Cfg = LoRa_Cfg_Telemetry
 class ID_Provider (metaclass=Singleton):
     def __init__ (self):
         self.__id = 0
+        self.__lock = threading.Lock()
 
     def next (self):
-        self.__id += 1
-        return self.__id
+        with self.__lock:
+            self.__id += 1
+            return self.__id
 
 
 ###############################################################################
