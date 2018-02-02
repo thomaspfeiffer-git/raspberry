@@ -127,7 +127,7 @@ class Payload (object):
     def verify (payload):  # TODO: check/compare digest
         try:
             (data, digest) = payload.rsplit(',', 1)
-            (id, timestamp, lon, lat, alt, voltage, source, digest) = payload.split(',')
+            (id_, timestamp, lon, lat, alt, voltage, source, digest) = payload.split(',')
         except ValueError:
             # TODO
             # Log("WARN: ...")
@@ -182,7 +182,7 @@ class Sender_UDP (threading.Thread):
         while self._running:
             datagram = self.payload()
             if datagram:
-                datagram = "{},{}".format(self.id.next(), datagram)
+                datagram = "{},".format(self.id.next()).encode('utf-8') + datagram
                 interval = CONFIG.Livetracking.Interval_UDP_OnBattery \
                            if self.runningonbattery \
                            else CONFIG.Livetracking.Interval_UDP_OnPowersupply
@@ -240,7 +240,7 @@ class Sender_LoRa (threading.Thread):
         while self._running:
             datagram = self.payload()
             if datagram:
-                datagram = "{},{}".format(self.id.next(), datagram)
+                datagram = "{},".format(self.id.next()).encode('utf-8') + datagram
                 interval = CONFIG.Livetracking.Interval_LoRa_OnBattery \
                            if self.runningonbattery \
                            else CONFIG.Livetracking.Interval_LoRa_OnPowersupply
@@ -282,7 +282,7 @@ class Display (object):
         (_, self.textheight) = self.draw.textsize("Text", font=self.font)
 
     def showdata (self, data, rssi):        
-        (id, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
+        (id_, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
         y = self.ypos
         self.draw.text((self.xpos, y), "{}".format(timestamp))
@@ -416,7 +416,7 @@ class Receiver (object):
                 i = -8888.8
             return i    
 
-        (id, timestamp, lon, lat, alt, voltage, source) = data.split(',')
+        (id_, timestamp, lon, lat, alt, voltage, source) = data.split(',')
         lon = float_(lon)
         lat = float_(lat)
         alt = float_(alt)
@@ -425,7 +425,7 @@ class Receiver (object):
                  VALUES ('{timestamp}', '{source}', {lon}, {lat}, {alt}, {voltage});"""
         sql = sql.format(timestamp=timestamp, source=source, lon=lon, lat=lat,
                          alt=alt, voltage=voltage)
-        Log("SQL: {}".format(sql))
+        Log("ID: {}; SQL: {}".format(id_, sql))
         self.db.execute(sql)
 
     def run (self):
