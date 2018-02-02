@@ -31,6 +31,7 @@ import threading
 import time
 
 sys.path.append("../libs/")
+from Commons import Singleton
 from Logging import Log
 
 try:
@@ -67,6 +68,15 @@ LoRa_Cfg = LoRa_Cfg_Telemetry
 # LoRa_Cfg = LoRa_Cfg_Telemetry_Stable
 
 
+###############################################################################
+# ID_Provider #################################################################
+class ID_Provider (metaclass=Singleton):
+    def __init__ (self):
+        self.__id = 0
+
+    def next (self):
+        self.__id += 1
+        return self.__id
 
 
 ###############################################################################
@@ -158,6 +168,7 @@ class Sender_UDP (threading.Thread):
         self.payload = Payload(source="gsm")
         self.udp = UDP()
         self.runningonbattery = True
+        self.id = ID_Provider()
         self._running = True
 
     def setdata (self, data):
@@ -169,6 +180,7 @@ class Sender_UDP (threading.Thread):
         while self._running:
             datagram = self.payload()
             if datagram:
+                print("Sender_UDP.run: ID: {}".format(self.id.next()))
                 interval = CONFIG.Livetracking.Interval_UDP_OnBattery \
                            if self.runningonbattery \
                            else CONFIG.Livetracking.Interval_UDP_OnPowersupply
@@ -214,6 +226,7 @@ class Sender_LoRa (threading.Thread):
         self.payload = Payload(source="lora")
         self.rfm96w = Pilix_RFM96W(sender=True)
         self.runningonbattery = True
+        self.id = ID_Provider()
         self._running = True
 
     def setdata (self, data):
@@ -225,6 +238,7 @@ class Sender_LoRa (threading.Thread):
         while self._running:
             datagram = self.payload()
             if datagram:
+                print("Sender_LoRa.run: ID: {}".format(self.id.next()))
                 interval = CONFIG.Livetracking.Interval_LoRa_OnBattery \
                            if self.runningonbattery \
                            else CONFIG.Livetracking.Interval_LoRa_OnPowersupply
