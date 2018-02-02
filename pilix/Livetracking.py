@@ -437,8 +437,8 @@ class Receiver (object):
                 self._running = False
             else:    # TODO: Payload.verify
                 (payload, digest_received) = datagram.rsplit(',', 1)
-                (id_, payload) = payload.split(',')
-                if hmac.compare_digest(digest_received, self.digest(payload)):
+                (id_, _payload) = payload.split(',', 1)
+                if hmac.compare_digest(digest_received, self.digest(_payload)):
                     Log("Received data: {}".format(datagram))
                     self.store(data=payload)
                 else:
