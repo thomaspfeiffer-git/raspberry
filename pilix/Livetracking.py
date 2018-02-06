@@ -97,8 +97,9 @@ class Digest (object):
 ###############################################################################
 # Payload #####################################################################
 class Payload (object):
+    digest = Digest(CONFIG.Livetracking.SECRET)
+
     def __init__ (self, source):
-        self.digest = Digest(CONFIG.Livetracking.SECRET)
         self.__data = None
         self.__source = source
 
@@ -123,24 +124,20 @@ class Payload (object):
     def data (self, data):
         self.__data = data
 
-    @staticmethod
-    def verify (payload):  # TODO: check/compare digest
+    @classmethod
+    def verify (cls, payload):
         try:
             (data, digest) = payload.rsplit(',', 1)
-            (msgid, timestamp, lon, lat, alt, voltage, source, digest) = payload.split(',')
+            (msgid, data) = data.split(',', 1) # msgid is not part of digest
         except ValueError:
-            # TODO
-            # Log("WARN: ...")
+            Log("WARN: Payload corrupted: {}".format(payload))
             return False
         else:
-            """
-            if hmac.compare_digest(digest, self.digest(data)):
+            if hmac.compare_digest(digest, cls.digest(data)):
                 return True
             else:
                 Log("WARN: Hashes do not match on data: {}".format(payload))
                 return False
-            """
-            return True
 
 
 ###############################################################################
@@ -329,8 +326,7 @@ class Relais (object):
                 self.udp.send(str.encode('utf-8'))
                 self.display.showdata(str, rssi)
             else:
-                Log("WARN: RFM96W: received bad packet: {}".format(str))
-                Log("RSSI: {}".format(rssi))
+                Log("RSSI: {}".format(self.rfm96w.last_rssi))
 
     def stop (self):
         self._running = False
@@ -431,19 +427,10 @@ class Receiver (object):
 
     def run (self):
         while self._running:
-            try:
-                datagram = self.socket.recv(CONFIG.Livetracking.MAX_PACKET_SIZE).decode('utf-8')
-                # TODO: Payload.verify()
-            except KeyboardInterrupt:
-                self._running = False
-            else:    # TODO: Payload.verify
+            datagram = self.socket.recv(CONFIG.Livetracking.MAX_PACKET_SIZE).decode('utf-8')
+            if Payload.verify(datagram):
                 (payload, digest_received) = datagram.rsplit(',', 1)
-                (msgid, _payload) = payload.split(',', 1)
-                if hmac.compare_digest(digest_received, self.digest(_payload)):
-                    Log("Received data: {}".format(datagram))
-                    self.store(data=payload)
-                else:
-                    Log("Hashes do not match on data: {}".format(datagram))
+                self.store(data=payload)
 
     def stop (self):
         self._running = False
