@@ -127,7 +127,7 @@ class Payload (object):
     def verify (payload):  # TODO: check/compare digest
         try:
             (data, digest) = payload.rsplit(',', 1)
-            (id_, timestamp, lon, lat, alt, voltage, source, digest) = payload.split(',')
+            (msgid, timestamp, lon, lat, alt, voltage, source, digest) = payload.split(',')
         except ValueError:
             # TODO
             # Log("WARN: ...")
@@ -282,10 +282,10 @@ class Display (object):
         (_, self.textheight) = self.draw.textsize("Text", font=self.font)
 
     def showdata (self, data, rssi):        
-        (id_, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
+        (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
         y = self.ypos
-        self.draw.text((self.xpos, y), "{}".format(timestamp))
+        self.draw.text((self.xpos, y), "{}: {}".format(msgid, timestamp))
         y += self.textheight
         self.draw.text((self.xpos, y), "X: {}".format(lon))
         y += self.textheight
@@ -352,6 +352,7 @@ USE pilix;
 CREATE TABLE telemetry (
     id BIGINT(20) PRIMARY KEY NOT NULL auto_increment,
     ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    msgid BIGINT(20),
     timestamp VARCHAR(32) NOT NULL,
     source SET('gsm', 'lora'),
     lon FLOAT,
@@ -416,16 +417,16 @@ class Receiver (object):
                 i = -8888.8
             return i    
 
-        (id_, timestamp, lon, lat, alt, voltage, source) = data.split(',')
+        (msgid, timestamp, lon, lat, alt, voltage, source) = data.split(',')
         lon = float_(lon)
         lat = float_(lat)
         alt = float_(alt)
 
-        sql = """INSERT INTO telemetry (timestamp, source, lon, lat, alt, voltage)
-                 VALUES ('{timestamp}', '{source}', {lon}, {lat}, {alt}, {voltage});"""
-        sql = sql.format(timestamp=timestamp, source=source, lon=lon, lat=lat,
-                         alt=alt, voltage=voltage)
-        Log("ID: {}; SQL: {}".format(id_, sql))
+        sql = """INSERT INTO telemetry (timestamp, msgid, source, lon, lat, alt, voltage)
+                 VALUES ('{timestamp}', '{msgid}', '{source}', {lon}, {lat}, {alt}, {voltage});"""
+        sql = sql.format(timestamp=timestamp, msgid=msgid, source=source, 
+                         lon=lon, lat=lat, alt=alt, voltage=voltage)
+        Log("SQL: {}".format(sql))
         self.db.execute(sql)
 
     def run (self):
@@ -437,7 +438,7 @@ class Receiver (object):
                 self._running = False
             else:    # TODO: Payload.verify
                 (payload, digest_received) = datagram.rsplit(',', 1)
-                (id_, _payload) = payload.split(',', 1)
+                (msgid, _payload) = payload.split(',', 1)
                 if hmac.compare_digest(digest_received, self.digest(_payload)):
                     Log("Received data: {}".format(datagram))
                     self.store(data=payload)
