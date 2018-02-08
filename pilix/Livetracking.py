@@ -133,11 +133,17 @@ class Payload (object):
             Log("WARN: Payload corrupted: {}".format(payload))
             return False
         else:
-            if hmac.compare_digest(digest, cls.digest(data)):
-                return True
-            else:
-                Log("WARN: Hashes do not match on data: {}".format(payload))
+            try:
+                if hmac.compare_digest(digest, cls.digest(data)):
+                    return True
+                else:
+                    Log("WARN: Hashes do not match on data: {}".format(payload))
+                    return False
+            except TypeError:    
+                Log("WARN: non-ascii characters found: {}".format(payload))
                 return False
+            except:
+                raise
 
 
 ###############################################################################
