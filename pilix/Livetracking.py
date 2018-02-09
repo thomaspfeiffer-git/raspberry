@@ -131,19 +131,18 @@ class Payload (object):
             (msgid, data) = data.split(',', 1) # msgid is not part of digest
         except ValueError:
             Log("WARN: Payload corrupted: {}".format(payload))
-            return False
         else:
             try:
                 if hmac.compare_digest(digest, cls.digest(data)):
                     return True
                 else:
                     Log("WARN: Hashes do not match on data: {}".format(payload))
-                    return False
             except TypeError:    
                 Log("WARN: non-ascii characters found: {}".format(payload))
-                return False
             except:
                 raise
+
+        return False
 
 
 ###############################################################################
