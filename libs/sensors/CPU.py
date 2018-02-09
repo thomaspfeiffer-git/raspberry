@@ -21,6 +21,11 @@ class CPU:
         res = res.decode()
         return float(res.replace("temp=","").replace("'C\n",""))
 
+        """
+        Exception in thread Thread-4:
+        subprocess.CalledProcessError: Command '['vcgencmd', 'measure_temp']' returned non-zero exit status -15
+        """
+
     def __nanoPi (self):
         with open('/sys/class/thermal/thermal_zone0/temp', 'r') as f:
             t = float(f.read())
