@@ -288,7 +288,11 @@ class Display (object):
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
         y = self.ypos
 
-        (_, timestamp) = timestamp.split('T') # Show time only
+        try:
+            (_, timestamp) = timestamp.split('T') # Show time only
+        except:
+            pass
+
         self.draw.text((self.xpos, y), "{} {}".format(msgid, timestamp))
         y += self.textheight
         self.draw.text((self.xpos, y), "X: {}".format(lon))
