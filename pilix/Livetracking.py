@@ -214,7 +214,10 @@ class Pilix_RFM96W (RFM9x):
             Log("RFM96W LoRa mode ok!")
 
         if sender:    
-            self.set_tx_power(eval(CONFIG.Livetracking.LoRa_TX_Power))
+            if CONFIG.APP.autostart:
+                self.set_tx_power(eval(CONFIG.Livetracking.LoRa_TX_Power_OnAutostart))
+            else:
+                self.set_tx_power(eval(CONFIG.Livetracking.LoRa_TX_Power))
         else:    
             self.set_lna(LNA_BOOST_MAX)
 
