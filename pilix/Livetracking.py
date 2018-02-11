@@ -287,7 +287,9 @@ class Display (object):
         (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
         y = self.ypos
-        self.draw.text((self.xpos, y), "{}: {}".format(msgid, timestamp))
+
+        (_, timestamp) = timestamp.split('T') # Show time only
+        self.draw.text((self.xpos, y), "{} {}".format(msgid, timestamp))
         y += self.textheight
         self.draw.text((self.xpos, y), "X: {}".format(lon))
         y += self.textheight
