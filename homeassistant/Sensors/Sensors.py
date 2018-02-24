@@ -12,6 +12,7 @@
 
 import rrdtool
 import sys
+import threading
 import time
 
 sys.path.append('../../libs')
@@ -26,6 +27,8 @@ from sensors.TSL2561 import TSL2561
 from SensorQueue2 import SensorQueueClient_write
 from SensorValue2 import SensorValue, SensorValue_Data
 
+from Commons import Singleton
+from Logging import Log
 from Shutdown import Shutdown
 
 
@@ -43,12 +46,82 @@ DS_OPEN3       = "ki_open3"
 DS_OPEN4       = "ki_open4"
 
 
+class Sensors (threading.Thread, metaclass=Singleton):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+
+        self.qv_temp       = SensorValue("ID_40", "TempKueche", SensorValue_Data.Types.Temp, "°C")
+        self.qv_humi       = SensorValue("ID_41", "HumiKueche", SensorValue_Data.Types.Humi, "% rF")
+        self.qv_pressure   = SensorValue("ID_42", "PressureKueche", SensorValue_Data.Types.Pressure, "hPa")
+        self.qv_light      = SensorValue("ID_43", "LightKueche", SensorValue_Data.Types.Light, "lux")
+        self.qv_airquality = SensorValue("ID_44", "AirQualityKueche", SensorValue_Data.Types.AirQuality, "%")
+
+        self.sq = SensorQueueClient_write("../../../configs/weatherqueue.ini")
+        self.sq.register(self.qv_temp)
+        self.sq.register(self.qv_humi)
+        self.sq.register(self.qv_pressure)
+        self.sq.register(self.qv_light)
+        self.sq.register(self.qv_airquality)
+
+        self.cpu     = CPU()
+        self.bme680  = BME680(i2c_addr=BME_680_SECONDARYADDR, \
+                              qv_temp=self.qv_temp, qv_humi=self.qv_humi, \
+                              qv_pressure=self.qv_pressure, qv_airquality=self.qv_airquality)
+        self.tsl2561 = TSL2561(qvalue=self.qv_light)
+
+        self.rrd_template = DS_TEMP        + ":" + \
+                            DS_TEMPCPU     + ":" + \
+                            DS_HUMI        + ":" + \
+                            DS_AIRPRESSURE + ":" + \
+                            DS_LIGHTNESS   + ":" + \
+                            DS_AIRQUALITY  + ":" + \
+                            DS_OPEN1       + ":" + \
+                            DS_OPEN2       + ":" + \
+                            DS_OPEN3       + ":" + \
+                            DS_OPEN4
+        self._running = True
+
+    def run (self):
+        while self._running:
+
+            self.bme680.get_sensor_data()
+
+            air_quality = self.bme680.data.air_quality_score if self.bme680.data.air_quality_score != None else 0
+            rrd_data = "N:{:.2f}".format(self.bme680.data.temperature) + \
+                        ":{:.2f}".format(self.cpu.read_temperature())  + \
+                        ":{:.2f}".format(self.bme680.data.humidity)    + \
+                        ":{:.2f}".format(self.bme680.data.pressure)    + \
+                        ":{:.2f}".format(self.tsl2561.lux())           + \
+                        ":{:.2f}".format(air_quality)                  + \
+                        ":{}".format(0)                                + \
+                        ":{}".format(0)                                + \
+                        ":{}".format(0)                                + \
+                        ":{}".format(0)
+            Log(rrd_data)
+            # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+
+            for _ in range(50): # interruptible sleep
+                if self._running:
+                    time.sleep(0.1)
+                else:
+                    break
+
+    def stop (self):
+        self._running = False
+
+   
+###############################################################################
+# Flask stuff #################################################################
+
+ 
 ###############################################################################
 # shutdown_application ########################################################
 def shutdown_application ():
     """called on shutdown; stops all threads"""
     print("in shutdown_application()")
     # TODO: bme680.shutdown() while calculating baseline
+    sensors.stop()
+    sensors.join()
     sys.exit(0)
 
 
@@ -57,54 +130,11 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    qv_temp       = SensorValue("ID_40", "TempKueche", SensorValue_Data.Types.Temp, "°C")
-    qv_humi       = SensorValue("ID_41", "HumiKueche", SensorValue_Data.Types.Humi, "% rF")
-    qv_pressure   = SensorValue("ID_42", "PressureKueche", SensorValue_Data.Types.Pressure, "hPa")
-    qv_light      = SensorValue("ID_43", "LightKueche", SensorValue_Data.Types.Light, "lux")
-    qv_airquality = SensorValue("ID_44", "AirQualityKueche", SensorValue_Data.Types.AirQuality, "%")
-
-    sq = SensorQueueClient_write("../../../configs/weatherqueue.ini")
-    sq.register(qv_temp)
-    sq.register(qv_humi)
-    sq.register(qv_pressure)
-    sq.register(qv_light)
-    sq.register(qv_airquality)
-
-    cpu     = CPU()
-    bme680  = BME680(i2c_addr=BME_680_SECONDARYADDR, \
-                     qv_temp=qv_temp, qv_humi=qv_humi, \
-                     qv_pressure=qv_pressure, qv_airquality=qv_airquality)
-    tsl2561 = TSL2561(qvalue=qv_light)
-
-    rrd_template = DS_TEMP        + ":" + \
-                   DS_TEMPCPU     + ":" + \
-                   DS_HUMI        + ":" + \
-                   DS_AIRPRESSURE + ":" + \
-                   DS_LIGHTNESS   + ":" + \
-                   DS_AIRQUALITY  + ":" + \
-                   DS_OPEN1       + ":" + \
-                   DS_OPEN2       + ":" + \
-                   DS_OPEN3       + ":" + \
-                   DS_OPEN4
+    sensors = Sensors()
+    sensors.start()
 
     while True:
-        bme680.get_sensor_data()
+        pass
 
-        air_quality = bme680.data.air_quality_score if bme680.data.air_quality_score != None else 0
-        rrd_data = "N:{:.2f}".format(bme680.data.temperature) + \
-                    ":{:.2f}".format(cpu.read_temperature())  + \
-                    ":{:.2f}".format(bme680.data.humidity)    + \
-                    ":{:.2f}".format(bme680.data.pressure)    + \
-                    ":{:.2f}".format(tsl2561.lux())           + \
-                    ":{:.2f}".format(air_quality)             + \
-                    ":{}".format(0)                           + \
-                    ":{}".format(0)                           + \
-                    ":{}".format(0)                           + \
-                    ":{}".format(0)
-        print(time.strftime("%Y%m%d %X:"), rrd_data)
-        # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
-
-        time.sleep(50)
-    
 # eof #
 
