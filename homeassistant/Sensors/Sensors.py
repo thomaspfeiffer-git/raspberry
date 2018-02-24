@@ -49,15 +49,6 @@ DS_OPEN4       = "ki_open4"
 
 
 class Sensors (threading.Thread, metaclass=Singleton):
-    class Values (object):
-        def __init__ (self):
-            self.temp        = "n/a"
-            self.tempcpu     = "n/a"
-            self.humi        = "n/a"
-            self.airpressure = "n/a"
-            self.lightness   = "n/a"
-            self.airquality  = "n/a"
-
     def __init__ (self):
         threading.Thread.__init__(self)
 
