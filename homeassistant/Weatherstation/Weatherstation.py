@@ -49,7 +49,7 @@ class WeatherApp (tk.Frame):
     def __init__ (self, master=None):
         super().__init__(master)
 
-        self.screennames = "main owm kid kb_outdoor kb_indoor wardrobe".split()
+        self.screennames = "main owm kitchen kid kb_outdoor kb_indoor wardrobe".split()
         self.master = master
 
         clock.init_values()
@@ -174,9 +174,9 @@ class WeatherApp (tk.Frame):
                                           decorated=['ID_03'],
                                           color=CONFIG.COLORS.OUTDOOR,
                                           gridpos=gridpos)
-        gridpos = self.drawWeatherSection(frame=frame, title="Helligkeit Küche:",
-                                          itemlist=['ID_09'],
-                                          color=CONFIG.COLORS.BRIGHTNESSKITCHEN,
+        gridpos = self.drawWeatherSection(frame=frame, title="Luftqualität Küche:",
+                                          itemlist=['ID_44'],
+                                          color=CONFIG.COLORS.AIRQUALITYKITCHEN,
                                           gridpos=gridpos)
 
 
@@ -194,6 +194,15 @@ class WeatherApp (tk.Frame):
                                            itemlist=['ID_OWM_25', 'ID_LC_22', 'ID_LC_23'],
                                            gridpos=gridpos)
 
+
+    def create_screen_kitchen (self):
+        frame = self.screens['kitchen']
+        gridpos = 0
+
+        gridpos = self.drawWeatherSection(frame=frame, title="Küche",
+                                          itemlist=['ID_40', 'ID_41', 'ID_42', 'ID_43', 'ID_44'],
+                                          color=CONFIG.COLORS.KITCHEN,
+                                          gridpos=gridpos)
 
     def create_screen_kid (self):
         frame = self.screens['kid']

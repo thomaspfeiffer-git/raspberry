@@ -46,7 +46,8 @@ class CONFIG:
         COTTAGE    = "ForestGreen"
         MISC       = "Indigo"
         WARDROBE   = "Gold"
-        BRIGHTNESSKITCHEN = "DarkOrange"
+        AIRQUALITYKITCHEN = "Green"
+        KITCHEN    = "DarkOrange"
 
 
     class IMAGES:
