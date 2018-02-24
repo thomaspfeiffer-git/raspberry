@@ -121,7 +121,7 @@ class Sensors (threading.Thread, metaclass=Singleton):
                         ":{}".format(0)                              + \
                         ":{}".format(0)
             Log(rrd_data)
-            # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+            rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
 
             for _ in range(500): # interruptible sleep
                 if self._running:
