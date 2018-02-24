@@ -364,7 +364,7 @@ class BME680(BME680Data, I2C):
                     self.__qv_humi.value = "%.1f" % (self.data.humidity)
 
                 if self.__qv_pressure is not None:
-                    self.__qv_pressure.value = "%.1f" % (self.data.pressure/100.0)
+                    self.__qv_pressure.value = "%.1f" % (self.data.pressure)
 
                 if self.__qv_airquality is not None:
                     try:
