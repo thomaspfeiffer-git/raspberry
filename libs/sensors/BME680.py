@@ -358,19 +358,19 @@ class BME680(BME680Data, I2C):
                 self.data.air_quality_score = self._calculate_air_quality()
 
                 if self.__qv_temp is not None:
-                    self.__qv_temp.value = "%.1f" % self.data.temperature
+                    self.__qv_temp.value = "%.1f" % (self.data.temperature)
 
                 if self.__qv_humi is not None:
-                    self.__qv_humi.value = "%.1f" % self.data.humidity
+                    self.__qv_humi.value = "%.1f" % (self.data.humidity)
 
                 if self.__qv_pressure is not None:
-                    self.__qv_pressure = "%.1f" % (self.data.pressure/100.0)
+                    self.__qv_pressure.value = "%.1f" % (self.data.pressure/100.0)
 
                 if self.__qv_airquality is not None:
                     try:
-                        self.__qv_airquality = "%.1f" % self.data.air_quality_score
+                        self.__qv_airquality.vlaue = "%.1f" % (self.data.air_quality_score)
                     except TypeError:
-                        self.__qv_airquality = "-99,99"
+                        self.__qv_airquality.value = "-99,99"
 
                 return True
 
