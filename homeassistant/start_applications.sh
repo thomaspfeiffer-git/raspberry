@@ -8,12 +8,20 @@ echo "QueueServer.py started."
 cd ..
 
 
+echo "Starting Sensors.py ..."
+cd Sensors/
+nohup ./Sensors.py &
+echo "Sensors.py started."
+cd ..
+
+
 echo
 echo "Starting Brightness.py ..."
 cd Brightness/
 nohup ./Brightness.py &
 echo "Brightness.py started."
 cd ..
+
 
 echo
 echo "Starting Weatherstation.py ..."
@@ -45,7 +53,6 @@ cd Anteroom
 nohup ./Anteroom.py &
 echo "Anteroom lighting control started"
 cd ..
-
 
 
 # eof #
