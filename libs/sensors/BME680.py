@@ -368,7 +368,7 @@ class BME680(BME680Data, I2C):
 
                 if self.__qv_airquality is not None:
                     try:
-                        self.__qv_airquality.vlaue = "%.1f" % (self.data.air_quality_score)
+                        self.__qv_airquality.value = "%.1f" % (self.data.air_quality_score)
                     except TypeError:
                         self.__qv_airquality.value = "-99,99"
 
