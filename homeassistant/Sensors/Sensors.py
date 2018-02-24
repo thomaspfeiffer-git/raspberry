@@ -47,8 +47,19 @@ DS_OPEN4       = "ki_open4"
 
 
 class Sensors (threading.Thread, metaclass=Singleton):
+    class Values (object):
+        def __init__ (self):
+            self.temp        = "n/a"
+            self.tempcpu     = "n/a"
+            self.humi        = "n/a"
+            self.airpressure = "n/a"
+            self.lightness   = "n/a"
+            self.airquality  = "n/a"
+
     def __init__ (self):
         threading.Thread.__init__(self)
+
+        self.values = self.Values()
 
         self.qv_temp       = SensorValue("ID_40", "TempKueche", SensorValue_Data.Types.Temp, "°C")
         self.qv_humi       = SensorValue("ID_41", "HumiKueche", SensorValue_Data.Types.Humi, "% rF")
@@ -83,24 +94,29 @@ class Sensors (threading.Thread, metaclass=Singleton):
 
     def run (self):
         while self._running:
-
             self.bme680.get_sensor_data()
+            self.values.temp        = self.bme680.data.temperature
+            self.values.tempcpu     = self.cpu.read_temperature()
+            self.values.humi        = self.bme680.data.humidity
+            self.values.airpressure = self.bme680.data.pressure
+            self.values.lightness   = self.tsl2561.lux()
+            self.values.airquality  = self.bme680.data.air_quality_score \
+                                      if self.bme680.data.air_quality_score != None else 0
 
-            air_quality = self.bme680.data.air_quality_score if self.bme680.data.air_quality_score != None else 0
-            rrd_data = "N:{:.2f}".format(self.bme680.data.temperature) + \
-                        ":{:.2f}".format(self.cpu.read_temperature())  + \
-                        ":{:.2f}".format(self.bme680.data.humidity)    + \
-                        ":{:.2f}".format(self.bme680.data.pressure)    + \
-                        ":{:.2f}".format(self.tsl2561.lux())           + \
-                        ":{:.2f}".format(air_quality)                  + \
-                        ":{}".format(0)                                + \
-                        ":{}".format(0)                                + \
-                        ":{}".format(0)                                + \
+            rrd_data = "N:{:.2f}".format(self.values.temp)        + \
+                        ":{:.2f}".format(self.values.tempcpu)     + \
+                        ":{:.2f}".format(self.values.humi)        + \
+                        ":{:.2f}".format(self.values.airpressure) + \
+                        ":{:.2f}".format(self.values.lightness)   + \
+                        ":{:.2f}".format(self.values.airquality)  + \
+                        ":{}".format(0)                           + \
+                        ":{}".format(0)                           + \
+                        ":{}".format(0)                           + \
                         ":{}".format(0)
             Log(rrd_data)
             # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
-            for _ in range(50): # interruptible sleep
+            for _ in range(500): # interruptible sleep
                 if self._running:
                     time.sleep(0.1)
                 else:
