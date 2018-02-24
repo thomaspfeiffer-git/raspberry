@@ -144,7 +144,7 @@ class API_Values (Resource):
 # shutdown_application ########################################################
 def shutdown_application ():
     """called on shutdown; stops all threads"""
-    print("in shutdown_application()")
+    Log("in shutdown_application()")
     # TODO: bme680.shutdown() while calculating baseline
     sensors.stop()
     sensors.join()
@@ -163,5 +163,6 @@ if __name__ == '__main__':
     sensors.start()
 
     app.run(host="0.0.0.0", port=5001)
+
 # eof #
 
