@@ -6,6 +6,7 @@ RRD_K=$RRDPATH/weather_kidsroom.rrd
 RRD_KB=$RRDPATH/weather_kollerberg.rrd
 RRD_WR=$RRDPATH/wardrobe.rrd
 RRD_AR=$RRDPATH/anteroom.rrd
+RRD_KI=$RRDPATH/kitchen.rrd
 
 
 PNG_TEMP_D=$RRDPATH/weather_temp_d.png
@@ -43,6 +44,10 @@ PNG_ANTEROOM_W=$RRDPATH/anteroom_w.png
 PNG_ANTEROOM_M=$RRDPATH/anteroom_m.png
 PNG_ANTEROOM_Y=$RRDPATH/anteroom_y.png
 
+PNG_AIRQUALITY_D=$RRDPATH/airquality_d.png
+PNG_AIRQUALITY_W=$RRDPATH/airquality_w.png
+PNG_AIRQUALITY_M=$RRDPATH/airquality_m.png
+PNG_AIRQUALITY_Y=$RRDPATH/airquality_y.png
 
 
 
@@ -67,6 +72,7 @@ printTemp ()
     DEF:temp_outdoor=$RRD:temp_outdoor:AVERAGE               \
     DEF:temp_realoutdoor=$RRD:temp_3:AVERAGE                 \
     DEF:temp_indoor=$RRD:temp_indoor:AVERAGE                 \
+    DEF:ki_temp=$RRD_KI:ki_temp:AVERAGE                      \
     DEF:temp_window=$RRD:temp_4:AVERAGE                      \
     DEF:kidsroom_temp1=$RRD_K:kidsroom_temp1:AVERAGE         \
     DEF:wr_temp1=$RRD_WR:wr_temp1:AVERAGE                    \
@@ -88,6 +94,11 @@ printTemp ()
     GPRINT:temp_indoor:AVERAGE:"Mittelwert\: %5.2lf °C"      \
     GPRINT:temp_indoor:MAX:"Max\: %5.2lf °C"                 \
     GPRINT:temp_indoor:MIN:"Min\: %5.2lf °C\n"               \
+    LINE1:ki_temp#C8FE2E:"Temperatur Küche              "    \
+    GPRINT:ki_temp:LAST:"Aktuell\: %5.2lf °C"                \
+    GPRINT:ki_temp:AVERAGE:"Mittelwert\: %5.2lf °C"          \
+    GPRINT:ki_temp:MAX:"Max\: %5.2lf °C"                     \
+    GPRINT:ki_temp:MIN:"Min\: %5.2lf °C\n"                   \
     LINE1:temp_window#ff80ff:"Temperatur Fensterbrett       "    \
     GPRINT:temp_window:LAST:"Aktuell\: %5.2lf °C"            \
     GPRINT:temp_window:AVERAGE:"Mittelwert\: %5.2lf °C"      \
@@ -136,6 +147,7 @@ printCPUTemp ()
     --watermark "$WATERMARK"                                             \
     --right-axis 1:0                                                     \
     DEF:temp_cpu=$RRD:temp_cpu:AVERAGE                                   \
+    DEF:ki_tempcpu=$RRD_KI:ki_tempcpu:AVERAGE                            \
     DEF:kidsroom_tempcpu=$RRD_K:kidsroom_tempcpu:AVERAGE                 \
     DEF:wr_tempcpu=$RRD_WR:wr_tempcpu:AVERAGE                            \
     DEF:ar_tempcpu=$RRD_AR:ar_tempcpu:AVERAGE                            \
@@ -147,6 +159,11 @@ printCPUTemp ()
     GPRINT:temp_cpu:AVERAGE:"Mittelwert\: %5.2lf °C"                     \
     GPRINT:temp_cpu:MAX:"Max\: %5.2lf °C"                                \
     GPRINT:temp_cpu:MIN:"Min\: %5.2lf °C\n"                              \
+    LINE1:ki_tempcpu#C8FE2E:"Temperatur Raspberry Pi Küche            "  \
+    GPRINT:ki_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
+    GPRINT:ki_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
+    GPRINT:ki_tempcpu:MAX:"Max\: %5.2lf °C"                              \
+    GPRINT:ki_tempcpu:MIN:"Min\: %5.2lf °C\n"                            \
     LINE1:kidsroom_tempcpu#00ccff:"Temperatur Raspberry Pi Kinderzimmer     " \
     GPRINT:kidsroom_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                \
     GPRINT:kidsroom_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"             \
@@ -196,6 +213,7 @@ printHumidity ()
     --right-axis 1:0                                           \
     DEF:humi_outdoor=$RRD:humi_outdoor:AVERAGE                 \
     DEF:humi_indoor=$RRD:humi_indoor:AVERAGE                   \
+    DEF:ki_humi=$RRD_KI:ki_humi:AVERAGE                        \
     DEF:kidsroom_humi=$RRD_K:kidsroom_humi:AVERAGE             \
     DEF:wr_humi=$RRD_WR:wr_humi:AVERAGE                        \
     DEF:kb_i_humi=$RRD_KB:kb_i_humi:AVERAGE                    \
@@ -211,6 +229,11 @@ printHumidity ()
     GPRINT:humi_indoor:AVERAGE:"Mittelwert\: %5.2lf %%"        \
     GPRINT:humi_indoor:MAX:"Max\: %5.2lf %%"                   \
     GPRINT:humi_indoor:MIN:"Min\: %5.2lf %%\n"                 \
+    LINE1:ki_humi#C8FE2E:"Luftfeuchtigkeit Küche            "  \
+    GPRINT:ki_humi:LAST:"\t Aktuell\: %5.2lf %%"               \
+    GPRINT:ki_humi:AVERAGE:"Mittelwert\: %5.2lf %%"            \
+    GPRINT:ki_humi:MAX:"Max\: %5.2lf %%"                       \
+    GPRINT:ki_humi:MIN:"Min\: %5.2lf %%\n"                     \
     LINE1:kidsroom_humi#00ccff:"Luftfeuchtigkeit Kinderzimmer     " \
     GPRINT:kidsroom_humi:LAST:"\t Aktuell\: %5.2lf %%"         \
     GPRINT:kidsroom_humi:AVERAGE:"Mittelwert\: %5.2lf %%"      \
@@ -331,7 +354,7 @@ printAnteroom()
 printLightness()
   {
     rrdtool graph $2                                        \
-    --title "Helligkeit Kleiderkasten [lux]"                \
+    --title "Helligkeit [lux]"                              \
     --end now --start end-$1                                \
     -w $WIDTH -h $HEIGHT -a PNG                             \
     --alt-autoscale                                         \
@@ -341,12 +364,42 @@ printLightness()
     --right-axis 1:0                                        \
     --right-axis-format "%4.0lf"                            \
     DEF:wr_lightness=$RRD_WR:wr_lightness:AVERAGE           \
+    DEF:ki_lightness=$RRD_KI:ki_lightness:AVERAGE           \
+    LINE1:ki_lightness#C8FE2E:"Helligkeit Küche           " \
+    GPRINT:ki_lightness:LAST:"\t Aktuell\: %5.2lf lux"      \
+    GPRINT:ki_lightness:AVERAGE:"Mittelwert\: %5.2lf lux"   \
+    GPRINT:ki_lightness:MAX:"Max\: %5.2lf lux"              \
+    GPRINT:ki_lightness:MIN:"Min\: %5.2lf lux\n"            \
     LINE1:wr_lightness#ffcc00:"Helligkeit Kleiderkasten   " \
     GPRINT:wr_lightness:LAST:"\t Aktuell\: %5.2lf lux"      \
     GPRINT:wr_lightness:AVERAGE:"Mittelwert\: %5.2lf lux"   \
     GPRINT:wr_lightness:MAX:"Max\: %5.2lf lux"              \
     GPRINT:wr_lightness:MIN:"Min\: %5.2lf lux\n"            &
  }
+
+
+#######################################################################
+# printAirQuality()                                                   #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printAirQuality()
+  {
+    rrdtool graph $2                                           \
+    --title "Luftqualität [%]"                                 \
+    --end now --start end-$1                                   \
+    -w $WIDTH -h $HEIGHT -a PNG                                \
+    --watermark "$WATERMARK"                                   \
+    --right-axis 1:0                                           \
+    DEF:ki_airquality=$RRD_KI:ki_airquality:AVERAGE            \
+    LINE1:ki_airquality#C8FE2E:"Luftqualität Küche           " \
+    GPRINT:ki_airquality:LAST:"\t Aktuell\: %5.2lf %%"         \
+    GPRINT:ki_airquality:AVERAGE:"Mittelwert\: %5.2lf %%"      \
+    GPRINT:ki_airquality:MAX:"Max\: %5.2lf %%"                 \
+    GPRINT:ki_airquality:MIN:"Min\: %5.2lf %%\n"               &
+ }      
+
 
 
 #######################################################################
@@ -385,6 +438,12 @@ printLightness "36h", "$PNG_WR_LIGHTNESS_D"
 printLightness "7d", "$PNG_WR_LIGHTNESS_W"
 printLightness "30d", "$PNG_WR_LIGHTNESS_M"
 printLightness "365d", "$PNG_WR_LIGHTNESS_Y"
+
+printAirQuality "36h", "$PNG_AIRQUALITY_D"
+printAirQuality "7d", "$PNG_AIRQUALITY_W"
+printAirQuality "30d", "$PNG_AIRQUALITY_M"
+printAirQuality "365d", "$PNG_AIRQUALITY_Y"
+
 
 # eof #
  
