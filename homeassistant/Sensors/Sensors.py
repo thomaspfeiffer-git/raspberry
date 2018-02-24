@@ -57,21 +57,23 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    qv_temp       = SensorValue("ID_50", "TempKueche", SensorValue_Data.Types.Temp, "°C")
-    qv_humi       = SensorValue("ID_51", "HumiKueche", SensorValue_Data.Types.Humi, "% rF")
-    qv_pressure   = SensorValue("ID_52", "PressureKueche", SensorValue_Data.Types.Pressure, "hPa")
-    qv_light      = SensorValue("ID_53", "LightKueche", SensorValue_Data.Types.Light, "lux")
-    qv_airquality = SensorValue("ID_54", "AirQualityKueche", SensorValue_Data.Types.AirQuality, "%")
+    qv_temp       = SensorValue("ID_40", "TempKueche", SensorValue_Data.Types.Temp, "°C")
+    qv_humi       = SensorValue("ID_41", "HumiKueche", SensorValue_Data.Types.Humi, "% rF")
+    qv_pressure   = SensorValue("ID_42", "PressureKueche", SensorValue_Data.Types.Pressure, "hPa")
+    qv_light      = SensorValue("ID_43", "LightKueche", SensorValue_Data.Types.Light, "lux")
+    qv_airquality = SensorValue("ID_44", "AirQualityKueche", SensorValue_Data.Types.AirQuality, "%")
 
     sq = SensorQueueClient_write("../../../configs/weatherqueue.ini")
     sq.register(qv_temp)
     sq.register(qv_humi)
     sq.register(qv_pressure)
     sq.register(qv_light)
-    #sq.register(qv_airquality)
+    sq.register(qv_airquality)
 
     cpu     = CPU()
-    bme680  = BME680(i2c_addr=BME_680_SECONDARYADDR)
+    bme680  = BME680(i2c_addr=BME_680_SECONDARYADDR, \
+                     qv_temp=qv_temp, qv_humi=qv_humi, \
+                     qv_pressure=qv_pressure, qv_airquality=qv_airquality)
     tsl2561 = TSL2561(qvalue=qv_light)
 
     rrd_template = DS_TEMP        + ":" + \

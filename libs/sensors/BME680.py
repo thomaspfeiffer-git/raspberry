@@ -35,12 +35,18 @@ class BME680(BME680Data, I2C):
     :param i2c_device: Optional smbus or compatible instance for facilitating i2c communications.
 
     """
-    def __init__(self, i2c_addr=BME_680_BASEADDR, gas_measurement=True, lock=None):
+    def __init__(self, i2c_addr=BME_680_BASEADDR, gas_measurement=True, qv_temp=None, \
+                 qv_humi=None, qv_pressure=None, qv_airquality=None, lock=None):
         BME680Data.__init__(self)
         I2C.__init__(self, lock)
 
         self.i2c_addr = i2c_addr
         self.gas_measurement = gas_measurement
+
+        self.__qv_temp       = qv_temp
+        self.__qv_humi       = qv_humi
+        self.__qv_pressure   = qv_pressure
+        self.__qv_airquality = qv_airquality
 
         self.chip_id = self._get_regs(CHIP_ID_ADDR, 1)
         if self.chip_id != CHIP_ID:
@@ -349,8 +355,12 @@ class BME680(BME680Data, I2C):
                 self.data.pressure = self._calc_pressure(adc_pres) / 100.0
                 self.data.humidity = self._calc_humidity(adc_hum) / 1000.0
                 self.data.gas_resistance = self._calc_gas_resistance(adc_gas_res, gas_range)
-
                 self.data.air_quality_score = self._calculate_air_quality()
+
+                if self.__qv_temp is not None:
+                    self.__qv_temp.value = "%.1f" % self.data.temperature
+
+
                 return True
 
             return False
