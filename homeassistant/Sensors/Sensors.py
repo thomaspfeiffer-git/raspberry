@@ -135,14 +135,9 @@ class Sensors (threading.Thread, metaclass=Singleton):
    
 ###############################################################################
 # Flask stuff #################################################################
-app = Flask(__name__)
-api = Api(app)
-
 class API_Values (Resource):
     def get (self):
         return sensors.values
-
-api.add_resource(API_Values, '/')
 
  
 ###############################################################################
@@ -160,6 +155,9 @@ def shutdown_application ():
 # Main ########################################################################
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
+    app = Flask(__name__)
+    api = Api(app)
+    api.add_resource(API_Values, '/')
 
     sensors = Sensors()
     sensors.start()
