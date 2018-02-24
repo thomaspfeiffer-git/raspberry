@@ -158,6 +158,11 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
     app = Flask(__name__)
+
+    import logging
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.ERROR)
+
     api = Api(app)
     api.add_resource(API_Values, '/')
 
