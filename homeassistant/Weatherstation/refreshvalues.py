@@ -17,6 +17,7 @@ import time
 import tkinter as tk
 
 sys.path.append('../../libs')
+from Logging import Log
 from SensorQueue2 import SensorQueueClient_read
 
 from config import CONFIG
@@ -104,8 +105,11 @@ class Values (threading.Thread):
         while self.__running:
             v = self.queue.read()
             if v is not None: 
-                self.values[v.id].set(self.getvalue(v))
-                newvalues = True
+                try:
+                    self.values[v.id].set(self.getvalue(v))
+                    newvalues = True
+                except KeyError:
+                    Log("Error: Unknown id '{}'.".format(v.id))
             else:  # queue empty --> get some interruptible sleep
                 if newvalues:
                    self.calculate_local_values()
