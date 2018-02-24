@@ -3,7 +3,7 @@
 HEARTBEAT=90
 
 
-rrdtool create /schild/kitchen.rrd --step 60 \
+rrdtool create /schild/weather/kitchen.rrd --step 60 \
 DS:ki_temp:GAUGE:$HEARTBEAT:-40:80 \
 DS:ki_tempcpu:GAUGE:$HEARTBEAT:-40:80 \
 DS:ki_humi:GAUGE:$HEARTBEAT:0:100 \
