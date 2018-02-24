@@ -126,7 +126,7 @@ class Sensors (threading.Thread, metaclass=Singleton):
             for _ in range(50): # interruptible sleep
                 if self._running:
                     time.sleep(1)
-                    # brightness control with higher frequency 
+                    # brightness control needs higher frequency 
                     self.values['lightness'] = self.tsl2561.lux() 
                 else:
                     break
