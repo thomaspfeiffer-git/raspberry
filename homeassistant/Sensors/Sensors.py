@@ -61,7 +61,7 @@ if __name__ == '__main__':
     qv_humi       = SensorValue("ID_51", "HumiKueche", SensorValue_Data.Types.Humi, "% rF")
     qv_pressure   = SensorValue("ID_52", "PressureKueche", SensorValue_Data.Types.Pressure, "hPa")
     qv_light      = SensorValue("ID_53", "LightKueche", SensorValue_Data.Types.Light, "lux")
-    #qv_airquality = SensorValue("ID_54", "AirQualityKueche", SensorValue_Data.Types.AirQuality, "%")
+    qv_airquality = SensorValue("ID_54", "AirQualityKueche", SensorValue_Data.Types.AirQuality, "%")
 
     sq = SensorQueueClient_write("../../../configs/weatherqueue.ini")
     sq.register(qv_temp)
