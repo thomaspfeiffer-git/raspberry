@@ -116,7 +116,6 @@ class Sensor (threading.Thread):
         self.__running = True
         while self.__running:
             v = self._read_sensor()
-            print("{} lux".format(v))
             self.__lux = v
             v = v * 2
             if v < self.MIN: v = self.MIN
