@@ -123,9 +123,11 @@ class Sensors (threading.Thread, metaclass=Singleton):
             Log(rrd_data)
             rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
 
-            for _ in range(500): # interruptible sleep
+            for _ in range(50): # interruptible sleep
                 if self._running:
-                    time.sleep(0.1)
+                    time.sleep(1)
+                    # brightness control with higher frequency 
+                    self.values['lightness'] = self.tsl2561.lux() 
                 else:
                     break
 

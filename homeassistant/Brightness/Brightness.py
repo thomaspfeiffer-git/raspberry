@@ -5,7 +5,7 @@
 # (c) https://github.com/thomaspfeiffer-git 2017                             #
 ##############################################################################
 """controls brightness of a raspberry pi display based on the
-   luminosity measured by a TSL2561"""
+   luminosity measured by a TSL2561 in prozess Sensors/Sensors.py"""
 
 ### usage ###
 # run programm: nohup ./Brightness.py &
@@ -16,21 +16,23 @@
 # sudo pip3 install flask-restful
 
 
+from attrdict import AttrDict
 from datetime import datetime, timedelta
+import json
+import socket
 import subprocess
 import sys
 import threading
 import time
+from urllib.error import HTTPError, URLError 
+from urllib.request import urlopen
 
 sys.path.append('../../libs')
 sys.path.append('../../libs/sensors')  # TODO beautify import paths
 sys.path.append('../../libs/sensors/Adafruit')
 
-from i2c import I2C
+from Logging import Log
 from Measurements import Measurements
-from sensors.TSL2561 import TSL2561
-from SensorQueue2 import SensorQueueClient_write
-from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 
 
@@ -41,7 +43,14 @@ app = Flask(__name__)
 api = Api(app)
 
 
-CONTROLBRIGHTNESS = '/sys/class/backlight/rpi_backlight/brightness'
+###############################################################################
+# CONFIG ######################################################################
+class CONFIG (object):
+    URL_API_LIGHTNESS = "http://pih:5001"
+    CONTROLBRIGHTNESS = '/sys/class/backlight/rpi_backlight/brightness'
+    # if necessary:
+    #   config = configparser.ConfigParser()
+    #   config.read(configfilename)
 
 
 ###############################################################################
@@ -72,12 +81,28 @@ class Sensor (threading.Thread):
     MIN = 15
     MAX = 255
 
-    def __init__ (self, qvalue=None):
+    def __init__ (self):
         threading.Thread.__init__(self)
-        self.sensor       = TSL2561(qvalue=qvalue)
+        self.url = CONFIG.URL_API_LIGHTNESS
         self.__lux_calced = 0
         self.__lux        = 0
         self.__running = False
+
+    def _read_sensor (self):
+        lightness = self.__lux 
+        try:
+            with urlopen(self.url, timeout=15) as response:
+                lightness = int(AttrDict(json.loads(response.read().decode("utf-8")))['lightness'])
+        except (HTTPError, URLError):
+            Log("HTTPError, URLError: {0[0]} {0[1]}".format(sys.exc_info()))
+        except socket.timeout:
+            Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+        except ConnectionResetError:
+            Log("ConnectionResetError: {0[0]} {0[1]}".format(sys.exc_info()))
+        except ConnectionRefusedError:
+            Log("ConnectionRefusedError: {0[0]} {0[1]}".format(sys.exc_info()))
+        finally:
+            return lightness
 
     @property
     def lux_calced (self):
@@ -90,7 +115,8 @@ class Sensor (threading.Thread):
     def run (self):
         self.__running = True
         while self.__running:
-            v = self.sensor.lux()
+            v = self._read_sensor()
+            print("{} lux".format(v))
             self.__lux = v
             v = v * 2
             if v < self.MIN: v = self.MIN
@@ -126,7 +152,7 @@ class Control (threading.Thread):
                 lastvalue = brightness
 
                 command = "sudo bash -c \"echo \\\"{}\\\" > {}\""
-                command = command.format(brightness, CONTROLBRIGHTNESS)
+                command = command.format(brightness, CONFIG.CONTROLBRIGHTNESS)
                 subprocess.call(command, shell=True)
 
         return set_value
@@ -187,11 +213,8 @@ def shutdown_application ():
 # Main ########################################################################
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
-    qv_brightness = SensorValue("ID_09", "LightKitchen", SensorValue_Data.Types.Light, "lux")
-    sq = SensorQueueClient_write("../config.ini")
-    sq.register(qv_brightness)
 
-    sensor = Sensor(qvalue=qv_brightness)
+    sensor = Sensor()
     sensor.start()
 
     control = Control()
