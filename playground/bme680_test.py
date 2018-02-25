@@ -10,6 +10,8 @@ import sys
 import time
 
 sys.path.append("../libs/")
+from Logging import Log
+
 from sensors.BME680 import BME680, BME_680_SECONDARYADDR, BME_680_BASEADDR
 
 print("""Estimate indoor air quality
@@ -30,8 +32,11 @@ sensor = BME680(i2c_addr=BME_680_BASEADDR)
 try:
     while True:
         sensor.get_sensor_data()
-        print("{:.2f} °C; {:.2f} hPa; {:.2f} % rF; gas resistance: {}; air quality: {}".format(sensor.data.temperature, sensor.data.pressure, sensor.data.humidity, sensor.data.gas_resistance, sensor.data.air_quality_score))
-        time.sleep(10)
+        Log("{:.2f} °C; {:.2f} hPa; {:.2f} % rF; gas resistance: {}; air quality: {}".format(sensor.data.temperature, sensor.data.pressure, sensor.data.humidity, sensor.data.gas_resistance, sensor.data.air_quality_score))
+        time.sleep(60)
 
 except KeyboardInterrupt:
     pass
+
+# eof #
+
