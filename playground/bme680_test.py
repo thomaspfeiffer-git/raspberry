@@ -10,7 +10,7 @@ import sys
 import time
 
 sys.path.append("../libs/")
-from sensors.BME680 import BME680, BME_680_SECONDARYADDR
+from sensors.BME680 import BME680, BME_680_SECONDARYADDR, BME_680_BASEADDR
 
 print("""Estimate indoor air quality
 
@@ -22,7 +22,7 @@ Press Ctrl+C to exit
 
 """)
 
-sensor = BME680(i2c_addr=BME_680_SECONDARYADDR)
+sensor = BME680(i2c_addr=BME_680_BASEADDR)
 
 # start_time and curr_time ensure that the 
 # burn_in_time (in seconds) is kept track of.
