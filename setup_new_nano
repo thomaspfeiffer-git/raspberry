@@ -17,7 +17,7 @@ screen /dev/ttyUSB0 115200
 sudo npi-config
 
 etc/network/interfaces
-etc/wpa_supplicant/wpa_supplicant.conf
+etc/wpa.conf
 
 sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
 sudo apt-get install --reinstall rsyslog -y # fixes missing files in /var/log
@@ -33,7 +33,7 @@ sudo pip3 install --upgrade pip
 
 
 # /etc/fstab
-schild.smtp.at:/exports/share/pi        /schild nfs comment=systemd.automount,_netdev,auto,vers=2,rsize=8192,wsize=8192,timeo=14,intr 0 0 
+nfs.smtp.at:/srv/nfs/pi                 /schild nfs rsize=8192,wsize=8192,timeo=14,intr 0 0
 
 sudo mkdir /schild
 sudo chmod ugo=rwx /schild/
