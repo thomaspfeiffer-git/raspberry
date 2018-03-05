@@ -9,6 +9,7 @@
 """
 
 
+import csv
 import sys
 import time
 
@@ -23,6 +24,30 @@ from Shutdown import Shutdown
 
 from actuators.SSD1306 import SSD1306
 from sensors.BME680 import BME680, BME_680_BASEADDR
+
+
+V_Timestamp = "Timestamp"
+V_Temperature = "Temperature"
+V_Humidity = "Humidity"
+V_Pressure = "Pressure"
+V_AirQuality = "Air Quality"
+
+
+###############################################################################
+# CSV #########################################################################
+class CSV (object):
+    fieldnames = [V_Timestamp, V_Temperature, V_Humidity, V_Pressure, V_AirQuality]
+    filename   = "airquality.csv"
+
+    def __init__ (self):
+        with open(self.filename, 'a', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
+            writer.writeheader()
+
+    def write (self, data):
+        with open(self.filename, 'a', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
+            writer.writerow(data)
 
 
 ###############################################################################
@@ -47,13 +72,16 @@ class Display (object):
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
         y = self.ypos
 
-        self.draw.text((self.xpos, y), "Temp: {} °C".format(data.temperature))
+        self.draw.text((self.xpos, y), "{}".format(data[V_Timestamp]))
         y += self.textheight
-        self.draw.text((self.xpos, y), "Humi: {} %".format(data.humidity))
+        self.draw.text((self.xpos, y), "Temp: {:.1f} °C".format(data[V_Temperature]))
         y += self.textheight
-        self.draw.text((self.xpos, y), "Press: {} hPa".format(data.pressure))
+        self.draw.text((self.xpos, y), "Humi: {:.1f} %".format(data[V_Humidity]))
         y += self.textheight
-        self.draw.text((self.xpos, y), "AirQ: {} %".format(data.air_quality_score))
+        self.draw.text((self.xpos, y), "Press: {:.1f} hPa".format(data[V_Pressure]))
+        y += self.textheight
+        if data[V_AirQuality] is not None:
+            self.draw.text((self.xpos, y), "AirQ: {:.1f} %".format(data[V_AirQuality]))
         y += self.textheight
 
         self.display.image(self.image)
@@ -79,13 +107,22 @@ if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
     bme = BME680(i2c_addr=BME_680_BASEADDR)
+    csv_ = CSV()
     display = Display()
 
     while True:
         bme.get_sensor_data()
-        display.showdata(bme.data)
-        Log("{:.2f} °C; {:.2f} hPa; {:.2f} % rF; gas resistance: {}; air quality: {}".format(bme.data.temperature, bme.data.pressure, bme.data.humidity, bme.data.gas_resistance, bme.data.air_quality_score))
-        time.sleep(60)
+
+        data = { V_Timestamp: time.strftime("%Y%m%d %H:%M:%S"),
+                 V_Temperature: bme.data.temperature,
+                 V_Humidity: bme.data.humidity,
+                 V_Pressure: bme.data.pressure,
+                 V_AirQuality: bme.data.air_quality_score }
+
+        display.showdata(data)
+        csv_.write(data)
+        # Log(data)
+        time.sleep(5)
 
 # eof #        
 
