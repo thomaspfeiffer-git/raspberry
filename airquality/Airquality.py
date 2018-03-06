@@ -74,15 +74,15 @@ class Display (object):
 
         self.draw.text((self.xpos, y), "{}".format(data[V_Timestamp]))
         y += self.textheight
-        self.draw.text((self.xpos, y), "Temp: {:.1f} °C".format(data[V_Temperature]))
+        self.draw.text((self.xpos, y), "Temp: {:.1f} °C".format(data[V_Temperature]).replace('.', ','))
         y += self.textheight
-        self.draw.text((self.xpos, y), "Humi: {:.1f} %".format(data[V_Humidity]))
+        self.draw.text((self.xpos, y), "Humi: {:.1f} %".format(data[V_Humidity]).replace('.', ','))
         y += self.textheight
-        self.draw.text((self.xpos, y), "Press: {:.1f} hPa".format(data[V_Pressure]))
+        self.draw.text((self.xpos, y), "Press: {:.1f} hPa".format(data[V_Pressure]).replace('.', ','))
         y += self.textheight
         if data[V_AirQuality] is not None:
-            self.draw.text((self.xpos, y), "AirQ: {:.1f} %".format(data[V_AirQuality]))
-        y += self.textheight
+            self.draw.text((self.xpos, y), "AirQ: {:.1f} %".format(data[V_AirQuality]).replace('.', ','))
+            y += self.textheight
 
         self.display.image(self.image)
         self.display.display()
