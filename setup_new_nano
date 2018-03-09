@@ -42,6 +42,8 @@ sudo mount /schild
 
 # /etc/rc.local
 sudo /sbin/iwconfig wlan0 power off
+sudo bash -c " echo 'default-on' > /sys/class/leds/nanopi:blue:status/trigger "
+
 
 # adding group i2c to user pi
 sudo usermod -aG i2c pi
@@ -107,11 +109,7 @@ echo 1 > /sys/class/gpio/gpio203/value
 
 
 # python installer
-sudo apt-get install python-pip
 sudo apt-get install python3-pip
-
-# python2 imaging
-sudo apt-get install python-imaging
 
 # python3 imaging
 sudo pip3 install Pillow
