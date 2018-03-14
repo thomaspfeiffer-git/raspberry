@@ -10,7 +10,10 @@ Basic data transfer using UDP.
 
 
 import argparse
+import base64
 import configparser as cfgparser
+import hashlib
+import hmac
 import socket
 import sys
 import time
@@ -28,6 +31,7 @@ cred.read(CREDENTIALS)
 ###############################################################################
 # CONFIG ######################################################################
 class CONFIG (object):
+    SECRET = cred['UDP']['SECRET']
     IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
     IP_ADDRESS_LOCAL = cred['UDP']['IP_ADDRESS_LOCAL']
     UDP_PORT = int(cred['UDP']['UDP_PORT'])
@@ -35,15 +39,30 @@ class CONFIG (object):
 
 
 ###############################################################################
+# Digest ######################################################################
+class Digest (object):
+    def __init__ (self, secret):
+        self.__secret = secret.encode('utf-8')
+
+    def __call__ (self, data):
+        digest_maker = hmac.new(self.__secret, 
+                                data.encode('utf-8'), 
+                                hashlib.sha256) 
+        return base64.encodestring(digest_maker.digest()).decode('utf-8').rstrip()
+
+
+###############################################################################
 # Sender ######################################################################
 class Sender (object):
     def __init__ (self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.digest = Digest(CONFIG.SECRET)
         self._running = True
 
     def run (self):
         while self._running:
-            datagram = "Daten via UDP: {}".format(time.strftime("%Y%m%d %X")).encode('utf-8')
+            payload = "Daten via UDP: {}".format(time.strftime("%Y%m%d %X"))
+            datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
             sent = self.socket.sendto(datagram, 
                                       (CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
             Log("Sent bytes (UDP): {}; data: {}".format(sent,datagram))
