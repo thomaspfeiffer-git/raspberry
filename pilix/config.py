@@ -6,7 +6,6 @@
 """lots of config stuff"""
 
 import configparser as cfgparser
-import os
 import sys
 
 CONFIGFILE = "pilix.ini"    
