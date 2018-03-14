@@ -10,6 +10,7 @@ Basic data transfer using UDP.
 
 
 import argparse
+import configparser as cfgparser
 import socket
 import sys
 import time
@@ -19,13 +20,18 @@ from Logging import Log
 from Shutdown import Shutdown
 
 
+CREDENTIALS = "udp.cred"
+cred = cfgparser.ConfigParser()
+cred.read(CREDENTIALS)
+
 
 ###############################################################################
 # CONFIG ######################################################################
 class CONFIG (object):
-    IP_ADDRESS_SERVER = "127.0.0.1"
-    UDP_PORT = 20519
-    MAX_PACKET_SIZE = 256
+    IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
+    IP_ADDRESS_LOCAL = cred['UDP']['IP_ADDRESS_LOCAL']
+    UDP_PORT = int(cred['UDP']['UDP_PORT'])
+    MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
 
 
 ###############################################################################
@@ -52,7 +58,7 @@ class Sender (object):
 class Receiver (object):
     def __init__ (self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind(("127.0.0.1", CONFIG.UDP_PORT))
+        self.socket.bind((CONFIG.IP_ADDRESS_LOCAL, CONFIG.UDP_PORT))
         self._running = True
 
     def run (self):
