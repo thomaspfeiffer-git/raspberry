@@ -63,9 +63,14 @@ class Sender (object):
         while self._running:
             payload = "Daten via UDP: {}".format(time.strftime("%Y%m%d %X"))
             datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
-            sent = self.socket.sendto(datagram, 
-                                      (CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
-            Log("Sent bytes (UDP): {}; data: {}".format(sent,datagram))
+            try:
+                sent = self.socket.sendto(datagram, 
+                                          (CONFIG.IP_ADDRESS_SERVER, 
+                                          CONFIG.UDP_PORT))
+                Log("Sent bytes: {}; data: {}".format(sent,datagram))
+            except:
+                Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
+
             time.sleep(5)
 
     def stop (self):
