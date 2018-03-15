@@ -10,15 +10,13 @@ Basic data transfer using UDP.
 
 
 import argparse
-import base64
 import configparser as cfgparser
-import hashlib
-import hmac
 import socket
 import sys
 import time
 
 sys.path.append("../../libs/")
+from Commons import Digest
 from Logging import Log
 from Shutdown import Shutdown
 
@@ -36,19 +34,6 @@ class CONFIG (object):
     IP_ADDRESS_LOCAL = cred['UDP']['IP_ADDRESS_LOCAL']
     UDP_PORT = int(cred['UDP']['UDP_PORT'])
     MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
-
-
-###############################################################################
-# Digest ######################################################################
-class Digest (object):
-    def __init__ (self, secret):
-        self.__secret = secret.encode('utf-8')
-
-    def __call__ (self, data):
-        digest_maker = hmac.new(self.__secret, 
-                                data.encode('utf-8'), 
-                                hashlib.sha256) 
-        return base64.encodestring(digest_maker.digest()).decode('utf-8').rstrip()
 
 
 ###############################################################################

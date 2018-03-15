@@ -22,16 +22,13 @@ This lib can be used:
 # nohup ./Livetracking.py >livetracking.log 2>&1 &
 
 
-import base64
-import hashlib
-import hmac
 import socket
 import sys
 import threading
 import time
 
 sys.path.append("../libs/")
-from Commons import Singleton
+from Commons import Digest, Singleton
 from Logging import Log
 
 try:
@@ -79,19 +76,6 @@ class ID_Provider (metaclass=Singleton):
         with self.__lock:
             self.__id += 1
             return self.__id
-
-
-###############################################################################
-# Digest ######################################################################
-class Digest (object):
-    def __init__ (self, secret):
-        self.__secret = secret.encode('utf-8')
-
-    def __call__ (self, data):
-        digest_maker = hmac.new(self.__secret, 
-                                data.encode('utf-8'), 
-                                hashlib.sha256) 
-        return base64.encodestring(digest_maker.digest()).decode('utf-8').rstrip()
 
 
 ###############################################################################
