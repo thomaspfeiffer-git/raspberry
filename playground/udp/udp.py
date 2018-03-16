@@ -31,7 +31,6 @@ cred.read(CREDENTIALS)
 class CONFIG (object):
     SECRET = cred['UDP']['SECRET']
     IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
-    IP_ADDRESS_LOCAL = cred['UDP']['IP_ADDRESS_LOCAL']
     UDP_PORT = int(cred['UDP']['UDP_PORT'])
     MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
 
@@ -62,13 +61,28 @@ class Sender (object):
         self._running = False
 
 
+
+
 ###############################################################################
 # Receiver ####################################################################
 class Receiver (object):
     def __init__ (self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((CONFIG.IP_ADDRESS_LOCAL, CONFIG.UDP_PORT))
+        self.socket.bind((self.my_ip(), CONFIG.UDP_PORT))
         self._running = True
+
+    @staticmethod
+    def my_ip ():
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            # doesn't even have to be reachable
+            s.connect(('10.255.255.255', 1))
+            IP = s.getsockname()[0]
+        except:
+            IP = '127.0.0.1'
+        finally:
+            s.close()
+            return IP
 
     def run (self):
         while self._running:
