@@ -11,10 +11,9 @@
 
 import configparser as cfgparser
 import datetime
-import signal
 import socket
 import sys
-from time import strftime, localtime, sleep, time
+from time import strftime, sleep, time
 import traceback
 
 sys.path.append('../libs')
@@ -122,8 +121,8 @@ def main():
     """main part"""
 
     if this_PI not in PIs:
-        print("wrong host!")
-        _exit()
+        Log("wrong host!")
+        shutdown_application()
 
     udp = UDP_Sender()
     htu21df = HTU21DF()
@@ -153,11 +152,9 @@ def main():
                     ":{:.2f}".format(temp_cpu)    + \
                     ":{:.2f}".format(humi_htu)    + \
                     ":{:.2f}".format(pressure)
-        print(rrd_template)
-        print("%s %s" % (strftime("%Y%m%d%H%M%S", localtime()), rrd_data))
 
         writeData(rrd_data)
-        udp.send(rrd_data)
+        udp.send("{},{}".format(this_PI,rrd_data))
 
         sleep(45)
 
@@ -186,7 +183,7 @@ if __name__ == '__main__':
         pass
 
     except:
-        print(traceback.print_exc())
+        Log(traceback.print_exc())
         shutdown_application()
 
     finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
