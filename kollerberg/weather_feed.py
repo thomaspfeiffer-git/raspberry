@@ -14,6 +14,7 @@ rrd database and to the sensor value queue.
 
 
 import configparser as cfgparser
+import rrdtool
 import socket
 import sys
 import threading
@@ -129,6 +130,8 @@ class ToQueue (threading.Thread):
                 self.qv_kb_k_h.value = "{:.1f}".format(float(data[pik_k].split(':')[4]))
 
             for _ in range(600):  # interruptible sleep
+                if not self._running:
+                    break
                 time.sleep(0.1)
 
     def stop (self):
@@ -140,12 +143,61 @@ class ToQueue (threading.Thread):
 class ToRRD (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
+
+        self.DS_TEMP1 = "DS_TEMP1"
+        self.DS_TEMP2 = "DS_TEMP2"
+        self.DS_TCPU  = "DS_TCPU"
+        self.DS_HUMI  = "DS_HUMI"
+        self.DS_PRESS = "DS_PRESS"
+        self.DS = { pik_i: { self.DS_TEMP1: 'kb_i_t1', 
+                             self.DS_TEMP2: 'kb_i_t2',
+                             self.DS_TCPU : 'kb_i_tcpu',
+                             self.DS_HUMI : 'kb_i_humi',
+                             self.DS_PRESS: 'kb_i_press' },
+                    pik_a: { self.DS_TEMP1: 'kb_a_t1',
+                             self.DS_TEMP2: 'kb_a_t2',
+                             self.DS_TCPU : 'kb_a_tcpu',
+                             self.DS_HUMI : 'kb_a_humi',
+                             self.DS_PRESS: 'kb_a_press' },
+                    pik_k: { self.DS_TEMP1: 'kb_k_t1',
+                             self.DS_TEMP2: 'kb_k_t2',
+                             self.DS_TCPU : 'kb_k_tcpu',
+                             self.DS_HUMI : 'kb_k_humi',
+                             self.DS_PRESS: 'kb_k_press' }
+                  } 
+
         self._running = True
 
     def run (self):
         while self._running:
-            Log("in ToRRD.run()")
-            time.sleep(10) # TODO: interruptible sleep
+            data_complete = True
+            rrd_template = ""
+            rrd_data = "N:"
+
+            for p in PIs:
+                if not data[p]:
+                    data_complete = False
+                else:    
+                    rrd_template = rrd_template + self.DS[p][self.DS_TEMP1] + ":" + \
+                                                  self.DS[p][self.DS_TEMP2] + ":" + \
+                                                  self.DS[p][self.DS_TCPU]  + ":" + \
+                                                  self.DS[p][self.DS_HUMI]  + ":" + \
+                                                  self.DS[p][self.DS_PRESS] + ":"
+                    rrd_data = rrd_data + data[p].split("N:")[1].rstrip() + ":"
+
+            if data_complete:
+                rrd_template = rrd_template.rstrip(":")
+                rrd_data     = rrd_data.rstrip(":")
+                
+                # Log(rrd_template)
+                # Log(rrd_data)
+
+                rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+
+            for _ in range(600):  # interruptible sleep
+                if not self._running:
+                    break
+                time.sleep(0.1)
 
     def stop (self):
         self._running = False
