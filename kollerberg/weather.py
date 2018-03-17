@@ -43,29 +43,6 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
                     pik_k: "/sys/bus/w1/devices/w1_bus_master1/28-000006de535b/w1_slave" }
 
 
-DS_TEMP1 = "DS_TEMP1"
-DS_TEMP2 = "DS_TEMP2"
-DS_TCPU  = "DS_TCPU"
-DS_HUMI  = "DS_HUMI"
-DS_PRESS = "DS_PRESS"
-
-DS = { pik_i: { DS_TEMP1: 'kb_i_t1', 
-                DS_TEMP2: 'kb_i_t2',
-                DS_TCPU : 'kb_i_tcpu',
-                DS_HUMI : 'kb_i_humi',
-                DS_PRESS: 'kb_i_press' },
-       pik_a: { DS_TEMP1: 'kb_a_t1',
-                DS_TEMP2: 'kb_a_t2',
-                DS_TCPU : 'kb_a_tcpu',
-                DS_HUMI : 'kb_a_humi',
-                DS_PRESS: 'kb_a_press' },
-       pik_k: { DS_TEMP1: 'kb_k_t1',
-                DS_TEMP2: 'kb_k_t2',
-                DS_TCPU : 'kb_k_tcpu',
-                DS_HUMI : 'kb_k_humi',
-                DS_PRESS: 'kb_k_press' }
-     } 
-
 DATAFILES = { pik_i: "/share/kb_i_weather",
               pik_a: "/share/kb_a_weather",
               pik_k: "/share/kb_k_weather" }
@@ -130,12 +107,6 @@ def main():
     tempcpu = CPU()
     if this_PI == pik_i:
         bmp180 = BMP180()
-
-    rrd_template = DS[this_PI][DS_TEMP1] + ":" + \
-                   DS[this_PI][DS_TEMP2] + ":" + \
-                   DS[this_PI][DS_TCPU]  + ":" + \
-                   DS[this_PI][DS_HUMI]  + ":" + \
-                   DS[this_PI][DS_PRESS]
 
     pressure = 1013.25 # in case of no BMP180 available
     while True:
