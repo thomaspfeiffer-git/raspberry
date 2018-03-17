@@ -30,6 +30,7 @@ from Shutdown import Shutdown
 
 CREDENTIALS = "/home/pi/configs/weather_feed.cred"
 QUEUE_INI   = "/home/pi/configs/weatherqueue.ini"
+RRDFILE     = "/schild/weather/weather_kollerberg.rrd"
 
 pik_i = "pik_i"
 pik_a = "pik_a"
