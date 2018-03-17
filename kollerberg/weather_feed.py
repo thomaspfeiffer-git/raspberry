@@ -28,6 +28,11 @@ from Shutdown import Shutdown
 CREDENTIALS = "/home/pi/configs/weather_feed.cred"
 
 
+data = { 'pik_i': None,
+         'pik_a': None,
+         'pik_k': None }
+
+
 ###############################################################################
 # UDP_Receiver ################################################################
 class UDP_Receiver (threading.Thread):
@@ -60,10 +65,19 @@ class UDP_Receiver (threading.Thread):
             s.close()
             return IP
 
+    def process_data (self, datagram):
+        (payload, digest_received) = datagram.rsplit(',', 1)
+        # TODO: verify digest
+        (source, values) = payload.split(',')
+        data[source] = values
+        Log("Data: {}".format(data))
+
+
     def run (self):
         while self._running:
             datagram = self.socket.recv(self.MAX_PACKET_SIZE).decode('utf-8')
             Log("Received: {}".format(datagram))
+            self.process_data(datagram)
 
     def stop (self):
         self._running = False
