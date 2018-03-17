@@ -10,7 +10,7 @@ rrd database and to the sensor value queue.
 """
 
 ### usage ####
-# nohup ./weather_feed.py  2>&1 weather_feed.log &
+# nohup ./weather_feed.py 2>&1 > weather_feed.log &
 
 
 import configparser as cfgparser
