@@ -10,7 +10,7 @@ rrd database and to the sensor value queue.
 """
 
 ### usage ####
-# TODO
+# nohup ./weather_feed.py  2>&1 weather_feed.log &
 
 
 import configparser as cfgparser
@@ -140,7 +140,7 @@ class ToQueue (threading.Thread):
 
 
 ###############################################################################
-###############################################################################
+# ToRRD #######################################################################
 class ToRRD (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
