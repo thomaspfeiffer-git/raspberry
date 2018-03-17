@@ -7,13 +7,12 @@
 """Weather station at our summer cottage"""
 
 ### usage ###
-# nohup ./weather.py &
+# nohup ./weather.py 2>&1 > weather.log &
 
 import configparser as cfgparser
-import datetime
 import socket
 import sys
-from time import strftime, sleep, time
+import time
 import traceback
 
 sys.path.append('../libs')
@@ -43,12 +42,6 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
                     pik_k: "/sys/bus/w1/devices/w1_bus_master1/28-000006de535b/w1_slave" }
 
 
-DATAFILES = { pik_i: "/share/kb_i_weather",
-              pik_a: "/share/kb_a_weather",
-              pik_k: "/share/kb_k_weather" }
-
-
-
 CREDENTIALS = "/home/pi/credentials/weather.cred"
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
@@ -61,16 +54,6 @@ class CONFIG (object):
     IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
     UDP_PORT = int(cred['UDP']['UDP_PORT'])
     MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
-
-
-###############################################################################
-# writeData ###################################################################
-def writeData(rrd_data):
-    """write weather data to a file which is transferred to schild.smtp.at"""
-    with open(DATAFILES[this_PI], 'w') as f:
-        ts = time()
-        f.write(datetime.datetime.fromtimestamp(ts).strftime("%Y%m%d%H%M%S:") + \
-                str(ts) + ":" + rrd_data)
 
 
 ###############################################################################
@@ -124,10 +107,8 @@ def main():
                     ":{:.2f}".format(humi_htu)    + \
                     ":{:.2f}".format(pressure)
 
-        writeData(rrd_data)
         udp.send("{},{}".format(this_PI,rrd_data))
-
-        sleep(45)
+        time.sleep(45)
 
 
 ###############################################################################
