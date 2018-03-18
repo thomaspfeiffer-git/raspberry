@@ -73,6 +73,7 @@ class UDP_Receiver (threading.Thread):
             return IP
 
     def process_data (self, datagram):
+        # TODO: https://docs.python.org/3/library/socket.html#socket.socket.setblocking
         (payload, digest_received) = datagram.rsplit(',', 1)
         # TODO: verify digest
         (source, values) = payload.split(',')
