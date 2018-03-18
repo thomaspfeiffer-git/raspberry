@@ -55,6 +55,7 @@ class UDP_Receiver (threading.Thread):
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.my_ip(), self.UDP_PORT))
+        self.socket.setblocking(False)
         self.digest = Digest(self.SECRET)
 
         self._running = True
@@ -73,19 +74,23 @@ class UDP_Receiver (threading.Thread):
             return IP
 
     def process_data (self, datagram):
-        # TODO: https://docs.python.org/3/library/socket.html#socket.socket.setblocking
         (payload, digest_received) = datagram.rsplit(',', 1)
         # TODO: verify digest
         (source, values) = payload.split(',')
         data[source] = values
         # Log("Data: {}".format(data))
 
-
     def run (self):
         while self._running:
-            datagram = self.socket.recv(self.MAX_PACKET_SIZE).decode('utf-8')
-            Log("Received: {}".format(datagram))
-            self.process_data(datagram)
+            try:
+                datagram = self.socket.recv(self.MAX_PACKET_SIZE).decode('utf-8')
+                Log("Received: {}".format(datagram))
+                self.process_data(datagram)
+            except BlockingIOError:
+                for _ in range(50):  # interruptible sleep
+                    if not self._running:
+                        break
+                    time.sleep(0.1)
 
     def stop (self):
         self._running = False
