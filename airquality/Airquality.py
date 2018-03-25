@@ -23,7 +23,7 @@ from Logging import Log
 from Shutdown import Shutdown
 
 from actuators.SSD1306 import SSD1306
-from sensors.BME680 import BME680, BME_680_BASEADDR
+from sensors.BME680 import BME680, BME_680_BASEADDR, BME_680_SECONDARYADDR
 
 
 V_Timestamp = "Timestamp"
@@ -106,7 +106,7 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    bme = BME680(i2c_addr=BME_680_BASEADDR)
+    bme = BME680(i2c_addr=BME_680_SECONDARYADDR)
     csv_ = CSV()
     display = Display()
 
