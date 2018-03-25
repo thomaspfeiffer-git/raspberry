@@ -23,7 +23,7 @@ sys.path.append('../../libs/sensors')
 from i2c import I2C
 
 from sensors.CPU import CPU
-from sensors.BME680 import BME680, BME_680_SECONDARYADDR
+from sensors.BME680 import BME680, BME_680_BASEADDR
 from sensors.TSL2561 import TSL2561
 
 from SensorQueue2 import SensorQueueClient_write
@@ -73,7 +73,7 @@ class Sensors (threading.Thread, metaclass=Singleton):
         self.sq.register(self.qv_airquality)
 
         self.cpu     = CPU()
-        self.bme680  = BME680(i2c_addr=BME_680_SECONDARYADDR, \
+        self.bme680  = BME680(i2c_addr=BME_680_BASEADDR, \
                               qv_temp=self.qv_temp, qv_humi=self.qv_humi, \
                               qv_pressure=self.qv_pressure, qv_airquality=self.qv_airquality)
         self.tsl2561 = TSL2561(qvalue=self.qv_light)
