@@ -107,6 +107,7 @@ class Values (threading.Thread):
             if v is not None: 
                 try:
                     self.values[v.id].set(self.getvalue(v))
+                    self.values[v.id].timestamp = "ts"
                     newvalues = True
                 except KeyError:
                     Log("Error: Unknown id '{}'.".format(v.id))
