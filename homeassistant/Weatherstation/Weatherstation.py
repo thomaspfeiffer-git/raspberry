@@ -127,7 +127,7 @@ class WeatherApp (tk.Frame):
             if decorated is not None:
                 font = self.font_item_decorated if item in decorated else font
             gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                                  stringvar=values.values[item],
+                                  stringvar=values.values[item].tk_StringVar,
                                   font=font, color=color).gridpos
         return gridpos
 
@@ -138,7 +138,7 @@ class WeatherApp (tk.Frame):
                             font=self.font_separator).gridpos
         for item in itemlist:
             gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
-                                  stringvar=values.values[item],
+                                  stringvar=values.values[item].tk_StringVar,
                                   font=self.font_forecast, 
                                   color=CONFIG.COLORS.FORECAST).gridpos
         return gridpos

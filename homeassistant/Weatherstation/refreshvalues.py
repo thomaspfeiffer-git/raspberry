@@ -54,23 +54,30 @@ class Clock (threading.Thread):
 
 
 ###############################################################################
+# A_Value #####################################################################
+class A_Value (object):
+    def __init__ (self):
+        self.tk_StringVar = None
+        self.valid_until = float('inf')
+
+
+###############################################################################
 # Values ######################################################################
 class Values (threading.Thread):
     """dedicated thread for updating all weather items"""
     def __init__ (self):
         threading.Thread.__init__(self)
         self.queue = SensorQueueClient_read("../config.ini")
-        self.values = { "ID_{:02d}".format(id+1): None for id in range(50) }
-        self.values.update({ "ID_OWM_{:02d}".format(id+1): None for id in range(30) })
+        self.values = { "ID_{:02d}".format(id+1): A_Value() for id in range(50) }
+        self.values.update({ "ID_OWM_{:02d}".format(id+1): A_Value() for id in range(30) })
                                                 # some local calculated values
-        self.values.update({ "ID_LC_{:02d}".format(id+1): None for id in range(30) })
+        self.values.update({ "ID_LC_{:02d}".format(id+1): A_Value() for id in range(30) })
         self.__running = False
 
     def init_values (self):
         for id in self.values.keys():
-            self.values[id] = tk.StringVar()
-            self.values[id].set(self.getvalue(None))
-            self.values[id].timestamp = 0.0
+            self.values[id].tk_StringVar = tk.StringVar()
+            self.values[id].tk_StringVar.set(self.getvalue(None))
 
     @staticmethod
     def getvalue (sensorvalue):
@@ -80,25 +87,25 @@ class Values (threading.Thread):
     def calculate_local_values (self):
         """some tk.StringVar() values are calculated locally, eg compiled
            from several OpenWeatherMap data"""
-        self.values['ID_LC_01'].set("Wettervorhersage aktuell:")
-        self.values['ID_LC_02'].set("{} - {}".format(self.values['ID_OWM_01'].get(),
-                                                     self.values['ID_OWM_02'].get()))
-        self.values['ID_LC_03'].set("{} ({})".format(self.values['ID_OWM_03'].get(),
-                                                     self.values['ID_OWM_04'].get()))
+        self.values['ID_LC_01'].tk_StringVar.set("Wettervorhersage aktuell:")
+        self.values['ID_LC_02'].tk_StringVar.set("{} - {}".format(self.values['ID_OWM_01'].tk_StringVar.get(),
+                                                                  self.values['ID_OWM_02'].tk_StringVar.get()))
+        self.values['ID_LC_03'].tk_StringVar.set("{} ({})".format(self.values['ID_OWM_03'].tk_StringVar.get(),
+                                                                  self.values['ID_OWM_04'].tk_StringVar.get()))
 
         title = "Wettervorhersage heute:" if datetime.now().hour < 12 else "Wettervorhersage morgen:"
-        self.values['ID_LC_11'].set(title)
-        self.values['ID_LC_12'].set("{} - {}".format(self.values['ID_OWM_11'].get(),
-                                                     self.values['ID_OWM_12'].get()))
-        self.values['ID_LC_13'].set("{} ({})".format(self.values['ID_OWM_13'].get(),
-                                                     self.values['ID_OWM_14'].get()))
+        self.values['ID_LC_11'].tk_StringVar.set(title)
+        self.values['ID_LC_12'].tk_StringVar.set("{} - {}".format(self.values['ID_OWM_11'].tk_StringVar.get(),
+                                                                  self.values['ID_OWM_12'].tk_StringVar.get()))
+        self.values['ID_LC_13'].tk_StringVar.set("{} ({})".format(self.values['ID_OWM_13'].tk_StringVar.get(),
+                                                                  self.values['ID_OWM_14'].tk_StringVar.get()))
 
         title = "Wettervorhersage morgen:" if datetime.now().hour < 12 else "Wettervorhersage übermorgen:"
-        self.values['ID_LC_21'].set(title)
-        self.values['ID_LC_22'].set("{} - {}".format(self.values['ID_OWM_21'].get(),
-                                                     self.values['ID_OWM_22'].get()))
-        self.values['ID_LC_23'].set("{} ({})".format(self.values['ID_OWM_23'].get(),
-                                                     self.values['ID_OWM_24'].get()))
+        self.values['ID_LC_21'].tk_StringVar.set(title)
+        self.values['ID_LC_22'].tk_StringVar.set("{} - {}".format(self.values['ID_OWM_21'].tk_StringVar.get(),
+                                                                  self.values['ID_OWM_22'].tk_StringVar.get()))
+        self.values['ID_LC_23'].tk_StringVar.set("{} ({})".format(self.values['ID_OWM_23'].tk_StringVar.get(),
+                                                                  self.values['ID_OWM_24'].tk_StringVar.get()))
 
     def run (self):
         self.__running = True
@@ -107,8 +114,8 @@ class Values (threading.Thread):
             v = self.queue.read()
             if v is not None: 
                 try:
-                    self.values[v.id].set(self.getvalue(v))
-                    self.values[v.id].timestamp = v.timestamp
+                    self.values[v.id].tk_StringVar.set(self.getvalue(v))
+                    self.values[v.id].valid_until = time.time() + 150 # data is valid for 3 min
                     newvalues = True
                 except KeyError:
                     Log("Error: Unknown id '{}'.".format(v.id))
@@ -138,7 +145,9 @@ class OutOfService (threading.Thread):
     def run (self):
         while self._running:
             for id_ in self.values.values.keys():
-                print("{}: {} - {}".format(id_, self.values.values[id_].timestamp, self.values.values[id_].get()))
+                if self.values.values[id_].valid_until < time.time():
+                    Log("Setting {} to NN/AA".format(id_))
+                    # self.values.values[id_].tk_StringVar.set("NN/AA")
 
             for _ in range(600):
                 time.sleep(0.1)
