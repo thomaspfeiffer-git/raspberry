@@ -135,8 +135,8 @@ class OutOfService (threading.Thread):
 
     def run (self):
         while self._running:
-            for v in self.values.values:
-                print("value: {}".format(v))
+            for id_ in self.values.values.keys():
+                print("value {}: {}".format(id_, self.values.values[id_].get()))
 
             for _ in range(600):
                 time.sleep(0.1)
