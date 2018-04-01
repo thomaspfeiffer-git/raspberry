@@ -107,7 +107,8 @@ class Values (threading.Thread):
             if v is not None: 
                 try:
                     self.values[v.id].set(self.getvalue(v))
-                    self.values[v.id].timestamp = "ts"
+                    self.values[v.id].timestamp = v.timestamp
+                    print("TS: {}".format(self.values[v.id].timestamp))
                     newvalues = True
                 except KeyError:
                     Log("Error: Unknown id '{}'.".format(v.id))
@@ -137,7 +138,9 @@ class OutOfService (threading.Thread):
     def run (self):
         while self._running:
             for id_ in self.values.values.keys():
-                print("value {}: {}".format(id_, self.values.values[id_].get()))
+                # import pprint
+                # pprint.pprint(self.values.values[id_])
+                print("{}: {} - {}".format(id_, self.values.values[id_].timestamp, self.values.values[id_].get()))
 
             for _ in range(600):
                 time.sleep(0.1)
