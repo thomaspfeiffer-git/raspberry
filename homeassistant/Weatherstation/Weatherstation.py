@@ -134,7 +134,7 @@ class WeatherApp (tk.Frame):
 
     def drawForecastSection (self, frame, vartitle, itemlist, gridpos):
         gridpos = Separator(frame=frame, gridpos=gridpos, 
-                            vartext=values.values[vartitle],
+                            vartext=values.values[vartitle].tk_StringVar,
                             font=self.font_separator).gridpos
         for item in itemlist:
             gridpos = WeatherItem(frame=frame, gridpos=gridpos, 

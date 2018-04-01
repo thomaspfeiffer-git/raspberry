@@ -147,7 +147,7 @@ class OutOfService (threading.Thread):
             for id_ in self.values.values.keys():
                 if self.values.values[id_].valid_until < time.time():
                     Log("Setting {} to NN/AA".format(id_))
-                    # self.values.values[id_].tk_StringVar.set("NN/AA")
+                    self.values.values[id_].tk_StringVar.set("NN/AA")
 
             for _ in range(600):
                 time.sleep(0.1)
