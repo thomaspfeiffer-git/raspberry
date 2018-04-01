@@ -70,6 +70,7 @@ class Values (threading.Thread):
         for id in self.values.keys():
             self.values[id] = tk.StringVar()
             self.values[id].set(self.getvalue(None))
+            self.values[id].timestamp = 0.0
 
     @staticmethod
     def getvalue (sensorvalue):
@@ -108,7 +109,6 @@ class Values (threading.Thread):
                 try:
                     self.values[v.id].set(self.getvalue(v))
                     self.values[v.id].timestamp = v.timestamp
-                    print("TS: {}".format(self.values[v.id].timestamp))
                     newvalues = True
                 except KeyError:
                     Log("Error: Unknown id '{}'.".format(v.id))
@@ -138,8 +138,6 @@ class OutOfService (threading.Thread):
     def run (self):
         while self._running:
             for id_ in self.values.values.keys():
-                # import pprint
-                # pprint.pprint(self.values.values[id_])
                 print("{}: {} - {}".format(id_, self.values.values[id_].timestamp, self.values.values[id_].get()))
 
             for _ in range(600):
