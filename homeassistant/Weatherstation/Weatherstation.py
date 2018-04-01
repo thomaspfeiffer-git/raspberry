@@ -40,7 +40,7 @@ from config import CONFIG
 from constants import CONSTANTS
 from displaybasics import WeatherItem, DateItem, Separator, Image
 from pagination import Pagination
-from refreshvalues import Clock, Values
+from refreshvalues import Clock, Values, OutOfService
 
 
 ###############################################################################
@@ -66,6 +66,7 @@ class WeatherApp (tk.Frame):
 
         clock.start()
         values.start()
+        oos.start()
 
 
     def init_fonts (self):
@@ -297,6 +298,9 @@ class Weather (object):
 def shutdown_application ():
     """called on shutdown; stops all threads"""
     Log("shutdown_application()")
+    oos.stop()
+    oos.join()
+    print("after oos.join()")
     clock.stop()
     clock.join()
     print("after clock.join()")
@@ -321,6 +325,7 @@ if __name__ == '__main__':
 
     values = Values()
     clock  = Clock()
+    oos    = OutOfService(values)
 
     weather = Weather()
     weather.run()

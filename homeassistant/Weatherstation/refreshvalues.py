@@ -122,5 +122,29 @@ class Values (threading.Thread):
     def stop (self):
         self.__running = False
 
+
+###############################################################################
+# OutOfService ################################################################
+class OutOfService (threading.Thread):
+    """ iterates over all Value.values and sets value to "n/a" if timestamp
+        is older than n minutes"""
+    def __init__ (self, values):
+        threading.Thread.__init__(self)
+        self.values = values
+        self._running = True
+
+    def run (self):
+        while self._running:
+            for v in self.values.values:
+                print("value: {}".format(v))
+
+            for _ in range(600):
+                time.sleep(0.1)
+                if not self._running:
+                    break
+
+    def stop (self):
+        self._running = False
+
 # eof #
 
