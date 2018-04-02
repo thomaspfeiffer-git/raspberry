@@ -115,7 +115,7 @@ class Values (threading.Thread):
             if v is not None: 
                 try:
                     self.values[v.id].tk_StringVar.set(self.getvalue(v))
-                    self.values[v.id].valid_until = time.time() + 150 # data is valid for 3 min
+                    self.values[v.id].valid_until = time.time() + 180 # data is valid for 3 min
                     newvalues = True
                 except KeyError:
                     Log("Error: Unknown id '{}'.".format(v.id))
