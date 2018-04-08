@@ -88,6 +88,7 @@ from Shutdown import Shutdown
 from actuators.SSD1306 import SSD1306
 from sensors.CPU import CPU
 from sensors.BMP180 import BMP180
+from sensors.DS1820 import DS1820
 from sensors.PCF8591 import PCF8591
 
 from config import CONFIG
@@ -113,12 +114,13 @@ class Sensors (object):
     def __init__ (self):
         self.cpu = CPU()
         self.bmp180 = BMP180()   # air pressure, temperature
+        self.ds1820 = DS1820("/sys/bus/w1/devices/28-00000855fdfe/w1_slave")
         self.pcf8591 = PCF8591() # ADC for measurement of supply voltage
 
     def read (self):
         timestamp = time.time()
         return{V_TemperatureBox: self.bmp180.read_temperature(),
-               V_TemperatureOutside: -22.22,
+               V_TemperatureOutside: self.ds1820.read_temperature())
                V_Pressure: self.bmp180.read_pressure(),
                V_Voltage: self.pcf8591.read(channel=0) / 255.0 * self.v_ref,
                V_TemperatureCPU: self.cpu.read_temperature(),
