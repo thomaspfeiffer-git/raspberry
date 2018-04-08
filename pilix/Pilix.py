@@ -120,7 +120,7 @@ class Sensors (object):
     def read (self):
         timestamp = time.time()
         return{V_TemperatureBox: self.bmp180.read_temperature(),
-               V_TemperatureOutside: self.ds1820.read_temperature()
+               V_TemperatureOutside: self.ds1820.read_temperature(),
                V_Pressure: self.bmp180.read_pressure(),
                V_Voltage: self.pcf8591.read(channel=0) / 255.0 * self.v_ref,
                V_TemperatureCPU: self.cpu.read_temperature(),
