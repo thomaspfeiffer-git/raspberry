@@ -276,49 +276,41 @@ modprobe w1-therm
 
 
 
-
 ############################################################################
-# Armbian
+# Armbian Stretch
 ############################################################################
-
-
-
-
 
 sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
 sudo pip3 install --upgrade pip
 sudo apt-get install python3-dev python3-setuptools
 
-# Just libjpeg8-dev might be fine. 
+# Just libjpeg8-dev might be fine (if it is available)
 sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk -y
 
 sudo pip3 install Pillow
 
-
 git clone https://github.com/thomaspfeiffer-git/raspberry
 
 
-# install wiringPi from FriendlyElec
+#------- 1-wire DS18B20 --------------------
+# enable 1-wire
+sudo armbian-config 
 
-# boardtype_friendlyelec.c
-BoardHardwareInfo gAllBoardHardwareInfo[] = {
-...
-        {"Allwinnersun8iFamily", 0, NanoPi_NEO, "NanoPi-NEO-Armbian", "-1(-1)"},
+# set PIN to PG11/203/phys 7
+## /boot/armbianEnv.txt
+param_w1_pin=PG11
 
-static int getAllwinnerBoardID(char* boardId, int boardIdMaxLen )
-{
-        int n,i,j;
-        char lineUntrim[1024], line[1024],*p;
-        const char* sunxi_board_id_fieldname = "sunxi_board_id";
-        FILE *f;
-        int ret = -1;
+## Device Tree
+cd /boot/dtb/overlay/
+cp sun8i-h3-w1-gpio.dtbo ~/sun8i-h3-w1-gpio.dtbo.orig
+dtc -I dtb -O dts sun8i-h3-w1-gpio.dtbo > sun8i-h3-w1-gpio.dts
+# sun8i-h3-w1-gpio.dts: 
+w1_pins {
+          pins = "PG11";
 
-        p = "2(0)";
-        memset(boardId,0,boardIdMaxLen);
-        strncpy(boardId, p, boardIdMaxLen-1);
+dtc -O dtb -o sun8i-h3-w1-gpio.dtbo sun8i-h3-w1-gpio.dts
+cp sun8i-h3-w1-gpio.dts ~/sun8i-h3-w1-gpio.dts.1wire_203
 
-        ret = 0;
-        return ret;
 
 
 
