@@ -12,6 +12,84 @@ screen /dev/ttyUSB0 115200
 
 
 
+
+############################################################################
+# Armbian Stretch
+############################################################################
+
+
+#------ switch off freaky blue LED ---------------
+# /etc/rclocal:
+sudo bash -c " echo 'default-on' > /sys/class/leds/nanopi:blue:status/trigger "
+
+
+
+sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
+sudo pip3 install --upgrade pip
+sudo apt-get install python3-dev python3-setuptools
+
+# Just libjpeg8-dev might be fine (if it is available)
+sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk -y
+
+sudo pip3 install Pillow
+
+git clone https://github.com/thomaspfeiffer-git/raspberry
+
+
+
+
+#------- 1-wire DS18B20 --------------------
+# enable 1-wire
+sudo armbian-config 
+
+# set PIN to PG11/203/phys 7
+## /boot/armbianEnv.txt
+param_w1_pin=PG11
+
+## Device Tree
+cd /boot/dtb/overlay/
+cp sun8i-h3-w1-gpio.dtbo ~/sun8i-h3-w1-gpio.dtbo.orig
+dtc -I dtb -O dts sun8i-h3-w1-gpio.dtbo > sun8i-h3-w1-gpio.dts
+# sun8i-h3-w1-gpio.dts: 
+w1_pins {
+          pins = "PG11";
+
+dtc -O dtb -o sun8i-h3-w1-gpio.dtbo sun8i-h3-w1-gpio.dts
+cp sun8i-h3-w1-gpio.dts ~/sun8i-h3-w1-gpio.dts.1wire_203
+
+# Additional information
+https://forum.armbian.com/topic/7912-default-w1-pin-on-nano-pi-neo/
+https://stackoverflow.com/questions/21670967/how-to-compile-dts-linux-device-tree-source-files-to-dtb
+
+
+
+
+
+
+
+
+
+sudo pip install wiringpi --upgrade
+sudo pip install wiringpi2 --upgrade
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##############################################################################
+##############################################################################
+# outdated but maybe useful
+
+
 ##### nanopi-neo-air_ubuntu-core-xenial_4.11.2_20170905.img ###########
 
 sudo npi-config
@@ -272,52 +350,5 @@ dtoverlay=w1-gpio-pullup,gpiopin=203,extpullup=1
 modprobe w1-gpio
 modprobe w1-therm
 
-
-
-
-
-############################################################################
-# Armbian Stretch
-############################################################################
-
-sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
-sudo pip3 install --upgrade pip
-sudo apt-get install python3-dev python3-setuptools
-
-# Just libjpeg8-dev might be fine (if it is available)
-sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk -y
-
-sudo pip3 install Pillow
-
-git clone https://github.com/thomaspfeiffer-git/raspberry
-
-
-#------- 1-wire DS18B20 --------------------
-# enable 1-wire
-sudo armbian-config 
-
-# set PIN to PG11/203/phys 7
-## /boot/armbianEnv.txt
-param_w1_pin=PG11
-
-## Device Tree
-cd /boot/dtb/overlay/
-cp sun8i-h3-w1-gpio.dtbo ~/sun8i-h3-w1-gpio.dtbo.orig
-dtc -I dtb -O dts sun8i-h3-w1-gpio.dtbo > sun8i-h3-w1-gpio.dts
-# sun8i-h3-w1-gpio.dts: 
-w1_pins {
-          pins = "PG11";
-
-dtc -O dtb -o sun8i-h3-w1-gpio.dtbo sun8i-h3-w1-gpio.dts
-cp sun8i-h3-w1-gpio.dts ~/sun8i-h3-w1-gpio.dts.1wire_203
-
-
-
-
-
-
-
-sudo pip install wiringpi --upgrade
-sudo pip install wiringpi2 --upgrade
 
 
