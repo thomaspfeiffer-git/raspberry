@@ -62,6 +62,10 @@ https://forum.armbian.com/topic/7912-default-w1-pin-on-nano-pi-neo/
 https://stackoverflow.com/questions/21670967/how-to-compile-dts-linux-device-tree-source-files-to-dtb
 
 
+#------- RRDTool ----------^
+sudo apt-get install python3-dev librrd-dev
+sudo pip3 install rrdtool
+
 
 
 
