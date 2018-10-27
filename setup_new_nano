@@ -63,7 +63,7 @@ https://stackoverflow.com/questions/21670967/how-to-compile-dts-linux-device-tre
 
 
 #------- RRDTool ----------^
-sudo apt-get install python3-dev librrd-dev
+sudo apt-get install python3-dev librrd-dev rrdtool
 sudo pip3 install rrdtool
 
 
