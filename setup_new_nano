@@ -26,10 +26,9 @@ sudo bash -c " echo 'default-on' > /sys/class/leds/nanopi:blue:status/trigger "
 
 sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
 sudo pip3 install --upgrade pip
-sudo apt-get install python3-dev python3-setuptools
+sudo apt-get install python3-dev python3-setuptools -y
 
-# Just libjpeg8-dev might be fine (if it is available)
-sudo apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk -y
+sudo apt-get install libtiff5-dev libjpeg62-turbo-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk -y
 
 sudo pip3 install Pillow
 
@@ -62,8 +61,8 @@ https://forum.armbian.com/topic/7912-default-w1-pin-on-nano-pi-neo/
 https://stackoverflow.com/questions/21670967/how-to-compile-dts-linux-device-tree-source-files-to-dtb
 
 
-#------- RRDTool ----------^
-sudo apt-get install python3-dev librrd-dev rrdtool
+#------- RRDTool ----------#
+sudo apt-get install python3-dev librrd-dev rrdtool -y
 sudo pip3 install rrdtool
 
 
