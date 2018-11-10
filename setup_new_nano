@@ -23,6 +23,11 @@ screen /dev/ttyUSB0 115200
 sudo bash -c " echo 'default-on' > /sys/class/leds/nanopi:blue:status/trigger "
 
 
+#------ /var/log not in ramdisk ------------------
+/etc/default/armbian-ramlog
+  # enable the armbian-ram-logging service?
+  ENABLED=false
+
 
 sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
 sudo pip3 install --upgrade pip
