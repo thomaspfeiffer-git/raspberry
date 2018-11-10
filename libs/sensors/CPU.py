@@ -9,7 +9,7 @@
 import subprocess
 import sys
 
-from sensors.Adafruit import Adafruit_GPIO_Platform as Platform
+from Adafruit import Adafruit_GPIO_Platform as Platform
 
 
 class CPU:
