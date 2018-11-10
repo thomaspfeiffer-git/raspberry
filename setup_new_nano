@@ -24,6 +24,7 @@ sudo bash -c " echo 'default-on' > /sys/class/leds/nanopi:blue:status/trigger "
 
 
 #------ /var/log not in ramdisk ------------------
+# https://forum.armbian.com/topic/8362-logrotate-not-working-in-varlog/
 /etc/default/armbian-ramlog
   # enable the armbian-ram-logging service?
   ENABLED=false
