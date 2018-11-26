@@ -19,6 +19,8 @@ import threading
 from time import sleep, strftime, time
 
 sys.path.append("../libs/")
+sys.path.append('../libs/sensors')
+
 from i2c import I2C
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
 from sensors.CPU import CPU
