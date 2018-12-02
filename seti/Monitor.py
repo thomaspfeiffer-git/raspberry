@@ -13,6 +13,8 @@ Monitoring some data on the seti hardware:
 - Room temperature
 - Room humidity
 - Airflow temperature
+
+- ... and some more
 """
 
 """ 
@@ -22,6 +24,7 @@ libraries to be installed:
 """
 
 
+import csv
 import os
 import psutil
 import sys
@@ -48,6 +51,24 @@ V_Temp_Airflow = "Temperature Airflow"
 V_Humidity = "Humidity"
 
 
+###############################################################################
+# CSV #########################################################################
+class CSV (object):
+    fieldnames = [V_Timestamp, V_CPU_Temp, V_CPU_AvgLoad, V_CPU_Usage_Core0, \
+                  V_CPU_Usage_Core1, V_CPU_Usage_Core2, V_CPU_Usage_Core3,   \
+                  V_CPU_Frequency, V_Temp_Room, V_Temp_Airflow, V_Humidity]
+    filename   = "monitor.csv"
+
+    def __init__ (self):
+        with open(self.filename, 'a', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
+            writer.writeheader()
+
+    def write (self, data):
+        with open(self.filename, 'a', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
+            writer.writerow(data)
+
 
 ###############################################################################
 ## Shutdown stuff #############################################################
@@ -63,6 +84,7 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
     cpu = CPU()
+    csv_ = CSV()
 
     while True:
         cpu_usage = psutil.cpu_percent(percpu=True)
@@ -77,8 +99,7 @@ if __name__ == "__main__":
                  V_Temp_Room: "n/a",
                  V_Temp_Airflow: "n/a",
                  V_Humidity: "n/a" }
-
-        print(data)
+        csv_.write(data)
         time.sleep(10)
 
 
