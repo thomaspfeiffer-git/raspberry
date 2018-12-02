@@ -6,11 +6,17 @@
 ###############################################################################
 
 """
-Monitoring some data on the seti hardware.
+Monitoring some data on the seti hardware:
+- CPU Load
+- CPU Temperature
+
+- Room temperature
+- Room humidity
+- Airflow temperature
+
 """
 
 
-import csv
 import sys
 import time
 
@@ -18,6 +24,8 @@ import time
 sys.path.append("../libs/")
 from Logging import Log
 from Shutdown import Shutdown
+
+from sensors.CPU import CPU
 
 
 ###############################################################################
@@ -32,6 +40,11 @@ def shutdown_application ():
 ## main #######################################################################
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
+    cpu = CPU()
+
+    while True:
+        Log(cpu.read_temperature())
+        time.sleep(10)
 
 
 # eof #        
