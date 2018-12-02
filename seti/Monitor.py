@@ -17,13 +17,16 @@ Monitoring some data on the seti hardware:
 - ... and some more
 """
 
-""" 
-libraries to be installed:
-- sudo pip3 install psutil
 
-"""
+### usage ###
+# nohup ./Monitor.py 2>&1 > monitor.py &
 
 
+### libraries to be installed ###
+# sudo pip3 install psutil
+
+
+import configparser as cfgparser
 import os
 import psutil
 import sys
@@ -48,6 +51,20 @@ V_CPU_Frequency = "CPU Frequency"
 V_Temp_Room = "Temperature Room"
 V_Temp_Airflow = "Temperature Airflow"
 V_Humidity = "Humidity"
+
+
+CREDENTIALS = "/home/pi/credentials/seti.cred"
+cred = cfgparser.ConfigParser()
+cred.read(CREDENTIALS)
+
+
+###############################################################################
+# CONFIG ######################################################################
+class CONFIG (object):
+    SECRET = cred['UDP']['SECRET']
+    IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
+    UDP_PORT = int(cred['UDP']['UDP_PORT'])
+    MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
 
 
 ###############################################################################
