@@ -40,19 +40,6 @@ from Shutdown import Shutdown
 from sensors.CPU import CPU
 
 
-V_Timestamp = "Timestamp"
-V_CPU_Temp = "CPU Temperature"
-V_CPU_AvgLoad = "CPU AvgLoad"
-V_CPU_Usage_Core0 = "CPU Usage Core 0"
-V_CPU_Usage_Core1 = "CPU Usage Core 1"
-V_CPU_Usage_Core2 = "CPU Usage Core 2"
-V_CPU_Usage_Core3 = "CPU Usage Core 3"
-V_CPU_Frequency = "CPU Frequency"
-V_Temp_Room = "Temperature Room"
-V_Temp_Airflow = "Temperature Airflow"
-V_Humidity = "Humidity"
-
-
 CREDENTIALS = "/home/pi/credentials/seti.cred"
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
