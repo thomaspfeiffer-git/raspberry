@@ -100,8 +100,7 @@ if __name__ == "__main__":
                  V_Temp_Airflow: "n/a",
                  V_Humidity: "n/a" }
         csv_.write(data)
-        time.sleep(10)
-
+        time.sleep(50)
 
 # eof #        
 
