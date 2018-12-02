@@ -24,7 +24,6 @@ libraries to be installed:
 """
 
 
-import csv
 import os
 import psutil
 import sys
@@ -52,25 +51,6 @@ V_Humidity = "Humidity"
 
 
 ###############################################################################
-# CSV #########################################################################
-class CSV (object):
-    fieldnames = [V_Timestamp, V_CPU_Temp, V_CPU_AvgLoad, V_CPU_Usage_Core0, \
-                  V_CPU_Usage_Core1, V_CPU_Usage_Core2, V_CPU_Usage_Core3,   \
-                  V_CPU_Frequency, V_Temp_Room, V_Temp_Airflow, V_Humidity]
-    filename   = "monitor.csv"
-
-    def __init__ (self):
-        with open(self.filename, 'a', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
-            writer.writeheader()
-
-    def write (self, data):
-        with open(self.filename, 'a', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
-            writer.writerow(data)
-
-
-###############################################################################
 ## Shutdown stuff #############################################################
 def shutdown_application ():
     """cleanup stuff"""
@@ -84,23 +64,32 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
     cpu = CPU()
-    csv_ = CSV()
 
     while True:
         cpu_usage = psutil.cpu_percent(percpu=True)
-        data = { V_Timestamp: time.strftime("%Y%m%d %H:%M:%S"),
-                 V_CPU_Temp: cpu.read_temperature(),
-                 V_CPU_AvgLoad: os.getloadavg()[0],
-                 V_CPU_Frequency: psutil.cpu_freq()[0],
-                 V_CPU_Usage_Core0: cpu_usage[0],
-                 V_CPU_Usage_Core1: cpu_usage[1],
-                 V_CPU_Usage_Core2: cpu_usage[2],
-                 V_CPU_Usage_Core3: cpu_usage[3],
-                 V_Temp_Room: "n/a",
-                 V_Temp_Airflow: "n/a",
-                 V_Humidity: "n/a" }
-        csv_.write(data)
-        time.sleep(50)
+        rrd_data = "N:{:.2f}".format(cpu.read_temperature()) + \
+                    ":{:.2f}".format(os.getloadavg()[0])     + \
+                    ":{:.2f}".format(psutil.cpu_freq()[0])   + \
+                    ":{:.2f}".format(cpu_usage[0])           + \
+                    ":{:.2f}".format(cpu_usage[1])           + \
+                    ":{:.2f}".format(cpu_usage[2])           + \
+                    ":{:.2f}".format(cpu_usage[3])           + \
+                    ":{:.2f}".format(-99.01)   + \
+                    ":{:.2f}".format(-99.02)   + \
+                    ":{:.2f}".format(-99.03)   + \
+                    ":{:.2f}".format(-99.04)   + \
+                    ":{:.2f}".format(-99.05)   + \
+                    ":{:.2f}".format(-99.06)
+        # 99.01: V_Temp_Room
+        # 99.02: V_Temp_Airflow
+        # 99.03: V_Humidity
+        # 99.04: reserved; maybe fan speed?
+        # 99.05: reserved
+        # 99.06: reserved
+
+        Log(rrd_data)
+        # udp.send("{},{}".format(this_PI,rrd_data))
+        time.sleep(120)
 
 # eof #        
 
