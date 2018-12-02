@@ -29,11 +29,13 @@ Monitoring some data on the seti hardware:
 import configparser as cfgparser
 import os
 import psutil
+import socket
 import sys
 import time
 
 
 sys.path.append("../libs/")
+from Commons import Digest
 from Logging import Log
 from Shutdown import Shutdown
 
@@ -55,6 +57,25 @@ class CONFIG (object):
 
 
 ###############################################################################
+# UDP_Sender ##################################################################
+class UDP_Sender (object):
+    def __init__ (self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.digest = Digest(CONFIG.SECRET)
+
+    def send (self, data):
+        payload = data
+        datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
+        try:
+            sent = self.socket.sendto(datagram, 
+                                      (CONFIG.IP_ADDRESS_SERVER, 
+                                      CONFIG.UDP_PORT))
+            Log("Sent bytes: {}; data: {}".format(sent,datagram))
+        except:
+            Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
+
+
+###############################################################################
 ## Shutdown stuff #############################################################
 def shutdown_application ():
     """cleanup stuff"""
@@ -68,6 +89,7 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
     cpu = CPU()
+    udp = UDP_Sender()
 
     while True:
         cpu_usage = psutil.cpu_percent(percpu=True)
