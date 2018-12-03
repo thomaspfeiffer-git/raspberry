@@ -52,9 +52,11 @@ this_PI = socket.gethostname()
 
 
 if this_PI == seti_01:
-    pass
-    # from sensors.DS1820 import DS1820
-    # from sensors.BME680 import BME680, BME_680_BASEADDR, BME_680_SECONDARYADDR
+    from sensors.DS1820 import DS1820
+    from sensors.BME680 import BME680, BME_680_BASEADDR, BME_680_SECONDARYADDR
+
+DS1820_Room    = "/sys/bus/w1/devices/28-000008561957/w1_slave"
+DS1820_Airflow = "/sys/bus/w1/devices/28-000008561957/w1_slave"
 
 
 CREDENTIALS = "/home/pi/credentials/seti.cred"
@@ -106,8 +108,20 @@ if __name__ == "__main__":
     cpu = CPU()
     udp = UDP_Sender()
 
+    if this_PI == seti_01:
+        ds_room = DS1820(DS1820_Room)
+        ds_airflow = DS1820(DS1820_Airflow)
+
+    temp_room    = -99.99 # in case no DS1820 available
+    temp_airflow = -99.99
+
     while True:
         cpu_usage = psutil.cpu_percent(percpu=True)
+        
+        if this_PI == seti_01:
+            temp_room    = ds_room.read_temperature()
+            temp_airflow = ds_airflow.read_temperature()
+
         rrd_data = "N:{:.2f}".format(cpu.read_temperature()) + \
                     ":{:.2f}".format(os.getloadavg()[0])     + \
                     ":{:.2f}".format(psutil.cpu_freq()[0])   + \
@@ -115,20 +129,17 @@ if __name__ == "__main__":
                     ":{:.2f}".format(cpu_usage[1])           + \
                     ":{:.2f}".format(cpu_usage[2])           + \
                     ":{:.2f}".format(cpu_usage[3])           + \
-                    ":{:.2f}".format(-99.01)   + \
-                    ":{:.2f}".format(-99.02)   + \
+                    ":{:.2f}".format(temp_room)              + \
+                    ":{:.2f}".format(temp_airflow)           + \
                     ":{:.2f}".format(-99.03)   + \
                     ":{:.2f}".format(-99.04)   + \
                     ":{:.2f}".format(-99.05)   + \
                     ":{:.2f}".format(-99.06)
-        # 99.01: V_Temp_Room
-        # 99.02: V_Temp_Airflow
         # 99.03: V_Humidity
         # 99.04: reserved; maybe fan speed?
         # 99.05: reserved
         # 99.06: reserved
 
-        # Log("{},{}".format(this_PI,rrd_data))
         udp.send("{},{}".format(this_PI,rrd_data))
         time.sleep(120)
 
