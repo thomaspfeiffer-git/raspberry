@@ -42,6 +42,21 @@ from Shutdown import Shutdown
 from sensors.CPU import CPU
 
 
+# Hosts where this app runs
+seti_01 = "seti_01"
+seti_02 = "seti_02"
+seti_03 = "seti_03"
+seti_04 = "seti_04"
+PIs = [seti_01, seti_02, seti_03, seti_04]
+this_PI = socket.gethostname()
+
+
+if this_PI == seti_01:
+    pass
+    # from sensors.DS1820 import DS1820
+    # from sensors.BME680 import BME680, BME_680_BASEADDR, BME_680_SECONDARYADDR
+
+
 CREDENTIALS = "/home/pi/credentials/seti.cred"
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
@@ -113,8 +128,8 @@ if __name__ == "__main__":
         # 99.05: reserved
         # 99.06: reserved
 
-        Log(rrd_data)
-        # udp.send("{},{}".format(this_PI,rrd_data))
+        # Log("{},{}".format(this_PI,rrd_data))
+        udp.send("{},{}".format(this_PI,rrd_data))
         time.sleep(120)
 
 # eof #        
