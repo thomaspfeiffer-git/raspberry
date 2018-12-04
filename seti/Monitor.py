@@ -53,7 +53,7 @@ this_PI = socket.gethostname()
 
 if this_PI == seti_01:
     from sensors.DS1820 import DS1820
-    from sensors.BME680 import BME680, BME_680_BASEADDR, BME_680_SECONDARYADDR
+    from sensors.HTU21DF import HTU21DF
 
 DS1820_Room    = "/sys/bus/w1/devices/28-000008561957/w1_slave"
 DS1820_Airflow = "/sys/bus/w1/devices/28-000008561957/w1_slave"
@@ -111,9 +111,11 @@ if __name__ == "__main__":
     if this_PI == seti_01:
         ds_room = DS1820(DS1820_Room)
         ds_airflow = DS1820(DS1820_Airflow)
+        # htu = HTU21DF()
 
     temp_room    = -99.99 # in case no DS1820 available
     temp_airflow = -99.99
+    humidity     = -99.99
 
     while True:
         cpu_usage = psutil.cpu_percent(percpu=True)
@@ -121,6 +123,7 @@ if __name__ == "__main__":
         if this_PI == seti_01:
             temp_room    = ds_room.read_temperature()
             temp_airflow = ds_airflow.read_temperature()
+            # humidity     = htu.read_humidity()
 
         rrd_data = "N:{:.2f}".format(cpu.read_temperature()) + \
                     ":{:.2f}".format(os.getloadavg()[0])     + \
@@ -131,7 +134,7 @@ if __name__ == "__main__":
                     ":{:.2f}".format(cpu_usage[3])           + \
                     ":{:.2f}".format(temp_room)              + \
                     ":{:.2f}".format(temp_airflow)           + \
-                    ":{:.2f}".format(-99.03)   + \
+                    ":{:.2f}".format(humidity)               + \
                     ":{:.2f}".format(-99.04)   + \
                     ":{:.2f}".format(-99.05)   + \
                     ":{:.2f}".format(-99.06)
