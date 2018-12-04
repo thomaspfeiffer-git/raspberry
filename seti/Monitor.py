@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     temp_room    = -99.99 # in case no DS1820 available
     temp_airflow = -99.99
-    humidity     = -99.99
+    humidity     = -99.99 # in case no HTU21DF available
 
     while True:
         cpu_usage = psutil.cpu_percent(percpu=True)
