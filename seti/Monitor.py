@@ -111,7 +111,7 @@ if __name__ == "__main__":
     if this_PI == seti_01:
         ds_room = DS1820(DS1820_Room)
         ds_airflow = DS1820(DS1820_Airflow)
-        # htu = HTU21DF()
+        htu = HTU21DF()
 
     temp_room    = -99.99 # in case no DS1820 available
     temp_airflow = -99.99
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         if this_PI == seti_01:
             temp_room    = ds_room.read_temperature()
             temp_airflow = ds_airflow.read_temperature()
-            # humidity     = htu.read_humidity()
+            humidity     = htu.read_humidity()
 
         rrd_data = "N:{:.2f}".format(cpu.read_temperature()) + \
                     ":{:.2f}".format(os.getloadavg()[0])     + \
@@ -138,7 +138,6 @@ if __name__ == "__main__":
                     ":{:.2f}".format(-99.04)   + \
                     ":{:.2f}".format(-99.05)   + \
                     ":{:.2f}".format(-99.06)
-        # 99.03: V_Humidity
         # 99.04: reserved; maybe fan speed?
         # 99.05: reserved
         # 99.06: reserved
