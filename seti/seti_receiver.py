@@ -75,7 +75,7 @@ class UDP_Receiver (threading.Thread):
         # TODO: verify digest
         (source, values) = payload.split(',')
         data[source] = values
-        Log("Data: {}".format(data))
+        # Log("Data: {}".format(data))
 
     def run (self):
         while self._running:
@@ -152,7 +152,7 @@ class ToRRD (threading.Thread):
                                self.RES0:        '3_res0',
                                self.RES1:        '3_res1',
                                self.RES2:        '3_res2' },
-                    seti_02: { self.TEMPCPU:     '4_tempcpu',
+                    seti_04: { self.TEMPCPU:     '4_tempcpu',
                                self.LOAD:        '4_load',
                                self.FREQ:        '4_freq',
                                self.CPU_USE0:    '4_cpu_use0',
@@ -171,8 +171,44 @@ class ToRRD (threading.Thread):
 
     def run (self):
         while self._running:
-            pass 
+            data_complete = True
+            rrd_template = ""
+            rrd_data = "N:"
 
+            for p in PIs:
+                if not data[p]:
+                    data_complete = False
+                else:    
+                    rrd_template = rrd_template + self.DS[p][self.TEMPCPU]     + ":" + \
+                                                  self.DS[p][self.LOAD]        + ":" + \
+                                                  self.DS[p][self.FREQ]        + ":" + \
+                                                  self.DS[p][self.CPU_USE0]    + ":" + \
+                                                  self.DS[p][self.CPU_USE1]    + ":" + \
+                                                  self.DS[p][self.CPU_USE2]    + ":" + \
+                                                  self.DS[p][self.CPU_USE3]    + ":" + \
+                                                  self.DS[p][self.TEMPROOM]    + ":" + \
+                                                  self.DS[p][self.TEMPAIRFLOW] + ":" + \
+                                                  self.DS[p][self.HUMIDITY]    + ":" + \
+                                                  self.DS[p][self.RES0]        + ":" + \
+                                                  self.DS[p][self.RES1]        + ":" + \
+                                                  self.DS[p][self.RES2]        + ":"
+                    rrd_data = rrd_data + data[p].split("N:")[1].rstrip() + ":"
+
+            if data_complete:
+                rrd_template = rrd_template.rstrip(":")
+                rrd_data     = rrd_data.rstrip(":")
+                                                                
+                Log(rrd_template)
+                Log(rrd_data)
+                # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+
+            for _ in range(600):  # interruptible sleep
+                if not self._running:
+                    break
+                time.sleep(0.1)
+
+    def stop (self):
+        self._running = False
 
 
 ###############################################################################
@@ -180,6 +216,8 @@ class ToRRD (threading.Thread):
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
+    to_rrd.stop()
+    to_rrd.join()
     udp.stop()
     udp.join()
     Log("Application stopped")
@@ -192,7 +230,10 @@ if __name__ == '__main__':
     shutdown_app = Shutdown(shutdown_func=shutdown_application)
 
     udp = UDP_Receiver()
+    to_rrd = ToRRD()
+
     udp.start()
+    to_rrd.start()
 
     while True:
         time.sleep(120)
