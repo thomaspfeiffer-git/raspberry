@@ -7,15 +7,30 @@ WIDTH=1024
 HEIGHT=160
 WATERMARK=`date  "+%e. %B %Y, %H:%M:%S"`
 
-PNG_LOAD_D=$RRDPATH/load_d.png
-PNG_LOAD_W=$RRDPATH/load_w.png
-PNG_LOAD_M=$RRDPATH/load_m.png
-PNG_LOAD_Y=$RRDPATH/load_y.png
+PNG_LOAD_D=$RRDPATH/seti_load_d.png
+PNG_LOAD_W=$RRDPATH/seti_load_w.png
+PNG_LOAD_M=$RRDPATH/seti_load_m.png
+PNG_LOAD_Y=$RRDPATH/seti_load_y.png
 
-PNG_TEMPCPU_D=$RRDPATH/tempcpu_d.png
-PNG_TEMPCPU_W=$RRDPATH/tempcpu_w.png
-PNG_TEMPCPU_M=$RRDPATH/tempcpu_m.png
-PNG_TEMPCPU_Y=$RRDPATH/tempcpu_y.png
+PNG_FREQ_D=$RRDPATH/seti_freq_d.png
+PNG_FREQ_W=$RRDPATH/seti_freq_w.png
+PNG_FREQ_M=$RRDPATH/seti_freq_m.png
+PNG_FREQ_Y=$RRDPATH/seti_freq_y.png
+
+PNG_TEMPCPU_D=$RRDPATH/seti_tempcpu_d.png
+PNG_TEMPCPU_W=$RRDPATH/seti_tempcpu_w.png
+PNG_TEMPCPU_M=$RRDPATH/seti_tempcpu_m.png
+PNG_TEMPCPU_Y=$RRDPATH/seti_tempcpu_y.png
+
+PNG_TEMP_D=$RRDPATH/seti_temp_d.png
+PNG_TEMP_W=$RRDPATH/seti_temp_w.png
+PNG_TEMP_M=$RRDPATH/seti_temp_m.png
+PNG_TEMP_Y=$RRDPATH/seti_temp_y.png
+
+PNG_HUMIDITY_D=$RRDPATH/seti_humidity_d.png
+PNG_HUMIDITY_W=$RRDPATH/seti_humidity_w.png
+PNG_HUMIDITY_M=$RRDPATH/seti_humidity_m.png
+PNG_HUMIDITY_Y=$RRDPATH/seti_humidity_y.png
 
 
 #######################################################################
@@ -63,6 +78,46 @@ printLoad ()
 # $1 Time Range                                                       #
 # $2 Filename                                                         #
 #######################################################################
+printFreq ()
+  {
+    rrdtool graph $2                                         \
+    --title "Frequenz"                                       \
+    --end now --start end-$1                                 \
+    -w $WIDTH -h $HEIGHT -a PNG                              \
+    --watermark "$WATERMARK"                                 \
+    --right-axis 1:0                                         \
+    DEF:1_freq=$RRD:1_freq:AVERAGE                           \
+    DEF:2_freq=$RRD:2_freq:AVERAGE                           \
+    DEF:3_freq=$RRD:3_freq:AVERAGE                           \
+    DEF:4_freq=$RRD:4_freq:AVERAGE                           \
+    LINE1:1_freq#0000FF:"Frequenz seti_01                "   \
+    GPRINT:1_freq:LAST:"Aktuell\: %5.2lf °C"                 \
+    GPRINT:1_freq:AVERAGE:"Mittelwert\: %5.2lf °C"           \
+    GPRINT:1_freq:MAX:"Max\: %5.2lf °C"                      \
+    GPRINT:1_freq:MIN:"Min\: %5.2lf °C\n"                    \
+    LINE1:2_freq#00FF00:"Frequenz seti_02                "   \
+    GPRINT:2_freq:LAST:"Aktuell\: %5.2lf °C"                 \
+    GPRINT:2_freq:AVERAGE:"Mittelwert\: %5.2lf °C"           \
+    GPRINT:2_freq:MAX:"Max\: %5.2lf °C"                      \
+    GPRINT:2_freq:MIN:"Min\: %5.2lf °C\n"                    \
+    LINE1:3_freq#FF0000:"Frequenz seti_03                "   \
+    GPRINT:3_freq:LAST:"Aktuell\: %5.2lf °C"                 \
+    GPRINT:3_freq:AVERAGE:"Mittelwert\: %5.2lf °C"           \
+    GPRINT:3_freq:MAX:"Max\: %5.2lf °C"                      \
+    GPRINT:3_freq:MIN:"Min\: %5.2lf °C\n"                    \
+    LINE1:4_freq#FFFF00:"Frequenz seti_04                "   \
+    GPRINT:4_freq:LAST:"Aktuell\: %5.2lf °C"                 \
+    GPRINT:4_freq:AVERAGE:"Mittelwert\: %5.2lf °C"           \
+    GPRINT:4_freq:MAX:"Max\: %5.2lf °C"                      \
+    GPRINT:4_freq:MIN:"Min\: %5.2lf °C\n"                    &
+}   
+
+
+#######################################################################
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
 printTempCPU ()
   {
     rrdtool graph $2                                         \
@@ -99,18 +154,81 @@ printTempCPU ()
 
 
 #######################################################################
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printTemp ()
+  {
+    rrdtool graph $2                                         \
+    --title "Temperaturen"                                   \
+    --end now --start end-$1                                 \
+    -w $WIDTH -h $(($HEIGHT*2)) -a PNG                       \
+    --watermark "$WATERMARK"                                 \
+    --right-axis 1:0                                         \
+    DEF:1_temproom=$RRD:1_temproom:AVERAGE                   \
+    DEF:1_tempairflow=$RRD:1_tempairflow:AVERAGE             \
+    LINE1:1_temproom#0000FF:"Raumtemperatur  "               \
+    GPRINT:1_temproom:LAST:"Aktuell\: %5.2lf °C"             \
+    GPRINT:1_temproom:AVERAGE:"Mittelwert\: %5.2lf °C"       \
+    GPRINT:1_temproom:MAX:"Max\: %5.2lf °C"                  \
+    GPRINT:1_temproom:MIN:"Min\: %5.2lf °C\n"                \
+    LINE1:1_tempairflow#00FF00:"Temperatur Airflow       "   \
+    GPRINT:1_tempairflow:LAST:"Aktuell\: %5.2lf °C"          \
+    GPRINT:1_tempairflow:AVERAGE:"Mittelwert\: %5.2lf °C"    \
+    GPRINT:1_tempairflow:MAX:"Max\: %5.2lf °C"               \
+    GPRINT:1_tempairflow:MIN:"Min\: %5.2lf °C\n"             &
+ }
+
+
+#######################################################################
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printHumidity ()
+  {
+    rrdtool graph $2                                         \
+    --title "Luftfeuchtigkeit [%]"                           \
+    --end now --start end-$1                                 \
+    -w $WIDTH -h $HEIGHT -a PNG                              \
+    --watermark "$WATERMARK"                                 \
+    --right-axis 1:0                                         \
+    DEF:1_humidity=$RRD:1_humidity:AVERAGE                   \
+    LINE1:1_humidity#0000FF:"Luftfeuchtigkeit"               \
+    GPRINT:1_humidity:LAST:"Aktuell\: %5.2lf %% rF"          \
+    GPRINT:1_humidity:AVERAGE:"Mittelwert\: %5.2lf %% rF"    \
+    GPRINT:1_humidity:MAX:"Max\: %5.2lf %% rF"               \
+    GPRINT:1_humidity:MIN:"Min\: %5.2lf %% rF\n"             &
+ }
+
+
+#######################################################################
 # main ################################################################
 printLoad "36h", "$PNG_LOAD_D"
 printLoad "7d",  "$PNG_LOAD_W"
 printLoad "30d", "$PNG_LOAD_M"
 printLoad "365d", "$PNG_LOAD_Y"
 
+printFreq "36h", "$PNG_FREQ_D"
+printFreq "7d",  "$PNG_FREQ_W"
+printFreq "30d", "$PNG_FREQ_M"
+printFreq "365d", "$PNG_FREQ_Y"
+
 printTempCPU "36h", "$PNG_TEMPCPU_D"
 printTempCPU "7d",  "$PNG_TEMPCPU_W"
 printTempCPU "30d", "$PNG_TEMPCPU_M"
 printTempCPU "365d", "$PNG_TEMPCPU_Y"
 
+printTemp "36h", "$PNG_TEMP_D"
+printTemp "7d",  "$PNG_TEMP_W"
+printTemp "30d", "$PNG_TEMP_M"
+printTemp "365d", "$PNG_TEMP_Y"
 
+printHumidity "36h", "$PNG_HUMIDITY_D"
+printHumidity "7d",  "$PNG_HUMIDITY_W"
+printHumidity "30d", "$PNG_HUMIDITY_M"
+printHumidity "365d", "$PNG_HUMIDITY_Y"
 
 # eof #
 
