@@ -199,7 +199,7 @@ class ToRRD (threading.Thread):
                 rrd_template = rrd_template.rstrip(":")
                 rrd_data     = rrd_data.rstrip(":")
                                                                 
-                Log(rrd_template)
+                # Log(rrd_template)
                 Log(rrd_data)
                 rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
