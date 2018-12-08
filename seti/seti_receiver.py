@@ -23,7 +23,18 @@ from Commons import Digest
 from Logging import Log
 from Shutdown import Shutdown
 
+
 CREDENTIALS = "/home/pi/configs/seti.cred"
+RRDFILE     = "/schild/weather/seti.rrd"
+
+
+# Hosts where this app runs
+seti_01 = "seti_01"
+seti_02 = "seti_02"
+seti_03 = "seti_03"
+seti_04 = "seti_04"
+PIs = [seti_01, seti_02, seti_03, seti_04]
+data = { p: None for p in PIs }
 
 
 ###############################################################################
@@ -63,14 +74,14 @@ class UDP_Receiver (threading.Thread):
         (payload, digest_received) = datagram.rsplit(',', 1)
         # TODO: verify digest
         (source, values) = payload.split(',')
-        # data[source] = values
-        # Log("Data: {}".format(data))
+        data[source] = values
+        Log("Data: {}".format(data))
 
     def run (self):
         while self._running:
             try:
                 datagram = self.socket.recv(self.MAX_PACKET_SIZE).decode('utf-8')
-                Log("Received: {}".format(datagram))
+                # Log("Received: {}".format(datagram))
                 self.process_data(datagram)
             except BlockingIOError:
                 for _ in range(50):  # interruptible sleep
@@ -80,6 +91,88 @@ class UDP_Receiver (threading.Thread):
 
     def stop (self):
         self._running = False
+
+
+###############################################################################
+# ToRRD #######################################################################
+class ToRRD (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+
+        self.TEMPCPU     = "DS_TEMPCPU"
+        self.LOAD        = "DS_LOAD"
+        self.FREQ        = "DS_FREQ"
+        self.CPU_USE0    = "DS_CPU_USE0"
+        self.CPU_USE1    = "DS_CPU_USE1"
+        self.CPU_USE2    = "DS_CPU_USE2"
+        self.CPU_USE3    = "DS_CPU_USE3"
+        self.TEMPROOM    = "DS_TEMPROOM"
+        self.TEMPAIRFLOW = "DS_TEMPAIRFLOW"
+        self.HUMIDITY    = "DS_HUMIDITY"
+        self.RES0        = "DS_RES0"
+        self.RES1        = "DS_RES1"
+        self.RES2        = "DS_RES2"
+
+        self.DS = { seti_01: { self.TEMPCPU:     '1_tempcpu',
+                               self.LOAD:        '1_load',
+                               self.FREQ:        '1_freq',
+                               self.CPU_USE0:    '1_cpu_use0',
+                               self.CPU_USE1:    '1_cpu_use1',
+                               self.CPU_USE2:    '1_cpu_use2',
+                               self.CPU_USE3:    '1_cpu_use3',
+                               self.TEMPROOM:    '1_temproom',
+                               self.TEMPAIRFLOW: '1_tempairflow',
+                               self.HUMIDITY:    '1_humidity',
+                               self.RES0:        '1_res0',
+                               self.RES1:        '1_res1',
+                               self.RES2:        '1_res2' },
+                    seti_02: { self.TEMPCPU:     '2_tempcpu',
+                               self.LOAD:        '2_load',
+                               self.FREQ:        '2_freq',
+                               self.CPU_USE0:    '2_cpu_use0',
+                               self.CPU_USE1:    '2_cpu_use1',
+                               self.CPU_USE2:    '2_cpu_use2',
+                               self.CPU_USE3:    '2_cpu_use3',
+                               self.TEMPROOM:    '2_temproom',
+                               self.TEMPAIRFLOW: '2_tempairflow',
+                               self.HUMIDITY:    '2_humidity',
+                               self.RES0:        '2_res0',
+                               self.RES1:        '2_res1',
+                               self.RES2:        '2_res2' },
+                    seti_03: { self.TEMPCPU:     '3_tempcpu',
+                               self.LOAD:        '3_load',
+                               self.FREQ:        '3_freq',
+                               self.CPU_USE0:    '3_cpu_use0',
+                               self.CPU_USE1:    '3_cpu_use1',
+                               self.CPU_USE2:    '3_cpu_use2',
+                               self.CPU_USE3:    '3_cpu_use3',
+                               self.TEMPROOM:    '3_temproom',
+                               self.TEMPAIRFLOW: '3_tempairflow',
+                               self.HUMIDITY:    '3_humidity',
+                               self.RES0:        '3_res0',
+                               self.RES1:        '3_res1',
+                               self.RES2:        '3_res2' },
+                    seti_02: { self.TEMPCPU:     '4_tempcpu',
+                               self.LOAD:        '4_load',
+                               self.FREQ:        '4_freq',
+                               self.CPU_USE0:    '4_cpu_use0',
+                               self.CPU_USE1:    '4_cpu_use1',
+                               self.CPU_USE2:    '4_cpu_use2',
+                               self.CPU_USE3:    '4_cpu_use3',
+                               self.TEMPROOM:    '4_temproom',
+                               self.TEMPAIRFLOW: '4_tempairflow',
+                               self.HUMIDITY:    '4_humidity',
+                               self.RES0:        '4_res0',
+                               self.RES1:        '4_res1',
+                               self.RES2:        '4_res2' }
+                  }
+
+        self._running = True
+
+    def run (self):
+        while self._running:
+            pass 
+
 
 
 ###############################################################################
