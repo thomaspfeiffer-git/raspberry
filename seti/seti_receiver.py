@@ -12,6 +12,7 @@
 
 
 import configparser as cfgparser
+import rrdtool
 import socket
 import sys
 import threading
@@ -200,7 +201,7 @@ class ToRRD (threading.Thread):
                                                                 
                 Log(rrd_template)
                 Log(rrd_data)
-                # rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+                rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
             for _ in range(600):  # interruptible sleep
                 if not self._running:
