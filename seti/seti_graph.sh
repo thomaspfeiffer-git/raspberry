@@ -17,11 +17,6 @@ PNG_FREQ_W=$RRDPATH/seti_freq_w.png
 PNG_FREQ_M=$RRDPATH/seti_freq_m.png
 PNG_FREQ_Y=$RRDPATH/seti_freq_y.png
 
-PNG_TEMPCPU_D=$RRDPATH/seti_tempcpu_d.png
-PNG_TEMPCPU_W=$RRDPATH/seti_tempcpu_w.png
-PNG_TEMPCPU_M=$RRDPATH/seti_tempcpu_m.png
-PNG_TEMPCPU_Y=$RRDPATH/seti_tempcpu_y.png
-
 PNG_TEMP_D=$RRDPATH/seti_temp_d.png
 PNG_TEMP_W=$RRDPATH/seti_temp_w.png
 PNG_TEMP_M=$RRDPATH/seti_temp_m.png
@@ -50,22 +45,22 @@ printLoad ()
     DEF:2_load=$RRD:2_load:AVERAGE                           \
     DEF:3_load=$RRD:3_load:AVERAGE                           \
     DEF:4_load=$RRD:4_load:AVERAGE                           \
-    LINE1:1_load#0000FF:"Load seti_01                    "   \
+    LINE1:1_load#0000FF:"Load seti_01         "              \
     GPRINT:1_load:LAST:"Aktuell\: %5.2lf °C"                 \
     GPRINT:1_load:AVERAGE:"Mittelwert\: %5.2lf °C"           \
     GPRINT:1_load:MAX:"Max\: %5.2lf °C"                      \
     GPRINT:1_load:MIN:"Min\: %5.2lf °C\n"                    \
-    LINE1:2_load#00FF00:"Load seti_02                    "   \
+    LINE1:2_load#00FF00:"Load seti_02         "              \
     GPRINT:2_load:LAST:"Aktuell\: %5.2lf °C"                 \
     GPRINT:2_load:AVERAGE:"Mittelwert\: %5.2lf °C"           \
     GPRINT:2_load:MAX:"Max\: %5.2lf °C"                      \
     GPRINT:2_load:MIN:"Min\: %5.2lf °C\n"                    \
-    LINE1:3_load#FF0000:"Load seti_03                    "   \
+    LINE1:3_load#FF0000:"Load seti_03         "              \
     GPRINT:3_load:LAST:"Aktuell\: %5.2lf °C"                 \
     GPRINT:3_load:AVERAGE:"Mittelwert\: %5.2lf °C"           \
     GPRINT:3_load:MAX:"Max\: %5.2lf °C"                      \
     GPRINT:3_load:MIN:"Min\: %5.2lf °C\n"                    \
-    LINE1:1_load#FFFF00:"Load seti_04                    "   \
+    LINE1:4_load#FFFF00:"Load seti_04         "              \
     GPRINT:4_load:LAST:"Aktuell\: %5.2lf °C"                 \
     GPRINT:4_load:AVERAGE:"Mittelwert\: %5.2lf °C"           \
     GPRINT:4_load:MAX:"Max\: %5.2lf °C"                      \
@@ -118,46 +113,6 @@ printFreq ()
 # $1 Time Range                                                       #
 # $2 Filename                                                         #
 #######################################################################
-printTempCPU ()
-  {
-    rrdtool graph $2                                         \
-    --title "Temperature CPU [°C]"                           \
-    --end now --start end-$1                                 \
-    -w $WIDTH -h $(($HEIGHT*2)) -a PNG                       \
-    --watermark "$WATERMARK"                                 \
-    --right-axis 1:0                                         \
-    DEF:1_tempcpu=$RRD:1_tempcpu:AVERAGE                     \
-    DEF:2_tempcpu=$RRD:2_tempcpu:AVERAGE                     \
-    DEF:3_tempcpu=$RRD:3_tempcpu:AVERAGE                     \
-    DEF:4_tempcpu=$RRD:4_tempcpu:AVERAGE                     \
-    LINE1:1_tempcpu#0000FF:"Temperatur seti_01           "   \
-    GPRINT:1_tempcpu:LAST:"Aktuell\: %5.2lf °C"              \
-    GPRINT:1_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"        \
-    GPRINT:1_tempcpu:MAX:"Max\: %5.2lf °C"                   \
-    GPRINT:1_tempcpu:MIN:"Min\: %5.2lf °C\n"                 \
-    LINE1:2_tempcpu#00FF00:"Temperatur seti_02           "   \
-    GPRINT:2_tempcpu:LAST:"Aktuell\: %5.2lf °C"              \
-    GPRINT:2_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"        \
-    GPRINT:2_tempcpu:MAX:"Max\: %5.2lf °C"                   \
-    GPRINT:2_tempcpu:MIN:"Min\: %5.2lf °C\n"                 \
-    LINE1:3_tempcpu#FF0000:"Temperatur seti_03           "   \
-    GPRINT:3_tempcpu:LAST:"Aktuell\: %5.2lf °C"              \
-    GPRINT:3_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"        \
-    GPRINT:3_tempcpu:MAX:"Max\: %5.2lf °C"                   \
-    GPRINT:3_tempcpu:MIN:"Min\: %5.2lf °C\n"                 \
-    LINE1:4_tempcpu#FFFF00:"Temperatur seti_04           "   \
-    GPRINT:4_tempcpu:LAST:"Aktuell\: %5.2lf °C"              \
-    GPRINT:4_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"        \
-    GPRINT:4_tempcpu:MAX:"Max\: %5.2lf °C"                   \
-    GPRINT:4_tempcpu:MIN:"Min\: %5.2lf °C\n"                 &
- }
-
-
-#######################################################################
-# Parameter:                                                          #
-# $1 Time Range                                                       #
-# $2 Filename                                                         #
-#######################################################################
 printTemp ()
   {
     rrdtool graph $2                                         \
@@ -168,12 +123,36 @@ printTemp ()
     --right-axis 1:0                                         \
     DEF:1_temproom=$RRD:1_temproom:AVERAGE                   \
     DEF:1_tempairflow=$RRD:1_tempairflow:AVERAGE             \
-    LINE1:1_temproom#0000FF:"Raumtemperatur  "               \
+    DEF:1_tempcpu=$RRD:1_tempcpu:AVERAGE                     \
+    DEF:2_tempcpu=$RRD:2_tempcpu:AVERAGE                     \
+    DEF:3_tempcpu=$RRD:3_tempcpu:AVERAGE                     \
+    DEF:4_tempcpu=$RRD:4_tempcpu:AVERAGE                     \
+    LINE1:1_tempcpu#0000FF:"Temperatur seti_01      "        \
+    GPRINT:1_tempcpu:LAST:"Aktuell\: %5.2lf °C"              \
+    GPRINT:1_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"        \
+    GPRINT:1_tempcpu:MAX:"Max\: %5.2lf °C"                   \
+    GPRINT:1_tempcpu:MIN:"Min\: %5.2lf °C\n"                 \
+    LINE1:2_tempcpu#00FF00:"Temperatur seti_02      "        \
+    GPRINT:2_tempcpu:LAST:"Aktuell\: %5.2lf °C"              \
+    GPRINT:2_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"        \
+    GPRINT:2_tempcpu:MAX:"Max\: %5.2lf °C"                   \
+    GPRINT:2_tempcpu:MIN:"Min\: %5.2lf °C\n"                 \
+    LINE1:3_tempcpu#FF0000:"Temperatur seti_03      "        \
+    GPRINT:3_tempcpu:LAST:"Aktuell\: %5.2lf °C"              \
+    GPRINT:3_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"        \
+    GPRINT:3_tempcpu:MAX:"Max\: %5.2lf °C"                   \
+    GPRINT:3_tempcpu:MIN:"Min\: %5.2lf °C\n"                 \
+    LINE1:4_tempcpu#FFFF00:"Temperatur seti_04      "        \
+    GPRINT:4_tempcpu:LAST:"Aktuell\: %5.2lf °C"              \
+    GPRINT:4_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"        \
+    GPRINT:4_tempcpu:MAX:"Max\: %5.2lf °C"                   \
+    GPRINT:4_tempcpu:MIN:"Min\: %5.2lf °C\n"                 \
+    LINE1:1_temproom#00FFFF:"Raumtemperatur          "       \
     GPRINT:1_temproom:LAST:"Aktuell\: %5.2lf °C"             \
     GPRINT:1_temproom:AVERAGE:"Mittelwert\: %5.2lf °C"       \
     GPRINT:1_temproom:MAX:"Max\: %5.2lf °C"                  \
     GPRINT:1_temproom:MIN:"Min\: %5.2lf °C\n"                \
-    LINE1:1_tempairflow#00FF00:"Temperatur Airflow       "   \
+    LINE1:1_tempairflow#FF00FF:"Temperatur Airflow      "    \
     GPRINT:1_tempairflow:LAST:"Aktuell\: %5.2lf °C"          \
     GPRINT:1_tempairflow:AVERAGE:"Mittelwert\: %5.2lf °C"    \
     GPRINT:1_tempairflow:MAX:"Max\: %5.2lf °C"               \
@@ -214,11 +193,6 @@ printFreq "36h", "$PNG_FREQ_D"
 printFreq "7d",  "$PNG_FREQ_W"
 printFreq "30d", "$PNG_FREQ_M"
 printFreq "365d", "$PNG_FREQ_Y"
-
-printTempCPU "36h", "$PNG_TEMPCPU_D"
-printTempCPU "7d",  "$PNG_TEMPCPU_W"
-printTempCPU "30d", "$PNG_TEMPCPU_M"
-printTempCPU "365d", "$PNG_TEMPCPU_Y"
 
 printTemp "36h", "$PNG_TEMP_D"
 printTemp "7d",  "$PNG_TEMP_W"
