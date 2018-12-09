@@ -87,7 +87,7 @@ class UDP_Sender (object):
             sent = self.socket.sendto(datagram, 
                                       (CONFIG.IP_ADDRESS_SERVER, 
                                       CONFIG.UDP_PORT))
-            Log("Sent bytes: {}; data: {}".format(sent,datagram))
+            # Log("Sent bytes: {}; data: {}".format(sent,datagram))
         except:
             Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
 
