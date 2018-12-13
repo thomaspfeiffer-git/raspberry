@@ -46,25 +46,25 @@ printLoad ()
     DEF:3_load=$RRD:3_load:AVERAGE                           \
     DEF:4_load=$RRD:4_load:AVERAGE                           \
     LINE1:1_load#0000FF:"Load seti_01         "              \
-    GPRINT:1_load:LAST:"Aktuell\: %5.2lf °C"                 \
-    GPRINT:1_load:AVERAGE:"Mittelwert\: %5.2lf °C"           \
-    GPRINT:1_load:MAX:"Max\: %5.2lf °C"                      \
-    GPRINT:1_load:MIN:"Min\: %5.2lf °C\n"                    \
+    GPRINT:1_load:LAST:"Aktuell\: %5.2lf"                    \
+    GPRINT:1_load:AVERAGE:"Mittelwert\: %5.2lf"              \
+    GPRINT:1_load:MAX:"Max\: %5.2lf"                         \
+    GPRINT:1_load:MIN:"Min\: %5.2lf\n"                       \
     LINE1:2_load#00FF00:"Load seti_02         "              \
-    GPRINT:2_load:LAST:"Aktuell\: %5.2lf °C"                 \
-    GPRINT:2_load:AVERAGE:"Mittelwert\: %5.2lf °C"           \
-    GPRINT:2_load:MAX:"Max\: %5.2lf °C"                      \
-    GPRINT:2_load:MIN:"Min\: %5.2lf °C\n"                    \
+    GPRINT:2_load:LAST:"Aktuell\: %5.2lf"                    \
+    GPRINT:2_load:AVERAGE:"Mittelwert\: %5.2lf"              \
+    GPRINT:2_load:MAX:"Max\: %5.2lf"                         \
+    GPRINT:2_load:MIN:"Min\: %5.2lf\n"                       \
     LINE1:3_load#FF0000:"Load seti_03         "              \
-    GPRINT:3_load:LAST:"Aktuell\: %5.2lf °C"                 \
-    GPRINT:3_load:AVERAGE:"Mittelwert\: %5.2lf °C"           \
-    GPRINT:3_load:MAX:"Max\: %5.2lf °C"                      \
-    GPRINT:3_load:MIN:"Min\: %5.2lf °C\n"                    \
+    GPRINT:3_load:LAST:"Aktuell\: %5.2lf"                    \
+    GPRINT:3_load:AVERAGE:"Mittelwert\: %5.2lf"              \
+    GPRINT:3_load:MAX:"Max\: %5.2lf"                         \
+    GPRINT:3_load:MIN:"Min\: %5.2lf\n"                       \
     LINE1:4_load#FFFF00:"Load seti_04         "              \
-    GPRINT:4_load:LAST:"Aktuell\: %5.2lf °C"                 \
-    GPRINT:4_load:AVERAGE:"Mittelwert\: %5.2lf °C"           \
-    GPRINT:4_load:MAX:"Max\: %5.2lf °C"                      \
-    GPRINT:4_load:MIN:"Min\: %5.2lf °C\n"                    &
+    GPRINT:4_load:LAST:"Aktuell\: %5.2lf"                    \
+    GPRINT:4_load:AVERAGE:"Mittelwert\: %5.2lf"              \
+    GPRINT:4_load:MAX:"Max\: %5.2lf"                         \
+    GPRINT:4_load:MIN:"Min\: %5.2lf\n"                       &
  }
 
 
@@ -76,7 +76,7 @@ printLoad ()
 printFreq ()
   {
     rrdtool graph $2                                         \
-    --title "Frequenz"                                       \
+    --title "Frequenz [MHz]"                                 \
     --end now --start end-$1                                 \
     -w $WIDTH -h $HEIGHT -a PNG                              \
     --watermark "$WATERMARK"                                 \
@@ -86,25 +86,25 @@ printFreq ()
     DEF:3_freq=$RRD:3_freq:AVERAGE                           \
     DEF:4_freq=$RRD:4_freq:AVERAGE                           \
     LINE1:1_freq#0000FF:"Frequenz seti_01                "   \
-    GPRINT:1_freq:LAST:"Aktuell\: %5.2lf °C"                 \
-    GPRINT:1_freq:AVERAGE:"Mittelwert\: %5.2lf °C"           \
-    GPRINT:1_freq:MAX:"Max\: %5.2lf °C"                      \
-    GPRINT:1_freq:MIN:"Min\: %5.2lf °C\n"                    \
+    GPRINT:1_freq:LAST:"Aktuell\: %5.2lf MHz"                \
+    GPRINT:1_freq:AVERAGE:"Mittelwert\: %5.2lf MHz"          \
+    GPRINT:1_freq:MAX:"Max\: %5.2lf MHz"                     \
+    GPRINT:1_freq:MIN:"Min\: %5.2lf MHz\n"                   \
     LINE1:2_freq#00FF00:"Frequenz seti_02                "   \
-    GPRINT:2_freq:LAST:"Aktuell\: %5.2lf °C"                 \
-    GPRINT:2_freq:AVERAGE:"Mittelwert\: %5.2lf °C"           \
-    GPRINT:2_freq:MAX:"Max\: %5.2lf °C"                      \
-    GPRINT:2_freq:MIN:"Min\: %5.2lf °C\n"                    \
+    GPRINT:2_freq:LAST:"Aktuell\: %5.2lf MHz"                \
+    GPRINT:2_freq:AVERAGE:"Mittelwert\: %5.2lf MHz"          \
+    GPRINT:2_freq:MAX:"Max\: %5.2lf MHz"                     \
+    GPRINT:2_freq:MIN:"Min\: %5.2lf MHz\n"                   \
     LINE1:3_freq#FF0000:"Frequenz seti_03                "   \
-    GPRINT:3_freq:LAST:"Aktuell\: %5.2lf °C"                 \
-    GPRINT:3_freq:AVERAGE:"Mittelwert\: %5.2lf °C"           \
-    GPRINT:3_freq:MAX:"Max\: %5.2lf °C"                      \
-    GPRINT:3_freq:MIN:"Min\: %5.2lf °C\n"                    \
+    GPRINT:3_freq:LAST:"Aktuell\: %5.2lf MHz"                \
+    GPRINT:3_freq:AVERAGE:"Mittelwert\: %5.2lf MHz"          \
+    GPRINT:3_freq:MAX:"Max\: %5.2lf MHz"                     \
+    GPRINT:3_freq:MIN:"Min\: %5.2lf MHz\n"                   \
     LINE1:4_freq#FFFF00:"Frequenz seti_04                "   \
-    GPRINT:4_freq:LAST:"Aktuell\: %5.2lf °C"                 \
-    GPRINT:4_freq:AVERAGE:"Mittelwert\: %5.2lf °C"           \
-    GPRINT:4_freq:MAX:"Max\: %5.2lf °C"                      \
-    GPRINT:4_freq:MIN:"Min\: %5.2lf °C\n"                    &
+    GPRINT:4_freq:LAST:"Aktuell\: %5.2lf MHz"                \
+    GPRINT:4_freq:AVERAGE:"Mittelwert\: %5.2lf MHz"          \
+    GPRINT:4_freq:MAX:"Max\: %5.2lf MHz"                     \
+    GPRINT:4_freq:MIN:"Min\: %5.2lf MHz\n"                   &
 }   
 
 
@@ -116,7 +116,7 @@ printFreq ()
 printTemp ()
   {
     rrdtool graph $2                                         \
-    --title "Temperaturen"                                   \
+    --title "Temperaturen [°C]"                              \
     --end now --start end-$1                                 \
     -w $WIDTH -h $(($HEIGHT*2)) -a PNG                       \
     --watermark "$WATERMARK"                                 \
@@ -168,7 +168,7 @@ printTemp ()
 printHumidity ()
   {
     rrdtool graph $2                                         \
-    --title "Luftfeuchtigkeit [%]"                           \
+    --title "Luftfeuchtigkeit [% rF]"                        \
     --end now --start end-$1                                 \
     -w $WIDTH -h $HEIGHT -a PNG                              \
     --watermark "$WATERMARK"                                 \
