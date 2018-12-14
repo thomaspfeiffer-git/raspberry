@@ -55,8 +55,8 @@ if this_PI == seti_01:
     from sensors.DS1820 import DS1820
     from sensors.HTU21DF import HTU21DF
 
-DS1820_Room    = "/sys/bus/w1/devices/28-000008561957/w1_slave"
-DS1820_Airflow = "/sys/bus/w1/devices/28-000008561957/w1_slave"
+DS1820_Room    = "/sys/bus/w1/devices/28-00000855fca3/w1_slave"
+DS1820_Airflow = "/sys/bus/w1/devices/28-000008386a83/w1_slave"
 
 
 CREDENTIALS = "/home/pi/credentials/seti.cred"
