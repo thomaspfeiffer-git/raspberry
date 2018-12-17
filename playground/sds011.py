@@ -104,18 +104,17 @@ if __name__ == "__main__":
     while True:
         cmd_set_sleep(0)
         cmd_set_mode(1);
-        while True:
-            for i in range(3):
-                values = cmd_query_data();
-                if values is not None:
-                    print("{}: PM2.5: {}; PM10: {}".format(datetime.now().strftime("%Y%m%d %H:%M:%S"),values[0],values[1]))
-                    time.sleep(2)
+        time.sleep(5)
+        for i in range(3):
+            values = cmd_query_data();
+            if values is not None:
+                print("{}: PM2.5: {}; PM10: {}".format(datetime.now().strftime("%Y%m%d %H:%M:%S"),values[0],values[1]))
+                time.sleep(2)
 
-            print("Going to sleep for 5 min ...")
-            cmd_set_mode(0);
-            cmd_set_sleep()
-            time.sleep(300)
-
+        print("Going to sleep for 5 min ...")
+        cmd_set_mode(0);
+        cmd_set_sleep()
+        time.sleep(300)
 
 # eof #
 
