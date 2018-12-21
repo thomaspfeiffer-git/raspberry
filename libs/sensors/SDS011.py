@@ -29,10 +29,12 @@
 
 import serial
 import struct
+import time
 
 from Logging import Log
 
-class SDS011(object):
+
+class SDS011 (object):
     """Provides method to read from a SDS011 air particlate density sensor
     using UART.
     """
@@ -60,15 +62,31 @@ class SDS011(object):
     # The work period command ID
     WORK_PERIOD_CMD = b'\x08'
 
-    def __init__(self, serial_port, baudrate=9600, timeout=2,
-                 use_query_mode=True):
-        """Initialise and open serial port.
-        """
-        self.ser = serial.Serial(port=serial_port,
-                                 baudrate=baudrate,
-                                 timeout=timeout)
+    def __init__ (self, serial_port, baudrate=9600, timeout=2,
+                  use_query_mode=True):
+        """Initialise and open serial port."""
+
+        self.__serial_port = serial_port
+        self.__baudrate = baudrate
+        self.__timeout = timeout
+        self.__use_query_mode = use_query_mode
+
+        self.open()
+
+    def open (self):
+        Log("Opening SDS011 on port {}".format(self.__serial_port))
+        self.ser = serial.Serial(port=self.__serial_port,
+                                 baudrate=self.__baudrate,
+                                 timeout=self.__timeout)
         self.ser.flush()
-        self.set_report_mode(active=not use_query_mode)
+        self.set_report_mode(active=not self.__use_query_mode)
+
+    def close (self):
+        Log("Closing SDS011 on port {}".format(self.__serial_port))
+        self.sleep()
+        time.sleep(1)
+        self.ser.close()
+        Log("Closed SDS011 on port {}".format(self.__serial_port))
 
     def _execute(self, cmd_bytes):
         """Writes a byte sequence to the serial.
@@ -89,7 +107,7 @@ class SDS011(object):
         """
         return self.HEAD + self.CMD_ID
 
-    def set_report_mode(self, read=False, active=False):
+    def set_report_mode (self, read=False, active=False):
         """Get sleep command. Does not contain checksum and tail.
         @rtype: list
         """
@@ -102,7 +120,7 @@ class SDS011(object):
         self._execute(cmd)
         self._get_reply()
 
-    def query(self):
+    def _query (self):
         """Query the device and read the data.
         @return: Air particulate density in micrograms per cubic meter.
         @rtype: tuple(float, float) -> (PM2.5, PM10)
@@ -121,7 +139,19 @@ class SDS011(object):
         pm10 = data[1] / 10.0
         return (pm25, pm10)
 
-    def sleep(self, read=False, sleep=True):
+    def query (self):
+        for _ in range(3):
+            values = self._query()
+            if values[0] >= 1.0 and values[1] >= 1.0:
+                return values
+            else:
+                Log("Error reading SDS011: {0[0]}, {0[1]}. Retrying ...".format(values))
+                self.close()
+                time.sleep(5)
+                self.open()
+        Log("Reading SDS011 failed.")
+
+    def sleep (self, read=False, sleep=True):
         """Sleep/Wake up the sensor.
         @param sleep: Whether the device should sleep or work.
         @type sleep: bool
@@ -135,7 +165,7 @@ class SDS011(object):
         self._execute(cmd)
         self._get_reply()
 
-    def set_work_period(self, read=False, work_time=0):
+    def set_work_period (self, read=False, work_time=0):
         """Get work period command. Does not contain checksum and tail.
         @rtype: list
         """
@@ -149,7 +179,7 @@ class SDS011(object):
         self._execute(cmd)
         self._get_reply()
 
-    def _finish_cmd(self, cmd, id1=b"\xff", id2=b"\xff"):
+    def _finish_cmd (self, cmd, id1=b"\xff", id2=b"\xff"):
         """Add device ID, checksum and tail bytes.
         @rtype: list
         """
@@ -158,7 +188,7 @@ class SDS011(object):
         cmd += bytes([checksum]) + self.TAIL
         return cmd
 
-    def _process_frame(self, data):
+    def _process_frame (self, data):
         """Process a SDS011 data frame.
         Byte positions:
             0 - Header
@@ -177,7 +207,7 @@ class SDS011(object):
         pm10 = raw[1] / 10.0
         return (pm25, pm10)
 
-    def read(self):
+    def read (self):
         """Read sensor data.
         @return: PM2.5 and PM10 concetration in micrograms per cude meter.
         @rtype: tuple(float, float) - first is PM2.5.
