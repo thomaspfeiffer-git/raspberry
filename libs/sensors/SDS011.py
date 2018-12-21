@@ -145,11 +145,11 @@ class SDS011 (object):
             if values[0] >= 1.0 and values[1] >= 1.0:
                 return values
             else:
-                Log("Error reading SDS011: {0[0]}, {0[1]}. Retrying ...".format(values))
+                Log("Error reading SDS011 on {0}: {1[0]}, {1[1]}. Retrying ...".format(self.__serial_port,values))
                 self.close()
                 time.sleep(5)
                 self.open()
-        Log("Reading SDS011 failed.")
+        Log("Reading SDS011 on port {} failed.".format(self.__serial_port))
 
     def sleep (self, read=False, sleep=True):
         """Sleep/Wake up the sensor.
