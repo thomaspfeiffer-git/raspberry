@@ -41,7 +41,7 @@ class Sensor (threading.Thread):
             self.data[self.PM25] = int(datetime.now().timestamp() % 2900)
             self.data[self.PM10] = int(2900 - (datetime.now().timestamp() % 2900))
 
-            for _ in range(600):  # interruptible sleep
+            for _ in range(600*5):  # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
@@ -71,7 +71,7 @@ class ToRRD (threading.Thread):
             Log(rrd_data)
             rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
-            for _ in range(600):  # interruptible sleep
+            for _ in range(600*5-100):  # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
