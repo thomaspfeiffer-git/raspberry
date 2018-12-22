@@ -9,6 +9,7 @@
 """
 
 import sys
+import threading
 import time
 
 
@@ -18,12 +19,71 @@ from Shutdown import Shutdown
 
 from sensors.SDS011 import SDS011
 
+RRDFILE = "/schild/weather/airparticulates.rrd"
+
+
+
+class Sensor (threading.Thread):
+    PM25 = 'pm25'
+    PM10 = 'pm10'
+
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self._running = True
+        self.data = { self.PM25: 0.0, self.PM10: 0.0 }
+
+    def run (self):
+        while self._running:
+            # faking sensor data
+            from datetime import datetime
+            self.data[self.PM25] = int(datetime.now().timestamp() % 2900)
+            self.data[self.PM10] = int(2900 - (datetime.now().timestamp() % 2900))
+            print(self.data)
+
+            for _ in range(600):  # interruptible sleep
+                if not self._running:
+                    break
+                time.sleep(0.1)
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+# ToRRD #######################################################################
+class ToRRD (threading.Thread):
+    def __init__ (self, id_):
+        threading.Thread.__init__(self)
+        self.id = id_
+
+        self.rrd_pm25 = "{}_pm25".format(self.id)
+        self.rrd_pm10 = "{}_pm10".format(self.id)
+
+        self._running = True
+
+    def run (self):
+        while self._running:     
+
+
+
+            for _ in range(600):  # interruptible sleep
+                if not self._running:
+                    break
+                time.sleep(0.1)
+
+    def stop (self):
+        self._running = False
+
 
 ###############################################################################
 # Shutdown stuff ##############################################################
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
+    sensor.stop()
+    sensor.join()
+    to_rrd.stop()
+    to_rrd.join()
     Log("Application stopped")
     sys.exit(0)
 
@@ -33,10 +93,13 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
+    sensor = Sensor()
+    sensor.start()
+    to_rrd = ToRRD(id_=1)
+    to_rrd.start()
+
     while True:
         pass
-
-
 
 # eof #
 
