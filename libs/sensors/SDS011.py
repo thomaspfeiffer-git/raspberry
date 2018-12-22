@@ -142,12 +142,13 @@ class SDS011 (object):
     def query (self):
         for _ in range(3):
             values = self._query()
-            if values[0] >= 1.0 and values[1] >= 1.0:
+
+            if values[0] >= 0.1 and values[1] >= 0.1:
                 return values
             else:
-                Log("Error reading SDS011 on {0}: {1[0]}, {1[1]}. Retrying ...".format(self.__serial_port,values))
+                Log("Error reading SDS011 on {0}: {1[0]}, {1[1]}. Retrying in 600 s ...".format(self.__serial_port,values))
                 self.close()
-                time.sleep(5)
+                time.sleep(600)
                 self.open()
         Log("Reading SDS011 on port {} failed.".format(self.__serial_port))
 
