@@ -8,6 +8,7 @@
 """
 """
 
+import rrdtool
 import sys
 import threading
 import time
@@ -22,7 +23,8 @@ from sensors.SDS011 import SDS011
 RRDFILE = "/schild/weather/airparticulates.rrd"
 
 
-
+###############################################################################
+# Sensor ######################################################################
 class Sensor (threading.Thread):
     PM25 = 'pm25'
     PM10 = 'pm10'
@@ -38,7 +40,6 @@ class Sensor (threading.Thread):
             from datetime import datetime
             self.data[self.PM25] = int(datetime.now().timestamp() % 2900)
             self.data[self.PM10] = int(2900 - (datetime.now().timestamp() % 2900))
-            print(self.data)
 
             for _ in range(600):  # interruptible sleep
                 if not self._running:
@@ -62,9 +63,13 @@ class ToRRD (threading.Thread):
         self._running = True
 
     def run (self):
+        rrd_template = "{}:{}".format(self.rrd_pm25,self.rrd_pm10)
+        # Log(rrd_template)
         while self._running:     
-
-
+            # TODO: rrd_data = sensor.rrd
+            rrd_data = "N:{}:{}".format(sensor.data[sensor.PM25],sensor.data[sensor.PM10])
+            Log(rrd_data)
+            rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
             for _ in range(600):  # interruptible sleep
                 if not self._running:
