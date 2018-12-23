@@ -10,9 +10,11 @@
 
 
 ### Usage ###
-# 
+# nohup ./Airparticulates.py --local_rrd >airparticulates.log 2>&1
+# nohup ./Airparticulates.py --remote_rrd >airparticulates.log 2>&1
 
 
+import argparse
 import sys
 import threading
 import time
@@ -146,8 +148,6 @@ def shutdown_application ():
     sensor.join()
     storedata.stop()
     storedata.join()
-    storedata_udp.stop()
-    storedata_udp.join()
     Log("Application stopped")
     sys.exit(0)
 
@@ -157,13 +157,21 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--local_rrd", help="runs with a local rrd database", action="store_true")
+    group.add_argument("--remote_rrd", help="runs with a remote rrd database", action="store_true")
+    args = parser.parse_args()
+
     sensor = Sensor()
     sensor.start()
 
-    storedata = ToRRD()
-    storedata_udp = ToUDP()
+    if args.local_rrd:
+       storedata = ToRRD()
+    if args.remote_rrd:
+       storedata = ToUDP()
+
     storedata.start()
-    storedata_udp.start()
 
     while True:
         pass
