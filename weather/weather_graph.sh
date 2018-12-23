@@ -7,6 +7,7 @@ RRD_KB=$RRDPATH/weather_kollerberg.rrd
 RRD_WR=$RRDPATH/wardrobe.rrd
 RRD_AR=$RRDPATH/anteroom.rrd
 RRD_KI=$RRDPATH/kitchen.rrd
+RRD_AP=$RRDPATH/airparticulates.rrd
 
 
 PNG_TEMP_D=$RRDPATH/weather_temp_d.png
@@ -48,6 +49,11 @@ PNG_AIRQUALITY_D=$RRDPATH/airquality_d.png
 PNG_AIRQUALITY_W=$RRDPATH/airquality_w.png
 PNG_AIRQUALITY_M=$RRDPATH/airquality_m.png
 PNG_AIRQUALITY_Y=$RRDPATH/airquality_y.png
+
+PNG_AIRPARTICULATES_D=$RRDPATH/airparticulates_d.png
+PNG_AIRPARTICULATES_W=$RRDPATH/airparticulates_w.png
+PNG_AIRPARTICULATES_M=$RRDPATH/airparticulates_m.png
+PNG_AIRPARTICULATES_Y=$RRDPATH/airparticulates_y.png
 
 
 
@@ -401,6 +407,46 @@ printAirQuality()
  }      
 
 
+#######################################################################
+# printAirparticulates()                                              #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printAirparticulates()
+  {
+    rrdtool graph $2                                           \
+    --title "Feinstaubg [µg/m3]"                               \
+    --end now --start end-$1                                   \
+    -w $WIDTH -h $HEIGHT -a PNG                                \
+    --watermark "$WATERMARK"                                   \
+    --right-axis 1:0                                           \
+    DEF:1_pm10=$RRD_AP:1_pm10:AVERAGE                          \
+    DEF:1_pm25=$RRD_AP:1_pm25:AVERAGE                          \
+    DEF:2_pm10=$RRD_AP:2_pm10:AVERAGE                          \
+    DEF:2_pm25=$RRD_AP:2_pm25:AVERAGE                          \
+    LINE1:1_pm10#0000FF:"Feinstaub Wien PM10  "                \
+    GPRINT:1_pm10:LAST:"\t Aktuell\: %5.2lf µg/m3"             \
+    GPRINT:1_pm10:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
+    GPRINT:1_pm10:MAX:"Max\: %5.2lf µg/m3"                     \
+    GPRINT:1_pm10:MIN:"Min\: %5.2lf µg/m3\n"                   \
+    LINE1:1_pm25#33ccff:"Feinstaub Wien PM2,5 "                \
+    GPRINT:1_pm25:LAST:"\t Aktuell\: %5.2lf µg/m3"             \
+    GPRINT:1_pm25:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
+    GPRINT:1_pm25:MAX:"Max\: %5.2lf µg/m3"                     \
+    GPRINT:1_pm25:MIN:"Min\: %5.2lf µg/m3\n"                   \
+    LINE1:2_pm10#40FF00:"Feinstaub Kollerberg PM10  "                \
+    GPRINT:2_pm10:LAST:"\t Aktuell\: %5.2lf µg/m3"             \
+    GPRINT:2_pm10:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
+    GPRINT:2_pm10:MAX:"Max\: %5.2lf µg/m3"                     \
+    GPRINT:2_pm10:MIN:"Min\: %5.2lf µg/m3\n"                   \
+    LINE1:2_pm25#ccffcc:"Feinstaub Kollerberg PM2,5 "                \
+    GPRINT:2_pm25:LAST:"\t Aktuell\: %5.2lf µg/m3"             \
+    GPRINT:2_pm25:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
+    GPRINT:2_pm25:MAX:"Max\: %5.2lf µg/m3"                     \
+    GPRINT:2_pm25:MIN:"Min\: %5.2lf µg/m3\n"                   &
+ }      
+
 
 #######################################################################
 # main ################################################################
@@ -444,6 +490,10 @@ printAirQuality "7d", "$PNG_AIRQUALITY_W"
 printAirQuality "30d", "$PNG_AIRQUALITY_M"
 printAirQuality "365d", "$PNG_AIRQUALITY_Y"
 
+printAirparticulates "36h", "$PNG_AIRPARTICULATES_D"
+printAirparticulates "7d", "$PNG_AIRPARTICULATES_W"
+printAirparticulates "30d", "$PNG_AIRPARTICULATES_M"
+printAirparticulates "365d", "$PNG_AIRPARTICULATES_Y"
 
 # eof #
  
