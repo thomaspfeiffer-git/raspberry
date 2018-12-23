@@ -116,6 +116,8 @@ class ToUDP (StoreData):
     UDP_PORT = int(cred['UDP']['UDP_PORT'])
     MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
 
+    prefix = "pik_a_particulates"  # TODO: hostname
+
     def __init__ (self):
         import socket
         from Commons import Digest
@@ -125,7 +127,7 @@ class ToUDP (StoreData):
         self.digest = Digest(self.SECRET)
 
     def store (self):
-        payload = self.rrd_data # TODO: Add prefix for particulates
+        payload = "{},{}{}".format(self.prefix,self.rrd_template,self.rrd_data)
         datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
         try:
             sent = self.socket.sendto(datagram, 
