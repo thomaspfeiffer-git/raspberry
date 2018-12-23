@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd raspberry/
+cd ~/raspberry/
 
 cd kollerberg/
 nohup ./weather.py 2>&1 > weather.log &
