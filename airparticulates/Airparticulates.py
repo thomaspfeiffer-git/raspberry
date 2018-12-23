@@ -34,12 +34,17 @@ class Sensor (threading.Thread):
         self._running = True
         self.data = { self.PM25: 0.0, self.PM10: 0.0 }
 
+    @property
+    def rrd (self):
+        return "N:{}:{}".format(self.data[self.PM25],self.data[self.PM10])
+
     def run (self):
         while self._running:
             # faking sensor data
             from datetime import datetime
-            self.data[self.PM25] = int(datetime.now().timestamp() % 2900)
-            self.data[self.PM10] = int(2900 - (datetime.now().timestamp() % 2900))
+            h = datetime.now().hour
+            m = datetime.now().minute
+            self.data = { self.PM25: h*60 + m, self.PM10: 1440 - (h*60 + m) }
 
             for _ in range(600*5):  # interruptible sleep
                 if not self._running:
@@ -66,8 +71,7 @@ class ToRRD (threading.Thread):
         rrd_template = "{}:{}".format(self.rrd_pm25,self.rrd_pm10)
         # Log(rrd_template)
         while self._running:     
-            # TODO: rrd_data = sensor.rrd
-            rrd_data = "N:{}:{}".format(sensor.data[sensor.PM25],sensor.data[sensor.PM10])
+            rrd_data = sensor.rrd
             Log(rrd_data)
             rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
