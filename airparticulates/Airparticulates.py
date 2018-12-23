@@ -56,24 +56,28 @@ class Sensor (threading.Thread):
 
 
 ###############################################################################
-# ToRRD #######################################################################
-class ToRRD (threading.Thread):
+# StoreData ###################################################################
+class StoreData (threading.Thread):
     def __init__ (self, id_):
         threading.Thread.__init__(self)
         self.id = id_
 
         self.rrd_pm25 = "{}_pm25".format(self.id)
         self.rrd_pm10 = "{}_pm10".format(self.id)
+        self.rrd_template = "{}:{}".format(self.rrd_pm25,self.rrd_pm10)
+        self.rrd_data = None
 
         self._running = True
 
+    def store (self):
+        raise NotImplementedError
+
     def run (self):
-        rrd_template = "{}:{}".format(self.rrd_pm25,self.rrd_pm10)
         # Log(rrd_template)
         while self._running:     
-            rrd_data = sensor.rrd
-            Log(rrd_data)
-            rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+            self.rrd_data = sensor.rrd
+            Log(self.rrd_data)
+            self.store()
 
             for _ in range(600*5-100):  # interruptible sleep
                 if not self._running:
@@ -82,6 +86,19 @@ class ToRRD (threading.Thread):
 
     def stop (self):
         self._running = False
+
+
+class ToRRD (StoreData):
+    def __init__ (self):
+        super().__init__(1)
+
+    def store (self):    
+        rrdtool.update(RRDFILE, "--template", self.rrd_template, self.rrd_data)
+
+
+class ToUDP (StoreData):
+    def __init__ (self):
+        super().__init__(2)
 
 
 ###############################################################################
@@ -104,7 +121,7 @@ if __name__ == "__main__":
 
     sensor = Sensor()
     sensor.start()
-    to_rrd = ToRRD(id_=1)
+    to_rrd = ToRRD()
     to_rrd.start()
 
     while True:
