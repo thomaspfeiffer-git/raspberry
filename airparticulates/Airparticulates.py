@@ -24,7 +24,7 @@ sys.path.append("../libs/")
 from Logging import Log
 from Shutdown import Shutdown
 
-from sensors.SDS011 import SDS011
+# from sensors.SDS011 import SDS011
 
 RRDFILE = "/schild/weather/airparticulates.rrd"
 CREDENTIALS = "/home/pi/credentials/weather.cred"
