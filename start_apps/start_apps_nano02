@@ -1,0 +1,26 @@
+
+cd raspberry/
+
+cd weather/
+nohup ./weather.py 2>&1 > weather.log &
+cd ..
+
+cd openweathermap/
+nohup ./openweather.py > openweather.log 2>&1 &
+cd ..
+
+cd kollerberg/
+nohup ./weather_feed.py 2>&1 > weather_feed.log &
+cd ..
+
+cd seti/
+nohup ./seti_receiver.py 2>&1 > seti_receiver.log &
+cd ..
+
+
+cd airparticulates/
+nohup ./Airparticulates.py --local_rrd 2>&1 > airparticulates.log &
+cd ..
+
+
+
