@@ -159,10 +159,6 @@ if __name__ == "__main__":
 
     sensor = Sensor()
     sensor.start()
-    # to_rrd = ToRRD()
-    # to_rrd.start()
-    # to_udp = ToUDP()
-    # to_udp.start()
 
     storedata = ToRRD()
     storedata_udp = ToUDP()
