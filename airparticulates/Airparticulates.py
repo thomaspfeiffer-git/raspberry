@@ -107,6 +107,7 @@ class ToRRD (StoreData):
 # ToUDP #######################################################################
 class ToUDP (StoreData):
     import configparser as cfgparser
+
     cred = cfgparser.ConfigParser()
     cred.read(CREDENTIALS)
 
@@ -116,10 +117,23 @@ class ToUDP (StoreData):
     MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
 
     def __init__ (self):
+        import socket
+        from Commons import Digest
+
         super().__init__(2)
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.digest = Digest(self.SECRET)
 
     def store (self):
-        pass
+        payload = self.rrd_data # TODO: Add prefix for particulates
+        datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
+        try:
+            sent = self.socket.sendto(datagram, 
+                                      (self.IP_ADDRESS_SERVER, 
+                                      self.UDP_PORT))
+            Log("Sent bytes: {}; data: {}".format(sent,datagram))
+        except:
+            Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
 
 
 ###############################################################################
