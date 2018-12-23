@@ -108,23 +108,24 @@ class ToRRD (StoreData):
 ###############################################################################
 # ToUDP #######################################################################
 class ToUDP (StoreData):
-    import configparser as cfgparser
-
-    cred = cfgparser.ConfigParser()
-    cred.read(CREDENTIALS)
-
-    SECRET = cred['UDP']['SECRET']
-    IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
-    UDP_PORT = int(cred['UDP']['UDP_PORT'])
-    MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
 
     prefix = "pik_a_particulates"  # TODO: hostname
 
     def __init__ (self):
+        import configparser as cfgparser
         import socket
         from Commons import Digest
 
         super().__init__(2)
+
+        self.cred = cfgparser.ConfigParser()
+        self.cred.read(CREDENTIALS)
+
+        self.SECRET = self.cred['UDP']['SECRET']
+        self.IP_ADDRESS_SERVER = self.cred['UDP']['IP_ADDRESS_SERVER']
+        self.UDP_PORT = int(self.cred['UDP']['UDP_PORT'])
+        self.MAX_PACKET_SIZE = int(self.cred['UDP']['MAX_PACKET_SIZE'])
+
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.digest = Digest(self.SECRET)
 
