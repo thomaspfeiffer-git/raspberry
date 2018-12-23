@@ -426,8 +426,8 @@ printAirparticulates()
     DEF:2_pm10=$RRD_AP:2_pm10:AVERAGE                          \
     DEF:2_pm25=$RRD_AP:2_pm25:AVERAGE                          \
     LINE1:1_pm10#0000FF:"Feinstaub Wien PM10  "                \
-    GPRINT:1_pm10:LAST:"\t Aktuell\: %5.2lf µg/m3"             \
-    GPRINT:1_pm10:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
+    GPRINT:1_pm10:LAST:"\t\t Aktuell\: %5.2lf µg/m3"           \
+    GPRINT:1_pm10:AVERAGE:"\tMittelwert\: %5.2lf µg/m3"        \
     GPRINT:1_pm10:MAX:"Max\: %5.2lf µg/m3"                     \
     GPRINT:1_pm10:MIN:"Min\: %5.2lf µg/m3\n"                   \
     LINE1:1_pm25#33ccff:"Feinstaub Wien PM2,5 "                \
@@ -435,12 +435,12 @@ printAirparticulates()
     GPRINT:1_pm25:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
     GPRINT:1_pm25:MAX:"Max\: %5.2lf µg/m3"                     \
     GPRINT:1_pm25:MIN:"Min\: %5.2lf µg/m3\n"                   \
-    LINE1:2_pm10#40FF00:"Feinstaub Kollerberg PM10  "                \
+    LINE1:2_pm10#40FF00:"Feinstaub Kollerberg PM10  "          \
     GPRINT:2_pm10:LAST:"\t Aktuell\: %5.2lf µg/m3"             \
     GPRINT:2_pm10:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
     GPRINT:2_pm10:MAX:"Max\: %5.2lf µg/m3"                     \
     GPRINT:2_pm10:MIN:"Min\: %5.2lf µg/m3\n"                   \
-    LINE1:2_pm25#ccffcc:"Feinstaub Kollerberg PM2,5 "                \
+    LINE1:2_pm25#ccffcc:"Feinstaub Kollerberg PM2,5 "          \
     GPRINT:2_pm25:LAST:"\t Aktuell\: %5.2lf µg/m3"             \
     GPRINT:2_pm25:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
     GPRINT:2_pm25:MAX:"Max\: %5.2lf µg/m3"                     \
