@@ -49,8 +49,10 @@ class Sensor (threading.Thread):
         while self._running:
             # faking sensor data
             from datetime import datetime
+            from random import randint
+
             h = datetime.now().hour
-            m = datetime.now().minute
+            m = datetime.now().minute + randint(-100,100)
             self.data = { self.PM25: h*60 + m, self.PM10: 1440 - (h*60 + m) }
 
             for _ in range(600*5):  # interruptible sleep
