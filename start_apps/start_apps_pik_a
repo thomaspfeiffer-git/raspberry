@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd raspberry/
+
+cd kollerberg/
+nohup ./weather.py 2>&1 > weather.log &
+cd ..
+
+cd airparticulates/
+nohup ./Airparticulates.py --remote_rrd >airparticulates.log 2>&1
+cd ..
+
+
