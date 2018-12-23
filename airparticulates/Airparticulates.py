@@ -84,7 +84,7 @@ class StoreData (threading.Thread):
     def run (self):
         while self._running:     
             self.rrd_data = sensor.rrd
-            Log(self.rrd_data)
+            # Log(self.rrd_data)
             self.store()
 
             for _ in range(600*5-100):  # interruptible sleep
