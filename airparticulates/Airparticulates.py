@@ -8,6 +8,11 @@
 """
 """
 
+
+### Usage ###
+# 
+
+
 import sys
 import threading
 import time
@@ -20,6 +25,7 @@ from Shutdown import Shutdown
 from sensors.SDS011 import SDS011
 
 RRDFILE = "/schild/weather/airparticulates.rrd"
+CREDENTIALS = "/home/pi/credentials/weather.cred"
 
 
 ###############################################################################
@@ -100,6 +106,15 @@ class ToRRD (StoreData):
 ###############################################################################
 # ToUDP #######################################################################
 class ToUDP (StoreData):
+    import configparser as cfgparser
+    cred = cfgparser.ConfigParser()
+    cred.read(CREDENTIALS)
+
+    SECRET = cred['UDP']['SECRET']
+    IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
+    UDP_PORT = int(cred['UDP']['UDP_PORT'])
+    MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
+
     def __init__ (self):
         super().__init__(2)
 
@@ -114,8 +129,8 @@ def shutdown_application ():
     Log("Stopping application")
     sensor.stop()
     sensor.join()
-    to_rrd.stop()
-    to_rrd.join()
+    storedata.stop()
+    storedata.join()
     Log("Application stopped")
     sys.exit(0)
 
@@ -127,8 +142,14 @@ if __name__ == "__main__":
 
     sensor = Sensor()
     sensor.start()
-    to_rrd = ToRRD()
-    to_rrd.start()
+    # to_rrd = ToRRD()
+    # to_rrd.start()
+    # to_udp = ToUDP()
+    # to_udp.start()
+
+    storedata = ToRRD()
+    # storedata = ToUDP()
+    storedata.start()
 
     while True:
         pass
