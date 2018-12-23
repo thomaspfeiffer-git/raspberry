@@ -8,7 +8,6 @@
 """
 """
 
-import rrdtool
 import sys
 import threading
 import time
@@ -73,7 +72,6 @@ class StoreData (threading.Thread):
         raise NotImplementedError
 
     def run (self):
-        # Log(rrd_template)
         while self._running:     
             self.rrd_data = sensor.rrd
             Log(self.rrd_data)
@@ -88,14 +86,19 @@ class StoreData (threading.Thread):
         self._running = False
 
 
+###############################################################################
+# ToRRD #######################################################################
 class ToRRD (StoreData):
     def __init__ (self):
         super().__init__(1)
 
     def store (self):    
+        import rrdtool
         rrdtool.update(RRDFILE, "--template", self.rrd_template, self.rrd_data)
 
 
+###############################################################################
+# ToUDP #######################################################################
 class ToUDP (StoreData):
     def __init__ (self):
         super().__init__(2)
