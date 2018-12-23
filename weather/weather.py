@@ -108,7 +108,7 @@ def main():
                                                          bme280_pressure,   \
                                                          cpu_temp])
                                                           
-        print(rrd_template)
+        # print(rrd_template)
         print(strftime("%Y%m%d %X:"), rrd_data)
         rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
    
