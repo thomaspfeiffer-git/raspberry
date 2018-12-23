@@ -127,12 +127,11 @@ class ToUDP (StoreData):
         self.digest = Digest(self.SECRET)
 
     def store (self):
-        payload = "{},{}{}".format(self.prefix,self.rrd_template,self.rrd_data)
+        payload = "{},{}:{}".format(self.prefix,self.rrd_template,self.rrd_data)
         datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
         try:
             sent = self.socket.sendto(datagram, 
-                                      (self.IP_ADDRESS_SERVER, 
-                                      self.UDP_PORT))
+                                      (self.IP_ADDRESS_SERVER, self.UDP_PORT))
             Log("Sent bytes: {}; data: {}".format(sent,datagram))
         except:
             Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
@@ -147,6 +146,8 @@ def shutdown_application ():
     sensor.join()
     storedata.stop()
     storedata.join()
+    storedata_udp.stop()
+    storedata_udp.join()
     Log("Application stopped")
     sys.exit(0)
 
@@ -164,8 +165,9 @@ if __name__ == "__main__":
     # to_udp.start()
 
     storedata = ToRRD()
-    # storedata = ToUDP()
+    storedata_udp = ToUDP()
     storedata.start()
+    storedata_udp.start()
 
     while True:
         pass
