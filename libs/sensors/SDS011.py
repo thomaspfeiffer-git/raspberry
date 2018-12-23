@@ -143,7 +143,7 @@ class SDS011 (object):
         for _ in range(3):
             values = self._query()
 
-            if values[0] >= 0.1 and values[1] >= 0.1:
+            if values[0] > 0.1 and values[1] > 0.1:  # 0.1 seems to be an error value
                 return values
             else:
                 Log("Error reading SDS011 on {0}: {1[0]}, {1[1]}. Retrying in 600 s ...".format(self.__serial_port,values))
