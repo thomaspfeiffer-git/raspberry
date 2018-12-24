@@ -66,13 +66,12 @@ class Sensor (threading.Thread):
 ###############################################################################
 # StoreData ###################################################################
 class StoreData (threading.Thread):
-    def __init__ (self, id_string, id_int):
+    def __init__ (self, id_):
         threading.Thread.__init__(self)
-        self.id_string = id_string
-        self.id_int    = id_int
+        self.id = id_
 
-        self.rrd_pm25 = "{}_pm25".format(self.id_int)
-        self.rrd_pm10 = "{}_pm10".format(self.id_int)
+        self.rrd_pm25 = "{}_pm25".format(self.id)
+        self.rrd_pm10 = "{}_pm10".format(self.id)
         self.rrd_template = "{}:{}".format(self.rrd_pm25,self.rrd_pm10)
         self.rrd_data = None
 
@@ -99,11 +98,11 @@ class StoreData (threading.Thread):
 ###############################################################################
 # ToUDP #######################################################################
 class ToUDP (StoreData):
-    def __init__ (self, id_string, id_int):
+    def __init__ (self, id_):
         import configparser as cfgparser
         from Commons import Digest
 
-        super().__init__(id_string, id_int)
+        super().__init__(id_)
 
         self.cred = cfgparser.ConfigParser()
         self.cred.read(CREDENTIALS)
@@ -117,7 +116,7 @@ class ToUDP (StoreData):
         self.digest = Digest(self.SECRET)
 
     def store (self):
-        payload = "{},{}:{}".format(self.id_string,self.rrd_template,self.rrd_data)
+        payload = "{},{}:{}".format("particulates",self.rrd_template,self.rrd_data)
         datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
         try:
             sent = self.socket.sendto(datagram, 
@@ -148,10 +147,9 @@ if __name__ == "__main__":
     sensor = Sensor()
     sensor.start()
 
-    id_string = "{}_particulates".format(socket.gethostname())
-    id_int    = 1  # todo: take from command line
-    Log("ID: {}".format(id_string, id_int))
-    storedata = ToUDP(id_string, id_int)
+    id_ = 1  # todo: take from command line
+    Log("ID: {}".format(id_))
+    storedata = ToUDP(id_)
     storedata.start()
 
     while True:
