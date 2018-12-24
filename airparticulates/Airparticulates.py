@@ -177,7 +177,7 @@ if __name__ == "__main__":
     storedata.start()
 
     while True:
-        pass
+        time.sleep(0.5)
 
 # eof #
 
