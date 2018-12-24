@@ -10,11 +10,10 @@
 
 
 ### Usage ###
-# nohup ./Airparticulates.py --local_rrd >airparticulates.log 2>&1
-# nohup ./Airparticulates.py --remote_rrd >airparticulates.log 2>&1
+# nohup ./Airparticulates.py >airparticulates.log 2>&1
 
 
-import argparse
+import socket
 import sys
 import threading
 import time
@@ -67,12 +66,13 @@ class Sensor (threading.Thread):
 ###############################################################################
 # StoreData ###################################################################
 class StoreData (threading.Thread):
-    def __init__ (self, id_):
+    def __init__ (self, id_string, id_int):
         threading.Thread.__init__(self)
-        self.id = id_
+        self.id_string = id_string
+        self.id_int    = id_int
 
-        self.rrd_pm25 = "{}_pm25".format(self.id)
-        self.rrd_pm10 = "{}_pm10".format(self.id)
+        self.rrd_pm25 = "{}_pm25".format(self.id_int)
+        self.rrd_pm10 = "{}_pm10".format(self.id_int)
         self.rrd_template = "{}:{}".format(self.rrd_pm25,self.rrd_pm10)
         self.rrd_data = None
 
@@ -84,7 +84,7 @@ class StoreData (threading.Thread):
     def run (self):
         while self._running:     
             self.rrd_data = sensor.rrd
-            # Log(self.rrd_data)
+            Log(self.rrd_data)
             self.store()
 
             for _ in range(600*5-100):  # interruptible sleep
@@ -97,28 +97,13 @@ class StoreData (threading.Thread):
 
 
 ###############################################################################
-# ToRRD #######################################################################
-class ToRRD (StoreData):
-    def __init__ (self):
-        super().__init__(1)
-
-    def store (self):    
-        import rrdtool
-        rrdtool.update(RRDFILE, "--template", self.rrd_template, self.rrd_data)
-
-
-###############################################################################
 # ToUDP #######################################################################
 class ToUDP (StoreData):
-
-    prefix = "pik_a_particulates"  # TODO: hostname
-
-    def __init__ (self):
+    def __init__ (self, id_string, id_int):
         import configparser as cfgparser
-        import socket
         from Commons import Digest
 
-        super().__init__(2)
+        super().__init__(id_string, id_int)
 
         self.cred = cfgparser.ConfigParser()
         self.cred.read(CREDENTIALS)
@@ -132,7 +117,7 @@ class ToUDP (StoreData):
         self.digest = Digest(self.SECRET)
 
     def store (self):
-        payload = "{},{}:{}".format(self.prefix,self.rrd_template,self.rrd_data)
+        payload = "{},{}:{}".format(self.id_string,self.rrd_template,self.rrd_data)
         datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
         try:
             sent = self.socket.sendto(datagram, 
@@ -160,20 +145,13 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    parser = argparse.ArgumentParser()
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--local_rrd", help="runs with a local rrd database", action="store_true")
-    group.add_argument("--remote_rrd", help="runs with a remote rrd database", action="store_true")
-    args = parser.parse_args()
-
     sensor = Sensor()
     sensor.start()
 
-    if args.local_rrd:
-       storedata = ToRRD()
-    if args.remote_rrd:
-       storedata = ToUDP()
-
+    id_string = "{}_particulates".format(socket.gethostname())
+    id_int    = 1  # todo: take from command line
+    Log("ID: {}".format(id_string, id_int))
+    storedata = ToUDP(id_string, id_int)
     storedata.start()
 
     while True:
