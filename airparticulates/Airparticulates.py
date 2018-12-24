@@ -10,7 +10,7 @@
 
 
 ### Usage ###
-# nohup ./Airparticulates.py >airparticulates.log 2>&1
+# nohup ./Airparticulates.py --id n >airparticulates.log 2>&1
 
 
 import argparse
@@ -26,7 +26,6 @@ from Shutdown import Shutdown
 
 # from sensors.SDS011 import SDS011
 
-RRDFILE = "/schild/weather/airparticulates.rrd"
 CREDENTIALS = "/home/pi/credentials/weather.cred"
 
 
