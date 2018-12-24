@@ -131,10 +131,10 @@ class ToUDP (StoreData):
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
-    sensor.stop()
-    sensor.join()
     storedata.stop()
     storedata.join()
+    sensor.stop()
+    sensor.join()
     Log("Application stopped")
     sys.exit(0)
 
