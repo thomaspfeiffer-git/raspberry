@@ -13,6 +13,7 @@
 # nohup ./Airparticulates.py >airparticulates.log 2>&1
 
 
+import argparse
 import socket
 import sys
 import threading
@@ -83,7 +84,7 @@ class StoreData (threading.Thread):
     def run (self):
         while self._running:     
             self.rrd_data = sensor.rrd
-            Log(self.rrd_data)
+            # Log(self.rrd_data)
             self.store()
 
             for _ in range(600*5-100):  # interruptible sleep
@@ -116,7 +117,7 @@ class ToUDP (StoreData):
         self.digest = Digest(self.SECRET)
 
     def store (self):
-        payload = "{},{}:{}".format("particulates",self.rrd_template,self.rrd_data)
+        payload = "{},{}:{}".format("particulates_{}".format(self.id),self.rrd_template,self.rrd_data)
         datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
         try:
             sent = self.socket.sendto(datagram, 
@@ -144,12 +145,14 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--id', required='True')
+    args = parser.parse_args()
+
     sensor = Sensor()
     sensor.start()
 
-    id_ = 1  # todo: take from command line
-    Log("ID: {}".format(id_))
-    storedata = ToUDP(id_)
+    storedata = ToUDP(args.id)
     storedata.start()
 
     while True:
