@@ -82,9 +82,8 @@ if __name__ == "__main__":
                 #print("{},{},{},{}".format(v1[0],v1[1],v2[0],v2[1]))
                 Log(",{0[0]},{0[1]},{1[0]},{1[1]}".format(v1,v2))
                 if i == 2:
-                    # particulates_1,1_pm25:1_pm10:N:1122:718
-                    udp.send(1,"1_pm25:1_pm10","{0[0]}:{0[1]}".format(v1))
-                    udp.send(2,"2_pm25:2_pm10","{0[0]}:{0[1]}".format(v2))
+                    udp.send(1,"1_pm25:1_pm10","N:{0[0]}:{0[1]}".format(v1))
+                    udp.send(2,"2_pm25:2_pm10","N:{0[0]}:{0[1]}".format(v2))
             else:
                 Log("v1 or v2 was None")
             time.sleep(3)    
