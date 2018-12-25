@@ -119,8 +119,7 @@ class ToUDP (StoreData):
         payload = "{},{}:{}".format("particulates_{}".format(self.id),self.rrd_template,self.rrd_data)
         datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
         try:
-            sent = self.socket.sendto(datagram, 
-                                      (self.IP_ADDRESS_SERVER, self.UDP_PORT))
+            sent = self.socket.sendto(datagram, (self.IP_ADDRESS_SERVER, self.UDP_PORT))
             Log("Sent bytes: {}; data: {}".format(sent,datagram))
         except:
             Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
