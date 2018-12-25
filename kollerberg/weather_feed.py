@@ -36,11 +36,13 @@ RRDFILE_PARTICULATES = "/schild/weather/airparticulates.rrd"
 pik_i = "pik_i"
 pik_a = "pik_a"
 pik_k = "pik_k"
-pik_a_particulates = "pik_a_particulates"
 PIs = [pik_i, pik_a, pik_k]
 
-data = { p: None for p in PIs }
-data[pik_a_particulates] = None
+particulates_1 = "particulates_1"
+particulates_2 = "particulates_2"
+Particulates = [particulates_1, particulates_2]
+
+data = { p: None for p in PIs+Particulates}
 
 
 ###############################################################################
@@ -186,7 +188,7 @@ class ToRRD (threading.Thread):
         for p in PIs:
             if not data[p]:
                 data_complete = False
-            else:    
+            else:      # TODO: use += instead of +
                 rrd_template = rrd_template + self.DS[p][self.DS_TEMP1] + ":" + \
                                               self.DS[p][self.DS_TEMP2] + ":" + \
                                               self.DS[p][self.DS_TCPU]  + ":" + \
@@ -194,7 +196,7 @@ class ToRRD (threading.Thread):
                                               self.DS[p][self.DS_PRESS] + ":"
                 rrd_data = rrd_data + data[p].split("N:")[1].rstrip() + ":"
 
-        if data_complete:
+        if data_complete:  # TODO: function()
             rrd_template = rrd_template.rstrip(":")
             rrd_data     = rrd_data.rstrip(":")
             # Log(rrd_template)
@@ -202,12 +204,22 @@ class ToRRD (threading.Thread):
             rrdtool.update(RRDFILE_WEATHER, "--template", rrd_template, rrd_data)
 
     def rrd_particulates (self):
-        if data[pik_a_particulates]:
-            Log(data[pik_a_particulates])
-            rrd_template = data[pik_a_particulates].split(":N:")[0]
-            rrd_data = "N:{}".format(data[pik_a_particulates].split(":N:")[1])
-            Log(rrd_template)
-            Log(rrd_data)
+        data_complete = True
+        rrd_template = ""
+        rrd_data = "N:"
+        for p in Particulates:
+            if not data[p]:
+                data_complete = False
+            else:    
+                rrd_template += data[p].split(":N:")[0] + ":"
+                        # TODO: remove "{}".format ...
+                rrd_data += "{}".format(data[p].split(":N:")[1]) + ":"
+
+        if data_complete:      # TODO: function()
+            rrd_template = rrd_template.rstrip(":")
+            rrd_data     = rrd_data.rstrip(":")
+            # Log(rrd_template)
+            # Log(rrd_data)
             rrdtool.update(RRDFILE_PARTICULATES, "--template", rrd_template, rrd_data)
 
     def run (self):
