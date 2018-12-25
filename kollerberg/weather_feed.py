@@ -188,13 +188,13 @@ class ToRRD (threading.Thread):
         for p in PIs:
             if not data[p]:
                 data_complete = False
-            else:      # TODO: use += instead of +
-                rrd_template = rrd_template + self.DS[p][self.DS_TEMP1] + ":" + \
-                                              self.DS[p][self.DS_TEMP2] + ":" + \
-                                              self.DS[p][self.DS_TCPU]  + ":" + \
-                                              self.DS[p][self.DS_HUMI]  + ":" + \
-                                              self.DS[p][self.DS_PRESS] + ":"
-                rrd_data = rrd_data + data[p].split("N:")[1].rstrip() + ":"
+            else: 
+                rrd_template += self.DS[p][self.DS_TEMP1] + ":" + \
+                                self.DS[p][self.DS_TEMP2] + ":" + \
+                                self.DS[p][self.DS_TCPU]  + ":" + \
+                                self.DS[p][self.DS_HUMI]  + ":" + \
+                                self.DS[p][self.DS_PRESS] + ":"
+                rrd_data += data[p].split("N:")[1].rstrip() + ":"
 
         if data_complete:  # TODO: function()
             rrd_template = rrd_template.rstrip(":")
@@ -212,12 +212,11 @@ class ToRRD (threading.Thread):
                 data_complete = False
             else:    
                 rrd_template += data[p].split(":N:")[0] + ":"
-                        # TODO: remove "{}".format ...
-                rrd_data += "{}".format(data[p].split(":N:")[1]) + ":"
+                rrd_data += data[p].split(":N:")[1] + ":"
 
         if data_complete:      # TODO: function()
             rrd_template = rrd_template.rstrip(":")
-            rrd_data     = rrd_data.rstrip(":")
+            rrd_data = rrd_data.rstrip(":")
             # Log(rrd_template)
             # Log(rrd_data)
             rrdtool.update(RRDFILE_PARTICULATES, "--template", rrd_template, rrd_data)
