@@ -19,7 +19,7 @@ cd ..
 
 
 cd airparticulates/
-nohup ./Airparticulates.py --local_rrd 2>&1 > airparticulates.log &
+nohup ./Airparticulates.py --id 1 2>&1 > airparticulates.log &
 cd ..
 
 
