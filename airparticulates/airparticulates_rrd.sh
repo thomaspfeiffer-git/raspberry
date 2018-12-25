@@ -1,8 +1,8 @@
 #/bin/bash
 
-HEARTBEAT=1000
+HEARTBEAT=90
 
-rrdtool create airparticulates.rrd --step 250 \
+rrdtool create airparticulates.rrd --step 60 \
 DS:1_pm25:GAUGE:$HEARTBEAT:0:3000 \
 DS:1_pm10:GAUGE:$HEARTBEAT:0:3000 \
 DS:2_pm25:GAUGE:$HEARTBEAT:0:3000 \
