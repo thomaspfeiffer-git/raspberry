@@ -180,6 +180,14 @@ class ToRRD (threading.Thread):
 
         self._running = True
 
+    @staticmethod
+    def update_rrd (db, template, data):
+        template = template.rstrip(":")
+        data     = data.rstrip(":")
+        # Log(template)
+        # Log(data)
+        rrdtool.update(db, "--template", template, data)
+
     def rrd_weather (self):
         data_complete = True
         rrd_template = ""
@@ -196,12 +204,8 @@ class ToRRD (threading.Thread):
                                 self.DS[p][self.DS_PRESS] + ":"
                 rrd_data += data[p].split("N:")[1].rstrip() + ":"
 
-        if data_complete:  # TODO: function()
-            rrd_template = rrd_template.rstrip(":")
-            rrd_data     = rrd_data.rstrip(":")
-            # Log(rrd_template)
-            # Log(rrd_data)
-            rrdtool.update(RRDFILE_WEATHER, "--template", rrd_template, rrd_data)
+        if data_complete:
+            self.update_rrd(RRDFILE_WEATHER, rrd_template, rrd_data)
 
     def rrd_particulates (self):
         data_complete = True
@@ -210,16 +214,12 @@ class ToRRD (threading.Thread):
         for p in Particulates:
             if not data[p]:
                 data_complete = False
-            else:    
+            else:    # TODO: catch exception
                 rrd_template += data[p].split(":N:")[0] + ":"
                 rrd_data += data[p].split(":N:")[1] + ":"
 
-        if data_complete:      # TODO: function()
-            rrd_template = rrd_template.rstrip(":")
-            rrd_data = rrd_data.rstrip(":")
-            # Log(rrd_template)
-            # Log(rrd_data)
-            rrdtool.update(RRDFILE_PARTICULATES, "--template", rrd_template, rrd_data)
+        if data_complete:
+            self.update_rrd(RRDFILE_PARTICULATES, rrd_template, rrd_data)
 
     def run (self):
         while self._running:
