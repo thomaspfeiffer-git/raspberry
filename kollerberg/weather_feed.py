@@ -42,7 +42,7 @@ particulates_1 = "particulates_1"
 particulates_2 = "particulates_2"
 Particulates = [particulates_1, particulates_2]
 
-data = { p: None for p in PIs+Particulates}
+data = { p: None for p in PIs+Particulates }
 
 
 ###############################################################################
