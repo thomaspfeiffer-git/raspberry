@@ -186,7 +186,10 @@ class ToRRD (threading.Thread):
         data     = data.rstrip(":")
         # Log(template)
         # Log(data)
-        rrdtool.update(db, "--template", template, data)
+        try:
+            rrdtool.update(db, "--template", template, data)
+        except rrdtool.OperationalError:
+            Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
     def rrd_weather (self):
         data_complete = True
@@ -214,9 +217,14 @@ class ToRRD (threading.Thread):
         for p in Particulates:
             if not data[p]:
                 data_complete = False
-            else:    # TODO: catch exception
-                rrd_template += data[p].split(":N:")[0] + ":"
-                rrd_data += data[p].split(":N:")[1] + ":"
+            else:
+                try:
+                    rrd_template += data[p].split(":N:")[0] + ":"
+                    rrd_data += data[p].split(":N:")[1] + ":"
+                except IndexError:
+                    Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()))
+                    Log("data[p]: {}".format(data[p]))
+                    return
 
         if data_complete:
             self.update_rrd(RRDFILE_PARTICULATES, rrd_template, rrd_data)
