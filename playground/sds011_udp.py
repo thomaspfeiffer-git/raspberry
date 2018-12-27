@@ -17,8 +17,8 @@ from Shutdown import Shutdown
 
 from sensors.SDS011 import SDS011
 
-sds011_1 = SDS011("/dev/ttyUSB0", use_query_mode=True)
-sds011_2 = SDS011("/dev/ttyUSB1", use_query_mode=True)
+sds011_1 = None
+sds011_2 = None
 
 CREDENTIALS = "/home/pi/credentials/weather.cred"
 
@@ -28,8 +28,10 @@ CREDENTIALS = "/home/pi/credentials/weather.cred"
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
-    sds011_1.close()
-    sds011_2.close()
+    if sds011_1 is not None:
+        sds011_1.close()
+    if sds011_2 is not None:
+        sds011_2.close()
     Log("Application stopped")
     sys.exit(0)
 
@@ -69,6 +71,9 @@ if __name__ == "__main__":
     udp = ToUDP()
 
     while True:
+        sds011_1 = SDS011("/dev/ttyUSB0", use_query_mode=True)
+        sds011_2 = SDS011("/dev/ttyUSB1", use_query_mode=True)
+
         sds011_1.sleep(sleep=False)
         time.sleep(1)
         sds011_2.sleep(sleep=False)
@@ -89,7 +94,11 @@ if __name__ == "__main__":
             time.sleep(3)    
 
         sds011_1.sleep()  
+        time.sleep(1)
         sds011_2.sleep()  
+        time.sleep(1)
+        sds011_1 = None
+        sds011_2 = None
         time.sleep(600)
 
 # eof #
