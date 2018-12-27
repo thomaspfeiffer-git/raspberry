@@ -2,7 +2,7 @@
 ###############################################################################
 # PCA9685.py                                                                  #
 # Communication with 16 channel PWM device PCA9685.                           #
-# (c) https://github.com/thomaspfeiffer-git 2017                              #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2018                        #
 ###############################################################################
 """provides a class for handling the 16 channel PWM device PCA9685"""
 
@@ -12,6 +12,8 @@
 
 from i2c import I2C
 import time
+
+from Logging import Log
 
 PCA9685_BASE_ADDRESS = 0x40 # caution: interferes with HTU21DF_BASE_ADDR
 
@@ -54,8 +56,11 @@ class PCA9685 (I2C):
 
     def __write (self, reg, value):
         """Write raw byte value to the specified register"""
-        with I2C._lock:
-            I2C._bus.write_byte_data(self.__address, reg, value)
+        try:
+            with I2C._lock:
+                I2C._bus.write_byte_data(self.__address, reg, value)
+        except:
+            Log("Cannot write to i2c bus: {0[0]} {0[1]}".format(sys.exc_info()))
 
     def __sleep (self):
         """Send the controller to sleep"""
