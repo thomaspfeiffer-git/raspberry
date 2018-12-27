@@ -54,7 +54,7 @@ class Sensor (threading.Thread):
             m = datetime.now().minute + randint(-100,100)
             self.data = { self.PM25: h*60 + m, self.PM10: 1440 - (h*60 + m) }
 
-            for _ in range(600*5):  # interruptible sleep
+            for _ in range(600*10):  # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
@@ -86,7 +86,7 @@ class StoreData (threading.Thread):
             # Log(self.rrd_data)
             self.store()
 
-            for _ in range(600*5-100):  # interruptible sleep
+            for _ in range(600*10-100):  # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)

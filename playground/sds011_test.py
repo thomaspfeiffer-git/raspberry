@@ -40,7 +40,7 @@ if __name__ == "__main__":
         sds011_1.sleep(sleep=False)
         time.sleep(1)
         sds011_2.sleep(sleep=False)
-        time.sleep(15)
+        time.sleep(25)
 
         for _ in range(3):
             v1 = sds011_1.query();
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
         sds011_1.sleep()  
         sds011_2.sleep()  
-        time.sleep(300)
+        time.sleep(600)
 
 # eof #
 
