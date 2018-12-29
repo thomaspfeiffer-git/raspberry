@@ -53,7 +53,7 @@ class Sensor (threading.Thread):
 
             values = sds011.query();
             if values is not None:
-                self.data = { self.PM25: values[0], self.PM10: values[1]  }
+                self.data = { self.PM25: values[0], self.PM10: values[1] }
                 Log("Data read: PM25: {0[0]}, PM10: {0[1]}".format(values))
             else:
                 Log("Reading SDS011 failed.")
