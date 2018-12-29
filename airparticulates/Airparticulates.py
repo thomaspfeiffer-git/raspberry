@@ -28,6 +28,7 @@ from Shutdown import Shutdown
 from sensors.SDS011 import SDS011
 
 CREDENTIALS = "/home/pi/credentials/weather.cred"
+UPDATE_INTERVAL = 10 * 60   # time delay between two measurements (seconds)
 
 
 ###############################################################################
@@ -64,7 +65,7 @@ class Sensor (threading.Thread):
             time.sleep(5)
             sds011 = None
 
-            for _ in range(600*10):  # interruptible sleep
+            for _ in range(UPDATE_INTERVAL*10):  # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
@@ -95,8 +96,8 @@ class StoreData (threading.Thread):
             self.rrd_data = sensor.rrd
             self.store()
 
-            for _ in range(600*10-100):  # interruptible sleep
-                if not self._running:
+            for _ in range(int(UPDATE_INTERVAL*10/3)-100): # send UDP data frequently
+                if not self._running:    # interruptible sleep 
                     break
                 time.sleep(0.1)
 
