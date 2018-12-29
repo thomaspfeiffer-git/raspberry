@@ -37,8 +37,8 @@ class Sensor (threading.Thread):
 
     def __init__ (self):
         threading.Thread.__init__(self)
-        self._running = True
         self.data = { self.PM25: 0.0, self.PM10: 0.0 }
+        self._running = True
 
     @property
     def rrd (self):
@@ -53,6 +53,9 @@ class Sensor (threading.Thread):
             values = sds011.query();
             if values is not None:
                 self.data = { self.PM25: values[0], self.PM10: values[1]  }
+                Log("Data read: PM25: {0[0]}, PM10: {0[1]}".format(values))
+            else:
+                Log("Reading SDS011 failed.")
 
             sds011.sleep()      
             time.sleep(1)
@@ -89,7 +92,6 @@ class StoreData (threading.Thread):
     def run (self):
         while self._running:     
             self.rrd_data = sensor.rrd
-            # Log(self.rrd_data)
             self.store()
 
             for _ in range(600*10-100):  # interruptible sleep
