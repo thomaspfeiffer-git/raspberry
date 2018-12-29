@@ -24,7 +24,7 @@ sys.path.append("../libs/")
 from Logging import Log
 from Shutdown import Shutdown
 
-# from sensors.SDS011 import SDS011
+from sensors.SDS011 import SDS011
 
 CREDENTIALS = "/home/pi/credentials/weather.cred"
 
@@ -52,8 +52,7 @@ class Sensor (threading.Thread):
 
             values = sds011.query();
             if values is not None:
-                self.data = None # TODO
-                # self.data = { self.PM25: h*60 + m, self.PM10: 1440 - (h*60 + m) }
+                self.data = { self.PM25: values[0], self.PM10: values[1]  }
 
             sds011.sleep()      
             time.sleep(1)
@@ -61,7 +60,7 @@ class Sensor (threading.Thread):
             time.sleep(5)
             sds011 = None
 
-            for _ in range(600*10):  # interruptible sleep  # TODO sleep for longer time
+            for _ in range(600*10):  # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
@@ -93,7 +92,7 @@ class StoreData (threading.Thread):
             # Log(self.rrd_data)
             self.store()
 
-            for _ in range(600*10-100):  # interruptible sleep  # TODO: sleep for longer time
+            for _ in range(600*10-100):  # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
