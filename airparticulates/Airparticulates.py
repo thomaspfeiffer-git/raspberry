@@ -46,15 +46,22 @@ class Sensor (threading.Thread):
 
     def run (self):
         while self._running:
-            # faking sensor data
-            from datetime import datetime
-            from random import randint
+            sds011 = SDS011("/dev/ttyUSB0", use_query_mode=True)
+            sds011.sleep(sleep=False)
+            time.sleep(25)
 
-            h = datetime.now().hour
-            m = datetime.now().minute + randint(-100,100)
-            self.data = { self.PM25: h*60 + m, self.PM10: 1440 - (h*60 + m) }
+            values = sds011.query();
+            if values is not None:
+                self.data = None # TODO
+                # self.data = { self.PM25: h*60 + m, self.PM10: 1440 - (h*60 + m) }
 
-            for _ in range(600*10):  # interruptible sleep
+            sds011.sleep()      
+            time.sleep(1)
+            sds011.close() # TODO: SDS011.__del__()
+            time.sleep(5)
+            sds011 = None
+
+            for _ in range(600*10):  # interruptible sleep  # TODO sleep for longer time
                 if not self._running:
                     break
                 time.sleep(0.1)
@@ -86,7 +93,7 @@ class StoreData (threading.Thread):
             # Log(self.rrd_data)
             self.store()
 
-            for _ in range(600*10-100):  # interruptible sleep
+            for _ in range(600*10-100):  # interruptible sleep  # TODO: sleep for longer time
                 if not self._running:
                     break
                 time.sleep(0.1)
