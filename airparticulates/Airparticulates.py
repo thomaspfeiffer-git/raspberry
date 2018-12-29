@@ -93,13 +93,13 @@ class StoreData (threading.Thread):
 
     def run (self):
         while self._running:     
-            self.rrd_data = sensor.rrd
-            self.store()
-
             for _ in range(int(UPDATE_INTERVAL*10/3)-100): # send UDP data frequently
                 if not self._running:    # interruptible sleep 
                     break
                 time.sleep(0.1)
+
+            self.rrd_data = sensor.rrd # sending data after sleep() avoids 
+            self.store()               # empty data in first loop cycle.
 
     def stop (self):
         self._running = False
