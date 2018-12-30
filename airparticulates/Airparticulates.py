@@ -61,7 +61,7 @@ class Sensor (threading.Thread):
 
             sds011.sleep()      
             time.sleep(1)
-            sds011.close() # TODO: SDS011.__del__()
+            sds011.close()
             time.sleep(5)
             sds011 = None
 

@@ -96,7 +96,7 @@ if __name__ == "__main__":
         sds011_1.sleep()  
         sds011_2.sleep()  
         time.sleep(1)
-        sds011_1.close() # TODO: SDS011.__del__()
+        sds011_1.close()
         sds011_2.close()
         time.sleep(5)
         sds011_1 = None

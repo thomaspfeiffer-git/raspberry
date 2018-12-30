@@ -88,6 +88,9 @@ class SDS011 (object):
         self.ser.close()
         Log("Closed SDS011 on port {}".format(self.__serial_port))
 
+    def __del__ (self):
+        self.ser.close()
+
     def _execute(self, cmd_bytes):
         """Writes a byte sequence to the serial.
         """
