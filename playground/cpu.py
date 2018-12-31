@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import sys
-sys.path.append('../libs/sensors')
+sys.path.append('../libs')
 
-from CPU import CPU
+from sensors.CPU import CPU
 
 cpu = CPU()
 print(cpu.read_temperature())
