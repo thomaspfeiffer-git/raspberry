@@ -47,7 +47,7 @@ def platform_detect():
         return NANOPI
     elif plat.lower().find('armv7l-with-glibc2.4') > -1:
         return NANOPI
-    elfi plat.lower().find('s5p6818-aarch64') > -1:    
+    elif plat.lower().find('s5p6818-aarch64') > -1:    
         return NANOPC_T3
     
         
