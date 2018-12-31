@@ -26,6 +26,8 @@ UNKNOWN      = 0
 RASPBERRY_PI = 1
 NANOPI       = 2
 MINNOWBOARD  = 3
+NANOPC_T3    = 4
+
 
 def platform_detect():
     """Detect if running on the Raspberry Pi or Beaglebone Black and return the
@@ -45,6 +47,8 @@ def platform_detect():
         return NANOPI
     elif plat.lower().find('armv7l-with-glibc2.4') > -1:
         return NANOPI
+    elfi plat.lower().find('s5p6818-aarch64') > -1:    
+        return NANOPC_T3
     
         
     # Handle Minnowboard
