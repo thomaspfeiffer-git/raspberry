@@ -39,7 +39,7 @@ class CPU:
             return self.__raspberryPi()
         elif plat == Platform.NANOPI:
             return self.__nanoPi()
-        elfi plat == Platform.NANOPC_T3:
+        elif plat == Platform.NANOPC_T3:
             return self.__nanoPi()
         else:
             return None
