@@ -1,5 +1,6 @@
 
-cd raspberry/
+
+cd /home/pi/raspberry/
 
 cd weather/
 nohup ./weather.py 2>&1 > weather.log &
@@ -16,7 +17,6 @@ cd ..
 cd seti/
 nohup ./seti_receiver.py 2>&1 > seti_receiver.log &
 cd ..
-
 
 cd airparticulates/
 nohup ./Airparticulates.py --id 1 2>&1 > airparticulates.log &
