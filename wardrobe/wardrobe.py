@@ -30,6 +30,7 @@ from sensors.TSL2561 import TSL2561
 from SensorQueue2 import SensorQueueClient_write
 from SensorValue2 import SensorValue, SensorValue_Data
 
+from Logging import Log
 from Shutdown import Shutdown
 
 from Forecast import Forecast
@@ -305,12 +306,17 @@ class Control_Button (Control):
 
     def __init__ (self, sensor_id, actuator_id):
         super().__init__(sensor_id, actuator_id)
-        self._stretchperiod = 60
+        self._stretchperiod = 0
 
     def run (self):
         self._actuator.on(lightnessvalue=PWM.MAX)  # constant actuator output
         while self._running:                       # for blue led in button
-            self.switchvalue = self._sensor.value
+            if self.switchvalue == Switch.OFF and self._sensor.value == Switch.ON:
+                self.switchvalue = Switch.ON
+                self._stretchperiod += 60
+            else:
+                self.switchvalue = self._sensor.value
+
             sleep(0.02)
         self.cleanup()
 
@@ -349,7 +355,7 @@ def main ():
                     ":{}".format(0)                          + \
                     ":{}".format(controls['drawer'].switchvalue_stretched()) + \
                     ":{}".format(0)
-        print(strftime("%Y%m%d %X:"), rrd_data)
+        Log(rrd_data)
         rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
 
         sleep(50)
