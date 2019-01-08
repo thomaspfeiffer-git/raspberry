@@ -309,15 +309,21 @@ class Control_Button (Control):
         self._stretchperiod = 0
 
     def run (self):
+        lastclick = 0
         self._actuator.on(lightnessvalue=PWM.MAX)  # constant actuator output
         while self._running:                       # for blue led in button
             if self.switchvalue == Switch.OFF and self._sensor.value == Switch.ON:
-                self.switchvalue = Switch.ON
                 self._stretchperiod += 60
+                self.switchvalue = Switch.ON
+                lastclick = time()
             else:
                 self.switchvalue = self._sensor.value
 
+            if lastclick + 10 <= time():
+                self._stretchperiod = 0
+
             sleep(0.02)
+
         self.cleanup()
 
 
