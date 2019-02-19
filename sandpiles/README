@@ -1,0 +1,6 @@
+usage: Sandpiles.py [-h] {calculate, displayfromfiles}
+
+positional arguments:
+    calculate           calculate pile
+    displayfromfiles    display already calculated piles
+
