@@ -16,6 +16,7 @@ https://en.wikipedia.org/wiki/Abelian_sandpile_model
 # sudo pip3 install Pillow
 
 
+import argparse
 import copy
 import json
 import multiprocessing
@@ -23,6 +24,7 @@ import sys
 import time
 
 from Config import CONFIG, filename
+import Display
 from Logging import Log
 from Shutdown import Shutdown
 
@@ -115,35 +117,40 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest='calculate | displayfromfiles')
+    subparsers.required = True         # https://bugs.python.org/issue29298
+
+    par_calc = subparsers.add_parser("calculate", help="calculate pile")
+    par_calc.set_defaults(target="calculate")
+    par_calc.add_argument("-d", "--display", help="display calculation results", action="store_true")
+
+    par_disp = subparsers.add_parser("displayfromfiles", help="display already calculated piles")
+    par_disp.set_defaults(target="displayfromfiles")
+    par_disp.add_argument("file", help="filename(s)", nargs='+')
+
+    args = parser.parse_args()
+
     shared_pile = multiprocessing.Array('i', [0 for i in range(CONFIG.PILE.X * CONFIG.PILE.Y)], lock=False)
     do_draw = multiprocessing.Value('i', 0)
     pile = Pile()
 
-    calculate = Calculate()
-    p = multiprocessing.Process(target=calculate.run, args=())
-    p.start()
+    if args.target == "calculate":
+        calculate = Calculate()
+        p = multiprocessing.Process(target=calculate.run, args=())
+        p.start()
 
-    """
-    Parameters:
-    --calculate [ --display ]
-    --displayfromfiles=<pattern>
+        if args.display:
+            tk_app = Display.TkApp(pile, do_draw)
+            tk_app.run()
 
-    """
+        p.join()
+     
+    if args.target == "displayfromfiles":
+        Log("Displaying from file(s): {}".format(args.file))
+        # TODO
 
-
-    import os
-    import Display
-    try:
-        os.environ["DISPLAY"]
-    except KeyError:
-        Log("$DISPLAY not set, using default :0.0")
-        os.environ["DISPLAY"] = ":0.0"
-
-
-    tk_app = Display.TkApp(pile, do_draw)
-    tk_app.run()
-
-    p.join()
+    sys.exit(0)
 
 # eof #
 

@@ -7,8 +7,9 @@
 All display related stuff for Sandpiles.py.
 """
 
-import tkinter as tk
+import os
 from PIL import Image, ImageDraw
+import tkinter as tk
 
 from Config import CONFIG, filename
 from Logging import Log
@@ -55,6 +56,13 @@ class DrawPile (tk.Frame):
 # TkApp #######################################################################
 class TkApp (object):
     def __init__ (self, pile, do_draw):
+
+        try:
+            os.environ["DISPLAY"]
+        except KeyError:
+            Log("$DISPLAY not set, using default :0.0")
+            os.environ["DISPLAY"] = ":0.0"
+    
         self.pile = pile
         self.do_draw = do_draw
 
