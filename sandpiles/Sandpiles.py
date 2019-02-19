@@ -6,16 +6,18 @@
 # https://en.wikipedia.org/wiki/Abelian_sandpile_model
 
 
+# sudo pip3 install Pillow
+
+
 import copy
-from datetime import datetime
 import json
 import multiprocessing
 import sys
 import time
 
-from Config import CONFIG
-from Shutdown import Shutdown
+from Config import CONFIG, filename
 from Logging import Log
+from Shutdown import Shutdown
 
 
 ###############################################################################
@@ -26,9 +28,7 @@ class Pile (object):
         self.pile[CONFIG.PILE.X//2][CONFIG.PILE.Y//2] = grains
 
     def save (self):
-        filename = "sandpiles/sandpile_{}x{}_{}.sp".format(CONFIG.PILE.X,CONFIG.PILE.Y,
-                                                           datetime.now().strftime("%Y%m%d_%H%M%S"))
-        with open(filename, 'w') as f:
+        with open(filename("sp"), 'w') as f:
             json.dump(self.pile, f, separators=(',', ':'))
 
     def share (self):
@@ -116,7 +116,23 @@ if __name__ == '__main__':
     p = multiprocessing.Process(target=calculate.run, args=())
     p.start()
 
+    """
+    Parameters:
+    --calculate [ --display ]
+    --displayfromfiles=<pattern>
+
+    """
+
+
+    import os
     import Display
+    try:
+        os.environ["DISPLAY"]
+    except KeyError:
+        Log("$DISPLAY not set, using default :0.0")
+        os.environ["DISPLAY"] = ":0.0"
+
+
     tk_app = Display.TkApp(pile, do_draw)
     tk_app.run()
 

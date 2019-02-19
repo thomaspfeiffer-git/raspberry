@@ -2,8 +2,13 @@
 ###############################################################################
 
 import tkinter as tk
-from Config import CONFIG
+from PIL import Image, ImageDraw
 
+from Config import CONFIG, filename
+from Logging import Log
+
+image = Image.new("RGB", (CONFIG.PILE.X, CONFIG.PILE.Y), (0, 0, 0))
+draw = ImageDraw.Draw(image)
 
 ###############################################################################
 # DrawPile ####################################################################
@@ -13,11 +18,6 @@ class DrawPile (tk.Frame):
 
         self.pile = pile
         self.master = master
-        self.canvas = None
-
-    def draw (self):
-        if self.canvas:
-            self.canvas.destroy()
 
         self.canvas = tk.Canvas(self.master, bg=CONFIG.COLORS.BG_PILE,
                                 width=CONFIG.PILE.X,
@@ -27,14 +27,20 @@ class DrawPile (tk.Frame):
         self.img = tk.PhotoImage(width=CONFIG.PILE.X, height=CONFIG.PILE.Y)
         self.canvas.create_image((CONFIG.PILE.X//2, CONFIG.PILE.Y//2), 
                                  image=self.img, state="normal")
+        # self.image = Image.new("RGB", (CONFIG.PILE.X, CONFIG.PILE.Y), (0, 0, 0))
+        # self.draw = ImageDraw.Draw(self.image)
 
+    def draw (self):
+        Log("Drawing")
         self.pile.localize()
         for x in range(CONFIG.PILE.X):
             for y in range(CONFIG.PILE.Y):
                 try:
                     self.img.put(CONFIG.COLORS.GRAIN[self.pile.pile[x][y]], (x,y))
+                    draw.point([x,y], CONFIG.COLORS.GRAIN[self.pile.pile[x][y]])
                 except KeyError:
                     pass
+        image.save(filename("png"))
 
 
 ###############################################################################
