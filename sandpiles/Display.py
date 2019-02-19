@@ -1,5 +1,11 @@
+# -*- coding: utf-8 -*-
 ###############################################################################
+# Display.py                                                                  #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019                   #
 ###############################################################################
+"""
+All display related stuff for Sandpiles.py.
+"""
 
 import tkinter as tk
 from PIL import Image, ImageDraw
@@ -7,6 +13,9 @@ from PIL import Image, ImageDraw
 from Config import CONFIG, filename
 from Logging import Log
 
+# When having these instances as members of DrawPile(), they seem
+# to be garbagge collected for some reason. As a quick workaround,
+# i make them global.
 image = Image.new("RGB", (CONFIG.PILE.X, CONFIG.PILE.Y), (0, 0, 0))
 draw = ImageDraw.Draw(image)
 
@@ -31,7 +40,6 @@ class DrawPile (tk.Frame):
         # self.draw = ImageDraw.Draw(self.image)
 
     def draw (self):
-        Log("Drawing")
         self.pile.localize()
         for x in range(CONFIG.PILE.X):
             for y in range(CONFIG.PILE.Y):

@@ -1,11 +1,18 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
+# Sandpiles.py                                                                #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019                   #
+###############################################################################
+"""
+Some playground for the sandpile model.
+https://en.wikipedia.org/wiki/Abelian_sandpile_model
+"""
 
+### Usage ###
+# ./Sandpiles.py 
 
-# https://en.wikipedia.org/wiki/Abelian_sandpile_model
-
-
+### you might need to install ###
 # sudo pip3 install Pillow
 
 
@@ -87,7 +94,7 @@ class Calculate (object):
         while toppled != 0:
             toppled = self.iterate()
             i += 1
-            if i % 50 == 0:
+            if i % 2500 == 0:
                 share_and_log()
               
         Log("Done!")
