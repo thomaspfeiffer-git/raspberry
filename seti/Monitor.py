@@ -54,9 +54,11 @@ this_PI = socket.gethostname()
 if this_PI == seti_01:
     from sensors.DS1820 import DS1820
     from sensors.HTU21DF import HTU21DF
+    from actuators.SSD1306 import SSD1306
 
-DS1820_Room    = "/sys/bus/w1/devices/28-00000855fca3/w1_slave"
-DS1820_Airflow = "/sys/bus/w1/devices/28-000008386a83/w1_slave"
+
+DS1820_Airflow = "/sys/bus/w1/devices/28-00000855fca3/w1_slave"
+DS1820_Room    = "/sys/bus/w1/devices/28-000008386a83/w1_slave"
 
 
 CREDENTIALS = "/home/pi/credentials/seti.cred"
@@ -91,6 +93,33 @@ class UDP_Sender (object):
         except:
             Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
 
+###############################################################################
+# Display #####################################################################
+def Display (SSD1306):
+    def __init__ (self):
+        self.xpos = 4
+        self.ypos = 4
+        self.begin()
+        self.clear()
+        self.display()
+
+        self.image = Image.new('1', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.image)
+        self.font = ImageFont.load_default()
+        _, self.textheight = self.draw.textsize("Text", font=self.font)
+
+    def show_data (temp_room, temp_airflow, humidity):
+        self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
+        y = self.ypos
+        self.draw.text((self.xpos, y), "Temperatur: {} °C".format(temp_room), font=font, fill=0)
+        y += self.textheight
+        self.draw.text((self.xpos, y), "Temperatur: {} °C".format(temp_airflow), font=font, fill=0)
+        y += self.textheight
+        self.draw.text((self.xpos, y), "Luftfeuchtigkeit: {} % rF".format(humidity), font=font, fill=0)
+
+        disp.image(image)
+        disp.display()
+
 
 ###############################################################################
 ## Shutdown stuff #############################################################
@@ -112,6 +141,7 @@ if __name__ == "__main__":
         ds_room = DS1820(DS1820_Room)
         ds_airflow = DS1820(DS1820_Airflow)
         htu = HTU21DF()
+        display = Display()
 
     temp_room    = -99.99 # in case no DS1820 available
     temp_airflow = -99.99
@@ -124,6 +154,7 @@ if __name__ == "__main__":
             temp_room    = ds_room.read_temperature()
             temp_airflow = ds_airflow.read_temperature()
             humidity     = htu.read_humidity()
+            display.show_data(temp_room, temp_airflow, humidity)
 
         rrd_data = "N:{:.2f}".format(cpu.read_temperature()) + \
                     ":{:.2f}".format(os.getloadavg()[0])     + \
