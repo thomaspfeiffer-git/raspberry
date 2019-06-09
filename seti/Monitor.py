@@ -56,6 +56,10 @@ if this_PI == seti_01:
     from sensors.HTU21DF import HTU21DF
     from actuators.SSD1306 import SSD1306
 
+    from PIL import Image
+    from PIL import ImageDraw
+    from PIL import ImageFont
+
 
 DS1820_Airflow = "/sys/bus/w1/devices/28-00000855fca3/w1_slave"
 DS1820_Room    = "/sys/bus/w1/devices/28-000008386a83/w1_slave"
@@ -95,30 +99,33 @@ class UDP_Sender (object):
 
 ###############################################################################
 # Display #####################################################################
-def Display (SSD1306):
+class Display (SSD1306):
     def __init__ (self):
+        super().__init__()
         self.xpos = 4
         self.ypos = 4
         self.begin()
         self.clear()
         self.display()
 
-        self.image = Image.new('1', (self.width, self.height))
-        self.draw = ImageDraw.Draw(self.image)
+        self.img = Image.new('1', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.img)
         self.font = ImageFont.load_default()
         _, self.textheight = self.draw.textsize("Text", font=self.font)
 
-    def show_data (temp_room, temp_airflow, humidity):
+    def show_data (self, temp_room, temp_airflow, humidity):
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
         y = self.ypos
-        self.draw.text((self.xpos, y), "Temperatur: {} °C".format(temp_room), font=font, fill=0)
+        self.draw.text((self.xpos, y), "Zeit: {}".format(time.strftime("%X")), font=self.font, fill=0)
         y += self.textheight
-        self.draw.text((self.xpos, y), "Temperatur: {} °C".format(temp_airflow), font=font, fill=0)
+        self.draw.text((self.xpos, y), "Temperatur: {:.1f} °C".format(temp_room), font=self.font, fill=0)
         y += self.textheight
-        self.draw.text((self.xpos, y), "Luftfeuchtigkeit: {} % rF".format(humidity), font=font, fill=0)
+        self.draw.text((self.xpos, y), "Temperatur: {:.1f} °C".format(temp_airflow), font=self.font, fill=0)
+        y += self.textheight
+        self.draw.text((self.xpos, y), "Luftf.: {:.1f} % rF".format(humidity), font=self.font, fill=0)
 
-        disp.image(image)
-        disp.display()
+        self.image(self.img)
+        self.display()
 
 
 ###############################################################################
