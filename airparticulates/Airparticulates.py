@@ -47,8 +47,9 @@ class Sensor (threading.Thread):
         return "N:{}:{}".format(self.data[self.PM25],self.data[self.PM10])
 
     def run (self):
+        sds011 = SDS011("/dev/ttyUSB0", use_query_mode=True)
         while self._running:
-            sds011 = SDS011("/dev/ttyUSB0", use_query_mode=True)
+            # sds011 = SDS011("/dev/ttyUSB0", use_query_mode=True)
             sds011.sleep(sleep=False)
             time.sleep(25)
 
@@ -60,10 +61,10 @@ class Sensor (threading.Thread):
                 Log("Reading SDS011 failed.")
 
             sds011.sleep()      
-            time.sleep(1)
-            sds011.close()
+            # time.sleep(1)
+            # sds011.close()
             time.sleep(5)
-            sds011 = None
+            # sds011 = None
 
             for _ in range(UPDATE_INTERVAL*10):  # interruptible sleep
                 if not self._running:
