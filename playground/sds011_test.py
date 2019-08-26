@@ -17,7 +17,7 @@ from Shutdown import Shutdown
 from sensors.SDS011 import SDS011
 
 sds011_1 = SDS011("/dev/ttyUSB0", use_query_mode=True)
-sds011_2 = SDS011("/dev/ttyUSB1", use_query_mode=True)
+# sds011_2 = SDS011("/dev/ttyUSB1", use_query_mode=True)
 
 
 ###############################################################################
@@ -26,7 +26,7 @@ def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
     sds011_1.close()
-    sds011_2.close()
+#    sds011_2.close()
     Log("Application stopped")
     sys.exit(0)
 
@@ -38,12 +38,15 @@ if __name__ == "__main__":
 
     while True:
         sds011_1.sleep(sleep=False)
-        time.sleep(1)
-        sds011_2.sleep(sleep=False)
+#        time.sleep(1)
+#        sds011_2.sleep(sleep=False)
         time.sleep(25)
 
         for _ in range(3):
             v1 = sds011_1.query();
+            Log(",{0[0]},{0[1]}".format(v1))
+            time.sleep(3)    
+            """
             v2 = sds011_2.query();
             if v1 is not None and v2 is not None:
                 # Log("PM2.5: {}; PM10: {}".format(values[0],values[1]))
@@ -52,10 +55,11 @@ if __name__ == "__main__":
             else:
                 Log("v1 or v2 was None")
             time.sleep(3)    
+            """
 
         sds011_1.sleep()  
-        sds011_2.sleep()  
-        time.sleep(600)
+#        sds011_2.sleep()  
+        time.sleep(60)
 
 # eof #
 
