@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #############################################################################
 # weather.py                                                                #
-# (c) https://github.com/thomaspfeiffer-git 2016, 2017, 2018                #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017, 2018, 2019          #
 #############################################################################
 """Weather station at our summer cottage"""
 
@@ -100,9 +100,9 @@ def main():
         temp_cpu = tempcpu.read_temperature()
 
         if this_PI == pik_i:
-            pressure = bme680.data.pressure
             temp = bme680.data.temperature
-            humidity = bme680.data.humidity
+            humi = bme680.data.humidity
+            pressure = bme680.data.pressure
             airquality = bme680.data.air_quality_score \
                          if bme680.data.air_quality_score != None else 0
             Log("Airquality: {}".format(airquality))             
