@@ -100,11 +100,13 @@ def main():
         temp_cpu = tempcpu.read_temperature()
 
         if this_PI == pik_i:
+            bme680.get_sensor_data()
             temp = bme680.data.temperature
             humi = bme680.data.humidity
             pressure = bme680.data.pressure
-            airquality = bme680.data.air_quality_score \
-                         if bme680.data.air_quality_score != None else 0
+            # airquality = bme680.data.air_quality_score \
+            #              if bme680.data.air_quality_score != None else 0
+            airquality = bme680.data.air_quality_score
             Log("Airquality: {}".format(airquality))             
         else:    
             temp = htu21df.read_temperature()
