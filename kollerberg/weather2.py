@@ -104,9 +104,8 @@ def main():
             temp = bme680.data.temperature
             humi = bme680.data.humidity
             pressure = bme680.data.pressure
-            # airquality = bme680.data.air_quality_score \
-            #              if bme680.data.air_quality_score != None else 0
-            airquality = bme680.data.air_quality_score
+            airquality = bme680.data.air_quality_score \
+                         if bme680.data.air_quality_score != None else 0
             Log("Airquality: {}".format(airquality))             
         else:    
             temp = htu21df.read_temperature()
