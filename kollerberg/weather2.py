@@ -34,7 +34,7 @@ PIs = [pik_i, pik_a, pik_k]
 this_PI = socket.gethostname()
 
 if this_PI == pik_i:   # BME680 installed only at pik_i
-    from sensors.BME680 import BME680, BME_680_BASEADD
+    from sensors.BME680 import BME680, BME_680_SECONDARYADDR
 
 
 AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w1_slave",
@@ -88,7 +88,7 @@ def main():
     tempds  = DS1820(AddressesDS1820[this_PI])
     tempcpu = CPU()
     if this_PI == pik_i:
-        bme680  = BME680(i2c_addr=BME_680_BASEADDR)
+        bme680  = BME680(i2c_addr=BME_680_SECONDARYADDR)
     else:
         htu21df = HTU21DF()
 
