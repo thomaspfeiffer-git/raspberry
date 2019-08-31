@@ -106,7 +106,6 @@ def main():
             pressure = bme680.data.pressure
             airquality = bme680.data.air_quality_score \
                          if bme680.data.air_quality_score != None else 0
-            Log("Airquality: {}".format(airquality))             
         else:    
             temp = htu21df.read_temperature()
             humi = htu21df.read_humidity()
@@ -115,8 +114,8 @@ def main():
                     ":{:.2f}".format(temp)    + \
                     ":{:.2f}".format(temp_cpu)    + \
                     ":{:.2f}".format(humi)    + \
-                    ":{:.2f}".format(pressure)
-                    # ":{:.2f}".format(airquality)
+                    ":{:.2f}".format(pressure) + \
+                    ":{:.2f}".format(airquality)
 
         udp.send("{},{}".format(this_PI,rrd_data))
         time.sleep(45)
