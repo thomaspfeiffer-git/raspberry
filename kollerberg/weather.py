@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #############################################################################
 # weather.py                                                                #
-# (c) https://github.com/thomaspfeiffer-git 2016, 2017, 2018                #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017, 2018, 2019          #
 #############################################################################
 """Weather station at our summer cottage"""
 
@@ -33,8 +33,8 @@ pik_k = "pik_k"
 PIs = [pik_i, pik_a, pik_k]
 this_PI = socket.gethostname()
 
-if this_PI == pik_i:   # BMP180 installed only at pik_i
-    from sensors.BMP180 import BMP180
+if this_PI == pik_i:   # BME680 installed only at pik_i
+    from sensors.BME680 import BME680, BME_680_SECONDARYADDR
 
 
 AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w1_slave",
@@ -85,27 +85,37 @@ def main():
         shutdown_application()
 
     udp = UDP_Sender()
-    htu21df = HTU21DF()
     tempds  = DS1820(AddressesDS1820[this_PI])
     tempcpu = CPU()
     if this_PI == pik_i:
-        bmp180 = BMP180()
+        bme680  = BME680(i2c_addr=BME_680_SECONDARYADDR)
+    else:
+        htu21df = HTU21DF()
 
-    pressure = 1013.25 # in case of no BMP180 available
+    pressure = 1013.25 # in case of no BME680 available
+    airquality = 0
+
     while True:
         temp_ds  = tempds.read_temperature()
         temp_cpu = tempcpu.read_temperature()
-        temp_htu = htu21df.read_temperature()
-        humi_htu = htu21df.read_humidity()
 
         if this_PI == pik_i:
-            pressure = bmp180.read_pressure() / 100.0
+            bme680.get_sensor_data()
+            temp = bme680.data.temperature
+            humi = bme680.data.humidity
+            pressure = bme680.data.pressure
+            airquality = bme680.data.air_quality_score \
+                         if bme680.data.air_quality_score != None else 0
+        else:    
+            temp = htu21df.read_temperature()
+            humi = htu21df.read_humidity()
 
         rrd_data = "N:{:.2f}".format(temp_ds)     + \
-                    ":{:.2f}".format(temp_htu)    + \
+                    ":{:.2f}".format(temp)    + \
                     ":{:.2f}".format(temp_cpu)    + \
-                    ":{:.2f}".format(humi_htu)    + \
-                    ":{:.2f}".format(pressure)
+                    ":{:.2f}".format(humi)    + \
+                    ":{:.2f}".format(pressure) + \
+                    ":{:.2f}".format(airquality)
 
         udp.send("{},{}".format(this_PI,rrd_data))
         time.sleep(45)
