@@ -161,21 +161,25 @@ class ToRRD (threading.Thread):
         self.DS_TCPU  = "DS_TCPU"
         self.DS_HUMI  = "DS_HUMI"
         self.DS_PRESS = "DS_PRESS"
+        self.DS_AIRQ  = "DS_AIRQ"
         self.DS = { pik_i: { self.DS_TEMP1: 'kb_i_t1', 
                              self.DS_TEMP2: 'kb_i_t2',
                              self.DS_TCPU : 'kb_i_tcpu',
                              self.DS_HUMI : 'kb_i_humi',
-                             self.DS_PRESS: 'kb_i_press' },
+                             self.DS_PRESS: 'kb_i_press',
+                             self.DS_AIRQ:  'kb_i_airquality' },
                     pik_a: { self.DS_TEMP1: 'kb_a_t1',
                              self.DS_TEMP2: 'kb_a_t2',
                              self.DS_TCPU : 'kb_a_tcpu',
                              self.DS_HUMI : 'kb_a_humi',
-                             self.DS_PRESS: 'kb_a_press' },
+                             self.DS_PRESS: 'kb_a_press',
+                             self.DS_AIRQ:  'kb_a_airquality' },
                     pik_k: { self.DS_TEMP1: 'kb_k_t1',
                              self.DS_TEMP2: 'kb_k_t2',
                              self.DS_TCPU : 'kb_k_tcpu',
                              self.DS_HUMI : 'kb_k_humi',
-                             self.DS_PRESS: 'kb_k_press' }
+                             self.DS_PRESS: 'kb_k_press', 
+                             self.DS_AIRQ:  'kb_k_airquality' }
                   } 
 
         self._running = True
@@ -204,7 +208,8 @@ class ToRRD (threading.Thread):
                                 self.DS[p][self.DS_TEMP2] + ":" + \
                                 self.DS[p][self.DS_TCPU]  + ":" + \
                                 self.DS[p][self.DS_HUMI]  + ":" + \
-                                self.DS[p][self.DS_PRESS] + ":"
+                                self.DS[p][self.DS_PRESS] + ":" + \
+                                self.DS[p][self.DS_AIRQ] + ":"
                 rrd_data += data[p].split("N:")[1].rstrip() + ":"
 
         if data_complete:
