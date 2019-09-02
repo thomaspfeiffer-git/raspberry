@@ -53,7 +53,7 @@ def main():
     bme680 = BME680(i2c_addr=BME_680_BASEADDR, \
                     qv_temp=qv_temp, qv_humi=qv_humi, \
                     qv_pressure=qv_pressure, qv_airquality=qv_airquality)
-    cpu = CPU.CPU()
+    cpu = CPU()
 
     rrd_template = DS_TEMP       + ":" + \
                    DS_HUMI       + ":" + \
@@ -81,7 +81,7 @@ def main():
         Log(rrd_data)
         rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
    
-        sleep(50)
+        time.sleep(50)
 
 
 ###############################################################################

@@ -58,7 +58,7 @@ def main():
                      qvalue_humi=qv_humi)
     ds1820  = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qv_temp_garden)
     tsl2561 = TSL2561(qvalue=qv_lightness)
-    cpu     = CPU.CPU()
+    cpu     = CPU()
 
     rrd_template = DS_TEMP        + ":" + \
                    DS_TEMP_GARDEN + ":" + \
@@ -87,7 +87,7 @@ def main():
         Log(rrd_data)
         rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
    
-        sleep(50)
+        time.sleep(50)
 
 
 ###############################################################################
