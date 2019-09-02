@@ -1,45 +1,38 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# weather.py                                                                  #
-# Monitors temperature, humidity, and air pressure in our living room         #
-# and outside.                                                                #
-# (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
+# weather_indoor.py                                                           #
+# Monitors temperature, humidity, and air pressure in our living room.        #
+# (c) https://github.com/thomaspfeiffer-git 2019                              #
 ###############################################################################
-"""this new version runs on a NanoPi NEO Air"""
-"""(runs on a Raspberry Pi as well :-) )"""
+""" Collect weather and some other data indoor (mainly with BME680). """
 
 # start with:
-# nohup ./weather.py 2>weather.err >weather.err &
+# nohup ./weather_indoor.py 2>weather_indoor.err >weather_indoor.err &
 
 import rrdtool
 import sys
-from time import sleep, strftime
+import time
 
 sys.path.append('../libs')
-sys.path.append('../libs/sensors')
 
-from Adafruit import Adafruit_GPIO_Platform as Platform
-platform = Platform.platform_detect()
-
-import HTU21DF   # temperature, humidity; outdoor
-import CPU
+from sensors.BME680 import BME680, BME_680_BASEADDR
+from sensors.CPU import CPU
 
 from SensorQueue2 import SensorQueueClient_write
 from SensorValue2 import SensorValue, SensorValue_Data
+
+from Logging import Log
 from Shutdown import Shutdown
 
 
 # Misc for rrdtool
-DATAFILE           = "/schild/weather/weather.rrd"
-DS_TEMPINDOOR      = "temp_indoor" 
-DS_TEMPOUTDOOR     = "temp_outdoor"
-DS_HUMIINDOOR      = "humi_indoor"
-DS_HUMIOUTDOOR     = "humi_outdoor"
-DS_REALTEMPOUTDOOR = "temp_3"
-DS_TEMPINDOOR2     = "temp_4"
-DS_AIRPRESSURE     = "air_pressure"
-DS_TEMPCPU         = "temp_cpu"
+DATAFILE      = "/schild/weather/weather_indoor.rrd"
+DS_TEMP       = "temp" 
+DS_HUMI       = "humi"
+DS_PRESSURE   = "pressure"
+DS_AIRQUALITY = "airquality"
+DS_TEMPCPU    = "temp_cpu"
 
 
 ###############################################################################
@@ -47,50 +40,48 @@ DS_TEMPCPU         = "temp_cpu"
 def main():
     """main part"""
 
-    qvalue_temp_indoor      = SensorValue("ID_01", "TempWohnzimmerIndoor", SensorValue_Data.Types.Temp, "°C")
-    qvalue_humi_indoor      = SensorValue("ID_02", "HumiWohnzimmerIndoor", SensorValue_Data.Types.Humi, "% rF")
+    qv_temp       = SensorValue("ID_01", "TempWohnzimmerIndoor", SensorValue_Data.Types.Temp, "°C")
+    qv_humi       = SensorValue("ID_02", "HumiWohnzimmerIndoor", SensorValue_Data.Types.Humi, "% rF")
+    qv_pressure   = SensorValue("ID_05", "Luftdruck", SensorValue_Data.Types.Pressure, "hPa") 
+    qv_airquality = SensorValue("ID_14", "AirQualityWohnzimmer", SensorValue_Data.Types.AirQuality, "%")
 
-    sq.register(qvalue_temp_indoor)
-    sq.register(qvalue_humi_indoor)
+    sq.register(qv_temp)
+    sq.register(qv_humi)
+    sq.register(qv_pressure)
+    sq.register(qv_airquality)
 
-    htu21df  = HTU21DF.HTU21DF(qvalue_temp=qvalue_temp_indoor, qvalue_humi=qvalue_humi_indoor)
-    cpu      = CPU.CPU()
+    bme680 = BME680(i2c_addr=BME_680_BASEADDR, \
+                    qv_temp=qv_temp, qv_humi=qv_humi, \
+                    qv_pressure=qv_pressure, qv_airquality=qv_airquality)
+    cpu = CPU.CPU()
 
-    rrd_template    = DS_TEMPINDOOR      + ":" + \
-                      DS_TEMPOUTDOOR     + ":" + \
-                      DS_HUMIINDOOR      + ":" + \
-                      DS_HUMIOUTDOOR     + ":" + \
-                      DS_REALTEMPOUTDOOR + ":" + \
-                      DS_TEMPINDOOR2     + ":" + \
-                      DS_AIRPRESSURE     + ":" + \
-                      DS_TEMPCPU
-
+    rrd_template = DS_TEMP       + ":" + \
+                   DS_HUMI       + ":" + \
+                   DS_PRESSURE   + ":" + \
+                   DS_AIRQUALITY + ":" + \
+                   DS_TEMPCPU
 
     while True:
-        bme280_pressure     = 1023.0
-        bme280_humidity     = 0.0
-        bme280_temperature  = 0.0
-        ds1820_1_temperature = 0.0
-        ds1820_2_temperature = 0.0
-        temperature = htu21df.read_temperature()
-        humidity    = htu21df.read_humidity()
-        cpu_temp    = cpu.read_temperature()
+        bme680.get_sensor_data()
+        temp       = bme680.data.temperature
+        humi       = bme680.data.humidity
+        pressure   = bme680.data.pressure
+        airquality = bme680.data.air_quality_score \
+                     if bme680.data.air_quality_score != None else 0
+        cpu_temp   = cpu.read_temperature()
      
         rrd_data = "N:" + \
-                   ":".join("{:.2f}".format(d) for d in [temperature,   \
-                                                         bme280_temperature,  \
-                                                         humidity,      \
-                                                         bme280_humidity,     \
-                                                         ds1820_1_temperature, \
-                                                         ds1820_2_temperature, \
-                                                         bme280_pressure,   \
+                   ":".join("{:.2f}".format(d) for d in [temp,       \
+                                                         humi,       \
+                                                         pressure,   \
+                                                         airquality, \
                                                          cpu_temp])
                                                           
-        # print(rrd_template)
-        print(strftime("%Y%m%d %X:"), rrd_data)
+        # Log(rrd_template)
+        Log(rrd_data)
         rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
    
-        sleep(45)
+        sleep(50)
 
 
 ###############################################################################
