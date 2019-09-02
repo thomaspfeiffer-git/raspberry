@@ -396,6 +396,7 @@ printAirQuality()
     --right-axis 1:0                                           \
     DEF:in_airquality=$RRD_IN:airquality:AVERAGE               \
     DEF:ki_airquality=$RRD_KI:ki_airquality:AVERAGE            \
+    DEF:kb_airquality=$RRD_KB:kb_i_airquality:AVERAGE          \
     LINE1:in_airquality#FF0000:"Luftqualität Wohnzimmer      " \
     GPRINT:in_airquality:LAST:"\t Aktuell\: %5.2lf %%"         \
     GPRINT:in_airquality:AVERAGE:"Mittelwert\: %5.2lf %%"      \
@@ -405,7 +406,12 @@ printAirQuality()
     GPRINT:ki_airquality:LAST:"\t Aktuell\: %5.2lf %%"         \
     GPRINT:ki_airquality:AVERAGE:"Mittelwert\: %5.2lf %%"      \
     GPRINT:ki_airquality:MAX:"Max\: %5.2lf %%"                 \
-    GPRINT:ki_airquality:MIN:"Min\: %5.2lf %%\n"               &
+    GPRINT:ki_airquality:MIN:"Min\: %5.2lf %%\n"               \
+    LINE1:kb_airquality#40FF00:"Luftqualität Kollerberg      " \
+    GPRINT:kb_airquality:LAST:"\t Aktuell\: %5.2lf %%"         \
+    GPRINT:kb_airquality:AVERAGE:"Mittelwert\: %5.2lf %%"      \
+    GPRINT:kb_airquality:MAX:"Max\: %5.2lf %%"                 \
+    GPRINT:kb_airquality:MIN:"Min\: %5.2lf %%\n"               &
  }      
 
 
