@@ -2,6 +2,8 @@
 
 RRDPATH=/schild/weather/
 RRD=$RRDPATH/weather.rrd
+RRD_IN=$RRDPATH/weather_indoor.rrd
+RRD_OUT=$RRDPATH/weather_outdoor.rrd
 RRD_K=$RRDPATH/weather_kidsroom.rrd
 RRD_KB=$RRDPATH/weather_kollerberg.rrd
 RRD_WR=$RRDPATH/wardrobe.rrd
@@ -77,9 +79,8 @@ printTemp ()
     --right-axis 1:0                                         \
     DEF:temp_outdoor=$RRD:temp_outdoor:AVERAGE               \
     DEF:temp_realoutdoor=$RRD:temp_3:AVERAGE                 \
-    DEF:temp_indoor=$RRD:temp_indoor:AVERAGE                 \
+    DEF:temp_indoor=$RRD_IN:temp:AVERAGE                   \
     DEF:ki_temp=$RRD_KI:ki_temp:AVERAGE                      \
-    DEF:temp_window=$RRD:temp_4:AVERAGE                      \
     DEF:kidsroom_temp1=$RRD_K:kidsroom_temp1:AVERAGE         \
     DEF:wr_temp1=$RRD_WR:wr_temp1:AVERAGE                    \
     DEF:kb_i_t1=$RRD_KB:kb_i_t1:AVERAGE                      \
@@ -147,7 +148,7 @@ printCPUTemp ()
     -w $WIDTH -h $HEIGHT -a PNG                                          \
     --watermark "$WATERMARK"                                             \
     --right-axis 1:0                                                     \
-    DEF:temp_cpu=$RRD:temp_cpu:AVERAGE                                   \
+    DEF:in_tempcpu=$RRD_IN:temp_cpu:AVERAGE                              \
     DEF:ki_tempcpu=$RRD_KI:ki_tempcpu:AVERAGE                            \
     DEF:kidsroom_tempcpu=$RRD_K:kidsroom_tempcpu:AVERAGE                 \
     DEF:wr_tempcpu=$RRD_WR:wr_tempcpu:AVERAGE                            \
@@ -155,11 +156,11 @@ printCPUTemp ()
     DEF:kb_i_tcpu=$RRD_KB:kb_i_tcpu:AVERAGE                              \
     DEF:kb_a_tcpu=$RRD_KB:kb_a_tcpu:AVERAGE                              \
     DEF:kb_k_tcpu=$RRD_KB:kb_k_tcpu:AVERAGE                              \
-    LINE1:temp_cpu#FF0000:"Temperatur NanoPi NEO Air Wohnzimmer     "    \
-    GPRINT:temp_cpu:LAST:"\t Aktuell\: %5.2lf °C"                        \
-    GPRINT:temp_cpu:AVERAGE:"Mittelwert\: %5.2lf °C"                     \
-    GPRINT:temp_cpu:MAX:"Max\: %5.2lf °C"                                \
-    GPRINT:temp_cpu:MIN:"Min\: %5.2lf °C\n"                              \
+    LINE1:in_tempcpu#FF0000:"Temperatur NanoPi NEO Air Wohnzimmer     "  \
+    GPRINT:in_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
+    GPRINT:in_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
+    GPRINT:in_tempcpu:MAX:"Max\: %5.2lf °C"                              \
+    GPRINT:in_tempcpu:MIN:"Min\: %5.2lf °C\n"                            \
     LINE1:ki_tempcpu#C8FE2E:"Temperatur Raspberry Pi Küche            "  \
     GPRINT:ki_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
     GPRINT:ki_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
@@ -213,7 +214,7 @@ printHumidity ()
     --watermark "$WATERMARK"                                   \
     --right-axis 1:0                                           \
     DEF:humi_outdoor=$RRD:humi_outdoor:AVERAGE                 \
-    DEF:humi_indoor=$RRD:humi_indoor:AVERAGE                   \
+    DEF:humi_indoor=$RRD_IN:humi:AVERAGE                       \
     DEF:ki_humi=$RRD_KI:ki_humi:AVERAGE                        \
     DEF:kidsroom_humi=$RRD_K:kidsroom_humi:AVERAGE             \
     DEF:wr_humi=$RRD_WR:wr_humi:AVERAGE                        \
@@ -281,7 +282,7 @@ printAirPressure ()
     --watermark "$WATERMARK"                             \
     --right-axis 1:0                                     \
     --right-axis-format "%4.0lf"                         \
-    DEF:air_pressure=$RRD:air_pressure:AVERAGE           \
+    DEF:air_pressure=$RRD_IN:pressure:AVERAGE            \
     DEF:kb_i_press=$RRD_KB:kb_i_press:AVERAGE            \
     LINE1:air_pressure#0000FF:"Luftdruck Wien       "    \
     GPRINT:air_pressure:LAST:"\t Aktuell\: %5.2lf hPa"   \
@@ -393,7 +394,13 @@ printAirQuality()
     -w $WIDTH -h $HEIGHT -a PNG                                \
     --watermark "$WATERMARK"                                   \
     --right-axis 1:0                                           \
+    DEF:in_airquality=$RRD_IN:airquality:AVERAGE               \
     DEF:ki_airquality=$RRD_KI:ki_airquality:AVERAGE            \
+    LINE1:in_airquality#FF0000:"Luftqualität Wohnzimmer      " \
+    GPRINT:in_airquality:LAST:"\t Aktuell\: %5.2lf %%"         \
+    GPRINT:in_airquality:AVERAGE:"Mittelwert\: %5.2lf %%"      \
+    GPRINT:in_airquality:MAX:"Max\: %5.2lf %%"                 \
+    GPRINT:in_airquality:MIN:"Min\: %5.2lf %%\n"               \
     LINE1:ki_airquality#C8FE2E:"Luftqualität Küche           " \
     GPRINT:ki_airquality:LAST:"\t Aktuell\: %5.2lf %%"         \
     GPRINT:ki_airquality:AVERAGE:"Mittelwert\: %5.2lf %%"      \
