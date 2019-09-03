@@ -3,7 +3,7 @@
 ##############################################################################
 # tests BME680                                                               #
 # taken from https://github.com/pimoroni/bme680                              #
-# (c) https://github.com/thomaspfeiffer-git 2017, 2018                       #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2018, 2019                 #
 ##############################################################################
 
 import sys
