@@ -3,7 +3,7 @@
 cd /home/pi/raspberry/
 
 cd weather/
-nohup ./weather.py 2>&1 > weather.log &
+nohup ./weather_outdoor.py 2>&1 > weather_outdoor.log &
 cd ..
 
 cd airparticulates/
