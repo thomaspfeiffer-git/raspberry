@@ -153,6 +153,7 @@ printCPUTemp ()
     DEF:kidsroom_tempcpu=$RRD_K:kidsroom_tempcpu:AVERAGE                 \
     DEF:wr_tempcpu=$RRD_WR:wr_tempcpu:AVERAGE                            \
     DEF:ar_tempcpu=$RRD_AR:ar_tempcpu:AVERAGE                            \
+    DEF:out_tempcpu=$RRD_OUT:temp_cpu:AVERAGE                            \
     DEF:kb_i_tcpu=$RRD_KB:kb_i_tcpu:AVERAGE                              \
     DEF:kb_a_tcpu=$RRD_KB:kb_a_tcpu:AVERAGE                              \
     DEF:kb_k_tcpu=$RRD_KB:kb_k_tcpu:AVERAGE                              \
@@ -181,6 +182,11 @@ printCPUTemp ()
     GPRINT:wr_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
     GPRINT:wr_tempcpu:MAX:"Max\: %5.2lf °C"                              \
     GPRINT:wr_tempcpu:MIN:"Min\: %5.2lf °C\n"                            \
+    LINE1:out_tempcpu#dcdcdc:"Temperatur NanoPi NEO Air Garten         " \
+    GPRINT:out_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                    \
+    GPRINT:out_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                 \
+    GPRINT:out_tempcpu:MAX:"Max\: %5.2lf °C"                            \
+    GPRINT:out_tempcpu:MIN:"Min\: %5.2lf °C\n"                          \
     LINE1:kb_i_tcpu#40FF00:"Temperatur Raspberry Pi Kollerberg innen "   \
     GPRINT:kb_i_tcpu:LAST:"\t Aktuell\: %5.2lf °C"                       \
     GPRINT:kb_i_tcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                    \
