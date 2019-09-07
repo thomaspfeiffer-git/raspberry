@@ -83,7 +83,7 @@ class BME280(object):
         self._mode = mode
         # Create I2C device.
         if i2c is None:
-            from Adafruit import Adafruit_I2C as I2C
+            from sensors.Adafruit import Adafruit_I2C as I2C
             i2c = I2C
         self._device = i2c.get_i2c_device(address, **kwargs)
         # Load calibration values.
