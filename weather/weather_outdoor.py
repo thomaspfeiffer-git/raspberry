@@ -43,7 +43,8 @@ DS_TEMPCPU     = "temp_cpu"
 def main():
     """main part"""
 
-    qv_temp        = SensorValue("ID_03", "TempOutdoor", SensorValue_Data.Types.Temp, "°C")
+    # qv_temp        = SensorValue("ID_03", "TempOutdoor", SensorValue_Data.Types.Temp, "°C")
+    qv_temp        = SensorValue("ID_12", "TempOutdoor", SensorValue_Data.Types.Temp, "°C")
     qv_temp_garden = SensorValue("ID_12", "TempOutdoorGarden", SensorValue_Data.Types.Temp, "°C")
     qv_humi        = SensorValue("ID_04", "HumiOutdoor", SensorValue_Data.Types.Humi, "% rF")
     qv_lightness   = SensorValue("ID_15", "LightnessOutdoor", SensorValue_Data.Types.Light, "lux")
