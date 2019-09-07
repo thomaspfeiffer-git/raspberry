@@ -53,13 +53,11 @@ def main():
     sq.register(qv_humi)
     sq.register(qv_lightness)
 
-    """
-    bme280  = BME280(qvalue_pressure=qv_pressure, \
+    bme280  = BME280(qvalue_pressure=None, \
                      qvalue_temp=qv_temp,  \
                      qvalue_humi=qv_humi)
-    ds1820  = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qv_temp_garden)
+    # ds1820  = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qv_temp_garden)
     tsl2561 = TSL2561(qvalue=qv_lightness)
-    """
     cpu     = CPU()
 
     rrd_template = DS_TEMP        + ":" + \
@@ -70,18 +68,12 @@ def main():
                    DS_TEMPCPU
 
     while True:
-        """
         temp        = bme280.read_temperature()
-        temp_garden = ds1820.read_temperature()
+        # temp_garden = ds1820.read_temperature()
         humi        = bme280.read_humidity()
         pressure    = bme280.read_pressure()/100.0 
         lightness   = tsl2561.lux()
-        """
-        temp        = 20.0
         temp_garden = 20.0
-        humi        = 40.0
-        pressure    = 1013.0
-        lightness   = 0
         cpu_temp    = cpu.read_temperature()
      
         rrd_data = "N:" + \
