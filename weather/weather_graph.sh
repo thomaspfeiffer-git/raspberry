@@ -42,6 +42,11 @@ PNG_WR_LIGHTNESS_W=$RRDPATH/wr_lightness_w.png
 PNG_WR_LIGHTNESS_M=$RRDPATH/wr_lightness_m.png
 PNG_WR_LIGHTNESS_Y=$RRDPATH/wr_lightness_y.png
 
+PNG_OUT_LIGHTNESS_D=$RRDPATH/out_lightness_d.png
+PNG_OUT_LIGHTNESS_W=$RRDPATH/out_lightness_w.png
+PNG_OUT_LIGHTNESS_M=$RRDPATH/out_lightness_m.png
+PNG_OUT_LIGHTNESS_Y=$RRDPATH/out_lightness_y.png
+
 PNG_ANTEROOM_D=$RRDPATH/anteroom_d.png
 PNG_ANTEROOM_W=$RRDPATH/anteroom_w.png
 PNG_ANTEROOM_M=$RRDPATH/anteroom_m.png
@@ -77,9 +82,9 @@ printTemp ()
     -w $WIDTH -h $(($HEIGHT*2)) -a PNG                       \
     --watermark "$WATERMARK"                                 \
     --right-axis 1:0                                         \
-    DEF:temp_outdoor=$RRD:temp_outdoor:AVERAGE               \
+    DEF:temp_outdoor=$RRD_OUT:temp:AVERAGE                   \
     DEF:temp_realoutdoor=$RRD:temp_3:AVERAGE                 \
-    DEF:temp_indoor=$RRD_IN:temp:AVERAGE                   \
+    DEF:temp_indoor=$RRD_IN:temp:AVERAGE                     \
     DEF:ki_temp=$RRD_KI:ki_temp:AVERAGE                      \
     DEF:kidsroom_temp1=$RRD_K:kidsroom_temp1:AVERAGE         \
     DEF:wr_temp1=$RRD_WR:wr_temp1:AVERAGE                    \
@@ -219,7 +224,7 @@ printHumidity ()
     -w $WIDTH -h $HEIGHT -a PNG                                \
     --watermark "$WATERMARK"                                   \
     --right-axis 1:0                                           \
-    DEF:humi_outdoor=$RRD:humi_outdoor:AVERAGE                 \
+    DEF:humi_outdoor=$RRD_OUT:humi:AVERAGE                     \
     DEF:humi_indoor=$RRD_IN:humi:AVERAGE                       \
     DEF:ki_humi=$RRD_KI:ki_humi:AVERAGE                        \
     DEF:kidsroom_humi=$RRD_K:kidsroom_humi:AVERAGE             \
@@ -362,7 +367,7 @@ printAnteroom()
 printLightness()
   {
     rrdtool graph $2                                        \
-    --title "Helligkeit [lux]"                              \
+    --title "Helligkeit indoor [lux]"                       \
     --end now --start end-$1                                \
     -w $WIDTH -h $HEIGHT -a PNG                             \
     --alt-autoscale                                         \
@@ -384,6 +389,33 @@ printLightness()
     GPRINT:wr_lightness:MAX:"Max\: %5.2lf lux"              \
     GPRINT:wr_lightness:MIN:"Min\: %5.2lf lux\n"            &
  }
+
+ 
+#######################################################################
+# printLightness_Outdoor()                                            #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printLightness_Outdoor()
+  {
+    rrdtool graph $2                                        \
+    --title "Helligkeit outdoor [lux]"                      \
+    --end now --start end-$1                                \
+    -w $WIDTH -h $HEIGHT -a PNG                             \
+    --alt-autoscale                                         \
+    --alt-y-grid                                            \
+    --rigid                                                 \
+    --watermark "$WATERMARK"                                \
+    --right-axis 1:0                                        \
+    --right-axis-format "%4.0lf"                            \
+    DEF:out_lightness=$RRD_OUT:lightness:AVERAGE            \
+    LINE1:out_lightness#0000FF:"Helligkeit draußen         " \
+    GPRINT:out_lightness:LAST:"\t Aktuell\: %5.2lf lux"     \
+    GPRINT:out_lightness:AVERAGE:"Mittelwert\: %5.2lf lux"  \
+    GPRINT:out_lightness:MAX:"Max\: %5.2lf lux"             \
+    GPRINT:out_lightness:MIN:"Min\: %5.2lf lux\n"           &
+ }   
 
 
 #######################################################################
@@ -498,6 +530,11 @@ printLightness "36h", "$PNG_WR_LIGHTNESS_D"
 printLightness "7d", "$PNG_WR_LIGHTNESS_W"
 printLightness "30d", "$PNG_WR_LIGHTNESS_M"
 printLightness "365d", "$PNG_WR_LIGHTNESS_Y"
+
+printLightness_Outdoor "36h", "$PNG_OUT_LIGHTNESS_D"
+printLightness_Outdoor "7d", "$PNG_OUT_LIGHTNESS_W"
+printLightness_Outdoor "30d", "$PNG_OUT_LIGHTNESS_M"
+printLightness_Outdoor "365d", "$PNG_OUT_LIGHTNESS_Y"
 
 printAirQuality "36h", "$PNG_AIRQUALITY_D"
 printAirQuality "7d", "$PNG_AIRQUALITY_W"
