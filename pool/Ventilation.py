@@ -22,13 +22,13 @@ from Logging import Log
 from Shutdown import Shutdown
 
 from sensors.CPU import CPU
-from sensors.HTU21DF import HTU21DF
 from sensors.DS1820 import DS1820
 
 
 # temperature and humidity sensor SHT31
+# https://github.com/adafruit/Adafruit_CircuitPython_SHT31D
 # http://www.pibits.net/code/raspberry-pi-sht31-sensor-example.php
-
+ 
 # Sensor #1: AirIn
 # Sensor #2: AirOut
 
