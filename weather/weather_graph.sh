@@ -82,7 +82,7 @@ printTemp ()
     --watermark "$WATERMARK"                                 \
     --right-axis 1:0                                         \
     DEF:temp_outdoor=$RRD_OUT:temp:AVERAGE                   \
-    DEF:temp_realoutdoor=$RRD_OUT:temp_garden:AVERAGE        \
+    DEF:temp_realoutdoor=$RRD_OUT:temp_gard:AVERAGE          \
     DEF:temp_indoor=$RRD_IN:temp:AVERAGE                     \
     DEF:ki_temp=$RRD_KI:ki_temp:AVERAGE                      \
     DEF:kidsroom_temp1=$RRD_K:kidsroom_temp1:AVERAGE         \
