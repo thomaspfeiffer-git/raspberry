@@ -21,8 +21,7 @@ sys.path.append("../libs/")
 from Logging import Log
 from Shutdown import Shutdown
 
-from sensors.CPU import CPU
-from sensors.DS1820 import DS1820
+from Sensors import Sensors
 
 
 # temperature and humidity sensor SHT31
@@ -57,6 +56,8 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
+    sensors = Sensors()
+    sensors.read_once()
 
 
 # eof #
