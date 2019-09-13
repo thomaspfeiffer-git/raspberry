@@ -21,7 +21,7 @@ sys.path.append("../libs/")
 from Logging import Log
 from Shutdown import Shutdown
 
-from Sensors import Sensors
+from Sensors import Sensors, Sensordata
 
 
 # temperature and humidity sensor SHT31
@@ -56,7 +56,9 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    sensors = Sensors()
+    data = Sensordata()
+
+    sensors = Sensors(data)
     sensors.read_once()
 
 
