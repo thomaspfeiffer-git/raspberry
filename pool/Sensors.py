@@ -1,4 +1,3 @@
-#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Sensors.py                                                                  #
@@ -35,24 +34,25 @@ class Sensordata (object):
         self.airin_humidity = None
         self.airout_temp = None
         self.airout_humidity = None
-        self.engines_circulation = None
-        self.engines_countercurrent = None
+        self.engine_circulation = None
+        self.engine_countercurrent = None
         self.outdoor_temp = None
         self.water_temp = None
 
     def __str__ (self):
         if self.valid:
-            print "test cpu: {0.cpu:.2f}".format(self)
-            return "CPU:      {cpu:.2f} °C\n" \
-                   "Temp Box: {:.2f} °C\n" \
-                   "Humi Box: {:.2f} % rF\n" \
-                   "Temp Air in: {:.2f} °C\n" \
-                   "Humi Air in: {:.2f} % rF\n"  \
-                   "Temp Air out: {:.2f} °C\n" \
-                   "Humi Air out: {:.2f} % rF\n" \
-                   .format(self.cpu, self.box_temp, self.box_humidity,
-                           self.airin_temp, self.airin_humidity,
-                           self.airout_temp, self.airout_humidity)
+            return "CPU:          {0.cpu:.2f} °C\n"               \
+                   "Temp box:     {0.box_temp:.2f} °C\n"          \
+                   "Temp air in:  {0.airin_temp:.2f} °C\n"        \
+                   "Temp air out: {0.airout_temp:.2f} °C\n"       \
+                   "Temp outdoor: {0.outdoor_temp:.2f} °C\n"      \
+                   "Temp water:   {0.water_temp:.2f} °C\n"        \
+                   "Humi box:     {0.box_humidity:.2f} % rF\n"    \
+                   "Humi air in:  {0.airin_humidity:.2f} % rF\n"  \
+                   "Humi air out: {0.airout_humidity:.2f} % rF\n" \
+                   "Engine circulation:     {0.engine_circulation:.2f}\n"    \
+                   "Engine counter current: {0.engine_countercurrent:.2f}\n" \
+                   .format(self)
         else:
             return "Sensordata not valid."
 
@@ -72,10 +72,8 @@ class Sensors (threading.Thread):
         self.__data = data
         self._running = True
 
-    # def run (self):
-    #    while self._running:
-    def read_once (self):
-        if True:
+    def run (self):
+       while self._running:
             self.__data.cpu = self.cpu.read_temperature()
             self.__data.box_temp = self.htu21_box.read_temperature()
             self.__data.box_humidity = self.htu21_box.read_humidity()
@@ -83,12 +81,17 @@ class Sensors (threading.Thread):
             self.__data.airin_humidity = self.sht31_airin.read_humidity()
             self.__data.airout_temp = self.sht31_airout.read_temperature()
             self.__data.airout_humidity = self.sht31_airout.read_humidity()
-            self.__data.engines_circulation = self.pcf8591.read(channel=0)
-            self.__data.engines_countercurrent = self.pcf8591.read(channel=1)
+            self.__data.engine_circulation = self.pcf8591.read(channel=0)
+            self.__data.engine_countercurrent = self.pcf8591.read(channel=1)
             self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
-            self.__data.water_temp = 0.0
+            self.__data.water_temp = 0.0    # self.ds1820_water.read_temperature()
             self.__data.valid = True
-            print(self.__data)
+            Log("\n{}".format(self.__data))
+
+            for _ in range(600):      # interruptible sleep 
+                if not self._running:
+                    break
+                time.sleep(0.1)
 
     def stop (self):
         self._running = False
