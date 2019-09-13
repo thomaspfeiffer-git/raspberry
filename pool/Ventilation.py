@@ -22,6 +22,7 @@ sys.path.append("../libs/")
 from Logging import Log
 from Shutdown import Shutdown
 
+from Display import Display
 from Sensors import Sensors, Sensordata
 
 
@@ -35,9 +36,10 @@ from Sensors import Sensors, Sensordata
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
+    display.stop()
+    display.join()
     sensors.stop()
     sensors.join()
-
     Log("Application stopped")
     sys.exit(0)
 
@@ -51,6 +53,9 @@ if __name__ == "__main__":
 
     sensors = Sensors(data)
     sensors.start()
+
+    display = Display(data)
+    display.start()
 
     while True:
         time.sleep(0.5)
