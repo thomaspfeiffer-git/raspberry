@@ -5,7 +5,7 @@
 ###############################################################################
 
 """
-TODO
+Contains all sensor staff.
 """
 
 import sys
@@ -24,6 +24,8 @@ from sensors.PCF8591 import PCF8591
 from sensors.SHT31 import SHT31, SHT31_BASEADDR, SHT31_SECONDARYADDR
 
 
+###############################################################################
+# Sensordata ##################################################################
 class Sensordata (object):
     def __init__ (self):
         self.valid = False
@@ -57,6 +59,8 @@ class Sensordata (object):
             return "Sensordata not valid."
 
 
+###############################################################################
+# Sensors #####################################################################
 class Sensors (threading.Thread):
     def __init__ (self, data):
         threading.Thread.__init__(self)

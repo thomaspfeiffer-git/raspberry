@@ -5,7 +5,7 @@
 ###############################################################################
 
 """
-TODO
+Displays most important data on an SSD1306.
 """
 
 import sys
@@ -22,6 +22,8 @@ from actuators.SSD1306 import SSD1306
 from Logging import Log
 
 
+###############################################################################
+# Display #####################################################################
 class Display (threading.Thread):
     def __init__ (self, data):
         threading.Thread.__init__(self)
@@ -50,10 +52,11 @@ class Display (threading.Thread):
                             outline=0, fill=255)
         self.y = self.ypos
 
-        self.draw_line("In:")
-        self.draw_line("Out:")
-        self.draw_line("Water:")
-        self.draw_line("Time: {}".format(time.strftime("%X")))
+        if self.data.valid:
+            self.draw_line("I: {0.airin_temp:.1f} °C / {0.airin_humidity:.0f} % rF".format(self.data))
+            self.draw_line("O: {0.airout_temp:.1f} °C / {0.airout_humidity:.0f} % rF".format(self.data))
+            self.draw_line("Water: {0.water_temp:.1f} °C".format(self.data))
+            self.draw_line("Time: {}".format(time.strftime("%X")))
 
         self.display.image(self.image)
         self.display.display()
