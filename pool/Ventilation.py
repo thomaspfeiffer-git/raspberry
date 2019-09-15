@@ -24,6 +24,7 @@ from Shutdown import Shutdown
 
 from Display import Display
 from Sensors import Sensors, Sensordata
+from UDP import UDP_Sender
 
 
 # Fans (AirIn, AirOut):
@@ -36,6 +37,8 @@ from Sensors import Sensors, Sensordata
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
+    udp_sender.stop()
+    udp_sender.join()
     sensors.stop()
     sensors.join()
     Log("Application stopped")
@@ -49,6 +52,9 @@ if __name__ == "__main__":
     data = Sensordata()
 
     display = Display(data)
+
+    udp_sender = UDP_Sender(data)
+    udp_sender.start()
 
     sensors = Sensors(data,update_display=display.print)
     sensors.start()

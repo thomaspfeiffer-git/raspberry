@@ -58,6 +58,13 @@ class Sensordata (object):
         else:
             return "Sensordata not valid."
 
+    @property
+    def rrd (self):
+        if self.valid:
+            return "N:"
+        else:
+            return "Sensordata not valid."
+
 
 ###############################################################################
 # Sensors #####################################################################

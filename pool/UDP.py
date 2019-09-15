@@ -12,6 +12,7 @@ import configparser as cfgparser
 import socket
 import sys
 import threading
+import time
 
 
 sys.path.append("../libs/")
@@ -41,18 +42,30 @@ class UDP_Sender (threading.Thread):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.digest = Digest(CONFIG.SECRET)
         self.data = data
+        self._running = True
 
     def send (self):
-        payload = data # TODO
-        datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
-        try:
-            sent = self.socket.sendto(datagram, 
-                                      (CONFIG.IP_ADDRESS_SERVER, 
-                                      CONFIG.UDP_PORT))
-            Log("Sent bytes: {}; data: {}".format(sent,datagram))
-        except:
-            Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
+        if self.data.valid:
+            payload = "{}".format(self.data.rrd) # TODO
+            datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
+            try:
+                sent = self.socket.sendto(datagram, 
+                                          (CONFIG.IP_ADDRESS_SERVER, 
+                                          CONFIG.UDP_PORT))
+                Log("Sent bytes: {}; data: {}".format(sent,datagram))
+            except:
+                Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
 
+    def run (self):
+        while self._running:
+            self.send()
+            for _ in range(600):      # interruptible sleep 
+                if not self._running:
+                    break
+                time.sleep(0.1)
+
+    def stop (self):
+        self._running = False
 
 
 ###############################################################################
