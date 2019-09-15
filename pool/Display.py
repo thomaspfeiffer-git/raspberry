@@ -9,7 +9,6 @@ Displays most important data on an SSD1306.
 """
 
 import sys
-import threading
 import time
 
 from PIL import Image
@@ -24,16 +23,13 @@ from Logging import Log
 
 ###############################################################################
 # Display #####################################################################
-class Display (threading.Thread):
-    def __init__ (self, data, lock):
-        threading.Thread.__init__(self)
+class Display (object):
+    def __init__ (self, data):
         self.data = data
-        self.__lock = lock
         self.display = SSD1306()
 
-        with self.__lock:
-            self.display.begin()
-            self.off()
+        self.display.begin()
+        self.off()
 
         self.xpos = 6
         self.ypos = 2
@@ -42,8 +38,6 @@ class Display (threading.Thread):
         self.draw  = ImageDraw.Draw(self.image)
         self.font  = ImageFont.load_default()
         (_, self.fontheight) = self.font.getsize("A")
-
-        self._running = True
 
     def draw_line (self, text):
         self.draw.text((self.xpos, self.y), text, font=self.font, fill=0)
@@ -60,27 +54,12 @@ class Display (threading.Thread):
             self.draw_line("Water: {0.water_temp:.1f} °C".format(self.data))
             self.draw_line("Time: {}".format(time.strftime("%X")))
 
-        with self.__lock:
-            self.display.image(self.image)
-            self.display.display()
+        self.display.image(self.image)
+        self.display.display()
 
     def off (self):
-        with self.__lock:
-            self.display.clear()
-            self.display.display()
-
-    def run (self):
-        while self._running:
-            self.print()
-
-            for _ in range(10):
-                if not self._running:
-                    break
-                time.sleep(0.1)    
-        self.off()        
-
-    def stop (self):
-        self._running = False
+        self.display.clear()
+        self.display.display()
 
 # eof #
 

@@ -62,10 +62,9 @@ class Sensordata (object):
 ###############################################################################
 # Sensors #####################################################################
 class Sensors (threading.Thread):
-    def __init__ (self, data, lock):
+    def __init__ (self, data, update_display):
         threading.Thread.__init__(self)
 
-        self.__lock = lock
         self.cpu = CPU()
         self.ds1820_outdoor = DS1820("/sys/bus/w1/devices/28-000008561957/w1_slave")
         # self.ds1820_water = DS1820()
@@ -75,24 +74,25 @@ class Sensors (threading.Thread):
         self.pcf8591 = PCF8591()
 
         self.__data = data
+        self.update_display = update_display
         self._running = True
 
     def run (self):
        while self._running:
-            with self.__lock:
-                self.__data.cpu = self.cpu.read_temperature()
-                self.__data.box_temp = self.htu21_box.read_temperature()
-                self.__data.box_humidity = self.htu21_box.read_humidity()
-                self.__data.airin_temp = self.sht31_airin.read_temperature()
-                self.__data.airin_humidity = self.sht31_airin.read_humidity()
-                self.__data.airout_temp = self.sht31_airout.read_temperature()
-                self.__data.airout_humidity = self.sht31_airout.read_humidity()
-                self.__data.engine_circulation = self.pcf8591.read(channel=0)
-                self.__data.engine_countercurrent = self.pcf8591.read(channel=1)
-                self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
-                self.__data.water_temp = 0.0    # self.ds1820_water.read_temperature()
-                self.__data.valid = True
+            self.__data.cpu = self.cpu.read_temperature()
+            self.__data.box_temp = self.htu21_box.read_temperature()
+            self.__data.box_humidity = self.htu21_box.read_humidity()
+            self.__data.airin_temp = self.sht31_airin.read_temperature()
+            self.__data.airin_humidity = self.sht31_airin.read_humidity()
+            self.__data.airout_temp = self.sht31_airout.read_temperature()
+            self.__data.airout_humidity = self.sht31_airout.read_humidity()
+            self.__data.engine_circulation = self.pcf8591.read(channel=0)
+            self.__data.engine_countercurrent = self.pcf8591.read(channel=1)
+            self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
+            self.__data.water_temp = 0.0    # self.ds1820_water.read_temperature()
+            self.__data.valid = True
             Log("\n{}".format(self.__data))
+            self.update_display()
 
             for _ in range(600):      # interruptible sleep 
                 if not self._running:
