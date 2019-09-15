@@ -46,7 +46,7 @@ class UDP_Sender (threading.Thread):
 
     def send (self):
         if self.data.valid:
-            payload = "{}".format(self.data.rrd) # TODO
+            payload = "{}".format(self.data.rrd)
             datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
             try:
                 sent = self.socket.sendto(datagram, 
@@ -72,10 +72,9 @@ class UDP_Sender (threading.Thread):
 # UDP_Receiver ################################################################
 class UDP_Receiver (object):
     def __init__ (self):
-        self.digest = Digest(CONFIG.Livetracking.SECRET)
+        self.digest = Digest(CONFIG.SECRET)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((CONFIG.Livetracking.IP_ADDRESS_SERVER, 
-                          CONFIG.Livetracking.UDP_PORT))
+        self.socket.bind((CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
 
     def receive (self):
         while True:

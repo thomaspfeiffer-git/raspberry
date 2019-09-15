@@ -36,10 +36,11 @@ class Sensordata (object):
         self.airin_humidity = None
         self.airout_temp = None
         self.airout_humidity = None
-        self.engine_circulation = None
-        self.engine_countercurrent = None
         self.outdoor_temp = None
         self.water_temp = None
+        self.fans_on = 0
+        self.engine_circulation = None
+        self.engine_countercurrent = None
 
     def __str__ (self):
         if self.valid:
@@ -52,6 +53,7 @@ class Sensordata (object):
                    "Humi box:     {0.box_humidity:.2f} % rF\n"    \
                    "Humi air in:  {0.airin_humidity:.2f} % rF\n"  \
                    "Humi air out: {0.airout_humidity:.2f} % rF\n" \
+                   "Fans on:      {0.fans_on}\n"                  \
                    "Engine circulation:     {0.engine_circulation:.2f}\n"    \
                    "Engine counter current: {0.engine_countercurrent:.2f}\n" \
                    .format(self)
@@ -61,9 +63,36 @@ class Sensordata (object):
     @property
     def rrd (self):
         if self.valid:
-            return "N:"
+            return "N:{0.cpu:.2f}"                   \
+                    ":{0.box_temp:.2f}"              \
+                    ":{0.airin_temp:.2f}"            \
+                    ":{0.airout_temp:.2f}"           \
+                    ":{0.outdoor_temp:.2f}"          \
+                    ":{0.water_temp:.2f}"            \
+                    ":{0.box_humidity:.2f}"          \
+                    ":{0.airin_humidity:.2f}"        \
+                    ":{0.airout_humidity:.2f}"       \
+                    ":{0.fans_on}"                   \
+                    ":{0.engine_circulation:.2f}"    \
+                    ":{0.engine_countercurrent:.2f}" \
+                    .format(self)
         else:
             return "Sensordata not valid."
+
+    @staticmethod
+    def rrd_template ():
+        return "DS_TEMPCPU:"     \
+               "DS_TEMPBOX:"     \
+               "DS_TEMPAIRIN:"   \
+               "DS_TEMPAIROUT:"  \
+               "DS_TEMPOUTDOOR:" \
+               "DS_TEMPWATER:"   \
+               "DS_HUMIBOX:"     \
+               "DS_HUMIAIRIN:"   \
+               "DS_HUMIAIROUT:"  \
+               "DS_FANS:"        \
+               "DS_ENGCIRC:"     \
+               "DS_ENGCC"
 
 
 ###############################################################################
