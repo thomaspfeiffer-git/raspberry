@@ -14,6 +14,7 @@ Controls ventilation of the control room of our swimming pool.
 
 
 import sys
+import threading
 import time
 
 
@@ -48,13 +49,14 @@ def shutdown_application ():
 ## main #######################################################################
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
+    i2c_lock = threading.Lock()
 
     data = Sensordata()
 
-    sensors = Sensors(data)
+    sensors = Sensors(data, i2c_lock)
     sensors.start()
 
-    display = Display(data)
+    display = Display(data, i2c_lock)
     display.start()
 
     while True:

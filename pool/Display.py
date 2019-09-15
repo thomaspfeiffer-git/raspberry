@@ -25,13 +25,15 @@ from Logging import Log
 ###############################################################################
 # Display #####################################################################
 class Display (threading.Thread):
-    def __init__ (self, data):
+    def __init__ (self, data, lock):
         threading.Thread.__init__(self)
         self.data = data
+        self.__lock = lock
         self.display = SSD1306()
 
-        self.display.begin()
-        self.off()
+        with self.__lock:
+            self.display.begin()
+            self.off()
 
         self.xpos = 6
         self.ypos = 2
@@ -58,12 +60,14 @@ class Display (threading.Thread):
             self.draw_line("Water: {0.water_temp:.1f} °C".format(self.data))
             self.draw_line("Time: {}".format(time.strftime("%X")))
 
-        self.display.image(self.image)
-        self.display.display()
+        with self.__lock:
+            self.display.image(self.image)
+            self.display.display()
 
     def off (self):
-        self.display.clear()
-        self.display.display()
+        with self.__lock:
+            self.display.clear()
+            self.display.display()
 
     def run (self):
         while self._running:
