@@ -80,8 +80,8 @@ class UDP_Receiver (object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
 
-    def store (self):
-        Log("Data received: {}".format(datagram))
+    def store (self, data):
+        Log("Data received: {}".format(data))
         # TODO rrd stuff
 
     def receive (self):
