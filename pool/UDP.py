@@ -1,3 +1,4 @@
+#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
 # UDP.py                                                                      #
@@ -11,14 +12,13 @@ Purpose:
 
 This lib can be used either standalone as a receiver (2) or 
 imported to another python program as a sender (1).
-
 """
 
+import configparser as cfgparser
 import socket
 import sys
 import threading
 import time
-
 
 sys.path.append("../libs/")
 from Commons import Digest

@@ -17,4 +17,7 @@ cd seti/
 nohup ./seti_receiver.py 2>&1 > seti_receiver.log &
 cd ..
 
+cd pool/
+nohup ./UDP.py 2>&1 > udp.log &
+cd ..
 
