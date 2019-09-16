@@ -5,7 +5,7 @@
 ###############################################################################
 
 """
-Contains all sensor staff.
+Contains all sensor stuff.
 """
 
 import sys

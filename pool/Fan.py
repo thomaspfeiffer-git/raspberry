@@ -35,16 +35,16 @@ class Fan (object):
         Log("Fan {} switched off.".format(self.pin))
 
     def on (self):
-        if self.__t_on:
-            self.__t_on.join()
-        self.__t_on = threading.Thread(target=self.__on)
-        self.__t_on.start()
+        if self.__thread_on:
+            self.__thread_on.join()
+        self.__thread_on = threading.Thread(target=self.__on)
+        self.__thread_on.start()
 
     def off (self):
-        if self.__t_off:
-            self.__t_off.join()
-        self.__t_off = threading.Thread(target=self.__off)
-        self.__t_off.start()
+        if self.__thread_off:
+            self.__thread_off.join()
+        self.__thread_off = threading.Thread(target=self.__off)
+        self.__thread_off.start()
 
 # eof #
 

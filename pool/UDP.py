@@ -5,10 +5,15 @@
 ###############################################################################
 
 """
-TODO
+Purpose:
+1) Send all data using UDP to my main server. 
+2) Receive data and store to rrd database.
+
+This lib can be used either standalone as a receiver (2) or 
+imported to another python program as a sender (1).
+
 """
 
-import configparser as cfgparser
 import socket
 import sys
 import threading
@@ -50,8 +55,7 @@ class UDP_Sender (threading.Thread):
             datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
             try:
                 sent = self.socket.sendto(datagram, 
-                                          (CONFIG.IP_ADDRESS_SERVER, 
-                                          CONFIG.UDP_PORT))
+                                          (CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
                 Log("Sent bytes: {}; data: {}".format(sent,datagram))
             except:
                 Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
@@ -76,10 +80,34 @@ class UDP_Receiver (object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
 
+    def store (self):
+        Log("Data received: {}".format(datagram))
+        # TODO rrd stuff
+
     def receive (self):
         while True:
-            datagram = self.socket.recv(CONFIG.Livetracking.MAX_PACKET_SIZE).decode('utf-8')
-            Log(datagram)
+            datagram = self.socket.recv(CONFIG.MAX_PACKET_SIZE).decode('utf-8')
+            data = datagram # TODO: split, checksum, ...
+            self.store(data)
+
+
+###############################################################################
+# shutdown ####################################################################
+def shutdown_application ():
+    """cleanup stuff"""
+    Log("Stopping application")
+    Log("Application stopped")
+    sys.exit(0)
+
+
+###############################################################################
+## main #######################################################################
+if __name__ == "__main__":
+    from Shutdown import Shutdown
+    shutdown_application = Shutdown(shutdown_func=shutdown_application)
+
+    udp = UDP_Receiver()
+    udp.receive()
 
 # eof #
 
