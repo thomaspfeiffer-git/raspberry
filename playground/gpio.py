@@ -24,7 +24,7 @@ class gpio (object):
         self.__pin = "{}".format(linux_gpio)
         o = open("/sys/class/gpio/export", "w"); o.write(self.__pin); o.close()
         time.sleep(0.5)
-       o = open("/sys/class/gpio/gpio{}/direction".format(self.__pin), "w"); o.write("out"); o.close()
+        o = open("/sys/class/gpio/gpio{}/direction".format(self.__pin), "w"); o.write("out"); o.close()
 
     def on (self):
         o = open("/sys/class/gpio/gpio{}/value".format(self.__pin), "w"); o.write("1"); o.close()
