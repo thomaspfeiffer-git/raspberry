@@ -35,8 +35,8 @@ class gpio (object):
 #        o = open("/sys/class/gpio/gpio{}/value".format(self.pin), "w"); o.write("0"); o.close()
         pass
 
-    def close (self):
-        self.off()
+    def close (self, immediate=False):
+        self.off(immediate)
 #        o = open("/sys/class/gpio/unexport", "w"); o.write(self.pin); o.close()
 
 
@@ -48,16 +48,17 @@ class Fan (gpio):
         self.pin = pin
         self.delay = delay
 
-        self.__t_on = None
-        self.__t_off = None
+        self.__thread_on = None
+        self.__thread_off = None
 
     def __on (self):
         time.sleep(self.delay)
         super().on()
         Log("Fan {} switched on.".format(self.pin))
 
-    def __off (self):
-        time.sleep(self.delay)
+    def __off (self, immediate):
+        if not immediate:
+            time.sleep(self.delay)
         super().off()
         Log("Fan {} switched off.".format(self.pin))
 
@@ -68,11 +69,11 @@ class Fan (gpio):
         self.__thread_on = threading.Thread(target=self.__on)
         self.__thread_on.start()
 
-    def off (self):
+    def off (self, immediate=False):
         if self.__thread_off:
             self.__thread_off.join()
             self.__thread_off = None
-        self.__thread_off = threading.Thread(target=self.__off)
+        self.__thread_off = threading.Thread(target=self.__off, kwargs={'immediate': immediate})
         self.__thread_off.start()
 
 # eof #

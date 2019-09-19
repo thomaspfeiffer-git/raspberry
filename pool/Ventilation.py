@@ -18,6 +18,7 @@ Controls ventilation of the control room of our swimming pool.
 # sudo pip3 install schedule
 
 
+import schedule
 import sys
 import time
 
@@ -35,26 +36,33 @@ from UDP import UDP_Sender
 ###############################################################################
 # Control #####################################################################
 class Control (object):
+    fan_in  = "fan_in"
+    fan_out = "fan_out"
+    fan_box = "fan_box"
+
     def __init__ (self):
-        self.fan_in = Fan(65)
-        self.fan_out = Fan(66)
-        self.fan_box = Fan(67)
+        self.fans = {Control.fan_in: Fan(65, delay=10), 
+                     Control.fan_out: Fan(66, delay=5), 
+                     Control.fan_box: Fan(67, delay=0)}
 
     def ventilation_on (self):
-        pass
-        # foreach fan: on
+        for f in self.fans.values():
+            f.on()
 
     def ventilation_off (self):
-        pass
-        # foreach fan: off
+        for f in self.fans.values():
+            f.off()
 
     def run (self):
-        pass
+        schedule.every().day.at("21:37").do(self.ventilation_on)
+        schedule.every().day.at("21:38").do(self.ventilation_off)
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
 
     def stop (self):
-        self.fan_in.close()   # TODO: immediate close necessary on shutdown
-        self.fan_out.close()
-        self.fan_box.close()
+        for f in self.fans.values():
+            f.close(immediate=True)
 
 
 ###############################################################################
@@ -63,10 +71,10 @@ def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
     control.stop()
-    udp_sender.stop()
-    udp_sender.join()
-    sensors.stop()
-    sensors.join()
+#    udp_sender.stop()
+#    udp_sender.join()
+#    sensors.stop()
+#    sensors.join()
     Log("Application stopped")
     sys.exit(0)
 
