@@ -53,9 +53,17 @@ class Control (object):
         for f in self.fans.values():
             f.off()
 
+
+    def set_optional (self, param):
+        self.optional = param
+
     def run (self):
-        schedule.every().day.at("21:37").do(self.ventilation_on)
-        schedule.every().day.at("21:38").do(self.ventilation_off)
+        schedule.every().day.at("14:00").do(self.ventilation_on)
+        schedule.every().day.at("15:00").do(self.ventilation_off)
+
+
+        schedule.every().day.at("07:00").do(self.set_optional, (True,))
+        schedule.every().day.at("08:00").do(self.set_optional, (False,))
         while True:
             schedule.run_pending()
             time.sleep(1)
