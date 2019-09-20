@@ -10,7 +10,7 @@ Controls ventilation of the control room of our swimming pool.
 """
 
 ### Usage ###
-### TODO
+# nohup ./Ventilation.py 2>&1 > ventilation.log &
 
 
 ### Packages you might need to install ###
@@ -40,7 +40,9 @@ class Control (object):
     fan_out = "fan_out"
     fan_box = "fan_box"
 
-    def __init__ (self):
+    def __init__ (self, data):
+        self.data = data
+        self.run_optional = False
         self.fans = {Control.fan_in: Fan(65, delay=10), 
                      Control.fan_out: Fan(66, delay=5), 
                      Control.fan_box: Fan(67, delay=0)}
@@ -53,19 +55,36 @@ class Control (object):
         for f in self.fans.values():
             f.off()
 
+    def set_run_optional (self, param):
+        self.run_optional = param
 
-    def set_optional (self, param):
-        self.optional = param
+    def ventilation_optional (self):
+        already_running = False
+
+        def ventilation_optional_logic ():
+            nonlocal already_running
+            if self.run_optional and not already_running:
+                # if humi_inside+5 > humi_outside:  # TODO: add some clever logic
+                self.ventilation_on()
+                already_running = True
+            elif not self.run_optional and already_running:
+                self.ventilation_off()
+                already_running = False
+
+        return ventilation_optional_logic        
 
     def run (self):
+        ventilation_optional = self.ventilation_optional()
+
         schedule.every().day.at("14:00").do(self.ventilation_on)
         schedule.every().day.at("15:00").do(self.ventilation_off)
 
+        schedule.every().day.at("10:00").do(self.set_run_optional, True)
+        schedule.every().day.at("12:00").do(self.set_run_optional, False)
 
-        schedule.every().day.at("07:00").do(self.set_optional, (True,))
-        schedule.every().day.at("08:00").do(self.set_optional, (False,))
         while True:
             schedule.run_pending()
+            ventilation_optional()
             time.sleep(1)
 
     def stop (self):
@@ -101,7 +120,7 @@ if __name__ == "__main__":
 #    sensors = Sensors(data,update_display=display.print)
 #    sensors.start()
 
-    control = Control()
+    control = Control(data)
     control.run()
 
 # eof #
