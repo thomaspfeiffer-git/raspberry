@@ -38,7 +38,10 @@ class Sensordata (object):
         self.airout_humidity = None
         self.outdoor_temp = None
         self.water_temp = None
-        self.fans_on = 0
+        self.fan1_on = 0
+        self.fan2_on = 0
+        self.fan3_on = 0
+        self.fan4_on = 0
         self.engine_circulation = None
         self.engine_countercurrent = None
 
@@ -53,7 +56,10 @@ class Sensordata (object):
                    "Humi box:     {0.box_humidity:.2f} % rF\n"    \
                    "Humi air in:  {0.airin_humidity:.2f} % rF\n"  \
                    "Humi air out: {0.airout_humidity:.2f} % rF\n" \
-                   "Fans on:      {0.fans_on}\n"                  \
+                   "Fan 1 on:     {0.fan1_on}\n"                  \
+                   "Fan 2 on:     {0.fan2_on}\n"                  \
+                   "Fan 3 on:     {0.fan3_on}\n"                  \
+                   "Fan 4 on:     {0.fan4_on}\n"                  \
                    "Engine circulation:     {0.engine_circulation:.2f}\n"    \
                    "Engine counter current: {0.engine_countercurrent:.2f}\n" \
                    .format(self)
@@ -72,7 +78,10 @@ class Sensordata (object):
                     ":{0.box_humidity:.2f}"          \
                     ":{0.airin_humidity:.2f}"        \
                     ":{0.airout_humidity:.2f}"       \
-                    ":{0.fans_on}"                   \
+                    ":{0.fan1_on}"                   \
+                    ":{0.fan2_on}"                   \
+                    ":{0.fan3_on}"                   \
+                    ":{0.fan4_on}"                   \
                     ":{0.engine_circulation:.2f}"    \
                     ":{0.engine_countercurrent:.2f}" \
                     .format(self)
@@ -90,7 +99,10 @@ class Sensordata (object):
                "DS_HUMIBOX:"     \
                "DS_HUMIAIRIN:"   \
                "DS_HUMIAIROUT:"  \
-               "DS_FANS:"        \
+               "DS_FAN1:"        \
+               "DS_FAN2:"        \
+               "DS_FAN3:"        \
+               "DS_FAN4:"        \
                "DS_ENGCIRC:"     \
                "DS_ENGCC"
 
