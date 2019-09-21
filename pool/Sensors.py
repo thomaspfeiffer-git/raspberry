@@ -90,21 +90,21 @@ class Sensordata (object):
 
     @staticmethod
     def rrd_template ():
-        return "DS_TEMPCPU:"     \
-               "DS_TEMPBOX:"     \
-               "DS_TEMPAIRIN:"   \
-               "DS_TEMPAIROUT:"  \
-               "DS_TEMPOUTDOOR:" \
-               "DS_TEMPWATER:"   \
-               "DS_HUMIBOX:"     \
-               "DS_HUMIAIRIN:"   \
-               "DS_HUMIAIROUT:"  \
-               "DS_FAN1:"        \
-               "DS_FAN2:"        \
-               "DS_FAN3:"        \
-               "DS_FAN4:"        \
-               "DS_ENGCIRC:"     \
-               "DS_ENGCC"
+        return "TEMPCPU:"     \
+               "TEMPBOX:"     \
+               "TEMPAIRIN:"   \
+               "TEMPAIROUT:"  \
+               "TEMPOUTDOOR:" \
+               "TEMPWATER:"   \
+               "HUMIBOX:"     \
+               "HUMIAIRIN:"   \
+               "HUMIAIROUT:"  \
+               "FAN1:"        \
+               "FAN2:"        \
+               "FAN3:"        \
+               "FAN4:"        \
+               "ENGCIRC:"     \
+               "ENGCC"
 
 
 ###############################################################################
