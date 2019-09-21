@@ -15,6 +15,7 @@ imported to another python program as a sender (1).
 """
 
 import configparser as cfgparser
+import rrdtool
 import socket
 import sys
 import threading
@@ -24,10 +25,14 @@ sys.path.append("../libs/")
 from Commons import Digest
 from Logging import Log
 
+from Sensors import Sensordata
+
 
 CREDENTIALS = "/home/pi/credentials/pool.cred"
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
+
+RRDFILE = "/schild/weather/pool.rrd"
 
 
 ###############################################################################
@@ -80,15 +85,16 @@ class UDP_Receiver (object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
 
-    def store (self, data):
-        Log("Data received: {}".format(data))
-        # TODO rrd stuff
-
     def receive (self):
         while True:
             datagram = self.socket.recv(CONFIG.MAX_PACKET_SIZE).decode('utf-8')
-            data = datagram # TODO: split, checksum, ...
-            self.store(data)
+            try:
+                (rrd_data, digest) = datagram.rsplit(',', 1)
+            except ValueError:
+                Log("WARN: Payload corrupted: {}".format(payload))
+            else:    
+                Log("RRD Data received: {}".format(rrd_data))
+                rrdtool.update(RRDFILE, "--template", Sensordata.rrd_template(), rrd_data)
 
 
 ###############################################################################

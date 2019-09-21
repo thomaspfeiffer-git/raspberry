@@ -2,11 +2,7 @@
 
 HEARTBEAT=90
 
-
-# rrdtool create /schild/weather/pool.rrd --step 60 \
-
-
-rrdtool create pool.rrd --step 60 \
+rrdtool create /schild/weather/pool.rrd --step 60 \
 DS:TEMPCPU:GAUGE:$HEARTBEAT:-40:80 \
 DS:TEMPBOX:GAUGE:$HEARTBEAT:-40:80 \
 DS:TEMPAIRIN:GAUGE:$HEARTBEAT:-40:80 \
