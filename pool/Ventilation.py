@@ -76,11 +76,11 @@ class Control (object):
     def run (self):
         ventilation_optional = self.ventilation_optional()
 
-        schedule.every().day.at("20:25").do(self.ventilation_on)
-        schedule.every().day.at("20:26").do(self.ventilation_off)
+        schedule.every().day.at("20:33").do(self.ventilation_on)
+        schedule.every().day.at("20:34").do(self.ventilation_off)
 
-        schedule.every().day.at("10:00").do(self.set_run_optional, True)
-        schedule.every().day.at("12:00").do(self.set_run_optional, False)
+#        schedule.every().day.at("10:00").do(self.set_run_optional, True)
+#        schedule.every().day.at("12:00").do(self.set_run_optional, False)
 
         while True:
             schedule.run_pending()
