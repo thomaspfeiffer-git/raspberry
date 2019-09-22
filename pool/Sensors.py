@@ -47,12 +47,12 @@ class Sensordata (object):
 
     def __str__ (self):
         if self.valid:
-            return "CPU:          {0.cpu:.2f} °C\n"               \
-                   "Temp box:     {0.box_temp:.2f} °C\n"          \
-                   "Temp air in:  {0.airin_temp:.2f} °C\n"        \
-                   "Temp air out: {0.airout_temp:.2f} °C\n"       \
-                   "Temp outdoor: {0.outdoor_temp:.2f} °C\n"      \
-                   "Temp water:   {0.water_temp:.2f} °C\n"        \
+            return "CPU:          {0.cpu:.2f} C\n"               \
+                   "Temp box:     {0.box_temp:.2f} C\n"          \
+                   "Temp air in:  {0.airin_temp:.2f} C\n"        \
+                   "Temp air out: {0.airout_temp:.2f} C\n"       \
+                   "Temp outdoor: {0.outdoor_temp:.2f} C\n"      \
+                   "Temp water:   {0.water_temp:.2f} C\n"        \
                    "Humi box:     {0.box_humidity:.2f} % rF\n"    \
                    "Humi air in:  {0.airin_humidity:.2f} % rF\n"  \
                    "Humi air out: {0.airout_humidity:.2f} % rF\n" \

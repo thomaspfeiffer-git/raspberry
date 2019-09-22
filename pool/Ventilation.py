@@ -98,10 +98,10 @@ def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
     control.stop()
-#    udp_sender.stop()
-#    udp_sender.join()
-#    sensors.stop()
-#    sensors.join()
+    udp_sender.stop()
+    udp_sender.join()
+    sensors.stop()
+    sensors.join()
     Log("Application stopped")
     sys.exit(0)
 
@@ -112,13 +112,13 @@ if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
     data = Sensordata()
 
-#    display = Display(data)
+    display = Display(data)
 
-#    udp_sender = UDP_Sender(data)
-#    udp_sender.start()
+    udp_sender = UDP_Sender(data)
+    udp_sender.start()
 
-#    sensors = Sensors(data,update_display=display.print)
-#    sensors.start()
+    sensors = Sensors(data,update_display=display.print)
+    sensors.start()
 
     control = Control(data)
     control.run()
