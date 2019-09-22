@@ -21,23 +21,25 @@ from Logging import Log
 class gpio (object):
     def __init__ (self, linux_gpio):
         # TODO: Check hardware - nanopi neo only
-        self.pin = "{}".format(linux_gpio)
+        self.__pin = str(linux_gpio)
 
-#        o = open("/sys/class/gpio/export", "w"); o.write(self.pin); o.close()
-#        time.sleep(0.5)
-#        o = open("/sys/class/gpio/gpio{}/direction".format(self.pin), "w"); o.write("out"); o.close()
+        o = open("/sys/class/gpio/export", "w"); o.write(self.__pin); o.close()
+        time.sleep(0.5)
+        o = open("/sys/class/gpio/gpio{}/direction".format(self.__pin), "w"); o.write("out"); o.close()
+        # self.off() # TODO needs some work on inheritance
+        o = open("/sys/class/gpio/gpio{}/value".format(self.__pin), "w"); o.write("1"); o.close()
 
     def on (self):
-#        o = open("/sys/class/gpio/gpio{}/value".format(self.pin), "w"); o.write("1"); o.close()
+        o = open("/sys/class/gpio/gpio{}/value".format(self.__pin), "w"); o.write("0"); o.close()
         pass
 
     def off (self):
-#        o = open("/sys/class/gpio/gpio{}/value".format(self.pin), "w"); o.write("0"); o.close()
+        o = open("/sys/class/gpio/gpio{}/value".format(self.__pin), "w"); o.write("1"); o.close()
         pass
 
     def close (self, immediate=False):
         self.off(immediate)
-#        o = open("/sys/class/gpio/unexport", "w"); o.write(self.pin); o.close()
+        o = open("/sys/class/gpio/unexport", "w"); o.write(self.__pin); o.close()
 
 
 ###############################################################################
