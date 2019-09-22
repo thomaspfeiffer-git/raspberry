@@ -79,13 +79,13 @@ class UDP_Sender (threading.Thread):
 ###############################################################################
 # UDP_Receiver ################################################################
 class UDP_Receiver (object):
-    import rrdtool
     def __init__ (self):
         self.digest = Digest(CONFIG.SECRET)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
 
     def receive (self):
+        import rrdtool
         while True:
             datagram = self.socket.recv(CONFIG.MAX_PACKET_SIZE).decode('utf-8')
             try:
