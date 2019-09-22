@@ -15,7 +15,6 @@ imported to another python program as a sender (1).
 """
 
 import configparser as cfgparser
-import rrdtool
 import socket
 import sys
 import threading
@@ -80,6 +79,7 @@ class UDP_Sender (threading.Thread):
 ###############################################################################
 # UDP_Receiver ################################################################
 class UDP_Receiver (object):
+    import rrdtool
     def __init__ (self):
         self.digest = Digest(CONFIG.SECRET)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
