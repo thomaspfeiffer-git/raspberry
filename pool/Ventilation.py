@@ -97,7 +97,6 @@ class Control (object):
 
     def stop (self):
         for f in self.fans.values():
-            Log("Control.stop: {}".format(f.pin))
             f.close(immediate=True)
 
 
