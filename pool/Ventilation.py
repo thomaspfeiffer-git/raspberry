@@ -48,10 +48,18 @@ class Control (object):
                      Control.fan_box: Fan(67, delay=0)}
 
     def ventilation_on (self):
+        self.data.fan1_on = 1  # TODO: Add per fan logic
+        self.data.fan2_on = 1
+        self.data.fan3_on = 1
+        self.data.fan4_on = 1
         for f in self.fans.values():
             f.on()
 
     def ventilation_off (self):
+        self.data.fan1_on = 0  # TODO: Add per fan logic
+        self.data.fan2_on = 0
+        self.data.fan3_on = 0
+        self.data.fan4_on = 0
         for f in self.fans.values():
             f.off()
 
