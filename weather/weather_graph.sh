@@ -57,10 +57,15 @@ PNG_AIRPARTICULATES_W=$RRDPATH/airparticulates_w.png
 PNG_AIRPARTICULATES_M=$RRDPATH/airparticulates_m.png
 PNG_AIRPARTICULATES_Y=$RRDPATH/airparticulates_y.png
 
-PNG_POOL_D=$RRDPATH/pool_d.png
-PNG_POOL_W=$RRDPATH/pool_w.png
-PNG_POOL_M=$RRDPATH/pool_m.png
-PNG_POOL_Y=$RRDPATH/pool_y.png
+PNG_POOLTEMP_D=$RRDPATH/pool_temp_d.png
+PNG_POOLTEMP_W=$RRDPATH/pool_temp_w.png
+PNG_POOLTEMP_M=$RRDPATH/pool_temp_m.png
+PNG_POOLTEMP_Y=$RRDPATH/pool_temp_y.png
+
+PNG_POOLHUMI_D=$RRDPATH/pool_humi_d.png
+PNG_POOLHUMI_W=$RRDPATH/pool_humi_w.png
+PNG_POOLHUMI_M=$RRDPATH/pool_humi_m.png
+PNG_POOLHUMI_Y=$RRDPATH/pool_humi_y.png
 
 
 WIDTH=1024
@@ -478,15 +483,15 @@ printAirparticulates()
  }      
 
 #######################################################################
-# printPool()                                                         #
+# printPoolTemp()                                                     #
 # Parameter:                                                          #
 # $1 Time Range                                                       #
 # $2 Filename                                                         #
 #######################################################################
-printPool()
+printPoolTemp()
   {
     rrdtool graph $2                                           \
-    --title "Pool Kollerberg"                                  \
+    --title "Pool Kollerberg: Temperaturen"                    \
     --end now --start end-$1                                   \
     -w $WIDTH -h $HEIGHT -a PNG                                \
     --watermark "$WATERMARK"                                   \
@@ -521,7 +526,41 @@ printPool()
     GPRINT:temp_water:AVERAGE:"Mittelwert\: %5.2lf °C"         \
     GPRINT:temp_water:MAX:"Max\: %5.2lf °C"                    \
     GPRINT:temp_water:MIN:"Min\: %5.2lf °C\n"                  &
+ }      
 
+
+#######################################################################
+# printPoolHumi()                                                     #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printPoolHumi()
+  {
+    rrdtool graph $2                                              \
+    --title "Pool Kollerberg: Luftfeuchtigkeit"                   \
+    --end now --start end-$1                                      \
+    -w $WIDTH -h $HEIGHT -a PNG                                   \
+    --watermark "$WATERMARK"                                      \
+    --right-axis 1:0                                              \
+    DEF:humi_box=$RRD_PO:HUMIBOX:AVERAGE                          \
+    DEF:humi_airin=$RRD_PO:HUMIAIRIN:AVERAGE                      \
+    DEF:humi_airout=$RRD_PO:HUMIAIROUT:AVERAGE                    \
+    LINE1:humi_box#BE25EB:"Luftfeuchtigkeit Steuerbox        "    \
+    GPRINT:humi_box:LAST:"\t Aktuell\: %5.2lf %%"                 \
+    GPRINT:humi_box:AVERAGE:"Mittelwert\: %5.2lf %%"              \
+    GPRINT:humi_box:MAX:"Max\: %5.2lf %%"                         \
+    GPRINT:humi_box:MIN:"Min\: %5.2lf %%\n"                       \
+    LINE1:humi_airin#42C3FF:"Luftfeuchtigkeit einströmende Luft"  \
+    GPRINT:humi_airin:LAST:"\t Aktuell\: %5.2lf %%"               \
+    GPRINT:humi_airin:AVERAGE:"Mittelwert\: %5.2lf %%"            \
+    GPRINT:humi_airin:MAX:"Max\: %5.2lf %%"                       \
+    GPRINT:humi_airin:MIN:"Min\: %5.2lf %%\n"                     \
+    LINE1:humi_airout#FF4242:"Luftfeuchtigkeit ausströmende Luft" \
+    GPRINT:humi_airout:LAST:"\t Aktuell\: %5.2lf %%"              \
+    GPRINT:humi_airout:AVERAGE:"Mittelwert\: %5.2lf %%"           \
+    GPRINT:humi_airout:MAX:"Max\: %5.2lf %%"                      \
+    GPRINT:humi_airout:MIN:"Min\: %5.2lf %%\n"                    &
  }      
 
 #######################################################################
@@ -571,11 +610,15 @@ printAirparticulates "7d", "$PNG_AIRPARTICULATES_W"
 printAirparticulates "30d", "$PNG_AIRPARTICULATES_M"
 printAirparticulates "365d", "$PNG_AIRPARTICULATES_Y"
 
-printPool "36h", "$PNG_POOL_D"
-printPool "7d", "$PNG_POOL_W"
-printPool "30d", "$PNG_POOL_M"
-printPool "365d", "$PNG_POOL_Y"
+printPoolTemp "36h", "$PNG_POOLTEMP_D"
+printPoolTemp "7d", "$PNG_POOLTEMP_W"
+printPoolTemp "30d", "$PNG_POOLTEMP_M"
+printPoolTemp "365d", "$PNG_POOLTEMP_Y"
 
+printPoolHumi "36h", "$PNG_POOLHUMI_D"
+printPoolHumi "7d", "$PNG_POOLHUMI_W"
+printPoolHumi "30d", "$PNG_POOLHUMI_M"
+printPoolHumi "365d", "$PNG_POOLHUMI_Y"
 
 
 # eof #
