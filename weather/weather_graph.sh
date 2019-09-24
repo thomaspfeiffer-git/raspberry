@@ -9,6 +9,7 @@ RRD_WR=$RRDPATH/wardrobe.rrd
 RRD_AR=$RRDPATH/anteroom.rrd
 RRD_KI=$RRDPATH/kitchen.rrd
 RRD_AP=$RRDPATH/airparticulates.rrd
+RRD_PO=$RRDPATH/pool.rrd
 
 
 PNG_TEMP_D=$RRDPATH/weather_temp_d.png
@@ -156,6 +157,7 @@ printCPUTemp ()
     DEF:kb_i_tcpu=$RRD_KB:kb_i_tcpu:AVERAGE                              \
     DEF:kb_a_tcpu=$RRD_KB:kb_a_tcpu:AVERAGE                              \
     DEF:kb_k_tcpu=$RRD_KB:kb_k_tcpu:AVERAGE                              \
+    DEF:po_tempcpu=$RRD_PO:TEMPCPU:AVERAGE                               \
     LINE1:in_tempcpu#FF0000:"Temperatur NanoPi NEO Air Wohnzimmer     "  \
     GPRINT:in_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
     GPRINT:in_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
@@ -182,10 +184,10 @@ printCPUTemp ()
     GPRINT:wr_tempcpu:MAX:"Max\: %5.2lf °C"                              \
     GPRINT:wr_tempcpu:MIN:"Min\: %5.2lf °C\n"                            \
     LINE1:out_tempcpu#dcdcdc:"Temperatur NanoPi NEO Air Garten         " \
-    GPRINT:out_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                    \
-    GPRINT:out_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                 \
-    GPRINT:out_tempcpu:MAX:"Max\: %5.2lf °C"                            \
-    GPRINT:out_tempcpu:MIN:"Min\: %5.2lf °C\n"                          \
+    GPRINT:out_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                     \
+    GPRINT:out_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                  \
+    GPRINT:out_tempcpu:MAX:"Max\: %5.2lf °C"                             \
+    GPRINT:out_tempcpu:MIN:"Min\: %5.2lf °C\n"                           \
     LINE1:kb_i_tcpu#40FF00:"Temperatur Raspberry Pi Kollerberg innen "   \
     GPRINT:kb_i_tcpu:LAST:"\t Aktuell\: %5.2lf °C"                       \
     GPRINT:kb_i_tcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                    \
@@ -200,7 +202,12 @@ printCPUTemp ()
     GPRINT:kb_k_tcpu:LAST:"\t Aktuell\: %5.2lf °C"                       \
     GPRINT:kb_k_tcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                    \
     GPRINT:kb_k_tcpu:MAX:"Max\: %5.2lf °C"                               \
-    GPRINT:kb_k_tcpu:MIN:"Min\: %5.2lf °C\n"                             &
+    GPRINT:kb_k_tcpu:MIN:"Min\: %5.2lf °C\n"                             \
+    LINE1:po_tempcpu#BE25EB:"Temperatur NanoPi NEO Air Pool           "  \
+    GPRINT:po_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
+    GPRINT:po_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
+    GPRINT:po_tempcpu:MAX:"Max\: %5.2lf °C"                              \
+    GPRINT:po_tempcpu:MIN:"Min\: %5.2lf °C\n"                            &
  }
 
 
