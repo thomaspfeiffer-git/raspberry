@@ -57,6 +57,10 @@ PNG_AIRPARTICULATES_W=$RRDPATH/airparticulates_w.png
 PNG_AIRPARTICULATES_M=$RRDPATH/airparticulates_m.png
 PNG_AIRPARTICULATES_Y=$RRDPATH/airparticulates_y.png
 
+PNG_POOL_D=$RRDPATH/pool_d.png
+PNG_POOL_W=$RRDPATH/pool_w.png
+PNG_POOL_M=$RRDPATH/pool_m.png
+PNG_POOL_Y=$RRDPATH/pool_y.png
 
 
 WIDTH=1024
@@ -473,6 +477,52 @@ printAirparticulates()
     GPRINT:2_pm25:MIN:"Min\: %5.2lf µg/m3\n"                   &
  }      
 
+#######################################################################
+# printPool()                                                         #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printPool()
+  {
+    rrdtool graph $2                                           \
+    --title "Pool Kollerberg"                                  \
+    --end now --start end-$1                                   \
+    -w $WIDTH -h $HEIGHT -a PNG                                \
+    --watermark "$WATERMARK"                                   \
+    --right-axis 1:0                                           \
+    DEF:temp_box=$RRD_PO:TEMPBOX:AVERAGE                       \
+    DEF:temp_airin=$RRD_PO:TEMPAIRIN:AVERAGE                   \
+    DEF:temp_airout=$RRD_PO:TEMPAIROUT:AVERAGE                 \
+    DEF:temp_outdoor=$RRD_PO:TEMPOUTDOOR:AVERAGE               \
+    DEF:temp_water=$RRD_PO:TEMPWATER:AVERAGE                   \
+    LINE1:temp_box#BE25EB:"Temperatur Steuerbox          "     \
+    GPRINT:temp_box:LAST:"Aktuell\: %5.2lf °C"                 \
+    GPRINT:temp_box:AVERAGE:"Mittelwert\: %5.2lf °C"           \
+    GPRINT:temp_box:MAX:"Max\: %5.2lf °C"                      \
+    GPRINT:temp_box:MIN:"Min\: %5.2lf °C\n"                    \
+    LINE1:temp_airin#42C3FF:"Temperatur einströmende Luft  "   \
+    GPRINT:temp_airin:LAST:"Aktuell\: %5.2lf °C"               \
+    GPRINT:temp_airin:AVERAGE:"Mittelwert\: %5.2lf °C"         \
+    GPRINT:temp_airin:MAX:"Max\: %5.2lf °C"                    \
+    GPRINT:temp_airin:MIN:"Min\: %5.2lf °C\n"                  \
+    LINE1:temp_airout#FF4242:"Temperatur ausströmende Luft  "  \
+    GPRINT:temp_airout:LAST:"Aktuell\: %5.2lf °C"              \
+    GPRINT:temp_airout:AVERAGE:"Mittelwert\: %5.2lf °C"        \
+    GPRINT:temp_airout:MAX:"Max\: %5.2lf °C"                   \
+    GPRINT:temp_airout:MIN:"Min\: %5.2lf °C\n"                 \
+    LINE1:temp_outdoor#3336F0:"Temperatur außen              " \
+    GPRINT:temp_outdoor:LAST:"Aktuell\: %5.2lf °C"             \
+    GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C"       \
+    GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"                  \
+    GPRINT:temp_outdoor:MIN:"Min\: %5.2lf °C\n"                \
+    LINE1:temp_water#2AF9FC:"Temperatur Wasser             "   \
+    GPRINT:temp_water:LAST:"Aktuell\: %5.2lf °C"               \
+    GPRINT:temp_water:AVERAGE:"Mittelwert\: %5.2lf °C"         \
+    GPRINT:temp_water:MAX:"Max\: %5.2lf °C"                    \
+    GPRINT:temp_water:MIN:"Min\: %5.2lf °C\n"                  &
+
+ }      
 
 #######################################################################
 # main ################################################################
@@ -520,6 +570,13 @@ printAirparticulates "36h", "$PNG_AIRPARTICULATES_D"
 printAirparticulates "7d", "$PNG_AIRPARTICULATES_W"
 printAirparticulates "30d", "$PNG_AIRPARTICULATES_M"
 printAirparticulates "365d", "$PNG_AIRPARTICULATES_Y"
+
+printPool "36h", "$PNG_POOL_D"
+printPool "7d", "$PNG_POOL_W"
+printPool "30d", "$PNG_POOL_M"
+printPool "365d", "$PNG_POOL_Y"
+
+
 
 # eof #
  
