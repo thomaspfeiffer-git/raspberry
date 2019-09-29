@@ -377,7 +377,7 @@ printAnteroom()
 printLightness()
   {
     rrdtool graph $2                                        \
-    --title "Helligkeit indoor [lux]"                       \
+    --title "Helligkeit [lux]"                              \
     --end now --start end-$1                                \
     -w $WIDTH -h $HEIGHT -a PNG                             \
     --alt-autoscale                                         \
