@@ -67,6 +67,10 @@ PNG_POOLHUMI_W=$RRDPATH/pool_humi_w.png
 PNG_POOLHUMI_M=$RRDPATH/pool_humi_m.png
 PNG_POOLHUMI_Y=$RRDPATH/pool_humi_y.png
 
+PNG_POOLFANS_D=$RRDPATH/pool_fans_d.png
+PNG_POOLFANS_W=$RRDPATH/pool_fans_w.png
+PNG_POOLFANS_M=$RRDPATH/pool_fans_m.png
+PNG_POOLFANS_Y=$RRDPATH/pool_fans_y.png
 
 WIDTH=1024
 HEIGHT=160
@@ -563,6 +567,39 @@ printPoolHumi()
     GPRINT:humi_airout:MIN:"Min\: %5.2lf %%\n"                    &
  }      
 
+ 
+#######################################################################
+# printPoolFans()                                                     #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printPoolFans()
+  {
+    rrdtool graph $2                                              \
+    --title "Pool Kollerberg: Fans"                               \
+    --end now --start end-$1                                      \
+    -w $WIDTH -h $HEIGHT -a PNG                                   \
+    --watermark "$WATERMARK"                                      \
+    DEF:fan1=$RRD_PO:FAN1:AVERAGE                                 \
+    DEF:fan2=$RRD_PO:FAN2:AVERAGE                                 \
+    DEF:fan3=$RRD_PO:FAN3:AVERAGE                                 \
+    DEF:fan4=$RRD_PO:FAN4:AVERAGE                                 \
+    AREA:fan1#42C3FF:"Fan einströmende Luft  "                    \
+    GPRINT:fan1:LAST:"\t Aktuell\: %5.0lf"                        \
+    GPRINT:fan1:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
+    STACK:fan2#FF4242:"Fan ausströmende Luft"                     \
+    GPRINT:fan2:LAST:"\t Aktuell\: %5.0lf"                        \
+    GPRINT:fan2:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
+    STACK:fan3#BE25EB:"Fan Steuerbox        "                     \
+    GPRINT:fan3:LAST:"\t Aktuell\: %5.0lf"                        \
+    GPRINT:fan3:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
+    STACK:fan4#F6FC2A:"Fan n/a              "                     \
+    GPRINT:fan4:LAST:"\t Aktuell\: %5.0lf"                        \
+    GPRINT:fan4:AVERAGE:"Mittelwert\: %5.2lf\n"                   &
+ }     
+
+ 
 #######################################################################
 # main ################################################################
 printTemp "36h", "$PNG_TEMP_D"
@@ -619,6 +656,11 @@ printPoolHumi "36h", "$PNG_POOLHUMI_D"
 printPoolHumi "7d", "$PNG_POOLHUMI_W"
 printPoolHumi "30d", "$PNG_POOLHUMI_M"
 printPoolHumi "365d", "$PNG_POOLHUMI_Y"
+
+printPoolFans "36h", "$PNG_POOLFANS_D"
+printPoolFans "7d", "$PNG_POOLFANS_W"
+printPoolFans "30d", "$PNG_POOLFANS_M"
+printPoolFans "365d", "$PNG_POOLFANS_Y"
 
 
 # eof #
