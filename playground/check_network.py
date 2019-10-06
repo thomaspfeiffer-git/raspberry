@@ -42,8 +42,14 @@ def shutdown_application ():
 ## main #######################################################################
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
+    ping_fails = 0
 
-    print("ping: {}".format(ping()))
+    while True:
+        if not ping():
+            ping_fails += 1
+            Log("Ping #{} failed.".format(ping_fails))
+        else:
+            ping_fails = 0
 
 
 # eof #
