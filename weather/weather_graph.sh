@@ -581,6 +581,7 @@ printPoolFans()
     --end now --start end-$1                                      \
     -w $WIDTH -h $HEIGHT -a PNG                                   \
     --watermark "$WATERMARK"                                      \
+    --right-axis 1:0                                              \
     DEF:fan1=$RRD_PO:FAN1:AVERAGE                                 \
     DEF:fan2=$RRD_PO:FAN2:AVERAGE                                 \
     DEF:fan3=$RRD_PO:FAN3:AVERAGE                                 \
