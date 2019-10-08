@@ -43,10 +43,10 @@ from sensors.CPU import CPU
 
 
 # Hosts where this app runs
-seti_01 = "seti_01"
-seti_02 = "seti_02"
-seti_03 = "seti_03"
-seti_04 = "seti_04"
+seti_01 = "seti-01"
+seti_02 = "seti-02"
+seti_03 = "seti-03"
+seti_04 = "seti-04"
 PIs = [seti_01, seti_02, seti_03, seti_04]
 this_PI = socket.gethostname()
 
