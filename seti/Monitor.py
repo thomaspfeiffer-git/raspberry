@@ -50,11 +50,11 @@ seti_04 = "seti-04"
 PIs = [seti_01, seti_02, seti_03, seti_04]
 this_PI = socket.gethostname()
 
+from actuators.SSD1306 import SSD1306
 
 if this_PI == seti_01:
     from sensors.DS1820 import DS1820
     from sensors.HTU21DF import HTU21DF
-    from actuators.SSD1306 import SSD1306
 
     from PIL import Image
     from PIL import ImageDraw
