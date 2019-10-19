@@ -28,6 +28,9 @@
 # https://learn.adafruit.com/neopixels-on-raspberry-pi/software
 # note: sudo python setup.py install ===> sudo python3 setup.py install
 
+# https://pypi.org/project/rpi-ws281x/
+# sudo pip3  install rpi-ws281x
+
 
 from enum import Enum
 from flask import Flask, request, Markup, render_template
