@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3 -u
 # coding=utf-8
 
 
@@ -16,7 +16,7 @@ while True:
     act = io.input(pin_ir)
     if act != last:
         last = act
-        print "Status: {}".format(act)
+        print("Status: {}".format(act))
 
     time.sleep(0.05)
 
