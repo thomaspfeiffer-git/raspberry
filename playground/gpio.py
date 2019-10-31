@@ -16,13 +16,18 @@ sys.path.append('../libs')
 
 from Logging import Log
 from Shutdown import Shutdown
+from sensors.Adafruit import Adafruit_GPIO_Platform as Platform
 
 
+##############################################################################
+# gpio #######################################################################
 class gpio (object):
     IN  = 'in'
     OUT = 'out'
     def __init__ (self, linux_gpio, direction):
-        # TODO: Check hardware - nanopi neo only
+        if Platform.platform_detect() != Platform.NANOPI:
+            raise RuntimeError("This library only works on NanoPi NEO Air")
+
         self.__pin = "{}".format(linux_gpio)
         if direction != gpio.IN and direction != gpio.OUT:
             raise ValueError("direction must be 'gpio.IN' or 'gpio.OUT'.")
