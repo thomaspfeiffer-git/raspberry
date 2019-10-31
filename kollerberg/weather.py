@@ -29,7 +29,7 @@ from sensors.DS1820 import DS1820
 # Hosts where this app runs
 pik_i = "pik_i"
 pik_a = "pik_a"
-pik_k = "pik_k"
+pik_k = "pik-k"
 PIs = [pik_i, pik_a, pik_k]
 this_PI = socket.gethostname()
 
@@ -82,13 +82,14 @@ def main():
 
     if this_PI not in PIs:
         Log("wrong host!")
+        global shutdown_application
         shutdown_application()
 
     udp = UDP_Sender()
     tempds  = DS1820(AddressesDS1820[this_PI])
     tempcpu = CPU()
     if this_PI == pik_i:
-        bme680  = BME680(i2c_addr=BME_680_SECONDARYADDR)
+        bme680 = BME680(i2c_addr=BME_680_SECONDARYADDR)
     else:
         htu21df = HTU21DF()
 
@@ -135,21 +136,7 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    try:
-        main()
-
-    except KeyboardInterrupt:
-        shutdown_application()
-
-    except SystemExit:      # Done in signal handler (shutdown_application()) #
-        pass
-
-    except:
-        Log(traceback.print_exc())
-        shutdown_application()
-
-    finally:    # All cleanup is done in KeyboardInterrupt or signal handler. #
-        pass
+    main()
 
 ### eof ###
 
