@@ -1,58 +1,68 @@
-#!/usr/bin/python -u
+#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
-############################################################################
-# Relais.py                                                                #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
-############################################################################
+###############################################################################
+# Relais.py                                                                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2019             #
+###############################################################################
 """control lighting of our anteroom:
    check relais and send status to Anteroom main programm"""
 
 ### usage ###
 # sudo Relais.py
 
-import RPi.GPIO as io
 import socket
 import sys
 import time
-import urllib
+import urllib.request
 
 sys.path.append("../libs/")
+from gpio import gpio as io
 from Logging import Log
-
-
-pin_ir = 7
-io.setmode(io.BOARD)
-io.setup(pin_ir, io.IN) 
+from Shutdown import Shutdown
 
 url = "http://localhost:5000/relais?status={}" # TODO config file
+pin = 67   # Phys pin 24
 
 ###############################################################################
+# SendRelaisStatus ############################################################
 def SendRelaisStatus (status):
     url_ = url.format(status)
 
     try:
-        response = urllib.urlopen(url_)
+        response = urllib.request.urlopen(url_)
         data = response.read().decode("utf-8")
     except (IOError):
         Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
     except socket.timeout:
         Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
 
+###############################################################################
+# Shutdown stuff ##############################################################
+def shutdown_application ():
+    """cleanup stuff"""
+    Log("Stopping application")
+    relais.close()
+    Log("Application stopped")
+    sys.exit(0)
 
 ###############################################################################
-## main ######################################################################
-last = None
-while True:
-    act = io.input(pin_ir)
-    if act != last:
-        if act == 1:
-            SendRelaisStatus("off")
-        else:
-            SendRelaisStatus("on")
+## main #######################################################################
+if __name__ == "__main__":
+    shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-        last = act
+    relais = io(pin, io.IN)
+    last = None
+    while True:
+        act = int(relais.read())
+        if act != last:
+            if act == 1:
+                SendRelaisStatus("off")
+            else:
+                SendRelaisStatus("on")
 
-    time.sleep(0.05)
+            last = act
+
+        time.sleep(0.05)
 
 # eof #
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ############################################################################
 # Button.py                                                                #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2019          #
 ############################################################################
 """control lighting of our anteroom:
    check button and toggle anteroom's light on and off"""
@@ -21,6 +21,7 @@ from Logging import Log
 from Shutdown import Shutdown
 
 url = "http://localhost:5000/toggle?button=1" # TODO config file
+pin = 199   # Phys pin 10
 
 ###############################################################################
 # CallToggle ##################################################################
@@ -48,7 +49,7 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    btn = io(199, io.IN)   # Pin 10
+    btn = io(pin, io.IN)
     last = None
     while True:
         act = int(btn.read())   # TODO: debounce if necessary
