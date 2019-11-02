@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Anteroom.py                                                                 #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2019             #
 ###############################################################################
 """control lighting of our anteroom"""
 
@@ -33,6 +33,7 @@ import threading
 from time import sleep, strftime, time
 
 sys.path.append("../libs/")
+from gpio import gpio as io
 from i2c import I2C
 from Logging import Log
 from Shutdown import Shutdown
@@ -54,7 +55,7 @@ DS_RES3     = "ar_res3"
 
 app = Flask(__name__)
 
-pin_fan = 8
+pin_fan = 198    # Phys pin 8 
 
 
 ###############################################################################
@@ -189,27 +190,19 @@ class Control (threading.Thread):
 class Fan (threading.Thread):
     def __init__ (self, pin):
         threading.Thread.__init__(self)
-
-        self.__pin = "{}".format(pin)
-        # FriendlyArm's WiringPI lib does not support python3.
-        # http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=921
-        # Therefore i use shell commands.
-        subprocess.run(["gpio", "-1", "mode", self.__pin, "output"], check=True)
+        self.__fan = io(pin, io.OUT)
         self.__last = None
         self.off()
         self._running = True
 
-    def io_write (self, status):
-        subprocess.run(["gpio", "-1", "write", self.__pin, status], check=True)
-
     def on (self):
         if self.__last != Switch.ON:
-            self.io_write("0")
+            self.__fan.write("0")
             self.__last = Switch.ON
 
     def off (self):
         if self.__last != Switch.OFF:
-            self.io_write("1")
+            self.__fan.write("1")
             self.__last = Switch.OFF
 
     def run (self):
