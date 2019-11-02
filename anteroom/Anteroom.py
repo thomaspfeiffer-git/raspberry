@@ -216,6 +216,7 @@ class Fan (threading.Thread):
 
     def stop (self):
         self._running = False
+        self.__fan.close()
 
 
 ###############################################################################
