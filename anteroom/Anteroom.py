@@ -213,10 +213,10 @@ class Fan (threading.Thread):
                 self.off()
             sleep(0.1)
         self.off()
+        self.__fan.close()
 
     def stop (self):
         self._running = False
-        self.__fan.close()
 
 
 ###############################################################################
