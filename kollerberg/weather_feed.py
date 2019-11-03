@@ -35,7 +35,7 @@ RRDFILE_PARTICULATES = "/schild/weather/airparticulates.rrd"
 
 pik_i = "pik_i"
 pik_a = "pik_a"
-pik_k = "pik_k"
+pik_k = "pik-k"
 PIs = [pik_i, pik_a, pik_k]
 
 particulates_1 = "particulates_1"
