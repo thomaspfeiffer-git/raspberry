@@ -13,40 +13,32 @@ import threading
 import time
 
 sys.path.append("../libs/")
+from gpio import gpio as io
 from Logging import Log
 
 
 ###############################################################################
 # gpio ########################################################################
 class gpio (object):
-    def __init__ (self, linux_gpio):
-        # TODO: Check hardware - nanopi neo only
-        self.__pin = str(linux_gpio)
-
-        o = open("/sys/class/gpio/export", "w"); o.write(self.__pin); o.close()
-        time.sleep(0.5)
-        o = open("/sys/class/gpio/gpio{}/direction".format(self.__pin), "w"); o.write("out"); o.close()
-        # self.off() # TODO needs some work on inheritance
-        o = open("/sys/class/gpio/gpio{}/value".format(self.__pin), "w"); o.write("1"); o.close()
+    def __init__ (self, pin):
+        self.__io = io(pin, io.OUT)
 
     def on (self):
-        o = open("/sys/class/gpio/gpio{}/value".format(self.__pin), "w"); o.write("0"); o.close()
-        pass
+        self.__io.write("0")
 
     def off (self):
-        o = open("/sys/class/gpio/gpio{}/value".format(self.__pin), "w"); o.write("1"); o.close()
-        pass
+        self.__io.write("1")
 
     def close (self, immediate=False):
         self.off(immediate)
-        o = open("/sys/class/gpio/unexport", "w"); o.write(self.__pin); o.close()
+        self.__io.close()
 
 
 ###############################################################################
 # Fan #########################################################################
 class Fan (gpio):
     def __init__ (self, pin, delay=0):
-        super().__init__(linux_gpio=pin)
+        super().__init__(pin=pin)
         self.pin = pin
         self.delay = delay
 
