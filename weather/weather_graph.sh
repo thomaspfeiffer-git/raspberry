@@ -1,5 +1,11 @@
 #/bin/bash
 
+
+LOCKFILE=/tmp/weather_rrd.lock
+
+lockfile -r 0 $LOCKFILE || exit 1
+
+
 RRDPATH=/schild/weather/
 RRD_IN=$RRDPATH/weather_indoor.rrd
 RRD_OUT=$RRDPATH/weather_outdoor.rrd
@@ -663,6 +669,7 @@ printPoolFans "7d", "$PNG_POOLFANS_W"
 printPoolFans "30d", "$PNG_POOLFANS_M"
 printPoolFans "365d", "$PNG_POOLFANS_Y"
 
+rm -f $LOCKFILE
 
 # eof #
  
