@@ -1,14 +1,12 @@
 #/bin/bash
 
 
-date
-echo "rrdtool processes running: "
+echo -n `date`
+echo -n ": rrdtool processes running: "
 ps aux | grep "rrdtool" | wc -l
-echo ""
-
 
 if [ $(ps aux | grep "rrdtool" | wc -l) -gt 1 ] ; then 
-    date
+    echo -n `date`
     echo "rrdtool already running, killing"
     killall rrdtool
     echo ""
