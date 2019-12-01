@@ -1,9 +1,19 @@
 #/bin/bash
 
 
-LOCKFILE=/tmp/weather_rrd.lock
+date
+echo "rrdtool processes running: "
+ps aux | grep "rrdtool" | wc -l
+echo ""
 
-lockfile -r 0 $LOCKFILE || exit 1
+
+if [ $(ps aux | grep "rrdtool" | wc -l) -gt 1 ] ; then 
+    date
+    echo "rrdtool already running, killing"
+    killall rrdtool
+    echo ""
+    exit 1
+fi
 
 
 RRDPATH=/schild/weather/
@@ -669,7 +679,6 @@ printPoolFans "7d", "$PNG_POOLFANS_W"
 printPoolFans "30d", "$PNG_POOLFANS_M"
 printPoolFans "365d", "$PNG_POOLFANS_Y"
 
-rm -f $LOCKFILE
 
 # eof #
  
