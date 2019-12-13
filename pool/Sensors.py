@@ -19,7 +19,7 @@ from Logging import Log
 
 from sensors.CPU import CPU
 from sensors.DS1820 import DS1820
-from sensors.HTU21DF import HTU21DF
+# from sensors.HTU21DF import HTU21DF
 from sensors.PCF8591 import PCF8591
 from sensors.SHT31 import SHT31, SHT31_BASEADDR, SHT31_SECONDARYADDR
 
@@ -116,7 +116,7 @@ class Sensors (threading.Thread):
         self.cpu = CPU()
         self.ds1820_outdoor = DS1820("/sys/bus/w1/devices/28-000008561957/w1_slave")
         # self.ds1820_water = DS1820()
-        self.htu21_box = HTU21DF()
+        # self.htu21_box = HTU21DF()
         self.sht31_airin = SHT31(addr=SHT31_BASEADDR)
         self.sht31_airout = SHT31(addr=SHT31_SECONDARYADDR)
         self.pcf8591 = PCF8591()
@@ -128,8 +128,10 @@ class Sensors (threading.Thread):
     def run (self):
        while self._running:
             self.__data.cpu = self.cpu.read_temperature()
-            self.__data.box_temp = self.htu21_box.read_temperature()
-            self.__data.box_humidity = self.htu21_box.read_humidity()
+            # self.__data.box_temp = self.htu21_box.read_temperature()
+            # self.__data.box_humidity = self.htu21_box.read_humidity()
+            self.__data.box_temp = 4.44
+            self.__data.box_humidity = 44.44
             self.__data.airin_temp = self.sht31_airin.read_temperature()
             self.__data.airin_humidity = self.sht31_airin.read_humidity()
             self.__data.airout_temp = self.sht31_airout.read_temperature()

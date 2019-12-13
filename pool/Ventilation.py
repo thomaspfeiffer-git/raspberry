@@ -90,6 +90,8 @@ class Control (object):
         schedule.every().day.at("12:40").do(self.ventilation_off)
         schedule.every().day.at("13:00").do(self.ventilation_on)
         schedule.every().day.at("14:00").do(self.ventilation_off)
+        schedule.every().day.at("15:46").do(self.ventilation_on)
+        schedule.every().day.at("15:48").do(self.ventilation_off)
         schedule.every().day.at("16:00").do(self.ventilation_on)
         schedule.every().day.at("17:00").do(self.ventilation_off)
         schedule.every().day.at("17:15").do(self.ventilation_on)
