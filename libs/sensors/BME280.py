@@ -9,7 +9,7 @@
 from time import strftime
 import sys
 
-from Adafruit import Adafruit_BME280
+from sensors.Adafruit import Adafruit_BME280
 from i2c import I2C
 
 
