@@ -19,6 +19,7 @@ Controls ventilation of the control room of our swimming pool.
 # sudo pip3 install Flask
 
 
+from enum import Enum
 from flask import Flask, request
 import schedule
 import sys
@@ -45,9 +46,13 @@ class Control (threading.Thread):
     fan_out = "fan_out"
     fan_box = "fan_box"
 
+    class State(Enum):
+        off = 0
+        on = 1
+
     def __init__ (self, data):
         threading.Thread.__init__(self)
-        self.status = None   # TODO: enum(on, off)
+        self.status = Control.State.off
         self.data = data
         self.run_optional = False
         self.fans = {Control.fan_in: Fan(65, delay=10), 
@@ -56,20 +61,28 @@ class Control (threading.Thread):
         self._running = True
 
     def ventilation_on (self):
-        self.data.fan1_on = 1  # TODO: Add per fan logic
+        self.data.fan1_on = 1
         self.data.fan2_on = 1
         self.data.fan3_on = 1
         self.data.fan4_on = 1
+        self.status = Control.State.on
         for f in self.fans.values():
             f.on()
 
     def ventilation_off (self):
-        self.data.fan1_on = 0  # TODO: Add per fan logic
+        self.data.fan1_on = 0
         self.data.fan2_on = 0
         self.data.fan3_on = 0
         self.data.fan4_on = 0
+        self.status = Control.State.off
         for f in self.fans.values():
             f.off()
+
+    def toggle (self):
+        if self.status == Control.State.on:
+            self.ventilation_off()
+        else:
+            self.ventilation_on()
 
     def set_run_optional (self, param):
         self.run_optional = param
@@ -128,15 +141,9 @@ class Control (threading.Thread):
 @app.route('/toggle')
 def API_Toggle ():
     triggered_by_button = request.args.get("button", "0") == "1"
-    status = "?"
-    
-    # if on:
-    #     --> off
-    # else:
-    #     --> on
-
-    Log("Request: toggle to {}; triggered by button: {}".format(status, triggered_by_button))
-    return "OK. Status: {}".format(status)
+    Log("Request: toggled; triggered by button: {}".format(triggered_by_button))
+    control.toggle()
+    return "OK.\n"
 
 
 ###############################################################################
