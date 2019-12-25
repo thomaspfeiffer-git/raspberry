@@ -115,7 +115,7 @@ class Sensors (threading.Thread):
 
         self.cpu = CPU()
         self.ds1820_outdoor = DS1820("/sys/bus/w1/devices/28-000008561957/w1_slave")
-        # self.ds1820_water = DS1820()
+        self.ds1820_water = DS1820("/sys/bus/w1/devices/28-0000085607ec/w1_slave")
         self.bme280_box = BME280()
         self.sht31_airin = SHT31(addr=SHT31_BASEADDR)
         self.sht31_airout = SHT31(addr=SHT31_SECONDARYADDR)
@@ -137,7 +137,7 @@ class Sensors (threading.Thread):
             self.__data.engine_circulation = self.pcf8591.read(channel=0)
             self.__data.engine_countercurrent = self.pcf8591.read(channel=1)
             self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
-            self.__data.water_temp = 0.0    # self.ds1820_water.read_temperature()
+            self.__data.water_temp = self.ds1820_water.read_temperature()
             self.__data.valid = True
             Log("\n{}".format(self.__data))
             self.update_display()
