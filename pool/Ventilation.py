@@ -16,10 +16,13 @@ Controls ventilation of the control room of our swimming pool.
 ### Packages you might need to install ###
 # sudo pip3 install Pillow
 # sudo pip3 install schedule
+# sudo pip3 install Flask
 
 
+from flask import Flask, request
 import schedule
 import sys
+import threading
 import time
 
 
@@ -32,20 +35,25 @@ from Fan import Fan
 from Sensors import Sensors, Sensordata
 from UDP import UDP_Sender
 
+app = Flask(__name__)
+
 
 ###############################################################################
 # Control #####################################################################
-class Control (object):
+class Control (threading.Thread):
     fan_in  = "fan_in"
     fan_out = "fan_out"
     fan_box = "fan_box"
 
     def __init__ (self, data):
+        threading.Thread.__init__(self)
+        self.status = None   # TODO: enum(on, off)
         self.data = data
         self.run_optional = False
         self.fans = {Control.fan_in: Fan(65, delay=10), 
                      Control.fan_out: Fan(66, delay=5), 
                      Control.fan_box: Fan(67, delay=0)}
+        self._running = True
 
     def ventilation_on (self):
         self.data.fan1_on = 1  # TODO: Add per fan logic
@@ -104,14 +112,31 @@ class Control (object):
 #        schedule.every().day.at("10:00").do(self.set_run_optional, True)
 #        schedule.every().day.at("12:00").do(self.set_run_optional, False)
 
-        while True:
+        while self._running:
             schedule.run_pending()
             ventilation_optional()
-            time.sleep(1)
+            time.sleep(0.5)
 
     def stop (self):
         for f in self.fans.values():
             f.close(immediate=True)
+        self._running = False    
+
+
+###############################################################################
+# Flask stuff #################################################################
+@app.route('/toggle')
+def API_Toggle ():
+    triggered_by_button = request.args.get("button", "0") == "1"
+    status = "?"
+    
+    # if on:
+    #     --> off
+    # else:
+    #     --> on
+
+    Log("Request: toggle to {}; triggered by button: {}".format(status, triggered_by_button))
+    return "OK. Status: {}".format(status)
 
 
 ###############################################################################
@@ -120,6 +145,7 @@ def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
     control.stop()
+    control.join()
     udp_sender.stop()
     udp_sender.join()
     sensors.stop()
@@ -143,7 +169,9 @@ if __name__ == "__main__":
     sensors.start()
 
     control = Control(data)
-    control.run()
+    control.start()
+
+    app.run(host="0.0.0.0")
 
 # eof #
 
