@@ -678,5 +678,7 @@ printPoolFans "30d", "$PNG_POOLFANS_M"
 printPoolFans "365d", "$PNG_POOLFANS_Y"
 
 
+/home/pi/raspberry/seti/seti_graph.sh
+
 # eof #
  
