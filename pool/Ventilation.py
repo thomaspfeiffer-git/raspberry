@@ -43,7 +43,8 @@ app = Flask(__name__)
 ###############################################################################
 # Control #####################################################################
 class Control (threading.Thread):
-    fan_in  = "fan_in"
+    fan_in1 = "fan_in1"
+    fan_in2 = "fan_in2"
     fan_out = "fan_out"
     fan_box = "fan_box"
 
@@ -56,8 +57,9 @@ class Control (threading.Thread):
         self.status = Control.State.off
         self.data = data
         self.run_optional = False
-        self.fans = {Control.fan_in:  Fan(CONFIG.Fans.fan_in, delay=10), 
-                     Control.fan_out: Fan(CONFIG.Fans.fan_out, delay=5), 
+        self.fans = {Control.fan_in1: Fan(CONFIG.Fans.fan_in1, delay=15),
+                     Control.fan_in2: Fan(CONFIG.Fans.fan_in2, delay=10),
+                     Control.fan_out: Fan(CONFIG.Fans.fan_out, delay=5),
                      Control.fan_box: Fan(CONFIG.Fans.fan_box, delay=0)}
         self._running = True
 

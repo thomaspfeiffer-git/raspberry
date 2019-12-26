@@ -14,7 +14,8 @@ cfg.read(CONFIGFILE)
 
 class CONFIG:
     class Fans:
-        fan_in  = int(cfg['Fans']['fan_in'])
+        fan_in1 = int(cfg['Fans']['fan_in1'])
+        fan_in2 = int(cfg['Fans']['fan_in2'])
         fan_out = int(cfg['Fans']['fan_out'])
         fan_box = int(cfg['Fans']['fan_box'])
 
