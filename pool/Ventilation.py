@@ -31,6 +31,7 @@ sys.path.append("../libs/")
 from Logging import Log
 from Shutdown import Shutdown
 
+from Config import CONFIG
 from Display import Display
 from Fan import Fan
 from Sensors import Sensors, Sensordata
@@ -55,9 +56,9 @@ class Control (threading.Thread):
         self.status = Control.State.off
         self.data = data
         self.run_optional = False
-        self.fans = {Control.fan_in: Fan(65, delay=10), 
-                     Control.fan_out: Fan(66, delay=5), 
-                     Control.fan_box: Fan(67, delay=0)}
+        self.fans = {Control.fan_in:  Fan(CONFIG.Fans.fan_in, delay=10), 
+                     Control.fan_out: Fan(CONFIG.Fans.fan_out, delay=5), 
+                     Control.fan_box: Fan(CONFIG.Fans.fan_box, delay=0)}
         self._running = True
 
     def ventilation_on (self):

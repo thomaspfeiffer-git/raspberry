@@ -21,8 +21,11 @@ from gpio import gpio as io
 from Logging import Log
 from Shutdown import Shutdown
 
+
+from Config import CONFIG
+
 url = "http://localhost:5000/toggle?button=1" # TODO config file
-pin = XXX   # Phys pin 10
+pin = CONFIG.Buttons.btn_toggle 
 
 ###############################################################################
 # CallToggle ##################################################################
