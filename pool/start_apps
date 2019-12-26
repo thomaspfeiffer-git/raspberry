@@ -1,4 +1,4 @@
-/bin/bash
+#!/bin/bash
 
 nohup sudo ./Ventilation.py 2>&1 >ventilation.log &
 nohup sudo ./Button.py 2>&1 >button.log &
