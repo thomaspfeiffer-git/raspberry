@@ -114,8 +114,8 @@ class Sensors (threading.Thread):
         threading.Thread.__init__(self)
 
         self.cpu = CPU()
-        self.ds1820_outdoor = DS1820("/sys/bus/w1/devices/28-000008561957/w1_slave")
-        self.ds1820_water = DS1820("/sys/bus/w1/devices/28-0000085607ec/w1_slave")
+        self.ds1820_water = DS1820("/sys/bus/w1/devices/28-000008561957/w1_slave")
+        self.ds1820_outdoor = DS1820("/sys/bus/w1/devices/28-0000085607ec/w1_slave")
         self.bme280_box = BME280()
         self.sht31_airin = SHT31(addr=SHT31_BASEADDR)
         self.sht31_airout = SHT31(addr=SHT31_SECONDARYADDR)
