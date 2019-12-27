@@ -6,7 +6,6 @@
 """lots of config stuff"""
 
 import configparser as cfgparser
-import sys
 
 CONFIGFILE = "ventilation.ini"
 cfg = cfgparser.ConfigParser()

@@ -144,7 +144,7 @@ class Control (threading.Thread):
 @app.route('/toggle')
 def API_Toggle ():
     triggered_by_button = request.args.get("button", "0") == "1"
-    Log("Request: toggled; triggered by button: {}".format(triggered_by_button))
+    Log(f"Request: toggled; triggered by button: {triggered_by_button}")
     control.toggle()
     return "OK.\n"
 
