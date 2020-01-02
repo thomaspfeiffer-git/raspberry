@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 # gpio.py                                                                    #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019                  #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020            #
 ##############################################################################
 
 import sys
@@ -15,9 +15,9 @@ from sensors.Adafruit import Adafruit_GPIO_Platform as Platform
 class gpio (object):
     IN  = 'in'
     OUT = 'out'
-    def __init__ (self, linux_gpio, direction):
+    def __init__ (self, linux_gpio, direction, init_func=None):
         if Platform.platform_detect() != Platform.NANOPI:
-            raise RuntimeError("This library only works on NanoPi NEO Air.")
+            raise RuntimeError("This library works on NanoPi NEO Air only.")
 
         self.__pin = "{}".format(linux_gpio)
         if direction != gpio.IN and direction != gpio.OUT:
@@ -31,6 +31,9 @@ class gpio (object):
         o = open("/sys/class/gpio/gpio{}/direction".format(self.__pin), "w")
         o.write(self.__direction)
         o.close()
+
+        if init_func is not None:
+            init_func()
 
     def read (self):
         if self.__direction != gpio.IN:

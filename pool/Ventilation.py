@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Ventilation.py                                                              #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020             #
 ###############################################################################
 
 """
@@ -48,7 +48,7 @@ class Control (threading.Thread):
     fan_out = "fan_out"
     fan_box = "fan_box"
 
-    class State(Enum):
+    class State (Enum):
         off = 0
         on = 1
 

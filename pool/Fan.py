@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Fan.py                                                                      #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020             #
 ###############################################################################
 
 """
@@ -20,8 +20,8 @@ from Logging import Log
 ###############################################################################
 # gpio ########################################################################
 class gpio (object):
-    def __init__ (self, pin):
-        self.__io = io(pin, io.OUT)
+    def __init__ (self, pin, init_func=None):
+        self.__io = io(pin, io.OUT, init_func)
 
     def on (self):
         self.__io.write("0")
@@ -38,7 +38,7 @@ class gpio (object):
 # Fan #########################################################################
 class Fan (gpio):
     def __init__ (self, pin, delay=0):
-        super().__init__(pin=pin)
+        super().__init__(pin=pin, init_func=super().off)
         self.pin = pin
         self.delay = delay
 
