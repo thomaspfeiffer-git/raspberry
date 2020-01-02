@@ -20,8 +20,8 @@ from Logging import Log
 ###############################################################################
 # gpio ########################################################################
 class gpio (object):
-    def __init__ (self, pin, init_func=None):
-        self.__io = io(pin, io.OUT, init_func)
+    def __init__ (self, pin):
+        self.__io = io(pin, io.OUT)
 
     def on (self):
         self.__io.write("0")
@@ -38,12 +38,14 @@ class gpio (object):
 # Fan #########################################################################
 class Fan (gpio):
     def __init__ (self, pin, delay=0):
-        super().__init__(pin=pin, init_func=super().off)
+        super().__init__(pin=pin)
         self.pin = pin
         self.delay = delay
 
         self.__thread_on = None
         self.__thread_off = None
+
+        self.off(immediate=True)
 
     def __on (self):
         time.sleep(self.delay)
@@ -72,6 +74,7 @@ class Fan (gpio):
             self.__thread_off.start()
         else:    
             super().off()
+            Log("Fan {} switched off immediately.".format(self.pin))
 
 # eof #
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Sensors.py                                                                  #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020             #
 ###############################################################################
 
 """
@@ -139,7 +139,7 @@ class Sensors (threading.Thread):
             self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
             self.__data.water_temp = self.ds1820_water.read_temperature()
             self.__data.valid = True
-            Log("\n{}".format(self.__data))
+            # Log("\n{}".format(self.__data))
             self.update_display()
 
             for _ in range(600):      # interruptible sleep 
