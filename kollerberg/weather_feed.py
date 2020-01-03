@@ -84,6 +84,7 @@ class UDP_Receiver (threading.Thread):
         (source, values) = payload.split(',')
         data[source] = values
         data['pik_a'] = "N:10.00:10.00:10.00:10.00:1013.25:0.00"
+        data['particulates_1'] = "1_pm25:1_pm10:N:11.1:5.5"
         # Log("Data: {}".format(data))
 
     def run (self):
