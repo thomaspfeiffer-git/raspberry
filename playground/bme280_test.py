@@ -1,21 +1,20 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# test_bme280.py                                                              #
-# (c) https://github.com/thomaspfeiffer-git 2016                              #
+# bme280_test.py                                                              #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2020                        #
 ###############################################################################
 """Tests sensor BME280 (air pressure, humidity, temperature."""
 
 
 import sys
-from time import sleep, strftime
+import time
 
 sys.path.append('../libs')
-sys.path.append('../libs/sensors')
 
-import BME280    # air pressure, temperature, humidity
+from sensors.BME280 import BME280    # air pressure, temperature, humidity
 
-bme280  = BME280.BME280()
+bme280  = BME280()
 
 while True:
      bme280_pressure     = bme280.read_pressure()/100.0
@@ -26,7 +25,7 @@ while True:
      print("BME280     | Humi  | {:>8.2f} | % rF    |".format(bme280_humidity))
      print("BME280     | Temp  | {:>8.2f} | C       |".format(bme280_temperature))
 
-     sleep(1)
+     time.sleep(1)
 
 # eof #
 
