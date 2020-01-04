@@ -1,0 +1,25 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on pik-p                                                      #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
+#############################################################################
+
+if [ $HOSTNAME != "pik-p" ] ; then
+    echo "Wrong host! This script runs on pik-p only!"
+    exit 1
+fi
+
+cd /home/pi/raspberry/
+
+cd pool/
+
+echo "Starting 'Ventilation.py' ..."
+nohup sudo ./Ventilation.py 2>&1 >ventilation.log &
+
+echo "Starting 'Button.py' ..."
+nohup sudo ./Button.py 2>&1 >button.log &
+
+cd ..
+
+# eof #
+

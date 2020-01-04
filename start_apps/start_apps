@@ -17,6 +17,9 @@ case "$HOSTNAME" in
     pik-a)
         ./start_apps_pik-a
         ;;
+    pik-p)
+        ./start_apps_pik-p
+        ;;
     *)
         echo "Unknown host '$HOSTNAME'."
         exit 1
