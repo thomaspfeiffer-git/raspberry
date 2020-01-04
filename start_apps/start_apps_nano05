@@ -1,0 +1,10 @@
+
+
+cd /home/pi/raspberry/
+
+cd weather/
+nohup ./anteroom.py 2>&1 >anteroom.log &
+cd ..
+
+# eof #
+
