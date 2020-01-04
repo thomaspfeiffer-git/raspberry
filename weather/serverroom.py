@@ -1,14 +1,14 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# anteroom.py                                                                 #
-# Monitors temperature and humidity in our anteroom.                          #
+# serverroomy                                                                 #
+# Monitors temperature and humidity in our server room                        #
 # (c) https://github.com/thomaspfeiffer-git 2020                              #
 ###############################################################################
-""" Collect temperature and humidity in our anteroom (mainly with HTU21DF). """
+""" Collect temperature and humidity in our server room (mainly with HTU21DF). """
 
 # start with:
-# nohup ./anteroom.py 2>&1 >anteroom.log &
+# nohup ./serverroom.py 2>&1 >serverroom.log &
 
 import rrdtool
 import sys
@@ -24,7 +24,7 @@ from Shutdown import Shutdown
 
 
 # Misc for rrdtool
-DATAFILE      = "/schild/weather/anteroom.rrd"  # TODO: check
+DATAFILE      = "/schild/weather/serverroom.rrd"
 DS_TEMP       = "temp" 
 DS_HUMI       = "humi"
 DS_TEMPCPU    = "temp_cpu"
