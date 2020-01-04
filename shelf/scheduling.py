@@ -18,7 +18,7 @@ sys.path.append("../libs/")
 from Logging import Log
 
 DEFAULT_ACTIVATE_TIME   = "--:--"   # = now()
-DEFAULT_DEACTIVATE_TIME = "22:30"
+DEFAULT_DEACTIVATE_TIME = "23:30"
 
 
 ############################################################################
