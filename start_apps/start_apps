@@ -1,0 +1,26 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on various hosts.                                             #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
+#############################################################################
+
+case "$HOSTNAME" in 
+    nano02)
+        ./start_apps_nano02
+        ;;
+    nano04)
+        ./start_apps_nano04
+        ;;
+    nano05)
+        ./start_apps_nano05
+        ;;
+    pik-a)
+        ./start_apps_pik-a
+        ;;
+    *)
+        echo "Unknown host '$HOSTNAME'."
+        exit 1
+esac        
+
+# eof #
+
