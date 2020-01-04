@@ -20,8 +20,8 @@ while True:
      htu21df_temperature = htu21df.read_temperature()
      htu21df_humidity    = htu21df.read_humidity()
 
-     print("HTU21DF | Humi | {:>8.2f} | % rF |".format(htu21df_humidity))
-     print("HTU21DF | Temp | {:>8.2f} | °C   |".format(htu21df_temperature))
+     print(f"HTU21DF | Humi | {htu21df_humidity:>8.2f} | % rF |")
+     print(f"HTU21DF | Temp | {htu21df_temperature:>8.2f} | °C   |")
 
      time.sleep(1)
 
