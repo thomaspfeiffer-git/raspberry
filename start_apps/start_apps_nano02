@@ -1,23 +1,40 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on nano02                                                     #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
+#############################################################################
+
+if [ $HOSTNAME != "nano02" ] ; then 
+    echo "Wrong host! This script runs on nano02 only!"
+    exit 1
+fi
 
 cd /home/pi/raspberry/
 
 cd weather/
+echo "Starting 'weather_indoor.py' ..."
 nohup ./weather_indoor.py 2>&1 > weather_indoor.log &
 cd ..
 
 cd openweathermap/
+echo "Starting 'openweather.py' ..."
 nohup ./openweather.py > openweather.log 2>&1 &
 cd ..
 
 cd kollerberg/
+echo "Starting 'weather_feed.py' ..."
 nohup ./weather_feed.py 2>&1 > weather_feed.log &
 cd ..
 
 cd seti/
+echo "Starting 'seti_receiver.py' ..."
 nohup ./seti_receiver.py 2>&1 > seti_receiver.log &
 cd ..
 
 cd pool/
+echo "Starting 'UDP.py' ..."
 nohup ./UDP.py 2>&1 > udp.log &
 cd ..
+
+# eof #
 

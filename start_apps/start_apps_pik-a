@@ -1,0 +1,26 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on pik-a                                                      #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
+#############################################################################
+
+if [ $HOSTNAME != "pik-a" ] ; then
+    echo "Wrong host! This script runs on pik-a only!"
+    exit 1
+fi
+
+
+cd ~/raspberry/
+
+cd kollerberg/
+echo "Starting 'weather.py' ..."
+nohup ./weather.py 2>&1 > weather.log &
+cd ..
+
+cd airparticulates/
+echo "Starting 'Airparticulates.py' ..."
+nohup ./Airparticulates.py --id 2 > airparticulates.log 2>&1 &
+cd ..
+
+# eof #
+
