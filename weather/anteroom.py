@@ -8,7 +8,7 @@
 """ Collect temperature and humidity in our anteroom (mainly with HTU21DF). """
 
 # start with:
-# nohup ./  TODO TODO
+# nohup ./anteroom.py 2>&1 >anteroom.log &
 
 import rrdtool
 import sys
@@ -37,8 +37,8 @@ def main():
     htu21df = HTU21DF()
     cpu = CPU()
 
-    rrd_template = DS_TEMP       + ":" + \
-                   DS_HUMI       + ":" + \
+    rrd_template = DS_TEMP + ":" + \
+                   DS_HUMI + ":" + \
                    DS_TEMPCPU
 
     while True:
