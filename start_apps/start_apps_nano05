@@ -1,9 +1,20 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on nano05                                                     #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
+#############################################################################
+
+if [ $HOSTNAME != "nano05" ] ; then 
+    echo "Wrong host! This script runs on nano05 only!"
+    exit 1
+fi
 
 
 cd /home/pi/raspberry/
 
 cd weather/
-nohup ./anteroom.py 2>&1 >anteroom.log &
+echo "Starting 'anteroom.py' ..."
+# nohup ./anteroom.py 2>&1 >anteroom.log &
 cd ..
 
 # eof #
