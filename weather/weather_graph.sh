@@ -24,6 +24,7 @@ RRD_AR=$RRDPATH/anteroom.rrd
 RRD_KI=$RRDPATH/kitchen.rrd
 RRD_AP=$RRDPATH/airparticulates.rrd
 RRD_PO=$RRDPATH/pool.rrd
+RRD_SR=$RRDPATH/serverroom.rrd
 
 
 PNG_TEMP_D=$RRDPATH/weather_temp_d.png
@@ -110,6 +111,7 @@ printTemp ()
     DEF:ki_temp=$RRD_KI:ki_temp:AVERAGE                      \
     DEF:kidsroom_temp1=$RRD_K:kidsroom_temp1:AVERAGE         \
     DEF:wr_temp1=$RRD_WR:wr_temp1:AVERAGE                    \
+    DEF:sr_temp=$RRD_SR:temp:AVERAGE                         \
     DEF:kb_i_t1=$RRD_KB:kb_i_t1:AVERAGE                      \
     DEF:kb_a_t1=$RRD_KB:kb_a_t1:AVERAGE                      \
     DEF:kb_k_t1=$RRD_KB:kb_k_t1:AVERAGE                      \
@@ -143,6 +145,11 @@ printTemp ()
     GPRINT:wr_temp1:AVERAGE:"Mittelwert\: %5.2lf °C"         \
     GPRINT:wr_temp1:MAX:"Max\: %5.2lf °C"                    \
     GPRINT:wr_temp1:MIN:"Min\: %5.2lf °C\n"                  \
+    LINE1:sr_temp#000000:"Temperatur Serverraum         "    \
+    GPRINT:sr_temp:LAST:"Aktuell\: %5.2lf °C"                \
+    GPRINT:sr_temp:AVERAGE:"Mittelwert\: %5.2lf °C"          \
+    GPRINT:sr_temp:MAX:"Max\: %5.2lf °C"                     \
+    GPRINT:sr_temp:MIN:"Min\: %5.2lf °C\n"                   \
     LINE1:kb_i_t1#40FF00:"Temperatur Kollerberg innen   "    \
     GPRINT:kb_i_t1:LAST:"Aktuell\: %5.2lf °C"                \
     GPRINT:kb_i_t1:AVERAGE:"Mittelwert\: %5.2lf °C"          \
@@ -180,6 +187,7 @@ printCPUTemp ()
     DEF:kidsroom_tempcpu=$RRD_K:kidsroom_tempcpu:AVERAGE                 \
     DEF:wr_tempcpu=$RRD_WR:wr_tempcpu:AVERAGE                            \
     DEF:ar_tempcpu=$RRD_AR:ar_tempcpu:AVERAGE                            \
+    DEF:sr_tempcpu=$RRD_SR:tempcpu:AVERAGE                               \
     DEF:out_tempcpu=$RRD_OUT:temp_cpu:AVERAGE                            \
     DEF:kb_i_tcpu=$RRD_KB:kb_i_tcpu:AVERAGE                              \
     DEF:kb_a_tcpu=$RRD_KB:kb_a_tcpu:AVERAGE                              \
@@ -205,6 +213,11 @@ printCPUTemp ()
     GPRINT:ar_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
     GPRINT:ar_tempcpu:MAX:"Max\: %5.2lf °C"                              \
     GPRINT:ar_tempcpu:MIN:"Min\: %5.2lf °C\n"                            \
+    LINE1:sr_tempcpu#000000:"Temperatur NanoPi NEO Serverraum         "  \
+    GPRINT:sr_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
+    GPRINT:sr_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
+    GPRINT:sr_tempcpu:MAX:"Max\: %5.2lf °C"                              \
+    GPRINT:sr_tempcpu:MIN:"Min\: %5.2lf °C\n"                            \
     LINE1:wr_tempcpu#ffcc00:"Temperatur Raspberry Pi Kleiderkasten    "  \
     GPRINT:wr_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
     GPRINT:wr_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
@@ -257,6 +270,7 @@ printHumidity ()
     DEF:ki_humi=$RRD_KI:ki_humi:AVERAGE                        \
     DEF:kidsroom_humi=$RRD_K:kidsroom_humi:AVERAGE             \
     DEF:wr_humi=$RRD_WR:wr_humi:AVERAGE                        \
+    DEF:sr_humi=$RRD_SR:humi:AVERAGE                           \
     DEF:kb_i_humi=$RRD_KB:kb_i_humi:AVERAGE                    \
     DEF:kb_a_humi=$RRD_KB:kb_a_humi:AVERAGE                    \
     DEF:kb_k_humi=$RRD_KB:kb_k_humi:AVERAGE                    \
@@ -285,6 +299,11 @@ printHumidity ()
     GPRINT:wr_humi:AVERAGE:"Mittelwert\: %5.2lf %%"            \
     GPRINT:wr_humi:MAX:"Max\: %5.2lf %%"                       \
     GPRINT:wr_humi:MIN:"Min\: %5.2lf %%\n"                     \
+    LINE1:sr_humi#000000:"Luftfeuchtigkeit Serverraum       "  \
+    GPRINT:sr_humi:LAST:"\t Aktuell\: %5.2lf %%"               \
+    GPRINT:sr_humi:AVERAGE:"Mittelwert\: %5.2lf %%"            \
+    GPRINT:sr_humi:MAX:"Max\: %5.2lf %%"                       \
+    GPRINT:sr_humi:MIN:"Min\: %5.2lf %%\n"                     \
     LINE1:kb_i_humi#40FF00:"Luftfeuchtigkeit Kollerberg innen " \
     GPRINT:kb_i_humi:LAST:"\t Aktuell\: %5.2lf %%"             \
     GPRINT:kb_i_humi:AVERAGE:"Mittelwert\: %5.2lf %%"          \
