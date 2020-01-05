@@ -27,7 +27,7 @@ from Shutdown import Shutdown
 DATAFILE      = "/schild/weather/serverroom.rrd"
 DS_TEMP       = "temp" 
 DS_HUMI       = "humi"
-DS_TEMPCPU    = "temp_cpu"
+DS_TEMPCPU    = "tempcpu"
 
 
 ###############################################################################
@@ -51,9 +51,9 @@ def main():
                                                  humidity,   \
                                                  cpu_temp])
                                                           
-        Log(rrd_template)
+        # Log(rrd_template)
         Log(rrd_data)
-        # rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
+        rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
    
         time.sleep(50)
 

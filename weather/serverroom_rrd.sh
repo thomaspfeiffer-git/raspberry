@@ -3,11 +3,10 @@
 
 HEARTBEAT=90
 
-rrdtool create weather_kidsroom.rrd --step 60 \
-DS:kidsroom_temp1:GAUGE:$HEARTBEAT:-40:80 \
-DS:kidsroom_tempcpu:GAUGE:$HEARTBEAT:-40:80 \
-DS:kidsroom_temp2:GAUGE:$HEARTBEAT:-40:80 \
-DS:kidsroom_humi:GAUGE:$HEARTBEAT:0:100 \
+rrdtool create serverroom.rrd --step 60 \
+DS:temp:GAUGE:$HEARTBEAT:-40:80 \
+DS:tempcpu:GAUGE:$HEARTBEAT:-40:80 \
+DS:humi:GAUGE:$HEARTBEAT:0:125 \
 RRA:AVERAGE:0.5:1:7200 \
 RRA:AVERAGE:0.5:5:4032 \
 RRA:AVERAGE:0.5:60:744 \
