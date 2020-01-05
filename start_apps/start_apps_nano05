@@ -13,8 +13,8 @@ fi
 cd /home/pi/raspberry/
 
 cd weather/
-echo "Starting 'anteroom.py' ..."
-nohup ./anteroom.py 2>&1 >anteroom.log &
+echo "Starting 'serverroom.py' ..."
+nohup ./serverroom.py 2>&1 >serverroom.log &
 cd ..
 
 # eof #
