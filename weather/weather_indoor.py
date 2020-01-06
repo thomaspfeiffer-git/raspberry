@@ -71,11 +71,11 @@ def main():
         cpu_temp   = cpu.read_temperature()
      
         rrd_data = "N:" + \
-                   ":".join("{:.2f}".format(d) for d in [temp,       \
-                                                         humi,       \
-                                                         pressure,   \
-                                                         airquality, \
-                                                         cpu_temp])
+                   ":".join(f"{d:.2f}" for d in [temp,       \
+                                                 humi,       \
+                                                 pressure,   \
+                                                 airquality, \
+                                                 cpu_temp])
                                                           
         # Log(rrd_template)
         Log(rrd_data)
