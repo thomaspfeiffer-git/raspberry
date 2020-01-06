@@ -94,7 +94,10 @@ class UDP_Receiver (object):
                 Log("WARN: Payload corrupted: {}".format(payload))
             else:    
                 Log("RRD Data received: {}".format(rrd_data))
-                rrdtool.update(RRDFILE, "--template", Sensordata.rrd_template(), rrd_data)
+                try:
+                    rrdtool.update(RRDFILE, "--template", Sensordata.rrd_template(), rrd_data)
+                except rrdtool.OperationalError:
+                    Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
 
 ###############################################################################

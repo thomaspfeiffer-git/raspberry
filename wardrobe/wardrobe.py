@@ -362,8 +362,11 @@ def main ():
                     ":{}".format(controls['drawer'].switchvalue_stretched()) + \
                     ":{}".format(0)
         Log(rrd_data)
-        rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
-
+        try:
+            rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+        except rrdtool.OperationalError:
+            Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+    
         sleep(50)
 
 

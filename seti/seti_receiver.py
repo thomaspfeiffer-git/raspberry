@@ -201,7 +201,10 @@ class ToRRD (threading.Thread):
                                                                 
                 # Log(rrd_template)
                 Log(rrd_data)
-                rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+                try:
+                    rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+                except rrdtool.OperationalError:
+                    Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
             for _ in range(600):  # interruptible sleep
                 if not self._running:
