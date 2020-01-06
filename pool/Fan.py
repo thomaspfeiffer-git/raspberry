@@ -50,13 +50,13 @@ class Fan (gpio):
     def __on (self):
         time.sleep(self.delay)
         super().on()
-        Log("Fan {} switched on.".format(self.pin))
+        Log(f"Fan {self.pin} switched on.")
 
     def __off (self, immediate):
         if not immediate:
             time.sleep(self.delay)
         super().off()
-        Log("Fan {} switched off.".format(self.pin))
+        Log(f"Fan {self.pin} switched off.")
 
     def on (self):
         if self.__thread_on:
@@ -74,7 +74,7 @@ class Fan (gpio):
             self.__thread_off.start()
         else:    
             super().off()
-            Log("Fan {} switched off immediately.".format(self.pin))
+            Log(f"Fan {self.pin} switched off immediately.")
 
 # eof #
 
