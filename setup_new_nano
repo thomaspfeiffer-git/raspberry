@@ -224,6 +224,11 @@ etc/network/interfaces
 etc/wpa_supplicant/wpa_supplicant.conf
 # keep mount -v -o loop in mind
 
+in case of not working wifi-stick:
+https://unix.stackexchange.com/questions/386925/aborting-authentication-by-local-choice-reason-3-deauth-leaving-when-trying
+ln -s /dev/null /etc/systemd/network/99-default.link
+
+
 
 # Basic setup
 dpkg-reconfigure tzdata
