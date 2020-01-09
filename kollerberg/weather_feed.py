@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # weather_feed.py                                                             #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2018                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2018, 2020             #
 ###############################################################################
 """
 Receives UDP data from our summer cottage and distributes it to the local
@@ -190,12 +190,19 @@ class ToRRD (threading.Thread):
     def update_rrd (db, template, data):
         template = template.rstrip(":")
         data     = data.rstrip(":")
+        retries  = 0
         # Log(template)
         # Log(data)
-        try:
-            rrdtool.update(db, "--template", template, data)
-        except rrdtool.OperationalError:
-            Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+        while retries < 3:
+            try:
+                Log(f"rrd update: {data}")
+                rrdtool.update(db, "--template", template, data)
+                Log("rrd update done")
+                break
+            except rrdtool.OperationalError:
+                Log("Retry: #{}. Cannot update rrd database: {1[0]} {1[1]}".format(retries,sys.exc_info()))
+                time.sleep(1)
+                retries += 1
 
     def rrd_weather (self):
         data_complete = True
@@ -241,7 +248,7 @@ class ToRRD (threading.Thread):
             self.rrd_weather()
             self.rrd_particulates()
 
-            for _ in range(600):  # interruptible sleep
+            for _ in range(500):  # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
