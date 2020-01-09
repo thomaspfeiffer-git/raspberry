@@ -1,8 +1,8 @@
 #/bin/bash
 
-HEARTBEAT=90
+HEARTBEAT=180
 
-rrdtool create /schild/weather/pool.rrd --step 60 \
+rrdtool create pool.rrd --step 60 \
 DS:TEMPCPU:GAUGE:$HEARTBEAT:-40:80 \
 DS:TEMPBOX:GAUGE:$HEARTBEAT:-40:80 \
 DS:TEMPAIRIN:GAUGE:$HEARTBEAT:-40:80 \

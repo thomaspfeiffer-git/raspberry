@@ -1,6 +1,6 @@
 #/bin/bash
 
-HEARTBEAT=90
+HEARTBEAT=180
 
 rrdtool create seti.rrd --step 60 \
 DS:1_tempcpu:GAUGE:$HEARTBEAT:-5:100 \
