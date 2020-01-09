@@ -1,6 +1,6 @@
 #/bin/bash
 
-HEARTBEAT=90
+HEARTBEAT=180
 
 rrdtool create weather_kollerberg.rrd --step 60 \
 DS:kb_i_t1:GAUGE:$HEARTBEAT:-40:80 \
