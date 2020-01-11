@@ -28,7 +28,7 @@ from sensors.DS1820 import DS1820
 
 # Hosts where this app runs
 pik_i = "pik_i"
-pik_a = "pik_a"
+pik_a = "pik-a"
 pik_k = "pik-k"
 PIs = [pik_i, pik_a, pik_k]
 this_PI = socket.gethostname()
