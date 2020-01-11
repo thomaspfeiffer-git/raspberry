@@ -543,7 +543,7 @@ printPoolTemp()
     GPRINT:temp_box:AVERAGE:"Mittelwert\: %5.2lf °C"           \
     GPRINT:temp_box:MAX:"Max\: %5.2lf °C"                      \
     GPRINT:temp_box:MIN:"Min\: %5.2lf °C\n"                    \
-    LINE1:temp_airin#42C3FF:"Temperatur einströmende Luft  "   \
+    LINE1:temp_airin#009900:"Temperatur einströmende Luft  "   \
     GPRINT:temp_airin:LAST:"Aktuell\: %5.2lf °C"               \
     GPRINT:temp_airin:AVERAGE:"Mittelwert\: %5.2lf °C"         \
     GPRINT:temp_airin:MAX:"Max\: %5.2lf °C"                    \
@@ -588,7 +588,7 @@ printPoolHumi()
     GPRINT:humi_box:AVERAGE:"Mittelwert\: %5.2lf %%"              \
     GPRINT:humi_box:MAX:"Max\: %5.2lf %%"                         \
     GPRINT:humi_box:MIN:"Min\: %5.2lf %%\n"                       \
-    LINE1:humi_airin#42C3FF:"Luftfeuchtigkeit einströmende Luft"  \
+    LINE1:humi_airin#009900:"Luftfeuchtigkeit einströmende Luft"  \
     GPRINT:humi_airin:LAST:"\t Aktuell\: %5.2lf %%"               \
     GPRINT:humi_airin:AVERAGE:"Mittelwert\: %5.2lf %%"            \
     GPRINT:humi_airin:MAX:"Max\: %5.2lf %%"                       \
