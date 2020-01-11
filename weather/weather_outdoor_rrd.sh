@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HEARTBEAT=90
+HEARTBEAT=180
 
 rrdtool create /schild/weather/weather_outdoor.rrd --step 60 \
 DS:temp:GAUGE:$HEARTBEAT:-40:80 \

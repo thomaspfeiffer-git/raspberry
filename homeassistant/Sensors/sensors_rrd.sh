@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HEARTBEAT=90
+HEARTBEAT=180
 
 
 rrdtool create /schild/weather/kitchen.rrd --step 60 \

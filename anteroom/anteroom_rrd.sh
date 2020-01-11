@@ -5,7 +5,7 @@
 # move to python
 # done: 1 minute for first 7 days (mind: change cron!)
 
-HEARTBEAT=90
+HEARTBEAT=180
 
 
 rrdtool create /schild/weather/anteroom.rrd --step 60 \
