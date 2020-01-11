@@ -33,7 +33,7 @@ QUEUE_INI = "/home/pi/configs/weatherqueue.ini"
 RRDFILE_WEATHER = "/schild/weather/weather_kollerberg.rrd"
 RRDFILE_PARTICULATES = "/schild/weather/airparticulates.rrd"
 
-pik_i = "pik_i"
+pik_i = "pik-i"
 pik_a = "pik-a"
 pik_k = "pik-k"
 PIs = [pik_i, pik_a, pik_k]
