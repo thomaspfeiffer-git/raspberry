@@ -1,0 +1,21 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on pik-i                                                      #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
+#############################################################################
+
+if [ $HOSTNAME != "pik-i" ] ; then
+    echo "Wrong host! This script runs on pik-i only!"
+    exit 1
+fi
+
+
+cd ~/raspberry/
+
+cd kollerberg/
+echo "Starting 'weather.py' ..."
+nohup ./weather.py 2>&1 > weather.log &
+cd ..
+
+# eof #
+
