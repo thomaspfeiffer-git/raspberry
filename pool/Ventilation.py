@@ -88,7 +88,7 @@ class Control (threading.Thread):
             self.ventilation_on()
 
     def ventilation_on_checked (self):
-        if self.data.valid and self.outdoor_temp >= 1.0:
+        if self.data.valid and self.data.outdoor_temp >= 1.0:
             self.ventilation_on()
 
     def set_run_optional (self, param):
