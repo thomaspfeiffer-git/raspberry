@@ -87,6 +87,10 @@ class Control (threading.Thread):
         else:
             self.ventilation_on()
 
+    def ventilation_on_checked (self):
+        if self.data.valid and self.outdoor_temp >= 1.0:
+            self.ventilation_on()
+
     def set_run_optional (self, param):
         self.run_optional = param
 
@@ -97,7 +101,7 @@ class Control (threading.Thread):
             nonlocal already_running
             if self.run_optional and not already_running:
                 # if humi_inside+5 > humi_outside:  # TODO: add some clever logic
-                self.ventilation_on()
+                self.ventilation_on_checked()
                 already_running = True
             elif not self.run_optional and already_running:
                 self.ventilation_off()
@@ -108,22 +112,8 @@ class Control (threading.Thread):
     def run (self):
         ventilation_optional = self.ventilation_optional()
 
-        schedule.every().day.at("10:00").do(self.ventilation_on)
-#        schedule.every().day.at("11:00").do(self.ventilation_off)
-#        schedule.every().day.at("12:38").do(self.ventilation_on)
-#        schedule.every().day.at("12:40").do(self.ventilation_off)
-#        schedule.every().day.at("13:00").do(self.ventilation_on)
-#        schedule.every().day.at("14:00").do(self.ventilation_off)
-#        schedule.every().day.at("15:46").do(self.ventilation_on)
-#        schedule.every().day.at("15:48").do(self.ventilation_off)
-#        schedule.every().day.at("16:00").do(self.ventilation_on)
-#        schedule.every().day.at("17:00").do(self.ventilation_off)
-#        schedule.every().day.at("17:15").do(self.ventilation_on)
-#        schedule.every().day.at("17:25").do(self.ventilation_off)
-#        schedule.every().day.at("19:00").do(self.ventilation_on)
-#        schedule.every().day.at("20:00").do(self.ventilation_off)
-#        schedule.every().day.at("22:00").do(self.ventilation_on)
-        schedule.every().day.at("23:00").do(self.ventilation_off)
+        schedule.every().day.at("13:00").do(self.ventilation_on_checked)
+        schedule.every().day.at("13:30").do(self.ventilation_off)
 
 #        schedule.every().day.at("10:00").do(self.set_run_optional, True)
 #        schedule.every().day.at("12:00").do(self.set_run_optional, False)
