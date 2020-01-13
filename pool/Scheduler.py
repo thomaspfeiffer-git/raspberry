@@ -25,20 +25,32 @@ def validate_time (start, stop):
 def validate_temperature (condition):
     location = condition['@location']
     if location not in ['inside', 'outside']:
-        raise ValueError() # TODO
+        raise ValueError(f"'@location' is '{location}', should be in ['inside', 'outside']")
 
     value = float(condition['value'])
     if not -10 <= value <= 50:
-        raise ValueError() # TODO
+        raise ValueError(f"'value is '{value}', should be in -10 .. +50")
 
     operator = condition['operator']
-    if operator not in ["<=", ">="]:
-        raise ValueError() # TODO
+    if operator not in ['<=', '>=']:
+        raise ValueError(f"'operator' is '{operator}', should be in ['<=', '>=']")
 
     print(f"location: {location}, value: {value}, operator: {operator}")    
 
 def validate_humidity_difference (condition):
-    print(f"in validate_humidity_difference: {condition}")
+    value = float(condition['value'])
+    if not 1 <= value <= 50:
+        raise ValueError(f"'value is '{value}', should be in 1 .. +50")
+
+    delay_for_measurement = int(condition['delay_for_measurement'])
+    if delay_for_measurement < 1:
+        raise ValueError() # TODO
+
+    delay_for_retry = int(condition['delay_for_retry'])
+    if delay_for_retry < 1:
+        raise ValueError() # TODO
+
+    print(f"value: {value}, delay_for_measurement: {delay_for_measurement}, delay_for_retry: {delay_for_retry}")    
 
 
 for s in doc['schedules']['schedule']:
