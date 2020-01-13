@@ -13,17 +13,29 @@ pp = pprint.PrettyPrinter(indent=2)
 
 with open('schedule.xml') as fd:
     doc = xmltodict.parse(fd.read())
-    pp.pprint(doc)
+
+pp.pprint(doc)
 
 
 validators = ['time', 'temperature', 'humidity_difference']
-
 
 def validate_time (start, stop):
     print(f"Start: {start}; stop: {stop}")
 
 def validate_temperature (condition):
-    print(f"in validate_temperature: {condition}")
+    location = condition['@location']
+    if location not in ['inside', 'outside']:
+        raise ValueError() # TODO
+
+    value = float(condition['value'])
+    if not -10 <= value <= 50:
+        raise ValueError() # TODO
+
+    operator = condition['operator']
+    if operator not in ["<=", ">="]:
+        raise ValueError() # TODO
+
+    print(f"location: {location}, value: {value}, operator: {operator}")    
 
 def validate_humidity_difference (condition):
     print(f"in validate_humidity_difference: {condition}")
