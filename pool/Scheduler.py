@@ -1,17 +1,29 @@
 #!/usr/bin/python3 -u
 
+
+
+# install
+# sudo pip3 install xmltodict
+
+import xmltodict
+
 import pprint
-pp = pprint.PrettyPrinter(indent=4)
-
-import xml.dom.minidom
-
-DT = xml.dom.minidom.parse("schedule.xml")
-collection = DT.documentElement
+pp = pprint.PrettyPrinter(indent=2)
 
 
-schedules = collection.getElementsByTagName("schedule")
-for sched in schedules:
-    start = sched.getElementsByTagName('start')[0]
-    print("start: {}".format(start.childNodes[0].data))
+with open('schedule.xml') as fd:
+    doc = xmltodict.parse(fd.read())
+    pp.pprint(doc)
 
+
+for s in doc['schedules']['schedule']:
+    start = s['start']
+    stop  = s['stop']
+    print(f"start: {start}; stop: {stop}")
+
+    if 'conditions' in s:
+        for c in s['conditions']:
+            print(f"c: {c}")
+
+ # eof #
 
