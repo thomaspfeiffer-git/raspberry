@@ -25,11 +25,11 @@
                 <value>3.0</value>
                 <operator>">="</operator>
             </temperature>
-            <humidity-difference>
+            <humidity_difference>
                 <value>5.0</value>
                 <delay_for_measurement>300</delay_for_measurement>
                 <delay_for_retry>1800</delay_for_retry>
-            </humidity-difference>
+            </humidity_difference>
         </conditions>    
     </schedule>
 </schedules>

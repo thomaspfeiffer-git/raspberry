@@ -16,14 +16,28 @@ with open('schedule.xml') as fd:
     pp.pprint(doc)
 
 
+validators = ['time', 'temperature', 'humidity_difference']
+
+
+def validate_time (start, stop):
+    print(f"Start: {start}; stop: {stop}")
+
+def validate_temperature (condition):
+    print(f"in validate_temperature: {condition}")
+
+def validate_humidity_difference (condition):
+    print(f"in validate_humidity_difference: {condition}")
+
+
 for s in doc['schedules']['schedule']:
-    start = s['start']
-    stop  = s['stop']
-    print(f"start: {start}; stop: {stop}")
+    validate_time(s['start'], s['stop'])
 
     if 'conditions' in s:
-        for c in s['conditions']:
-            print(f"c: {c}")
+        for condition in s['conditions']:
+            if not condition in validators:
+                raise NameError(f"Condition '{condition}' not defined.")
+            fn=locals()[f"validate_{condition}"]
+            fn(s['conditions'][condition])
 
  # eof #
 
