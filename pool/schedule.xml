@@ -1,0 +1,37 @@
+
+<!-- https://www.tutorialspoint.com/python3/python_xml_processing.htm -->
+
+<schedules>
+    <schedule>
+        <start>4:00</start>
+        <stop>4:30</start>
+    </schedule>
+
+    <schedule>
+        <start>7:00</start>
+        <stop>8:00</stop>
+        <conditions>
+            <temperature location="outside">
+                <value>1.0</value>
+                <operator>">="</operator>
+            </temperature>
+        </conditions>    
+    </schedule>
+
+    <schedule>
+        <start>10:00</start>
+        <stop>16:00</stop>
+        <conditions>
+            <temperature location="outside">
+                <value>3.0</value>
+                <operator>">="</operator>
+            </temperature>
+            <humidity-difference>
+                <value>5.0</value>
+                <delay_for_measurement>300</delay_for_measurement>
+                <delay_for_retry>1800</delay_for_retry>
+            </humidity>
+        </conditions>    
+    </schedule>
+</schedules>
+
