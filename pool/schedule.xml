@@ -4,7 +4,7 @@
 <schedules>
     <schedule>
         <start>4:00</start>
-        <stop>4:30</start>
+        <stop>4:30</stop>
     </schedule>
 
     <schedule>
@@ -30,7 +30,7 @@
                 <value>5.0</value>
                 <delay_for_measurement>300</delay_for_measurement>
                 <delay_for_retry>1800</delay_for_retry>
-            </humidity>
+            </humidity-difference>
         </conditions>    
     </schedule>
 </schedules>
