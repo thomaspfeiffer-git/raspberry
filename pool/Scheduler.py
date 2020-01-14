@@ -27,7 +27,7 @@ def validate_time (schedule):
             t = datetime.datetime.strptime(t, "%H:%M")
         except ValueError:
             raise ValueError(f"'start' is '{t}', should be '%H:%M'")
-        return datetime.datetime.now().replace(hour=t.hour, minute=t.minute)
+        return lambda: datetime.datetime.now().replace(hour=t.hour, minute=t.minute)
 
     schedule['start'] = validate(schedule['start'])
     schedule['stop'] = validate(schedule['stop'])
