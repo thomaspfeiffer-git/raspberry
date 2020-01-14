@@ -32,10 +32,5 @@
             </humidity_difference>
         </conditions>    
     </schedule>
-
-    <schedule>
-        <start>20:00</start>
-        <stop>20:15</stop>
-    </schedule>
 </schedules>
 
