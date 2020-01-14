@@ -5,6 +5,7 @@
 # install
 # sudo pip3 install xmltodict
 
+import datetime
 import operator
 import xmltodict
 
@@ -20,8 +21,16 @@ pp.pprint(doc)
 
 all_conditions = ['time', 'temperature', 'humidity_difference']
 
-def validate_time (start, stop):
-    print(f"Start: {start}; stop: {stop}")
+def validate_time (schedule):
+    def validate (t):
+        try:
+            t = datetime.datetime.strptime(t, "%H:%M")
+        except ValueError:
+            raise ValueError(f"'start' is '{t}', should be '%H:%M'")
+        return datetime.datetime.now().replace(hour=t.hour, minute=t.minute)
+
+    schedule['start'] = validate(schedule['start'])
+    schedule['stop'] = validate(schedule['stop'])
 
 
 def validate_temperature (condition):
@@ -58,7 +67,7 @@ def validate_humidity_difference (condition):
 
 
 for schedule in doc['schedules']['schedule']:
-    validate_time(schedule['start'], schedule['stop'])
+    validate_time(schedule)
 
     if 'conditions' in schedule:
         for condition in schedule['conditions']:
