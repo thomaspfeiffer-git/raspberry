@@ -56,6 +56,9 @@ class Schedule (object):
         schedule['start'] = validate(schedule['start'])
         schedule['stop'] = validate(schedule['stop'])
 
+        if schedule['stop']() < schedule['start']():
+            raise ValueError(f"starttime '{schedule['start']()}' is after stoptime '{schedule['stop']()}'")
+
 
     def validate_temperature (self, condition):
         location = condition['@location']
@@ -105,14 +108,26 @@ class Scheduler (threading.Thread):
         with self.__lock:
             self.schedule = Schedule()
 
+    def check_time (self, condition):
+        if condition['start']() <= datetime.datetime.now() <= condition['stop']():
+            return True
+        else:
+            return False
+
     def check (self):
         with self.__lock:
-            for s in self.schedule.schedule['schedules']['schedule']:
-                pass
+            for schedule in self.schedule.schedule['schedules']['schedule']:
+                on = self.check_time(schedule)
+                print(f"on after check_time: {on}")
+            
+                if 'conditions' in schedule:
+                   for condition in schedule['conditions']:
+                       pass
 
     def run (self):
         while self._running:
             self.check()
+            self._running = False
 
             for _ in range(600):      # interruptible sleep 
                 if not self._running:
@@ -126,15 +141,10 @@ class Scheduler (threading.Thread):
 ################
 # main #########
 
-s = Schedule()
+s = Scheduler()
+s.start()
 
-
-import pprint
-pp = pprint.PrettyPrinter(indent=2)
-
-
-pp.pprint(s.schedule)
-
+s.join()
 
 # eof #
 
