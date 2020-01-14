@@ -16,6 +16,7 @@ Controls ventilation of the control room of our swimming pool.
 ### Packages you might need to install ###
 # sudo pip3 install Pillow
 # sudo pip3 install Flask
+# sudo pip3 install xmltodict
 
 
 from enum import Enum
@@ -88,7 +89,7 @@ class Control (threading.Thread):
             self.ventilation_on()
 
     def run (self):
-        last = None
+        last_on = None
         while self._running:
             if self.scheduler.on and not last_on:
                 self.ventilation_on()
@@ -155,7 +156,7 @@ if __name__ == "__main__":
     scheduler = Scheduler(data)
     scheduler.start()
 
-    control = Control(data)
+    control = Control(data, scheduler)
     control.start()
 
     app.run(host="0.0.0.0")

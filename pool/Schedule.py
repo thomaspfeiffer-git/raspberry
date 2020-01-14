@@ -9,10 +9,6 @@
 Implements the scheduler.
 """
 
-
-# install
-# sudo pip3 install xmltodict
-
 import datetime
 import operator
 import threading
@@ -20,6 +16,7 @@ import time
 import xmltodict
 
 from Config import CONFIG
+from Logging import Log
 
 
 ###############################################################################
@@ -119,7 +116,7 @@ class Scheduler (threading.Thread):
         with self.__lock:
             for schedule in self.schedule.schedule['schedules']['schedule']:
                 on = self.check_time(schedule)
-                print(f"on after check_time: {on}")
+                # Log(f"on after check_time: {on}")
             
                 if 'conditions' in schedule:
                    for condition in schedule['conditions']:
