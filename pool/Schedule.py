@@ -6,9 +6,8 @@
 ###############################################################################
 
 """
-
+Implements the scheduler.
 """
-
 
 
 # install
@@ -57,7 +56,8 @@ class Schedule (object):
         schedule['stop'] = validate(schedule['stop'])
 
         if schedule['stop']() < schedule['start']():
-            raise ValueError(f"starttime '{schedule['start']()}' is after stoptime '{schedule['stop']()}'")
+            raise ValueError(f"starttime '{schedule['start']()}' is after " +
+                             f"stoptime '{schedule['stop']()}'")
 
 
     def validate_temperature (self, condition):
@@ -96,17 +96,18 @@ class Schedule (object):
 ###############################################################################
 # Scheduler ###################################################################
 class Scheduler (threading.Thread):
-    def __init__ (self):
+    def __init__ (self, data):
         threading.Thread.__init__(self)
+        self.data = data
         self.__lock = threading.Lock()
         self.on = False
         self.load_schedule()
-
         self._running = True
 
     def load_schedule (self):
         with self.__lock:
             self.schedule = Schedule()
+            Log("Schedule loaded.")
 
     def check_time (self, condition):
         if condition['start']() <= datetime.datetime.now() <= condition['stop']():
@@ -122,12 +123,13 @@ class Scheduler (threading.Thread):
             
                 if 'conditions' in schedule:
                    for condition in schedule['conditions']:
-                       pass
+                       pass       # TODO
+
+                self.on = on       
 
     def run (self):
         while self._running:
             self.check()
-            self._running = False
 
             for _ in range(600):      # interruptible sleep 
                 if not self._running:
@@ -135,16 +137,7 @@ class Scheduler (threading.Thread):
                 time.sleep(0.1)
 
     def stop (self):
-        self._running = True
-
-
-################
-# main #########
-
-s = Scheduler()
-s.start()
-
-s.join()
+        self._running = False
 
 # eof #
 

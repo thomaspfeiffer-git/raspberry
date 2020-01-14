@@ -15,13 +15,11 @@ Controls ventilation of the control room of our swimming pool.
 
 ### Packages you might need to install ###
 # sudo pip3 install Pillow
-# sudo pip3 install schedule
 # sudo pip3 install Flask
 
 
 from enum import Enum
 from flask import Flask, request
-import schedule
 import sys
 import threading
 import time
@@ -34,6 +32,7 @@ from Shutdown import Shutdown
 from Config import CONFIG
 from Display import Display
 from Fan import Fan
+from Schedule import Scheduler
 from Sensors import Sensors, Sensordata
 from UDP import UDP_Sender
 
@@ -52,10 +51,11 @@ class Control (threading.Thread):
         off = 0
         on = 1
 
-    def __init__ (self, data):
+    def __init__ (self, data, scheduler):
         threading.Thread.__init__(self)
         self.status = Control.State.off
         self.data = data
+        self.scheduler = scheduler
         self.run_optional = False
         self.fans = {Control.fan_in1: Fan(CONFIG.Fans.fan_in1, delay=15),
                      Control.fan_in2: Fan(CONFIG.Fans.fan_in2, delay=10),
@@ -87,40 +87,16 @@ class Control (threading.Thread):
         else:
             self.ventilation_on()
 
-    def ventilation_on_checked (self):
-        if self.data.valid and self.data.outdoor_temp >= 1.0:
-            self.ventilation_on()
-
-    def set_run_optional (self, param):
-        self.run_optional = param
-
-    def ventilation_optional (self):
-        already_running = False
-
-        def ventilation_optional_logic ():
-            nonlocal already_running
-            if self.run_optional and not already_running:
-                # if humi_inside+5 > humi_outside:  # TODO: add some clever logic
-                self.ventilation_on_checked()
-                already_running = True
-            elif not self.run_optional and already_running:
-                self.ventilation_off()
-                already_running = False
-
-        return ventilation_optional_logic        
-
     def run (self):
-        ventilation_optional = self.ventilation_optional()
-
-        schedule.every().day.at("13:00").do(self.ventilation_on_checked)
-        schedule.every().day.at("13:30").do(self.ventilation_off)
-
-#        schedule.every().day.at("10:00").do(self.set_run_optional, True)
-#        schedule.every().day.at("12:00").do(self.set_run_optional, False)
-
+        last = None
         while self._running:
-            schedule.run_pending()
-            ventilation_optional()
+            if self.scheduler.on and not last_on:
+                self.ventilation_on()
+                last_on = True
+            elif not self.scheduler.on and last_on:
+                self.ventilation_off()
+                last_on = False
+
             time.sleep(0.5)
 
     def stop (self):
@@ -138,6 +114,12 @@ def API_Toggle ():
     control.toggle()
     return "OK.\n"
 
+@app.route('/schedule')
+def API_Schedule ():
+    Log("Request: reload schedule")
+    scheduler.load_schedule()
+    return "OK.\n"
+
 
 ###############################################################################
 # Shutdown stuff ##############################################################
@@ -146,6 +128,8 @@ def shutdown_application ():
     Log("Stopping application")
     control.stop()
     control.join()
+    scheduler.stop()
+    scheduler.join()
     udp_sender.stop()
     udp_sender.join()
     sensors.stop()
@@ -167,6 +151,9 @@ if __name__ == "__main__":
 
     sensors = Sensors(data,update_display=display.print)
     sensors.start()
+
+    scheduler = Scheduler(data)
+    scheduler.start()
 
     control = Control(data)
     control.start()
