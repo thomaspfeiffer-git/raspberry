@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Config.py                                                                   #
-# (c) https://github.com/thomaspfeiffer-git 2019                              #
+# (c) https://github.com/thomaspfeiffer-git 2019, 2020                        #
 ###############################################################################
 """lots of config stuff"""
 
@@ -20,6 +20,9 @@ class CONFIG:
 
     class Buttons:
         btn_toggle = int(cfg['Buttons']['btn_toggle'])
+
+    class Schedule:
+        schedule = cfg['Schedule']['schedule']
 
 # eof #
 
