@@ -29,6 +29,8 @@ class Schedule (object):
         with open(CONFIG.Schedule.schedule) as fd:
             xmldoc = xmltodict.parse(fd.read())
 
+        xmldoc['ttl'] = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0)
+
         for schedule in xmldoc['schedules']['schedule']:
             self.validate_time(schedule)
 
@@ -113,6 +115,9 @@ class Scheduler (threading.Thread):
             return False
 
     def check (self):
+        if self.schedule.schedule['ttl'] < datetime.datetime.now():
+            self.load_schedule()
+
         with self.__lock:
             for schedule in self.schedule.schedule['schedules']['schedule']:
                 on = self.check_time(schedule)
