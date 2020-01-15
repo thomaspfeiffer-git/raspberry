@@ -26,10 +26,12 @@ class Schedule (object):
 
     def __init__ (self):
         self.schedule = None
-        with open(CONFIG.Schedule.schedule) as fd:
+        with open(CONFIG.Schedule.file) as fd:
             xmldoc = xmltodict.parse(fd.read())
 
-        xmldoc['ttl'] = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0)
+        xmldoc['valid_until'] = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0)
+        xmldoc['min_on_time'] = CONFIG.Schedule.min_on_time
+        xmldoc['min_off_time'] = CONFIG.Schedule.min_off_time
 
         for schedule in xmldoc['schedules']['schedule']:
             self.validate_time(schedule)
@@ -115,7 +117,7 @@ class Scheduler (threading.Thread):
             return False
 
     def check (self):
-        if self.schedule.schedule['ttl'] < datetime.datetime.now():
+        if self.schedule.schedule['valid_until'] < datetime.datetime.now():
             self.load_schedule()
 
         with self.__lock:
