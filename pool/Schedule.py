@@ -97,9 +97,9 @@ class Schedule (object):
 ###############################################################################
 # Scheduler ###################################################################
 class Scheduler (threading.Thread):
-    def __init__ (self, data):
+    def __init__ (self, sensordata):
         threading.Thread.__init__(self)
-        self.data = data
+        self.sensordata = sensordata
         self.__lock = threading.Lock()
         self.on = False
         self.load_schedule()
@@ -115,6 +115,9 @@ class Scheduler (threading.Thread):
             return True
         else:
             return False
+
+    def check_temperature (self, condition):
+        pass
 
     def check (self):
         if self.schedule.schedule['valid_until'] < datetime.datetime.now():
