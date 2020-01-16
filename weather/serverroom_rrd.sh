@@ -1,7 +1,7 @@
 #/bin/bash
 
 
-HEARTBEAT=90
+HEARTBEAT=180
 
 rrdtool create serverroom.rrd --step 60 \
 DS:temp:GAUGE:$HEARTBEAT:-40:80 \
