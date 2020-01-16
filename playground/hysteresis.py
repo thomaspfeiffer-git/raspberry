@@ -26,6 +26,8 @@ class Scheduler (object):
 
     @state.setter
     def state (self, state_):
+        if self.state == state_:
+            Log(f"already in state '{state_}'")
         if self.state == Scheduler.State.off and state_ == Scheduler.State.on:
             if self.last_off + self.min_off_time < datetime.datetime.now():
                 self.__state = Scheduler.State.on
@@ -34,9 +36,13 @@ class Scheduler (object):
             else:
                 Log("'on' not allowed currently.")
         elif self.state == Scheduler.State.on and state_ == Scheduler.State.off:
-            self.__state = Scheduler.State.off
-            self.last_off = datetime.datetime.now()
-            Log("off")
+            if self.last_on + self.min_on_time < datetime.datetime.now():
+                self.__state = Scheduler.State.off
+                self.last_off = datetime.datetime.now()
+                Log("off")
+            else:
+                Log("'off' not allowed currently.")
+
 
 #########################
 # main ##################
@@ -49,7 +55,9 @@ time.sleep(10)
 s.state = Scheduler.State.on
 time.sleep(1)
 s.state = Scheduler.State.off
-
+s.state = Scheduler.State.off
+time.sleep(1)
+Log("Ende")
 
 
 
