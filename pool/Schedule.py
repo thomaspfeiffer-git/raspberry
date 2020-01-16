@@ -69,7 +69,7 @@ class Schedule (object):
         value = float(condition['value'])
         if not -10 <= value <= 50:
             raise ValueError(f"'value is '{value}', should be in -10 .. +50")
-        condition['value'] = value    
+        condition['value'] = value
 
         operator_ = condition['operator']
         if operator_ not in ['<=', '>=']:
@@ -81,7 +81,7 @@ class Schedule (object):
         value = float(condition['value'])
         if not 1 <= value <= 50:
             raise ValueError(f"'value is '{value}', should be in 1 .. +50")
-        condition['value'] = value    
+        condition['value'] = value
 
         delay_for_measurement = int(condition['delay_for_measurement'])
         if delay_for_measurement < 1:
@@ -121,21 +121,25 @@ class Scheduler (threading.Thread):
             self.load_schedule()
 
         with self.__lock:
+            on = False
             for schedule in self.schedule.schedule['schedules']['schedule']:
                 on = self.check_time(schedule)
                 # Log(f"on after check_time: {on}")
-            
+
                 if 'conditions' in schedule:
                    for condition in schedule['conditions']:
                        pass       # TODO
 
-                self.on = on       
+                if on:
+                    break
+
+            self.on = on
 
     def run (self):
         while self._running:
             self.check()
 
-            for _ in range(600):      # interruptible sleep 
+            for _ in range(600):      # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
