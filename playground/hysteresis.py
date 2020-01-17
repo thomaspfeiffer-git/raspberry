@@ -13,9 +13,11 @@ class Scheduler (object):
         on = 1
         off = 0
 
-    def __init__ (self):
-        self.min_on_time = datetime.timedelta(seconds=15)
-        self.min_off_time = datetime.timedelta(seconds=15)
+    def __init__ (self, min_on_time, min_off_time):
+        # self.min_on_time = datetime.timedelta(seconds=min_on_time*60)
+        # self.min_off_time = datetime.timedelta(seconds=min_off_time*60)
+        self.min_on_time = datetime.timedelta(seconds=min_on_time)
+        self.min_off_time = datetime.timedelta(seconds=min_off_time)
         self.last_on = datetime.datetime(year=1970, month=1, day=1)
         self.last_off = datetime.datetime(year=1970, month=1, day=1)
         self.__state = Scheduler.State.off
@@ -47,7 +49,7 @@ class Scheduler (object):
 #########################
 # main ##################
 
-s = Scheduler()
+s = Scheduler(15,15)
 s.state = Scheduler.State.on
 time.sleep(10)
 s.state = Scheduler.State.off
