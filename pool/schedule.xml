@@ -7,6 +7,16 @@
     </schedule>
 
     <schedule>
+        <start>19:00</start>
+        <stop>19:20</stop>
+    </schedule>
+
+    <schedule>
+        <start>19:30</start>
+        <stop>19:40</stop>
+    </schedule>
+
+    <schedule>
         <start>7:00</start>
         <stop>8:00</stop>
         <conditions>
@@ -14,7 +24,7 @@
                 <value>1.0</value>
                 <operator>>=</operator>
             </temperature>
-        </conditions>    
+        </conditions>
     </schedule>
 
     <schedule>
@@ -30,7 +40,7 @@
                 <delay_for_measurement>300</delay_for_measurement>
                 <delay_for_retry>1800</delay_for_retry>
             </humidity_difference>
-        </conditions>    
+        </conditions>
     </schedule>
 </schedules>
 

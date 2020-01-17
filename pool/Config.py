@@ -23,8 +23,8 @@ class CONFIG:
 
     class Schedule:
         file = cfg['Schedule']['file']
-        min_on_time = cfg['Schedule']['min_on_time']
-        min_off_time = cfg['Schedule']['min_off_time']
+        min_on_time = int(cfg['Schedule']['min_on_time'])
+        min_off_time = int(cfg['Schedule']['min_off_time'])
 
 # eof #
 

@@ -10,6 +10,7 @@ Implements the scheduler.
 """
 
 import datetime
+from enum import Enum
 import operator
 import threading
 import time
@@ -174,7 +175,7 @@ class Scheduler (threading.Thread):
                 if on:
                     break
 
-            self.state = State.States.on if on else State.States.off
+            self.state.state = State.States.on if on else State.States.off
 
     def run (self):
         while self._running:
