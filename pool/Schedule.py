@@ -41,7 +41,7 @@ class State (object):
     @state.setter
     def state (self, newstate):
         if self.state == newstate:
-            Log(f"State: already in state '{state}'")
+            Log(f"State: already in state '{newstate}'")
         if self.state == State.States.off and newstate == State.States.on:
             if self.last_off + self.min_off_time < datetime.datetime.now():
                 self.__state = State.States.on
