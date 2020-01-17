@@ -33,7 +33,7 @@ from Shutdown import Shutdown
 from Config import CONFIG
 from Display import Display
 from Fan import Fan
-from Schedule import Scheduler
+from Schedule import Scheduler, State
 from Sensors import Sensors, Sensordata
 from UDP import UDP_Sender
 
@@ -91,10 +91,10 @@ class Control (threading.Thread):
     def run (self):
         last_on = None
         while self._running:
-            if self.scheduler.on and not last_on:
+            if self.scheduler.state.state == State.States.on and not last_on:
                 self.ventilation_on()
                 last_on = True
-            elif not self.scheduler.on and last_on:
+            elif self.scheduler.state.state == State.States.off and last_on:
                 self.ventilation_off()
                 last_on = False
 
@@ -103,7 +103,7 @@ class Control (threading.Thread):
     def stop (self):
         for f in self.fans.values():
             f.close(immediate=True)
-        self._running = False    
+        self._running = False
 
 
 ###############################################################################

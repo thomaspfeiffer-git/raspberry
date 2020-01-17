@@ -139,7 +139,7 @@ class Scheduler (threading.Thread):
         threading.Thread.__init__(self)
         self.sensordata = sensordata
         self.__lock = threading.Lock()
-        self.on = State(CONFIG.Schedule.min_on_time, CONFIG.Schedule.min_off_time)
+        self.state = State(CONFIG.Schedule.min_on_time, CONFIG.Schedule.min_off_time)
         self.load_schedule()
         self._running = True
 
@@ -174,7 +174,7 @@ class Scheduler (threading.Thread):
                 if on:
                     break
 
-            self.on = State.States.on if on else State.States.off
+            self.state = State.States.on if on else State.States.off
 
     def run (self):
         while self._running:
