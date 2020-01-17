@@ -20,6 +20,44 @@ from Logging import Log
 
 
 ###############################################################################
+# State #######################################################################
+class State (object):
+    class States (Enum):
+        on = 1
+        off = 0
+
+    def __init__ (self, min_on_time, min_off_time):
+        self.min_on_time = datetime.timedelta(seconds=min_on_time*60)
+        self.min_off_time = datetime.timedelta(seconds=min_off_time*60)
+        self.last_on = datetime.datetime(year=1970, month=1, day=1)
+        self.last_off = datetime.datetime(year=1970, month=1, day=1)
+        self.__state = State.States.off
+
+    @property
+    def state (self):
+        return self.__state
+
+    @state.setter
+    def state (self, state_):
+        if self.state == state_:
+            Log(f"State: already in state '{state_}'")
+        if self.state == State.States.off and state_ == State.States.on:
+            if self.last_off + self.min_off_time < datetime.datetime.now():
+                self.__state = State.States.on
+                self.last_on = datetime.datetime.now()
+                Log("State: set to on")
+            else:
+                Log("State: 'on' not allowed currently.")
+        elif self.state == State.States.on and state_ == State.States.off:
+            if self.last_on + self.min_on_time < datetime.datetime.now():
+                self.__state = State.States.off
+                self.last_off = datetime.datetime.now()
+                Log("State: set to off")
+            else:
+                Log("State: 'off' not allowed currently.")
+
+
+###############################################################################
 # Schedule ####################################################################
 class Schedule (object):
     all_conditions = ['time', 'temperature', 'humidity_difference']
@@ -101,7 +139,7 @@ class Scheduler (threading.Thread):
         threading.Thread.__init__(self)
         self.sensordata = sensordata
         self.__lock = threading.Lock()
-        self.on = False
+        self.on = State(CONFIG.Schedule.min_on_time, CONFIG.Schedule.min_off_time)
         self.load_schedule()
         self._running = True
 
@@ -136,7 +174,7 @@ class Scheduler (threading.Thread):
                 if on:
                     break
 
-            self.on = on
+            self.on = State.States.on if on else State.States.off
 
     def run (self):
         while self._running:
