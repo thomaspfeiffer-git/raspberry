@@ -22,7 +22,9 @@ class CONFIG:
         btn_toggle = int(cfg['Buttons']['btn_toggle'])
 
     class Schedule:
-        schedule = cfg['Schedule']['schedule']
+        file = cfg['Schedule']['file']
+        min_on_time = cfg['Schedule']['min_on_time']
+        min_off_time = cfg['Schedule']['min_off_time']
 
 # eof #
 
