@@ -39,23 +39,23 @@ class State (object):
         return self.__state
 
     @state.setter
-    def state (self, state_):
-        if self.state == state_:
-            Log(f"State: already in state '{state_}'")
-        if self.state == State.States.off and state_ == State.States.on:
+    def state (self, newstate):
+        if self.state == newstate:
+            Log(f"State: already in state '{state}'")
+        if self.state == State.States.off and newstate == State.States.on:
             if self.last_off + self.min_off_time < datetime.datetime.now():
                 self.__state = State.States.on
                 self.last_on = datetime.datetime.now()
                 Log("State: set to on")
             else:
-                Log("State: 'on' not allowed currently.")
-        elif self.state == State.States.on and state_ == State.States.off:
+                Log("State: 'on' not allowed currently. last_off: {self.last_off.ctime()}")
+        elif self.state == State.States.on and newstate == State.States.off:
             if self.last_on + self.min_on_time < datetime.datetime.now():
                 self.__state = State.States.off
                 self.last_off = datetime.datetime.now()
                 Log("State: set to off")
             else:
-                Log("State: 'off' not allowed currently.")
+                Log("State: 'off' not allowed currently. last_on: {self.last_on.ctime()}")
 
 
 ###############################################################################
