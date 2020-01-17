@@ -46,16 +46,16 @@ class State (object):
             if self.last_off + self.min_off_time < datetime.datetime.now():
                 self.__state = State.States.on
                 self.last_on = datetime.datetime.now()
-                Log("State: set to on")
+                Log(f"State: set to on")
             else:
-                Log("State: 'on' not allowed currently. last_off: {self.last_off.ctime()}")
+                Log(f"State: 'on' not allowed currently. last_off: {self.last_off.ctime()}")
         elif self.state == State.States.on and newstate == State.States.off:
             if self.last_on + self.min_on_time < datetime.datetime.now():
                 self.__state = State.States.off
                 self.last_off = datetime.datetime.now()
-                Log("State: set to off")
+                Log(f"State: set to off")
             else:
-                Log("State: 'off' not allowed currently. last_on: {self.last_on.ctime()}")
+                Log(f"State: 'off' not allowed currently. last_on: {self.last_on.ctime()}")
 
 
 ###############################################################################
