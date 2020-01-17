@@ -29,6 +29,7 @@ class State (object):
 
     def __init__ (self, min_on_time, min_off_time):
         self.min_on_time = datetime.timedelta(seconds=min_on_time*60)
+        Log(f"min_on: {min_on_time}; off: {(datetime.datetime.now()+self.min_on_time).ctime()}")
         self.min_off_time = datetime.timedelta(seconds=min_off_time*60)
         self.last_on = datetime.datetime(year=1970, month=1, day=1)
         self.last_off = datetime.datetime(year=1970, month=1, day=1)
