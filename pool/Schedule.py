@@ -29,7 +29,6 @@ class State (object):
 
     def __init__ (self, min_on_time, min_off_time):
         self.min_on_time = datetime.timedelta(seconds=min_on_time*60)
-        Log(f"min_on: {min_on_time}; off: {(datetime.datetime.now()+self.min_on_time).ctime()}")
         self.min_off_time = datetime.timedelta(seconds=min_off_time*60)
         self.last_on = datetime.datetime(year=1970, month=1, day=1)
         self.last_off = datetime.datetime(year=1970, month=1, day=1)
@@ -41,22 +40,14 @@ class State (object):
 
     @state.setter
     def state (self, newstate):
-        if self.state == newstate:
-            Log(f"State: already in state '{newstate}'")
         if self.state == State.States.off and newstate == State.States.on:
             if self.last_off + self.min_off_time < datetime.datetime.now():
                 self.__state = State.States.on
                 self.last_on = datetime.datetime.now()
-                Log(f"State: set to on")
-            else:
-                Log(f"State: 'on' not allowed currently. last_off: {self.last_off.ctime()}")
         elif self.state == State.States.on and newstate == State.States.off:
             if self.last_on + self.min_on_time < datetime.datetime.now():
                 self.__state = State.States.off
                 self.last_off = datetime.datetime.now()
-                Log(f"State: set to off")
-            else:
-                Log(f"State: 'off' not allowed currently. last_on: {self.last_on.ctime()}")
 
 
 ###############################################################################
@@ -167,7 +158,6 @@ class Scheduler (threading.Thread):
             on = False
             for schedule in self.schedule.schedule['schedules']['schedule']:
                 on = self.check_time(schedule)
-                # Log(f"on after check_time: {on}")
 
                 if 'conditions' in schedule:
                    for condition in schedule['conditions']:

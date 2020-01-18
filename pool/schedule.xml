@@ -7,16 +7,6 @@
     </schedule>
 
     <schedule>
-        <start>21:10</start>
-        <stop>21:30</stop>
-    </schedule>
-
-    <schedule>
-        <start>21:40</start>
-        <stop>21:50</stop>
-    </schedule>
-
-    <schedule>
         <start>7:00</start>
         <stop>8:00</stop>
         <conditions>
