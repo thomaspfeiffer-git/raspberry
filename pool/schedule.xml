@@ -21,6 +21,10 @@
         <start>10:00</start>
         <stop>16:00</stop>
         <conditions>
+            <humidity location="in">
+                <value>96.0</value>
+                <operator>&lt;=</operator>
+            </humidity>
             <temperature location="outside">
                 <value>3.0</value>
                 <operator>>=</operator>
