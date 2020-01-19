@@ -206,6 +206,18 @@ class Scheduler (threading.Thread):
             r = self.check_hysteresis(condition['hysteresis'])
             Log(f"check_humidity: hysteresis result: {r}")
             # TODO add logic
+            """
+            if self.check_hysteresis(condition['hysteresis']):
+                return True
+            else:
+                humidity = ...
+                operator = ...
+                if humidity <= value:
+                    return True
+                else:
+                    return False
+
+            """
 
         return True
 
