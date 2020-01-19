@@ -16,6 +16,9 @@ import threading
 import time
 import xmltodict
 
+import sys
+sys.path.append("../libs/")
+
 from Config import CONFIG
 from Logging import Log
 
@@ -28,8 +31,8 @@ class State (object):
         off = 0
 
     def __init__ (self, min_on_time, min_off_time):
-        self.min_on_time = datetime.timedelta(seconds=min_on_time*60)
-        self.min_off_time = datetime.timedelta(seconds=min_off_time*60)
+        self.min_on_time = datetime.timedelta(seconds=min_on_time)
+        self.min_off_time = datetime.timedelta(seconds=min_off_time)
         self.last_on = datetime.datetime(year=1970, month=1, day=1)
         self.last_off = datetime.datetime(year=1970, month=1, day=1)
         self.__state = State.States.off
@@ -61,8 +64,10 @@ class Schedule (object):
             xmldoc = xmltodict.parse(fd.read())
 
         xmldoc['valid_until'] = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0)
-        xmldoc['min_on_time'] = int(xmldoc['min_on_time'])
-        xmldoc['min_off_time'] = int(xmldoc['min_off_time'])
+        xmldoc['min_on_time'] = int(xmldoc['schedules']['min_on_time']) * 60
+        xmldoc['min_off_time'] = int(xmldoc['schedules']['min_off_time']) * 60
+        xmldoc['schedules'].pop('min_on_time', None)
+        xmldoc['schedules'].pop('min_off_time', None)
 
         for schedule in xmldoc['schedules']['schedule']:
             self.validate_time(schedule)
@@ -108,8 +113,35 @@ class Schedule (object):
         condition['operator'] = {'>=': operator.ge, '<=': operator.le}[operator_]
 
 
+    def validate_hysteresis (self, hysteresis):
+        delay_for_measurement = int(hysteresis['delay_for_measurement'])
+        if delay_for_measurement < 1:
+            raise ValueError(f"'delay_for_measurement' is '{delay_for_measurement}', should be >= 1")
+        hysteresis['delay_for_measurement'] = delay_for_measurement * 60
+
+        delay_for_retry = int(hysteresis['delay_for_retry'])
+        if delay_for_retry < 1:
+            raise ValueError(f"'delay_for_retry' is '{delay_for_retry}', should be >= 1")
+        hysteresis['delay_for_retry'] = delay_for_retry * 60
+
+
     def validate_humidity (self, condition):
-        pass
+        direction = condition['@direction']
+        if direction not in ['in', 'out']:
+            raise ValueError(f"'@direction' is '{direction}', should be in ['in', 'out']")
+
+        value = float(condition['value'])
+        if not 0 <= value <= 100:
+            raise ValueError(f"'value is '{value}', should be in 0 .. 100")
+        condition['value'] = value
+
+        operator_ = condition['operator']
+        if operator_ not in ['<=', '>=']:
+            raise ValueError(f"'operator' is '{operator_}', should be in ['<=', '>=']")
+        condition['operator'] = {'>=': operator.ge, '<=': operator.le}[operator_]
+
+        if 'hysteresis' in condition:
+            self.validate_hysteresis(condition['hysteresis'])
 
 
     def validate_humidity_difference (self, condition):
@@ -118,15 +150,8 @@ class Schedule (object):
             raise ValueError(f"'value is '{value}', should be in 1 .. +50")
         condition['value'] = value
 
-        delay_for_measurement = int(condition['delay_for_measurement'])
-        if delay_for_measurement < 1:
-            raise ValueError(f"'delay_for_measurement' is '{delay_for_measurement}', should be >= 1")
-        condition['delay_for_measurement'] = delay_for_measurement
-
-        delay_for_retry = int(condition['delay_for_retry'])
-        if delay_for_retry < 1:
-            raise ValueError(f"'delay_for_retry' is '{delay_for_retry}', should be >= 1")
-        condition['delay_for_retry'] = delay_for_retry
+        if 'hysteresis' in condition:
+            self.validate_hysteresis(condition['hysteresis'])
 
 
 ###############################################################################
@@ -136,8 +161,8 @@ class Scheduler (threading.Thread):
         threading.Thread.__init__(self)
         self.sensordata = sensordata
         self.__lock = threading.Lock()
-        self.state = State(CONFIG.Schedule.min_on_time, CONFIG.Schedule.min_off_time)
         self.load_schedule()
+        self.state = State(self.schedule['min_on_time'], self.schedule['min_off_time'])
         self._running = True
 
     def load_schedule (self):
@@ -183,6 +208,16 @@ class Scheduler (threading.Thread):
 
     def stop (self):
         self._running = False
+
+
+###############################################################################
+## main #######################################################################
+""" for testing purposes only """
+if __name__ == "__main__":
+    import pprint
+    pp = pprint.PrettyPrinter(indent=2)
+    s = Schedule()
+    pp.pprint(s.schedule)
 
 # eof #
 

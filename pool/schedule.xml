@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<min_on_time>5</min_on_time>
-<min_off_time>30</min_off_time>
-
 <schedules>
+    <min_on_time>5</min_on_time>
+    <min_off_time>30</min_off_time>
+
+    <schedule>
+        <start>5:50</start>
+        <stop>6:20</stop>
+    </schedule>
+
     <schedule>
         <start>9:00</start>
         <stop>16:00</stop>
         <conditions>
-            <humidity location="in">
+            <humidity direction="in">
                 <value>96.0</value>
                 <operator>&lt;=</operator>
                 <hysteresis>
                     <delay_for_measurement>1</delay_for_measurement>
                     <delay_for_retry>30</delay_for_retry>
-                </hystersis>
+                </hysteresis>
             </humidity>
             <temperature location="outside">
                 <value>1.0</value>
@@ -25,7 +30,7 @@
                 <hysteresis>
                     <delay_for_measurement>1</delay_for_measurement>
                     <delay_for_retry>30</delay_for_retry>
-                </hystersis>
+                </hysteresis>
             </humidity_difference>
         </conditions>
     </schedule>
