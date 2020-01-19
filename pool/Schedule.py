@@ -53,7 +53,7 @@ class State (object):
 ###############################################################################
 # Schedule ####################################################################
 class Schedule (object):
-    all_conditions = ['time', 'temperature', 'humidity_difference']
+    all_conditions = ['time', 'temperature', 'humidity_difference', 'humidity']
 
     def __init__ (self):
         self.schedule = None
@@ -106,6 +106,10 @@ class Schedule (object):
         if operator_ not in ['<=', '>=']:
             raise ValueError(f"'operator' is '{operator_}', should be in ['<=', '>=']")
         condition['operator'] = {'>=': operator.ge, '<=': operator.le}[operator_]
+
+
+    def validate_humidity (self, condition):
+        pass
 
 
     def validate_humidity_difference (self, condition):
