@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
+<min_on_time>5</min_on_time>
+<min_off_time>30</min_off_time>
+
 <schedules>
     <schedule>
         <start>4:00</start>

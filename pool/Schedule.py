@@ -61,8 +61,8 @@ class Schedule (object):
             xmldoc = xmltodict.parse(fd.read())
 
         xmldoc['valid_until'] = (datetime.datetime.now() + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0)
-        xmldoc['min_on_time'] = CONFIG.Schedule.min_on_time
-        xmldoc['min_off_time'] = CONFIG.Schedule.min_off_time
+        xmldoc['min_on_time'] = int(xmldoc['min_on_time'])
+        xmldoc['min_off_time'] = int(xmldoc['min_off_time'])
 
         for schedule in xmldoc['schedules']['schedule']:
             self.validate_time(schedule)
