@@ -192,7 +192,7 @@ class Scheduler (threading.Thread):
             hysteresis['time_for_retry'] = now + datetime.timedelta(seconds=hysteresis['interval_for_measurement']) + \
                                                  datetime.timedelta(seconds=hysteresis['interval_for_retry'])
 
-        print(f"now: {now}; time_for_measurment: {hysteresis['time_for_measurment']}")
+        print(f"now: {now}; time_for_measurment: {hysteresis['time_for_measurment']}; time_for_retry: {hysteresis['time_for_retry']}")
         if now <= hysteresis['time_for_measurment']:
             return True
 
