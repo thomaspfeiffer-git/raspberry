@@ -17,8 +17,8 @@
                 <value>96.0</value>
                 <operator>&lt;=</operator>
                 <hysteresis>
-                    <delay_for_measurement>1</delay_for_measurement>
-                    <delay_for_retry>30</delay_for_retry>
+                    <interval_for_measurement>3</interval_for_measurement>
+                    <interval_for_retry>27</interval_for_retry>
                 </hysteresis>
             </humidity>
             <temperature location="outside">
@@ -28,8 +28,8 @@
             <humidity_difference>
                 <value>5.0</value>
                 <hysteresis>
-                    <delay_for_measurement>1</delay_for_measurement>
-                    <delay_for_retry>30</delay_for_retry>
+                    <interval_for_measurement>3</interval_for_measurement>
+                    <interval_for_retry>27</interval_for_retry>
                 </hysteresis>
             </humidity_difference>
         </conditions>

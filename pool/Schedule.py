@@ -114,15 +114,18 @@ class Schedule (object):
 
 
     def validate_hysteresis (self, hysteresis):
-        delay_for_measurement = int(hysteresis['delay_for_measurement'])
-        if delay_for_measurement < 1:
-            raise ValueError(f"'delay_for_measurement' is '{delay_for_measurement}', should be >= 1")
-        hysteresis['delay_for_measurement'] = delay_for_measurement * 60
+        interval_for_measurement = int(hysteresis['interval_for_measurement'])
+        if interval_for_measurement < 1:
+            raise ValueError(f"'interval_for_measurement' is '{interval_for_measurement}', should be >= 1")
+        hysteresis['interval_for_measurement'] = interval_for_measurement * 60
 
-        delay_for_retry = int(hysteresis['delay_for_retry'])
-        if delay_for_retry < 1:
-            raise ValueError(f"'delay_for_retry' is '{delay_for_retry}', should be >= 1")
-        hysteresis['delay_for_retry'] = delay_for_retry * 60
+        interval_for_retry = int(hysteresis['interval_for_retry'])
+        if interval_for_retry < 1:
+            raise ValueError(f"'interval_for_retry' is '{interval_for_retry}', should be >= 1")
+        hysteresis['interval_for_retry'] = interval_for_retry * 60
+
+        hysteresis['time_for_measurment'] = datetime.datetime(year=1970, month=1, day=1)
+        hysteresis['time_for_retry'] = datetime.datetime(year=1970, month=1, day=1)
 
 
     def validate_humidity (self, condition):
@@ -179,40 +182,34 @@ class Scheduler (threading.Thread):
             return False
 
     def check_temperature (self, condition):
-        Log("check_temperature")
         return True
 
     def check_hysteresis (self, hysteresis):
         now = datetime.datetime.now()
-        if 'time_for_retry' not in hysteresis:
-            hysteresis['time_for_retry'] = now + datetime.timedelta(seconds=hysteresis['delay_for_retry'])
-        else:
-            if now > hysteresis['time_for_retry']:
-                hysteresis.pop('time_for_retry', None)
-                return True
-            else:
-                return False
 
-        if 'time_for_measurment' not in hysteresis:
-            hysteresis['time_for_measurment'] = now + datetime.timedelta(seconds=hysteresis['delay_for_measurement'])
-        else:
-            if now > hysteresis['time_for_measurment']:
-                hysteresis.pop('time_for_measurment', None)
-                return True
-            else:
-                return False
+        def init ():
+            hysteresis['time_for_measurment'] = now + datetime.timedelta(seconds=hysteresis['interval_for_measurement'])
+            hysteresis['time_for_retry'] = now + datetime.timedelta(seconds=hysteresis['interval_for_measurement']) + \
+                                                 datetime.timedelta(seconds=hysteresis['interval_for_retry'])
+
+        print(f"now: {now}; time_for_measurment: {hysteresis['time_for_measurment']}")
+        if now <= hysteresis['time_for_measurment']:
+            return True
+
+        if now > hysteresis['time_for_retry']:
+            init()
+        return False
 
 
     def check_humidity (self, condition):
         if 'hysteresis' in condition:
             r = self.check_hysteresis(condition['hysteresis'])
-            Log(f"check_humidity: result: {r}")
+            Log(f"check_humidity: hysteresis result: {r}")
             # TODO add logic
 
         return True
 
     def check_humidity_difference (self, condition):
-        Log("check_humidity_difference")
         return True
 
     def check (self):
@@ -235,7 +232,7 @@ class Scheduler (threading.Thread):
                     break
 
             self.state.state = State.States.on if on else State.States.off
-            Log(f"State: {self.state.state}")
+            # Log(f"State: {self.state.state}")
 
     def run (self):
         while self._running:
@@ -258,7 +255,92 @@ if __name__ == "__main__":
     pp = pprint.PrettyPrinter(indent=2)
     s = Scheduler("emil")
     s.check()
-    pp.pprint(s.schedule.schedule)
+    # pp.pprint(s.schedule.schedule)
+
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(720)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
+    time.sleep(60)
+    s.check()
 
 
 # eof #
