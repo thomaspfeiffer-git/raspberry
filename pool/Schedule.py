@@ -157,12 +157,14 @@ class Schedule (object):
 ###############################################################################
 # Scheduler ###################################################################
 class Scheduler (threading.Thread):
+    all_checks = ['time', 'temperature', 'humidity', 'humidity_difference']
+
     def __init__ (self, sensordata):
         threading.Thread.__init__(self)
         self.sensordata = sensordata
         self.__lock = threading.Lock()
         self.load_schedule()
-        self.state = State(self.schedule['min_on_time'], self.schedule['min_off_time'])
+        self.state = State(self.schedule.schedule['min_on_time'], self.schedule.schedule['min_off_time'])
         self._running = True
 
     def load_schedule (self):
@@ -177,7 +179,41 @@ class Scheduler (threading.Thread):
             return False
 
     def check_temperature (self, condition):
-        pass
+        Log("check_temperature")
+        return True
+
+    def check_hysteresis (self, hysteresis):
+        now = datetime.datetime.now()
+        if 'time_for_retry' not in hysteresis:
+            hysteresis['time_for_retry'] = now + datetime.timedelta(seconds=hysteresis['delay_for_retry'])
+        else:
+            if now > hysteresis['time_for_retry']:
+                hysteresis.pop('time_for_retry', None)
+                return True
+            else:
+                return False
+
+        if 'time_for_measurment' not in hysteresis:
+            hysteresis['time_for_measurment'] = now + datetime.timedelta(seconds=hysteresis['delay_for_measurement'])
+        else:
+            if now > hysteresis['time_for_measurment']:
+                hysteresis.pop('time_for_measurment', None)
+                return True
+            else:
+                return False
+
+
+    def check_humidity (self, condition):
+        if 'hysteresis' in condition:
+            r = self.check_hysteresis(condition['hysteresis'])
+            Log(f"check_humidity: result: {r}")
+            # TODO add logic
+
+        return True
+
+    def check_humidity_difference (self, condition):
+        Log("check_humidity_difference")
+        return True
 
     def check (self):
         if self.schedule.schedule['valid_until'] < datetime.datetime.now():
@@ -189,13 +225,17 @@ class Scheduler (threading.Thread):
                 on = self.check_time(schedule)
 
                 if 'conditions' in schedule:
-                   for condition in schedule['conditions']:
-                       pass       # TODO
+                    for check in schedule['conditions']:
+                        if not check in Scheduler.all_checks:
+                            raise NameError(f"Check '{check}' not defined.")
+                        fn = getattr(self, f"check_{check}")
+                        on = on and fn(schedule['conditions'][check])
 
                 if on:
                     break
 
             self.state.state = State.States.on if on else State.States.off
+            Log(f"State: {self.state.state}")
 
     def run (self):
         while self._running:
@@ -216,8 +256,10 @@ class Scheduler (threading.Thread):
 if __name__ == "__main__":
     import pprint
     pp = pprint.PrettyPrinter(indent=2)
-    s = Schedule()
-    pp.pprint(s.schedule)
+    s = Scheduler("emil")
+    s.check()
+    pp.pprint(s.schedule.schedule)
+
 
 # eof #
 
