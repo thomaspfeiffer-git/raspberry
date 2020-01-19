@@ -258,7 +258,7 @@ if __name__ == "__main__":
     # pp.pprint(s.schedule.schedule)
 
     i = 0
-    while i < 200:
+    while i < 2000:
         time.sleep(60)
         s.check()
         i += 1

@@ -11,7 +11,7 @@
 
     <schedule>
         <start>9:00</start>
-        <stop>20:00</stop>
+        <stop>23:30</stop>
         <conditions>
             <humidity direction="in">
                 <value>96.0</value>
