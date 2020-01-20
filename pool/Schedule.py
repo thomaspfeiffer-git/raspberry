@@ -192,33 +192,28 @@ class Scheduler (threading.Thread):
             hysteresis['time_for_retry'] = now + datetime.timedelta(seconds=hysteresis['interval_for_measurement']) + \
                                                  datetime.timedelta(seconds=hysteresis['interval_for_retry'])
 
-        Log(f"time_for_measurment: {hysteresis['time_for_measurment']}; time_for_retry: {hysteresis['time_for_retry']}")
         if now <= hysteresis['time_for_measurment']:
             return True
-
         if now > hysteresis['time_for_retry']:
             init()
         return False
 
-
     def check_humidity (self, condition):
         if 'hysteresis' in condition:
-            r = self.check_hysteresis(condition['hysteresis'])
-            Log(f"check_humidity: hysteresis result: {r}")
-            # TODO add logic
-            """
             if self.check_hysteresis(condition['hysteresis']):
                 return True
             else:
-                humidity = ...
-                operator = ...
-                if humidity <= value:
+                if condition['@direction'] == 'in':
+                    measurement = self.sensordata.airin_humidity
+                elif condition['@direction'] == 'out':
+                    measurement = self.sensordata.airout_humidity
+                else:
+                    raise ValueError(f"'@direction' is '{direction}', should be in ['in', 'out']")
+
+                if condition['operator'](measurement, condition['value']):
                     return True
                 else:
                     return False
-
-            """
-
         return True
 
     def check_humidity_difference (self, condition):
@@ -244,7 +239,7 @@ class Scheduler (threading.Thread):
                     break
 
             self.state.state = State.States.on if on else State.States.off
-            # Log(f"State: {self.state.state}")
+            Log(f"State: {self.state.state}")
 
     def run (self):
         while self._running:
@@ -263,12 +258,18 @@ class Scheduler (threading.Thread):
 ## main #######################################################################
 """ for testing purposes only """
 if __name__ == "__main__":
+    from Sensors import Sensordata
     import pprint
     pp = pprint.PrettyPrinter(indent=2)
-    s = Scheduler("emil")
+    data = Sensordata()
+    data.airin_humidity = 95.0
+    data.airout_humidity = 99.0
+    data.valid = True
+    s = Scheduler(data)
     s.check()
     # pp.pprint(s.schedule.schedule)
 
+    sys.exit(0)
     i = 0
     while i < 2000:
         time.sleep(60)
