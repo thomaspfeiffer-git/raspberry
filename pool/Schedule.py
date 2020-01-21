@@ -239,7 +239,6 @@ class Scheduler (threading.Thread):
                     break
 
             self.state.state = State.States.on if on else State.States.off
-            Log(f"State: {self.state.state}")
 
     def run (self):
         while self._running:
