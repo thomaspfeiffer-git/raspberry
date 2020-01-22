@@ -2,7 +2,7 @@
 
 <schedules>
     <min_on_time>5</min_on_time>
-    <min_off_time>30</min_off_time>
+    <min_off_time>20</min_off_time>
 
     <schedule>
         <start>5:50</start>

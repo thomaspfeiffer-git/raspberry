@@ -188,10 +188,13 @@ class Scheduler (threading.Thread):
         now = datetime.datetime.now()
 
         def init ():
+            Log(f"init(): interval_for_measurement: {hysteresis['interval_for_measurement']}, interval_for_retry: {hysteresis['interval_for_retry']}")
             hysteresis['time_for_measurment'] = now + datetime.timedelta(seconds=hysteresis['interval_for_measurement'])
             hysteresis['time_for_retry'] = now + datetime.timedelta(seconds=hysteresis['interval_for_measurement']) + \
                                                  datetime.timedelta(seconds=hysteresis['interval_for_retry'])
+            Log(f"init(): time_for_measurment: {hysteresis['time_for_measurment']}; time_for_retry: {hysteresis['time_for_retry']}")
 
+        Log(f"time_for_measurment: {hysteresis['time_for_measurment']}; time_for_retry: {hysteresis['time_for_retry']}")
         if now <= hysteresis['time_for_measurment']:
             return True
         if now > hysteresis['time_for_retry']:
@@ -200,6 +203,9 @@ class Scheduler (threading.Thread):
 
     def check_humidity (self, condition):
         if 'hysteresis' in condition:
+            if not self.sensordata.valid:
+                return True
+
             if self.check_hysteresis(condition['hysteresis']):
                 return True
             else:
