@@ -43,14 +43,15 @@ class State (object):
 
     @state.setter
     def state (self, newstate):
+        now = datetime.datetime.now()
         if self.state == State.States.off and newstate == State.States.on:
-            if self.last_off + self.min_off_time < datetime.datetime.now():
+            if self.last_off + self.min_off_time < now:
                 self.__state = State.States.on
-                self.last_on = datetime.datetime.now()
+                self.last_on = now
         elif self.state == State.States.on and newstate == State.States.off:
-            if self.last_on + self.min_on_time < datetime.datetime.now():
+            if self.last_on + self.min_on_time < now:
                 self.__state = State.States.off
-                self.last_off = datetime.datetime.now()
+                self.last_off = now
 
 
 ###############################################################################
@@ -113,21 +114,6 @@ class Schedule (object):
         condition['operator'] = {'>=': operator.ge, '<=': operator.le}[operator_]
 
 
-    def validate_hysteresis (self, hysteresis):
-        interval_for_measurement = int(hysteresis['interval_for_measurement'])
-        if interval_for_measurement < 1:
-            raise ValueError(f"'interval_for_measurement' is '{interval_for_measurement}', should be >= 1")
-        hysteresis['interval_for_measurement'] = interval_for_measurement * 60
-
-        interval_for_retry = int(hysteresis['interval_for_retry'])
-        if interval_for_retry < 1:
-            raise ValueError(f"'interval_for_retry' is '{interval_for_retry}', should be >= 1")
-        hysteresis['interval_for_retry'] = interval_for_retry * 60
-
-        hysteresis['time_for_measurment'] = datetime.datetime(year=1970, month=1, day=1)
-        hysteresis['time_for_retry'] = datetime.datetime(year=1970, month=1, day=1)
-
-
     def validate_humidity (self, condition):
         direction = condition['@direction']
         if direction not in ['in', 'out']:
@@ -143,18 +129,12 @@ class Schedule (object):
             raise ValueError(f"'operator' is '{operator_}', should be in ['<=', '>=']")
         condition['operator'] = {'>=': operator.ge, '<=': operator.le}[operator_]
 
-        if 'hysteresis' in condition:
-            self.validate_hysteresis(condition['hysteresis'])
-
 
     def validate_humidity_difference (self, condition):
         value = float(condition['value'])
         if not 1 <= value <= 50:
             raise ValueError(f"'value is '{value}', should be in 1 .. +50")
         condition['value'] = value
-
-        if 'hysteresis' in condition:
-            self.validate_hysteresis(condition['hysteresis'])
 
 
 ###############################################################################
@@ -184,43 +164,24 @@ class Scheduler (threading.Thread):
     def check_temperature (self, condition):
         return True
 
-    def check_hysteresis (self, hysteresis):
-        now = datetime.datetime.now()
-
-        def init ():
-            Log(f"init(): interval_for_measurement: {hysteresis['interval_for_measurement']}, interval_for_retry: {hysteresis['interval_for_retry']}")
-            hysteresis['time_for_measurment'] = now + datetime.timedelta(seconds=hysteresis['interval_for_measurement'])
-            hysteresis['time_for_retry'] = now + datetime.timedelta(seconds=hysteresis['interval_for_measurement']) + \
-                                                 datetime.timedelta(seconds=hysteresis['interval_for_retry'])
-            Log(f"init(): time_for_measurment: {hysteresis['time_for_measurment']}; time_for_retry: {hysteresis['time_for_retry']}")
-
-        Log(f"time_for_measurment: {hysteresis['time_for_measurment']}; time_for_retry: {hysteresis['time_for_retry']}")
-        if now <= hysteresis['time_for_measurment']:
-            return True
-        if now > hysteresis['time_for_retry']:
-            init()
-        return False
-
     def check_humidity (self, condition):
-        if 'hysteresis' in condition:
-            if not self.sensordata.valid:
-                return True
+        if not self.sensordata.valid:
+            return False
 
-            if self.check_hysteresis(condition['hysteresis']):
-                return True
-            else:
-                if condition['@direction'] == 'in':
-                    measurement = self.sensordata.airin_humidity
-                elif condition['@direction'] == 'out':
-                    measurement = self.sensordata.airout_humidity
-                else:
-                    raise ValueError(f"'@direction' is '{direction}', should be in ['in', 'out']")
+        if datetime.datetime.now().minute in [0, 30]:
+            return True
 
-                if condition['operator'](measurement, condition['value']):
-                    return True
-                else:
-                    return False
-        return True
+        if condition['@direction'] == 'in':
+            measurement = self.sensordata.airin_humidity
+        elif condition['@direction'] == 'out':
+            measurement = self.sensordata.airout_humidity
+        else:
+            raise ValueError(f"'@direction' is '{direction}', should be in ['in', 'out']")
+
+        if condition['operator'](measurement, condition['value']):
+            return True
+        else:
+            return False
 
     def check_humidity_difference (self, condition):
         return True
@@ -250,7 +211,7 @@ class Scheduler (threading.Thread):
         while self._running:
             self.check()
 
-            for _ in range(600):      # interruptible sleep
+            for _ in range(500):      # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)

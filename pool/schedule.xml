@@ -2,7 +2,7 @@
 
 <schedules>
     <min_on_time>5</min_on_time>
-    <min_off_time>20</min_off_time>
+    <min_off_time>25</min_off_time>
 
     <schedule>
         <start>5:50</start>
@@ -11,15 +11,11 @@
 
     <schedule>
         <start>9:00</start>
-        <stop>16:30</stop>
+        <stop>17:30</stop>
         <conditions>
             <humidity direction="in">
                 <value>96.0</value>
                 <operator>&lt;=</operator>
-                <hysteresis>
-                    <interval_for_measurement>3</interval_for_measurement>
-                    <interval_for_retry>27</interval_for_retry>
-                </hysteresis>
             </humidity>
             <temperature location="outside">
                 <value>1.0</value>
@@ -27,10 +23,6 @@
             </temperature>
             <humidity_difference>
                 <value>5.0</value>
-                <hysteresis>
-                    <interval_for_measurement>3</interval_for_measurement>
-                    <interval_for_retry>27</interval_for_retry>
-                </hysteresis>
             </humidity_difference>
         </conditions>
     </schedule>
