@@ -21,7 +21,7 @@ else
     echo -n "`date` - "
     echo "Restarting network ..."
 
-    uname -a | grep armv6l
+    uname -a | grep armv7l 2>&1 >/dev/null
     if [ $? -eq 0 ] ; then    # Raspberry
         /etc/init.d/networking restart
     else                      # NanoPi
