@@ -20,7 +20,14 @@ if [ $? -eq 0 ] ; then
 else
     echo -n "`date` - "
     echo "Restarting network ..."
-    systemctl restart NetworkManager
+
+    uname -a | grep armv6l
+    if [ $? -eq 0 ] ; then    # Raspberry
+        /etc/init.d/networking restart
+    else                      # NanoPi
+        systemctl restart NetworkManager
+    fi
+
 fi
 
 # eof #
