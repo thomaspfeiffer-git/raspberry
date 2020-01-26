@@ -162,7 +162,18 @@ class Scheduler (threading.Thread):
             return False
 
     def check_temperature (self, condition):
-        return True
+        if not self.sensordata.valid:
+            return False
+
+        if condition['@location'] == 'outside':
+            measurement = self.sensordata.outdoor_temp
+        else:
+            raise NotImplementedError("Other locations than 'outside' not implemented yet.")
+
+        if condition['operator'](measurement, condition['value']):
+            return True
+        else:
+            return False
 
     def check_humidity (self, condition):
         if not self.sensordata.valid:

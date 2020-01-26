@@ -5,21 +5,23 @@
     <min_off_time>25</min_off_time>
 
     <schedule>
-        <start>5:50</start>
-        <stop>6:10</stop>
+        <start>0:25</start>
+        <stop>0:35</stop>
     </schedule>
 
     <schedule>
-        <start>9:00</start>
-        <stop>17:30</stop>
+        <start>1:00</start>
+        <stop>23:00</stop>
         <conditions>
+            <!--
             <humidity direction="in">
                 <value>96.0</value>
                 <operator>&lt;=</operator>
             </humidity>
+            -->
             <temperature location="outside">
-                <value>1.0</value>
-                <operator>&gt;=</operator>
+                <value>4.0</value>
+                <operator>&lt;=</operator>
             </temperature>
             <humidity_difference>
                 <value>5.0</value>
