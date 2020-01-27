@@ -142,7 +142,7 @@ class Sensors (threading.Thread):
             self.__data.engine_circulation = self.pcf8591.read(channel=0)
             self.__data.engine_countercurrent = self.pcf8591.read(channel=1)
             self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
-            self.__data.room_temp = self.ds1820_water.read_temperature()
+            self.__data.room_temp = self.ds1820_room.read_temperature()
             self.__data.water_temp = 5.0 # TODO
             self.__data.valid = True
             # Log("\n{}".format(self.__data))
