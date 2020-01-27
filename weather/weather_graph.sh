@@ -554,7 +554,7 @@ printPoolTemp()
     GPRINT:temp_airout:AVERAGE:"Mittelwert\: %5.2lf °C"        \
     GPRINT:temp_airout:MAX:"Max\: %5.2lf °C"                   \
     GPRINT:temp_airout:MIN:"Min\: %5.2lf °C\n"                 \
-    LINE1:temp_outdoor#3336F0:"Temperatur aussen             " \
+    LINE1:temp_outdoor#3336F0:"Temperatur außen             "  \
     GPRINT:temp_outdoor:LAST:"Aktuell\: %5.2lf °C"             \
     GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C"       \
     GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"                  \
