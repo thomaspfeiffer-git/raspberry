@@ -625,18 +625,18 @@ printPoolFans()
     DEF:fan2=$RRD_PO:FAN2:AVERAGE                                 \
     DEF:fan3=$RRD_PO:FAN3:AVERAGE                                 \
     DEF:fan4=$RRD_PO:FAN4:AVERAGE                                 \
-    AREA:fan1#42C3FF:"Fan einströmende Luft"                      \
+    AREA:fan1#42C3FF:"Fan einströmende Luft #1"                   \
     GPRINT:fan1:LAST:"\t Aktuell\: %5.0lf"                        \
     GPRINT:fan1:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
+    STACK:fan4#F6FC2A:"Fan einströmende Luft #2"                  \
+    GPRINT:fan4:LAST:"\t Aktuell\: %5.0lf"                        \
+    GPRINT:fan4:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
     STACK:fan2#FF4242:"Fan ausströmende Luft"                     \
     GPRINT:fan2:LAST:"\t Aktuell\: %5.0lf"                        \
     GPRINT:fan2:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
     STACK:fan3#BE25EB:"Fan Steuerbox        "                     \
     GPRINT:fan3:LAST:"\t Aktuell\: %5.0lf"                        \
-    GPRINT:fan3:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
-    STACK:fan4#F6FC2A:"Fan n/a              "                     \
-    GPRINT:fan4:LAST:"\t Aktuell\: %5.0lf"                        \
-    GPRINT:fan4:AVERAGE:"Mittelwert\: %5.2lf\n"                   &
+    GPRINT:fan3:AVERAGE:"Mittelwert\: %5.2lf\n"                   &
  }
 
 
