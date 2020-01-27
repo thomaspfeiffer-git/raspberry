@@ -554,12 +554,12 @@ printPoolTemp()
     GPRINT:temp_airout:AVERAGE:"Mittelwert\: %5.2lf °C"        \
     GPRINT:temp_airout:MAX:"Max\: %5.2lf °C"                   \
     GPRINT:temp_airout:MIN:"Min\: %5.2lf °C\n"                 \
-    LINE1:temp_outdoor#3336F0:"Temperatur außen             "  \
+    LINE1:temp_outdoor#3336F0:"Temperatur außen              " \
     GPRINT:temp_outdoor:LAST:"Aktuell\: %5.2lf °C"             \
     GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C"       \
     GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"                  \
     GPRINT:temp_outdoor:MIN:"Min\: %5.2lf °C\n"                \
-    LINE1:temp_room#000000:"Temperatur innen                 " \
+    LINE1:temp_room#000000:"Temperatur innen              "    \
     GPRINT:temp_room:LAST:"Aktuell\: %5.2lf °C"                \
     GPRINT:temp_room:AVERAGE:"Mittelwert\: %5.2lf °C"          \
     GPRINT:temp_room:MAX:"Max\: %5.2lf °C"                     \
@@ -625,16 +625,16 @@ printPoolFans()
     DEF:fan2=$RRD_PO:FAN2:AVERAGE                                 \
     DEF:fan3=$RRD_PO:FAN3:AVERAGE                                 \
     DEF:fan4=$RRD_PO:FAN4:AVERAGE                                 \
-    AREA:fan1#42C3FF:"Fan einströmende Luft #1"                   \
+    AREA:fan1#42C3FF:"Fan einströmende Luft #1 "                  \
     GPRINT:fan1:LAST:"\t Aktuell\: %5.0lf"                        \
     GPRINT:fan1:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
-    STACK:fan4#F6FC2A:"Fan einströmende Luft #2"                  \
+    STACK:fan4#F6FC2A:"Fan einströmende Luft #2 "                 \
     GPRINT:fan4:LAST:"\t Aktuell\: %5.0lf"                        \
     GPRINT:fan4:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
-    STACK:fan2#FF4242:"Fan ausströmende Luft"                     \
+    STACK:fan2#FF4242:"Fan ausströmende Luft    "                 \
     GPRINT:fan2:LAST:"\t Aktuell\: %5.0lf"                        \
     GPRINT:fan2:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
-    STACK:fan3#BE25EB:"Fan Steuerbox        "                     \
+    STACK:fan3#BE25EB:"Fan Steuerbox            "                 \
     GPRINT:fan3:LAST:"\t Aktuell\: %5.0lf"                        \
     GPRINT:fan3:AVERAGE:"Mittelwert\: %5.2lf\n"                   &
  }
