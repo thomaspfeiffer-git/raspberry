@@ -5,7 +5,7 @@ echo -n `date`
 echo -n ": rrdtool processes running: "
 ps aux | grep "rrdtool" | wc -l
 
-if [ $(ps aux | grep "rrdtool" | wc -l) -gt 1 ] ; then 
+if [ $(ps aux | grep "rrdtool" | wc -l) -gt 1 ] ; then
     echo -n `date`
     echo "rrdtool already running, killing"
     killall rrdtool
@@ -443,7 +443,7 @@ printLightness()
     GPRINT:out_lightness:MIN:"Min\: %5.2lf lux\n"           &
  }
 
- 
+
 #######################################################################
 # printAirQuality()                                                   #
 # Parameter:                                                          #
@@ -476,7 +476,7 @@ printAirQuality()
     GPRINT:kb_airquality:AVERAGE:"Mittelwert\: %5.2lf %%"      \
     GPRINT:kb_airquality:MAX:"Max\: %5.2lf %%"                 \
     GPRINT:kb_airquality:MIN:"Min\: %5.2lf %%\n"               &
- }      
+ }
 
 
 #######################################################################
@@ -517,7 +517,7 @@ printAirparticulates()
     GPRINT:2_pm25:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
     GPRINT:2_pm25:MAX:"Max\: %5.2lf µg/m3"                     \
     GPRINT:2_pm25:MIN:"Min\: %5.2lf µg/m3\n"                   &
- }      
+ }
 
 #######################################################################
 # printPoolTemp()                                                     #
@@ -537,6 +537,7 @@ printPoolTemp()
     DEF:temp_airin=$RRD_PO:TEMPAIRIN:AVERAGE                   \
     DEF:temp_airout=$RRD_PO:TEMPAIROUT:AVERAGE                 \
     DEF:temp_outdoor=$RRD_PO:TEMPOUTDOOR:AVERAGE               \
+    DEF:temp_room=$RRD_PO:TEMPROOM:AVERAGE                     \
     DEF:temp_water=$RRD_PO:TEMPWATER:AVERAGE                   \
     LINE1:temp_box#BE25EB:"Temperatur Steuerbox          "     \
     GPRINT:temp_box:LAST:"Aktuell\: %5.2lf °C"                 \
@@ -553,17 +554,22 @@ printPoolTemp()
     GPRINT:temp_airout:AVERAGE:"Mittelwert\: %5.2lf °C"        \
     GPRINT:temp_airout:MAX:"Max\: %5.2lf °C"                   \
     GPRINT:temp_airout:MIN:"Min\: %5.2lf °C\n"                 \
-    LINE1:temp_outdoor#3336F0:"Temperatur außen              " \
+    LINE1:temp_outdoor#3336F0:"Temperatur aussen             " \
     GPRINT:temp_outdoor:LAST:"Aktuell\: %5.2lf °C"             \
     GPRINT:temp_outdoor:AVERAGE:"Mittelwert\: %5.2lf °C"       \
     GPRINT:temp_outdoor:MAX:"Max\: %5.2lf °C"                  \
     GPRINT:temp_outdoor:MIN:"Min\: %5.2lf °C\n"                \
+    LINE1:temp_room#000000:"Temperatur innen                 " \
+    GPRINT:temp_room:LAST:"Aktuell\: %5.2lf °C"                \
+    GPRINT:temp_room:AVERAGE:"Mittelwert\: %5.2lf °C"          \
+    GPRINT:temp_room:MAX:"Max\: %5.2lf °C"                     \
+    GPRINT:temp_room:MIN:"Min\: %5.2lf °C\n"                   \
     LINE1:temp_water#2AF9FC:"Temperatur Wasser             "   \
     GPRINT:temp_water:LAST:"Aktuell\: %5.2lf °C"               \
     GPRINT:temp_water:AVERAGE:"Mittelwert\: %5.2lf °C"         \
     GPRINT:temp_water:MAX:"Max\: %5.2lf °C"                    \
     GPRINT:temp_water:MIN:"Min\: %5.2lf °C\n"                  &
- }      
+ }
 
 
 #######################################################################
@@ -598,9 +604,9 @@ printPoolHumi()
     GPRINT:humi_airout:AVERAGE:"Mittelwert\: %5.2lf %%"           \
     GPRINT:humi_airout:MAX:"Max\: %5.2lf %%"                      \
     GPRINT:humi_airout:MIN:"Min\: %5.2lf %%\n"                    &
- }      
+ }
 
- 
+
 #######################################################################
 # printPoolFans()                                                     #
 # Parameter:                                                          #
@@ -631,9 +637,9 @@ printPoolFans()
     STACK:fan4#F6FC2A:"Fan n/a              "                     \
     GPRINT:fan4:LAST:"\t Aktuell\: %5.0lf"                        \
     GPRINT:fan4:AVERAGE:"Mittelwert\: %5.2lf\n"                   &
- }     
+ }
 
- 
+
 #######################################################################
 # main ################################################################
 printTemp "36h", "$PNG_TEMP_D"
@@ -700,4 +706,4 @@ printPoolFans "365d", "$PNG_POOLFANS_Y"
 /home/pi/raspberry/seti/seti_graph.sh
 
 # eof #
- 
+

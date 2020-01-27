@@ -37,6 +37,7 @@ class Sensordata (object):
         self.airout_temp = None
         self.airout_humidity = None
         self.outdoor_temp = None
+        self.room_temp = None
         self.water_temp = None
         self.fan1_on = 0
         self.fan2_on = 0
@@ -47,12 +48,13 @@ class Sensordata (object):
 
     def __str__ (self):
         if self.valid:
-            return "CPU:          {0.cpu:.2f} C\n"               \
-                   "Temp box:     {0.box_temp:.2f} C\n"          \
-                   "Temp air in:  {0.airin_temp:.2f} C\n"        \
-                   "Temp air out: {0.airout_temp:.2f} C\n"       \
-                   "Temp outdoor: {0.outdoor_temp:.2f} C\n"      \
-                   "Temp water:   {0.water_temp:.2f} C\n"        \
+            return "CPU:          {0.cpu:.2f} °C\n"               \
+                   "Temp box:     {0.box_temp:.2f} °C\n"          \
+                   "Temp air in:  {0.airin_temp:.2f} °C\n"        \
+                   "Temp air out: {0.airout_temp:.2f} °C\n"       \
+                   "Temp outdoor: {0.outdoor_temp:.2f} °C\n"      \
+                   "Temp room:    {0.room_temp:.2f} °C\n"         \
+                   "Temp water:   {0.water_temp:.2f} °C\n"        \
                    "Humi box:     {0.box_humidity:.2f} % rF\n"    \
                    "Humi air in:  {0.airin_humidity:.2f} % rF\n"  \
                    "Humi air out: {0.airout_humidity:.2f} % rF\n" \
@@ -74,6 +76,7 @@ class Sensordata (object):
                     ":{0.airin_temp:.2f}"            \
                     ":{0.airout_temp:.2f}"           \
                     ":{0.outdoor_temp:.2f}"          \
+                    ":{0.room_temp:.2f}"             \
                     ":{0.water_temp:.2f}"            \
                     ":{0.box_humidity:.2f}"          \
                     ":{0.airin_humidity:.2f}"        \
@@ -95,6 +98,7 @@ class Sensordata (object):
                "TEMPAIRIN:"   \
                "TEMPAIROUT:"  \
                "TEMPOUTDOOR:" \
+               "TEMPROOM:"    \
                "TEMPWATER:"   \
                "HUMIBOX:"     \
                "HUMIAIRIN:"   \
@@ -114,8 +118,9 @@ class Sensors (threading.Thread):
         threading.Thread.__init__(self)
 
         self.cpu = CPU()
-        self.ds1820_water = DS1820("/sys/bus/w1/devices/28-000008561957/w1_slave")
         self.ds1820_outdoor = DS1820("/sys/bus/w1/devices/28-0000085607ec/w1_slave")
+        self.ds1820_room = DS1820("/sys/bus/w1/devices/28-000008561957/w1_slave")
+        self.ds1820_water = None  # TODO
         self.bme280_box = BME280()
         self.sht31_airin = SHT31(addr=SHT31_BASEADDR)
         self.sht31_airout = SHT31(addr=SHT31_SECONDARYADDR)
@@ -137,12 +142,13 @@ class Sensors (threading.Thread):
             self.__data.engine_circulation = self.pcf8591.read(channel=0)
             self.__data.engine_countercurrent = self.pcf8591.read(channel=1)
             self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
-            self.__data.water_temp = self.ds1820_water.read_temperature()
+            self.__data.room_temp = self.ds1820_water.read_temperature()
+            self.__data.water_temp = 5.0 # TODO
             self.__data.valid = True
             # Log("\n{}".format(self.__data))
             self.update_display()
 
-            for _ in range(600):      # interruptible sleep 
+            for _ in range(600):      # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
