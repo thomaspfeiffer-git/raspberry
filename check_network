@@ -25,6 +25,8 @@ else
     if [ $? -eq 0 ] ; then    # Raspberry
         /etc/init.d/networking restart
     else                      # NanoPi
+        systemctl restart NetworkManager
+        sleep 5
         /etc/init.d/networking restart
         sleep 5
         systemctl restart NetworkManager
