@@ -13,12 +13,10 @@
         <start>1:00</start>
         <stop>23:00</stop>
         <conditions>
-            <!--
             <humidity direction="in">
-                <value>96.0</value>
+                <value>98.0</value>
                 <operator>&lt;=</operator>
             </humidity>
-            -->
             <temperature location="outside">
                 <value>9.0</value>
                 <operator>&lt;=</operator>
