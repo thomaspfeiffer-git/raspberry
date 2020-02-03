@@ -7,10 +7,10 @@
 
 """
 Purpose:
-1) Send all data using UDP to my main server. 
+1) Send all data using UDP to my main server.
 2) Receive data and store to rrd database.
 
-This lib can be used either standalone as a receiver (2) or 
+This lib can be used either standalone as a receiver (2) or
 imported to another python program as a sender (1).
 """
 
@@ -58,16 +58,16 @@ class UDP_Sender (threading.Thread):
             payload = "{}".format(self.data.rrd)
             datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
             try:
-                sent = self.socket.sendto(datagram, 
+                sent = self.socket.sendto(datagram,
                                           (CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
                 Log("Sent bytes: {}; data: {}".format(sent,datagram))
             except:
-                Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
+                Log("Cannot send data: {0[0]} {0[1]} (Data: {1})".format(sys.exc_info(), datagram))
 
     def run (self):
         while self._running:
             self.send()
-            for _ in range(600):      # interruptible sleep 
+            for _ in range(600):      # interruptible sleep
                 if not self._running:
                     break
                 time.sleep(0.1)
@@ -92,7 +92,7 @@ class UDP_Receiver (object):
                 (rrd_data, digest) = datagram.rsplit(',', 1)
             except ValueError:
                 Log("WARN: Payload corrupted: {}".format(payload))
-            else:    
+            else:
                 Log("RRD Data received: {}".format(rrd_data))
                 try:
                     rrdtool.update(RRDFILE, "--template", Sensordata.rrd_template(), rrd_data)
