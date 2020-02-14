@@ -1,7 +1,7 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# serverroomy                                                                 #
+# serverroom.py                                                               #
 # Monitors temperature and humidity in our server room                        #
 # (c) https://github.com/thomaspfeiffer-git 2020                              #
 ###############################################################################
@@ -25,7 +25,7 @@ from Shutdown import Shutdown
 
 # Misc for rrdtool
 DATAFILE      = "/schild/weather/serverroom.rrd"
-DS_TEMP       = "temp" 
+DS_TEMP       = "temp"
 DS_HUMI       = "humi"
 DS_TEMPCPU    = "tempcpu"
 
@@ -45,16 +45,16 @@ def main():
         temperature = htu21df.read_temperature()
         humidity    = htu21df.read_humidity()
         cpu_temp    = cpu.read_temperature()
-     
+
         rrd_data = "N:" + \
                    ":".join(f"{d:.2f}" for d in [temperature, \
                                                  humidity,   \
                                                  cpu_temp])
-                                                          
+
         # Log(rrd_template)
         Log(rrd_data)
         try:
-            rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data) 
+            rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data)
         except rrdtool.OperationalError:
             Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
