@@ -83,7 +83,7 @@ class UDP_Receiver (threading.Thread):
         # TODO: verify digest
         (source, values) = payload.split(',')
         data[source] = values
-        # data['pik_a'] = "N:10.00:10.00:10.00:10.00:1013.25:0.00"
+        data['pik_k'] = "N:10.00:10.00:10.00:10.00:1013.25:0.00"
         # data['particulates_2'] = "2_pm25:2_pm10:N:11.1:5.5"
         # Log("Data: {}".format(data))
 
@@ -164,7 +164,7 @@ class ToRRD (threading.Thread):
         self.DS_HUMI  = "DS_HUMI"
         self.DS_PRESS = "DS_PRESS"
         self.DS_AIRQ  = "DS_AIRQ"
-        self.DS = { pik_i: { self.DS_TEMP1: 'kb_i_t1', 
+        self.DS = { pik_i: { self.DS_TEMP1: 'kb_i_t1',
                              self.DS_TEMP2: 'kb_i_t2',
                              self.DS_TCPU : 'kb_i_tcpu',
                              self.DS_HUMI : 'kb_i_humi',
@@ -180,9 +180,9 @@ class ToRRD (threading.Thread):
                              self.DS_TEMP2: 'kb_k_t2',
                              self.DS_TCPU : 'kb_k_tcpu',
                              self.DS_HUMI : 'kb_k_humi',
-                             self.DS_PRESS: 'kb_k_press', 
+                             self.DS_PRESS: 'kb_k_press',
                              self.DS_AIRQ:  'kb_k_airquality' }
-                  } 
+                  }
 
         self._running = True
 
@@ -212,7 +212,7 @@ class ToRRD (threading.Thread):
         for p in PIs:
             if not data[p]:
                 data_complete = False
-            else: 
+            else:
                 rrd_template += self.DS[p][self.DS_TEMP1] + ":" + \
                                 self.DS[p][self.DS_TEMP2] + ":" + \
                                 self.DS[p][self.DS_TCPU]  + ":" + \
