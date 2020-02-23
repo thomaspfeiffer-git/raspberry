@@ -83,7 +83,7 @@ class UDP_Receiver (threading.Thread):
         # TODO: verify digest
         (source, values) = payload.split(',')
         data[source] = values
-        data[pik_k] = "N:10.00:10.00:10.00:10.00:1013.25:0.00"
+        # data[pik_k] = "N:10.00:10.00:10.00:10.00:1013.25:0.00"
         # data['particulates_2'] = "2_pm25:2_pm10:N:11.1:5.5"
         # Log("Data: {}".format(data))
 
