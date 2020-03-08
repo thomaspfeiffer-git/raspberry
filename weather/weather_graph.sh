@@ -628,7 +628,7 @@ printPoolAbsHumi()
     --right-axis 1:0                                              \
     DEF:abshumi_box=$RRD_PO:ABSHUBOX:AVERAGE                      \
     DEF:abshumi_airin=$RRD_PO:ABSHUAIRIN:AVERAGE                  \
-    DEF:abshumi_airout=$RRD_PO:ABSHUMIAIROUT:AVERAGE              \
+    DEF:abshumi_airout=$RRD_PO:ABSHUAIROUT:AVERAGE              \
     LINE1:abshumi_box#BE25EB:"Luftfeuchtigkeit absolut Steuerbox        "    \
     GPRINT:abshumi_box:LAST:"\t Aktuell\: %5.2lf g/m^3"                 \
     GPRINT:abshumi_box:AVERAGE:"Mittelwert\: %5.2lf g/m^3"              \
