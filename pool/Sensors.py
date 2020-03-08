@@ -15,6 +15,7 @@ import time
 
 sys.path.append("../libs/")
 
+from Humidity import abs_humidity
 from Logging import Log
 
 from sensors.CPU import CPU
@@ -32,10 +33,13 @@ class Sensordata (object):
         self.cpu = None
         self.box_temp = None
         self.box_humidity = None
+        self.box_abs_humidity = None
         self.airin_temp = None
         self.airin_humidity = None
+        self.airin_abs_humidity = None
         self.airout_temp = None
         self.airout_humidity = None
+        self.airout_abs_humidity = None
         self.outdoor_temp = None
         self.room_temp = None
         self.water_temp = None
@@ -48,20 +52,23 @@ class Sensordata (object):
 
     def __str__ (self):
         if self.valid:
-            return "CPU:          {0.cpu:.2f} °C\n"               \
-                   "Temp box:     {0.box_temp:.2f} °C\n"          \
-                   "Temp air in:  {0.airin_temp:.2f} °C\n"        \
-                   "Temp air out: {0.airout_temp:.2f} °C\n"       \
-                   "Temp outdoor: {0.outdoor_temp:.2f} °C\n"      \
-                   "Temp room:    {0.room_temp:.2f} °C\n"         \
-                   "Temp water:   {0.water_temp:.2f} °C\n"        \
-                   "Humi box:     {0.box_humidity:.2f} % rF\n"    \
-                   "Humi air in:  {0.airin_humidity:.2f} % rF\n"  \
-                   "Humi air out: {0.airout_humidity:.2f} % rF\n" \
-                   "Fan 1 on:     {0.fan1_on}\n"                  \
-                   "Fan 2 on:     {0.fan2_on}\n"                  \
-                   "Fan 3 on:     {0.fan3_on}\n"                  \
-                   "Fan 4 on:     {0.fan4_on}\n"                  \
+            return "CPU:              {0.cpu:.2f} °C\n"                    \
+                   "Temp box:         {0.box_temp:.2f} °C\n"               \
+                   "Temp air in:      {0.airin_temp:.2f} °C\n"             \
+                   "Temp air out:     {0.airout_temp:.2f} °C\n"            \
+                   "Temp outdoor:     {0.outdoor_temp:.2f} °C\n"           \
+                   "Temp room:        {0.room_temp:.2f} °C\n"              \
+                   "Temp water:       {0.water_temp:.2f} °C\n"             \
+                   "Humi box:         {0.box_humidity:.2f} % rF\n"         \
+                   "Humi air in:      {0.airin_humidity:.2f} % rF\n"       \
+                   "Humi air out:     {0.airout_humidity:.2f} % rF\n"      \
+                   "Abs humi box:     {0.box_abs_humidity:.2f} g/m^3\n"    \
+                   "Abs humi air in:  {0.airin_abs_humidity:.2f} g/m^3\n"  \
+                   "Abs humi air out: {0.airout_abs_humidity:.2f} g/m^3\n" \
+                   "Fan 1 on:         {0.fan1_on}\n"                       \
+                   "Fan 2 on:         {0.fan2_on}\n"                       \
+                   "Fan 3 on:         {0.fan3_on}\n"                       \
+                   "Fan 4 on:         {0.fan4_on}\n"                       \
                    "Engine circulation:     {0.engine_circulation:.2f}\n"    \
                    "Engine counter current: {0.engine_countercurrent:.2f}\n" \
                    .format(self)
@@ -81,6 +88,9 @@ class Sensordata (object):
                     ":{0.box_humidity:.2f}"          \
                     ":{0.airin_humidity:.2f}"        \
                     ":{0.airout_humidity:.2f}"       \
+                    ":{0.box_abs_humidity:.2f}"      \
+                    ":{0.airin_abs_humidity:.2f}"    \
+                    ":{0.airout_abs_humidity:.2f}"   \
                     ":{0.fan1_on}"                   \
                     ":{0.fan2_on}"                   \
                     ":{0.fan3_on}"                   \
@@ -103,6 +113,9 @@ class Sensordata (object):
                "HUMIBOX:"     \
                "HUMIAIRIN:"   \
                "HUMIAIROUT:"  \
+               "ABSHUBOX:"    \
+               "ABSHUAIRIN:"  \
+               "ABSHUAIROUT:" \
                "FAN1:"        \
                "FAN2:"        \
                "FAN3:"        \
@@ -144,6 +157,9 @@ class Sensors (threading.Thread):
             self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
             self.__data.room_temp = self.ds1820_room.read_temperature()
             self.__data.water_temp = self.ds1820_water.read_temperature()
+            self.__data.box_abs_humidity = abs_humidity(self.__data.box_humidity, self.__data.box_temp)
+            self.__data.airin_abs_humidity = abs_humidity(self.__data.airin_humidity, self.__data.airin_temp)
+            self.__data.airout_abs_humidity = abs_humidity(self.__data.airout_humidity, self.__data.airout_temp)
             self.__data.valid = True
             # Log("\n{}".format(self.__data))
             self.update_display()
