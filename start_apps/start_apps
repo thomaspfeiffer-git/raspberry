@@ -4,7 +4,7 @@
 # (c) https://github.com/thomaspfeiffer-git 2020                            #
 #############################################################################
 
-case "$HOSTNAME" in 
+case "$HOSTNAME" in
     nano02)
         ./start_apps_nano02
         ;;
@@ -13,6 +13,9 @@ case "$HOSTNAME" in
         ;;
     nano05)
         ./start_apps_nano05
+        ;;
+    pik-i)
+        ./start_apps_pik-i
         ;;
     pik-a)
         ./start_apps_pik-a
@@ -23,7 +26,7 @@ case "$HOSTNAME" in
     *)
         echo "Unknown host '$HOSTNAME'."
         exit 1
-esac        
+esac
 
 # eof #
 
