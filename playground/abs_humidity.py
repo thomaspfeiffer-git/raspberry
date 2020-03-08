@@ -22,6 +22,7 @@ a = 6.112
 b = 17.67
 c = 243.5
 
+
 # Compute saturated water vapor pressure in hPa
 # Param t - temperature in °C
 def svp(t):
@@ -35,6 +36,7 @@ def svp(t):
 def vp(rh, t):
   vp = rh/100. * svp(t)
   return vp
+
 
 # Compute the absolute humidity in g/m³
 # Param rh - relative humidity in %
@@ -50,7 +52,7 @@ def ah(rh, t):
 while True:
      temperature = htu21df.read_temperature()
      humidity    = htu21df.read_humidity()
-     abs_humi = ah(humidity, temperature)
+     abs_humi    = ah(humidity, temperature)
 
      print(f"Humi     | {humidity:>8.2f} | % rF   |")
      print(f"Temp     | {temperature:>8.2f} | °C  |")
