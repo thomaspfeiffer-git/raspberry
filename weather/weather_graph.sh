@@ -82,6 +82,11 @@ PNG_POOLHUMI_W=$RRDPATH/pool_humi_w.png
 PNG_POOLHUMI_M=$RRDPATH/pool_humi_m.png
 PNG_POOLHUMI_Y=$RRDPATH/pool_humi_y.png
 
+PNG_POOLABSHUMI_D=$RRDPATH/pool_abshumi_d.png
+PNG_POOLABSHUMI_W=$RRDPATH/pool_abshumi_w.png
+PNG_POOLABSHUMI_M=$RRDPATH/pool_abshumi_m.png
+PNG_POOLABSHUMI_Y=$RRDPATH/pool_abshumi_y.png
+
 PNG_POOLFANS_D=$RRDPATH/pool_fans_d.png
 PNG_POOLFANS_W=$RRDPATH/pool_fans_w.png
 PNG_POOLFANS_M=$RRDPATH/pool_fans_m.png
@@ -608,6 +613,41 @@ printPoolHumi()
 
 
 #######################################################################
+# printPoolAbsHumi()                                                  #
+# Parameter:                                                          #
+# $1 Time Range                                                       #
+# $2 Filename                                                         #
+#######################################################################
+printPoolAbsHumi()
+  {
+    rrdtool graph $2                                              \
+    --title "Pool Kollerberg: Absolute Luftfeuchtigkeit"          \
+    --end now --start end-$1                                      \
+    -w $WIDTH -h $HEIGHT -a PNG                                   \
+    --watermark "$WATERMARK"                                      \
+    --right-axis 1:0                                              \
+    DEF:abshumi_box=$RRD_PO:ABSHUBOX:AVERAGE                      \
+    DEF:abshumi_airin=$RRD_PO:ABSHUAIRIN:AVERAGE                  \
+    DEF:abshumi_airout=$RRD_PO:HUMIAIROUT:AVERAGE                 \
+    LINE1:abshumi_box#BE25EB:"Luftfeuchtigkeit absolut Steuerbox        "    \
+    GPRINT:abshumi_box:LAST:"\t Aktuell\: %5.2lf %%"                 \
+    GPRINT:abshumi_box:AVERAGE:"Mittelwert\: %5.2lf %%"              \
+    GPRINT:abshumi_box:MAX:"Max\: %5.2lf %%"                         \
+    GPRINT:abshumi_box:MIN:"Min\: %5.2lf %%\n"                       \
+    LINE1:abshumi_airin#009900:"Luftfeuchtigkeit absolut einströmende Luft"  \
+    GPRINT:abshumi_airin:LAST:"\t Aktuell\: %5.2lf %%"               \
+    GPRINT:abshumi_airin:AVERAGE:"Mittelwert\: %5.2lf %%"            \
+    GPRINT:abshumi_airin:MAX:"Max\: %5.2lf %%"                       \
+    GPRINT:abshumi_airin:MIN:"Min\: %5.2lf %%\n"                     \
+    LINE1:abshumi_airout#FF4242:"Luftfeuchtigkeit absolut ausströmende Luft" \
+    GPRINT:abshumi_airout:LAST:"\t Aktuell\: %5.2lf %%"              \
+    GPRINT:abshumi_airout:AVERAGE:"Mittelwert\: %5.2lf %%"           \
+    GPRINT:abshumi_airout:MAX:"Max\: %5.2lf %%"                      \
+    GPRINT:abshumi_airout:MIN:"Min\: %5.2lf %%\n"                    &
+}
+
+
+#######################################################################
 # printPoolFans()                                                     #
 # Parameter:                                                          #
 # $1 Time Range                                                       #
@@ -696,6 +736,11 @@ printPoolHumi "36h", "$PNG_POOLHUMI_D"
 printPoolHumi "7d", "$PNG_POOLHUMI_W"
 printPoolHumi "30d", "$PNG_POOLHUMI_M"
 printPoolHumi "365d", "$PNG_POOLHUMI_Y"
+
+printPoolAbsHumi "36h", "$PNG_POOLABSHUMI_D"
+printPoolAbsHumi "7d", "$PNG_POOLABSHUMI_W"
+printPoolAbsHumi "30d", "$PNG_POOLABSHUMI_M"
+printPoolAbsHumi "365d", "$PNG_POOLABSHUMI_Y"
 
 printPoolFans "36h", "$PNG_POOLFANS_D"
 printPoolFans "7d", "$PNG_POOLFANS_W"
