@@ -54,8 +54,8 @@ while True:
      humidity    = htu21df.read_humidity()
      abs_humi    = ah(humidity, temperature)
 
-     print(f"Humi     | {humidity:>8.2f} | % rF   |")
-     print(f"Temp     | {temperature:>8.2f} | °C  |")
+     print(f"Humi     | {humidity:>8.2f} | % rF  |")
+     print(f"Temp     | {temperature:>8.2f} | °C    |")
      print(f"Abs Humi | {abs_humi:>8.2f} | g/m^3 |")
 
      time.sleep(1)
