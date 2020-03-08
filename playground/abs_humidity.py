@@ -24,7 +24,7 @@ while True:
      print(f"Temp     | {temperature:>8.2f} | °C    |")
      print(f"Abs Humi | {abs_humi:>8.2f} | g/m^3 |")
 
-     time.sleep(1)
+     time.sleep(10)
 
 # eof #
 
