@@ -15,9 +15,6 @@ from Humidity import abs_humidity
 from sensors.HTU21DF import HTU21DF
 htu21df = HTU21DF()
 
-
-
-
 while True:
      temperature = htu21df.read_temperature()
      humidity    = htu21df.read_humidity()
