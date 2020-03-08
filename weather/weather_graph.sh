@@ -630,20 +630,20 @@ printPoolAbsHumi()
     DEF:abshumi_airin=$RRD_PO:ABSHUAIRIN:AVERAGE                  \
     DEF:abshumi_airout=$RRD_PO:ABSHUMIAIROUT:AVERAGE              \
     LINE1:abshumi_box#BE25EB:"Luftfeuchtigkeit absolut Steuerbox        "    \
-    GPRINT:abshumi_box:LAST:"\t Aktuell\: %5.2lf %%"                 \
-    GPRINT:abshumi_box:AVERAGE:"Mittelwert\: %5.2lf %%"              \
-    GPRINT:abshumi_box:MAX:"Max\: %5.2lf %%"                         \
-    GPRINT:abshumi_box:MIN:"Min\: %5.2lf %%\n"                       \
+    GPRINT:abshumi_box:LAST:"\t Aktuell\: %5.2lf g/m^3"                 \
+    GPRINT:abshumi_box:AVERAGE:"Mittelwert\: %5.2lf g/m^3"              \
+    GPRINT:abshumi_box:MAX:"Max\: %5.2lf g/m^3"                         \
+    GPRINT:abshumi_box:MIN:"Min\: %5.2lf g/m^3\n"                       \
     LINE1:abshumi_airin#009900:"Luftfeuchtigkeit absolut einströmende Luft"  \
-    GPRINT:abshumi_airin:LAST:"\t Aktuell\: %5.2lf %%"               \
-    GPRINT:abshumi_airin:AVERAGE:"Mittelwert\: %5.2lf %%"            \
-    GPRINT:abshumi_airin:MAX:"Max\: %5.2lf %%"                       \
-    GPRINT:abshumi_airin:MIN:"Min\: %5.2lf %%\n"                     \
+    GPRINT:abshumi_airin:LAST:"\t Aktuell\: %5.2lf g/m^3"               \
+    GPRINT:abshumi_airin:AVERAGE:"Mittelwert\: %5.2lf g/m^3"            \
+    GPRINT:abshumi_airin:MAX:"Max\: %5.2lf g/m^3"                       \
+    GPRINT:abshumi_airin:MIN:"Min\: %5.2lf g/m^3\n"                     \
     LINE1:abshumi_airout#FF4242:"Luftfeuchtigkeit absolut ausströmende Luft" \
-    GPRINT:abshumi_airout:LAST:"\t Aktuell\: %5.2lf %%"              \
-    GPRINT:abshumi_airout:AVERAGE:"Mittelwert\: %5.2lf %%"           \
-    GPRINT:abshumi_airout:MAX:"Max\: %5.2lf %%"                      \
-    GPRINT:abshumi_airout:MIN:"Min\: %5.2lf %%\n"                    &
+    GPRINT:abshumi_airout:LAST:"\t Aktuell\: %5.2lf g/m^3"              \
+    GPRINT:abshumi_airout:AVERAGE:"Mittelwert\: %5.2lf g/m^3"           \
+    GPRINT:abshumi_airout:MAX:"Max\: %5.2lf g/m^3"                      \
+    GPRINT:abshumi_airout:MIN:"Min\: %5.2lf g/m^3\n"                    &
 }
 
 
