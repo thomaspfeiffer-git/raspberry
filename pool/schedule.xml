@@ -18,12 +18,12 @@
                 <operator>&lt;=</operator>
             </humidity>
             <temperature location="outside">
-                <value>8.0</value>
+                <value>18.0</value>
                 <operator>&lt;=</operator>
             </temperature>
-            <humidity_difference>
-                <value>15.0</value>
-            </humidity_difference>
+            <abs_humidity_difference>
+                <value>0.75</value>
+            </abs_humidity_difference>
         </conditions>
     </schedule>
 </schedules>

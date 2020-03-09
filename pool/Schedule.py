@@ -57,7 +57,7 @@ class State (object):
 ###############################################################################
 # Schedule ####################################################################
 class Schedule (object):
-    all_conditions = ['time', 'temperature', 'humidity_difference', 'humidity']
+    all_conditions = ['time', 'temperature', 'humidity_difference', 'abs_humidity_difference', 'humidity']
 
     def __init__ (self):
         self.schedule = None
@@ -133,14 +133,21 @@ class Schedule (object):
     def validate_humidity_difference (self, condition):
         value = float(condition['value'])
         if not 1 <= value <= 50:
-            raise ValueError(f"'value is '{value}', should be in 1 .. +50")
+            raise ValueError(f"'value is '{value}', should be in 1 .. 50")
+        condition['value'] = value
+
+
+    def validate_abs_humidity_difference (self, condition):
+        value = float(condition['value'])
+        if not 0.5 <= value <= 100:
+            raise ValueError(f"'value is '{value}', should be in 0.5 .. 100")
         condition['value'] = value
 
 
 ###############################################################################
 # Scheduler ###################################################################
 class Scheduler (threading.Thread):
-    all_checks = ['time', 'temperature', 'humidity', 'humidity_difference']
+    all_checks = ['time', 'temperature', 'humidity', 'humidity_difference', 'abs_humidity_difference']
 
     def __init__ (self, sensordata):
         threading.Thread.__init__(self)
@@ -195,7 +202,22 @@ class Scheduler (threading.Thread):
             return False
 
     def check_humidity_difference (self, condition):
+        if not self.sensordata.valid:
+            return False
+
         return True
+
+    def check_abs_humidity_difference (self, condition):
+        if not self.sensordata.valid:
+            return False
+
+        if datetime.datetime.now().minute in [0, 30]:
+            return True
+
+        if self.sensordata.airin_abs_humidity+condition['value'] < self.sensordata.airout_abs_humidity:
+            return True
+        else:
+            return False
 
     def check (self):
         if self.schedule.schedule['valid_until'] < datetime.datetime.now():
