@@ -186,7 +186,7 @@ class Scheduler (threading.Thread):
         if not self.sensordata.valid:
             return False
 
-        if datetime.datetime.now().minute in [0, 30]:
+        if datetime.datetime.now().minute in [0, ]:
             return True
 
         if condition['@direction'] == 'in':
@@ -211,7 +211,7 @@ class Scheduler (threading.Thread):
         if not self.sensordata.valid:
             return False
 
-        if datetime.datetime.now().minute in [0, 30]:
+        if datetime.datetime.now().minute in [0, ]:
             return True
 
         if self.sensordata.airin_abs_humidity+condition['value'] < self.sensordata.airout_abs_humidity:
