@@ -8,7 +8,7 @@
 """
 
 ### usage ####
-# 
+#
 
 
 import configparser as cfgparser
@@ -76,6 +76,10 @@ class UDP_Receiver (threading.Thread):
         # TODO: verify digest
         (source, values) = payload.split(',')
         data[source] = values
+
+        if source == seti_01:   # seti-02 currently not working
+            data[seti_02] = values
+
         # Log("Data: {}".format(data))
 
     def run (self):
@@ -179,7 +183,7 @@ class ToRRD (threading.Thread):
             for p in PIs:
                 if not data[p]:
                     data_complete = False
-                else:    
+                else:
                     rrd_template = rrd_template + self.DS[p][self.TEMPCPU]     + ":" + \
                                                   self.DS[p][self.LOAD]        + ":" + \
                                                   self.DS[p][self.FREQ]        + ":" + \
@@ -198,7 +202,7 @@ class ToRRD (threading.Thread):
             if data_complete:
                 rrd_template = rrd_template.rstrip(":")
                 rrd_data     = rrd_data.rstrip(":")
-                                                                
+
                 # Log(rrd_template)
                 Log(rrd_data)
                 try:
