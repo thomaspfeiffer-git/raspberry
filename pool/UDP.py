@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # UDP.py                                                                      #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020             #
 ###############################################################################
 
 """
@@ -27,11 +27,11 @@ from Logging import Log
 from Sensors import Sensordata
 
 
-CREDENTIALS = "/home/pi/credentials/pool.cred"
+CREDENTIALS = "/home/thomas/credentials/pool.cred"
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
 
-RRDFILE = "/schild/weather/pool.rrd"
+RRDFILE = "/home/thomas/rrd/databases/pool.rrd"
 
 
 ###############################################################################
