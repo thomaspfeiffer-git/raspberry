@@ -1,8 +1,8 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-#                                                                             #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2018                   #
+# seti_receiver.py                                                            #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2018, 2020             #
 ###############################################################################
 """
 """
@@ -85,7 +85,7 @@ class UDP_Receiver (threading.Thread):
         while self._running:
             try:
                 datagram = self.socket.recv(self.MAX_PACKET_SIZE).decode('utf-8')
-                # Log("Received: {}".format(datagram))
+                Log("Received: {}".format(datagram))
                 self.process_data(datagram)
             except BlockingIOError:
                 for _ in range(50):  # interruptible sleep
