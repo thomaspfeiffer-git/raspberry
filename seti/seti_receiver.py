@@ -8,7 +8,7 @@
 """
 
 ### usage ####
-#
+# nohup ./seti_receiver.py 2>&1 > seti_receiver.log &
 
 
 import configparser as cfgparser
