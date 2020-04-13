@@ -26,10 +26,5 @@ echo "Starting 'weather_feed.py' ..."
 nohup ./weather_feed.py 2>&1 > weather_feed.log &
 cd ..
 
-cd pool/
-echo "Starting 'UDP.py' ..."
-nohup ./UDP.py 2>&1 > udp.log &
-cd ..
-
 # eof #
 

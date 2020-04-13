@@ -16,5 +16,12 @@ echo "Starting 'seti_receiver.py' ..."
 nohup ./seti_receiver.py 2>&1 > seti_receiver.log &
 cd ..
 
+
+cd pool/
+echo "Starting 'UDP.py' ..."
+nohup ./UDP.py 2>&1 > udp.log &
+cd ..
+
+
 # eof #
 
