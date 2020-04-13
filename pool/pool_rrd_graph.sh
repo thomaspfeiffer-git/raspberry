@@ -93,7 +93,7 @@ printPoolTemp()
     GPRINT:temp_water:LAST:"Aktuell\: %5.2lf °C"               \
     GPRINT:temp_water:AVERAGE:"Mittelwert\: %5.2lf °C"         \
     GPRINT:temp_water:MAX:"Max\: %5.2lf °C"                    \
-    GPRINT:temp_water:MIN:"Min\: %5.2lf °C\n"                  &
+    GPRINT:temp_water:MIN:"Min\: %5.2lf °C\n"
  }
 
 
@@ -128,7 +128,7 @@ printPoolHumi()
     GPRINT:humi_airout:LAST:"\t Aktuell\: %5.2lf %%"              \
     GPRINT:humi_airout:AVERAGE:"Mittelwert\: %5.2lf %%"           \
     GPRINT:humi_airout:MAX:"Max\: %5.2lf %%"                      \
-    GPRINT:humi_airout:MIN:"Min\: %5.2lf %%\n"                    &
+    GPRINT:humi_airout:MIN:"Min\: %5.2lf %%\n"
  }
 
 
@@ -163,7 +163,7 @@ printPoolAbsHumi()
     GPRINT:abshumi_airout:LAST:"\t Aktuell\: %5.2lf g/m^3"              \
     GPRINT:abshumi_airout:AVERAGE:"Mittelwert\: %5.2lf g/m^3"           \
     GPRINT:abshumi_airout:MAX:"Max\: %5.2lf g/m^3"                      \
-    GPRINT:abshumi_airout:MIN:"Min\: %5.2lf g/m^3\n"                    &
+    GPRINT:abshumi_airout:MIN:"Min\: %5.2lf g/m^3\n"
 }
 
 
@@ -196,7 +196,7 @@ printPoolFans()
     GPRINT:fan2:AVERAGE:"Mittelwert\: %5.2lf\n"                   \
     STACK:fan3#BE25EB:"Fan Steuerbox            "                 \
     GPRINT:fan3:LAST:"\t Aktuell\: %5.0lf"                        \
-    GPRINT:fan3:AVERAGE:"Mittelwert\: %5.2lf\n"                   &
+    GPRINT:fan3:AVERAGE:"Mittelwert\: %5.2lf\n"
  }
 
 
