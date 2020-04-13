@@ -23,25 +23,25 @@ HEIGHT=160
 WATERMARK=`date  "+%e. %B %Y, %H:%M:%S"`
 
 
-PNG_POOLTEMP_D=$RRDPATH/pool_temp_d.png
-PNG_POOLTEMP_W=$RRDPATH/pool_temp_w.png
-PNG_POOLTEMP_M=$RRDPATH/pool_temp_m.png
-PNG_POOLTEMP_Y=$RRDPATH/pool_temp_y.png
+PNG_POOLTEMP_D=$PICS/pool_temp_d.png
+PNG_POOLTEMP_W=$PICS/pool_temp_w.png
+PNG_POOLTEMP_M=$PICS/pool_temp_m.png
+PNG_POOLTEMP_Y=$PICS/pool_temp_y.png
 
-PNG_POOLHUMI_D=$RRDPATH/pool_humi_d.png
-PNG_POOLHUMI_W=$RRDPATH/pool_humi_w.png
-PNG_POOLHUMI_M=$RRDPATH/pool_humi_m.png
-PNG_POOLHUMI_Y=$RRDPATH/pool_humi_y.png
+PNG_POOLHUMI_D=$PICS/pool_humi_d.png
+PNG_POOLHUMI_W=$PICS/pool_humi_w.png
+PNG_POOLHUMI_M=$PICS/pool_humi_m.png
+PNG_POOLHUMI_Y=$PICS/pool_humi_y.png
 
-PNG_POOLABSHUMI_D=$RRDPATH/pool_abshumi_d.png
-PNG_POOLABSHUMI_W=$RRDPATH/pool_abshumi_w.png
-PNG_POOLABSHUMI_M=$RRDPATH/pool_abshumi_m.png
-PNG_POOLABSHUMI_Y=$RRDPATH/pool_abshumi_y.png
+PNG_POOLABSHUMI_D=$PICS/pool_abshumi_d.png
+PNG_POOLABSHUMI_W=$PICS/pool_abshumi_w.png
+PNG_POOLABSHUMI_M=$PICS/pool_abshumi_m.png
+PNG_POOLABSHUMI_Y=$PICS/pool_abshumi_y.png
 
-PNG_POOLFANS_D=$RRDPATH/pool_fans_d.png
-PNG_POOLFANS_W=$RRDPATH/pool_fans_w.png
-PNG_POOLFANS_M=$RRDPATH/pool_fans_m.png
-PNG_POOLFANS_Y=$RRDPATH/pool_fans_y.png
+PNG_POOLFANS_D=$PICS/pool_fans_d.png
+PNG_POOLFANS_W=$PICS/pool_fans_w.png
+PNG_POOLFANS_M=$PICS/pool_fans_m.png
+PNG_POOLFANS_Y=$PICS/pool_fans_y.png
 
 
 #######################################################################
