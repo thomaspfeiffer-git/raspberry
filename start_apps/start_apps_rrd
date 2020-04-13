@@ -1,0 +1,20 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on rrd                                                        #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
+#############################################################################
+
+if [ $HOSTNAME != "v2202004118613114435" ] ; then
+    echo "Wrong host! This script runs on host 'rrd' only!"
+    exit 1
+fi
+
+cd /home/thomas/raspberry/
+
+cd seti/
+echo "Starting 'seti_receiver.py' ..."
+nohup ./seti_receiver.py 2>&1 > seti_receiver.log &
+cd ..
+
+# eof #
+
