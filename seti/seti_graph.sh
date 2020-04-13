@@ -1,31 +1,33 @@
 #/bin/bash
 
-RRDPATH=/schild/weather/
-RRD=$RRDPATH/seti.rrd
+RRDPATH=/home/thomas/rrd/
+RRD=$RRDPATH/databases/seti.rrd
+PICS=$RRDPATH/temp/
+PICS_STORE=$RRDPATH/graphs/
 
 WIDTH=1024
 HEIGHT=160
 WATERMARK=`date  "+%e. %B %Y, %H:%M:%S"`
 
-PNG_LOAD_D=$RRDPATH/seti_load_d.png
-PNG_LOAD_W=$RRDPATH/seti_load_w.png
-PNG_LOAD_M=$RRDPATH/seti_load_m.png
-PNG_LOAD_Y=$RRDPATH/seti_load_y.png
+PNG_LOAD_D=$PICS/seti_load_d.png
+PNG_LOAD_W=$PICS/seti_load_w.png
+PNG_LOAD_M=$PICS/seti_load_m.png
+PNG_LOAD_Y=$PICS/seti_load_y.png
 
-PNG_FREQ_D=$RRDPATH/seti_freq_d.png
-PNG_FREQ_W=$RRDPATH/seti_freq_w.png
-PNG_FREQ_M=$RRDPATH/seti_freq_m.png
-PNG_FREQ_Y=$RRDPATH/seti_freq_y.png
+PNG_FREQ_D=$PICS/seti_freq_d.png
+PNG_FREQ_W=$PICS/seti_freq_w.png
+PNG_FREQ_M=$PICS/seti_freq_m.png
+PNG_FREQ_Y=$PICS/seti_freq_y.png
 
-PNG_TEMP_D=$RRDPATH/seti_temp_d.png
-PNG_TEMP_W=$RRDPATH/seti_temp_w.png
-PNG_TEMP_M=$RRDPATH/seti_temp_m.png
-PNG_TEMP_Y=$RRDPATH/seti_temp_y.png
+PNG_TEMP_D=$PICS/seti_temp_d.png
+PNG_TEMP_W=$PICS/seti_temp_w.png
+PNG_TEMP_M=$PICS/seti_temp_m.png
+PNG_TEMP_Y=$PICS/seti_temp_y.png
 
-PNG_HUMIDITY_D=$RRDPATH/seti_humidity_d.png
-PNG_HUMIDITY_W=$RRDPATH/seti_humidity_w.png
-PNG_HUMIDITY_M=$RRDPATH/seti_humidity_m.png
-PNG_HUMIDITY_Y=$RRDPATH/seti_humidity_y.png
+PNG_HUMIDITY_D=$PICS/seti_humidity_d.png
+PNG_HUMIDITY_W=$PICS/seti_humidity_w.png
+PNG_HUMIDITY_M=$PICS/seti_humidity_m.png
+PNG_HUMIDITY_Y=$PICS/seti_humidity_y.png
 
 
 #######################################################################
@@ -64,7 +66,7 @@ printLoad ()
     GPRINT:4_load:LAST:"Aktuell\: %5.2lf"                    \
     GPRINT:4_load:AVERAGE:"Mittelwert\: %5.2lf"              \
     GPRINT:4_load:MAX:"Max\: %5.2lf"                         \
-    GPRINT:4_load:MIN:"Min\: %5.2lf\n"                       &
+    GPRINT:4_load:MIN:"Min\: %5.2lf\n"
  }
 
 
@@ -104,8 +106,8 @@ printFreq ()
     GPRINT:4_freq:LAST:"Aktuell\: %5.2lf MHz"                \
     GPRINT:4_freq:AVERAGE:"Mittelwert\: %5.2lf MHz"          \
     GPRINT:4_freq:MAX:"Max\: %5.2lf MHz"                     \
-    GPRINT:4_freq:MIN:"Min\: %5.2lf MHz\n"                   &
-}   
+    GPRINT:4_freq:MIN:"Min\: %5.2lf MHz\n"
+}
 
 
 #######################################################################
@@ -156,7 +158,7 @@ printTemp ()
     GPRINT:1_tempairflow:LAST:"Aktuell\: %5.2lf °C"          \
     GPRINT:1_tempairflow:AVERAGE:"Mittelwert\: %5.2lf °C"    \
     GPRINT:1_tempairflow:MAX:"Max\: %5.2lf °C"               \
-    GPRINT:1_tempairflow:MIN:"Min\: %5.2lf °C\n"             &
+    GPRINT:1_tempairflow:MIN:"Min\: %5.2lf °C\n"
  }
 
 
@@ -178,7 +180,7 @@ printHumidity ()
     GPRINT:1_humidity:LAST:"Aktuell\: %5.2lf %% rF"          \
     GPRINT:1_humidity:AVERAGE:"Mittelwert\: %5.2lf %% rF"    \
     GPRINT:1_humidity:MAX:"Max\: %5.2lf %% rF"               \
-    GPRINT:1_humidity:MIN:"Min\: %5.2lf %% rF\n"             &
+    GPRINT:1_humidity:MIN:"Min\: %5.2lf %% rF\n"
  }
 
 
@@ -203,6 +205,8 @@ printHumidity "36h", "$PNG_HUMIDITY_D"
 printHumidity "7d",  "$PNG_HUMIDITY_W"
 printHumidity "30d", "$PNG_HUMIDITY_M"
 printHumidity "365d", "$PNG_HUMIDITY_Y"
+
+mv $PICS/seti_*png $PICS_STORE
 
 # eof #
 
