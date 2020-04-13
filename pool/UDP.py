@@ -26,8 +26,11 @@ from Logging import Log
 
 from Sensors import Sensordata
 
+if socket.gethostname() == "pik-p":
+    CREDENTIALS = "/home/pi/credentials/pool.cred"
+else:
+    CREDENTIALS = "/home/thomas/credentials/pool.cred"
 
-CREDENTIALS = "/home/thomas/credentials/pool.cred"
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
 
