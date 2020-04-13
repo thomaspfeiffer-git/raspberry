@@ -77,8 +77,8 @@ class UDP_Receiver (threading.Thread):
         (source, values) = payload.split(',')
         data[source] = values
 
-        if source == seti_01:   # seti-02 currently not working
-            data[seti_02] = values
+        # if source == seti_01:   # seti-02 currently not working
+        #     data[seti_02] = values
 
         # Log("Data: {}".format(data))
 
