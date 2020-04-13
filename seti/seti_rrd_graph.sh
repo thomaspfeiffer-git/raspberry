@@ -1,5 +1,18 @@
 #/bin/bash
 
+echo -n `date`
+echo -n ": rrdtool processes running: "
+ps aux | grep "rrdtool" | wc -l
+
+if [ $(ps aux | grep "rrdtool" | wc -l) -gt 1 ] ; then
+    echo -n `date`
+    echo "rrdtool already running, killing"
+    killall rrdtool
+    echo ""
+    exit 1
+fi
+
+
 RRDPATH=/home/thomas/rrd/
 RRD=$RRDPATH/databases/seti.rrd
 PICS=$RRDPATH/temp/
