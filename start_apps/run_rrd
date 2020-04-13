@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+/home/thomas/raspberry/seti/seti_rrd_graph.sh
+/home/thomas/raspberry/pool/pool_rrd_graph.sh
+
+# eof #
+
