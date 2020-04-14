@@ -77,6 +77,14 @@ class UDP_Sender (threading.Thread):
 ###############################################################################
 # UDP_Receiver ################################################################
 class UDP_Receiver (object):
+    # TODO: move to central place (same code in Serverroom.py)
+    DS_TEMP = "temp"
+    DS_HUMI = "humi"
+    DS_TEMPCPU = "tempcpu"
+    rrd_template = DS_TEMP + ":" + \
+                   DS_HUMI + ":" + \
+                   DS_TEMPCPU
+
     def __init__ (self):
         self.digest = Digest(CONFIG.SECRET)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -93,7 +101,7 @@ class UDP_Receiver (object):
             else:
                 Log("RRD Data received: {}".format(rrd_data))
                 try:                                      # TODO
-                    rrdtool.update(RRDFILE, "--template", Sensordata.rrd_template(), rrd_data)
+                    rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
                 except rrdtool.OperationalError:
                     Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 

@@ -23,5 +23,10 @@ nohup ./Ventilation_UDP.py 2>&1 > udp.log &
 cd ..
 
 
+cd weather/
+echo "Starting 'Serverroom_UDP.py' ..."
+nohup ./Serverroom_UDP.py 2>&1 > udp.log &
+cd ..
+
 # eof #
 
