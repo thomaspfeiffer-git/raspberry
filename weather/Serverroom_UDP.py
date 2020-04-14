@@ -15,6 +15,7 @@ imported to another python program as a sender (1).
 """
 
 import configparser as cfgparser
+import os
 import socket
 import sys
 import threading
@@ -24,19 +25,11 @@ sys.path.append("../libs/")
 from Commons import Digest
 from Logging import Log
 
-from Sensors import Sensordata
-
-# TODO
-if socket.gethostname() == "pik-p":
-    CREDENTIALS = "/home/pi/credentials/pool.cred"
-else:
-    CREDENTIALS = "/home/thomas/credentials/pool.cred"
-
+CREDENTIALS = os.path.expanduser("~/credentials/serverroom.cred")
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
 
-# TODO
-RRDFILE = "/home/thomas/rrd/databases/pool.rrd"
+RRDFILE = os.path.expanduser("~/rrd/databases/serverroom.rrd")
 
 
 ###############################################################################
