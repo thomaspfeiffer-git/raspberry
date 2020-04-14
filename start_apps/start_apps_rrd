@@ -18,8 +18,8 @@ cd ..
 
 
 cd pool/
-echo "Starting 'UDP.py' ..."
-nohup ./UDP.py 2>&1 > udp.log &
+echo "Starting 'Ventilation_UDP.py' ..."
+nohup ./Ventilation_UDP.py 2>&1 > udp.log &
 cd ..
 
 

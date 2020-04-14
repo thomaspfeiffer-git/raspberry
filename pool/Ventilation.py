@@ -35,7 +35,7 @@ from Display import Display
 from Fan import Fan
 from Schedule import Scheduler, State
 from Sensors import Sensors, Sensordata
-from UDP import UDP_Sender
+from Ventilation_UDP import UDP_Sender
 
 app = Flask(__name__)
 
