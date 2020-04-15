@@ -10,7 +10,7 @@
 # start with:
 # nohup ./serverroom.py 2>&1 >serverroom.log &
 
-import rrdtool
+import rrdtool  # TODO remove after migration
 import sys
 import time
 
@@ -25,7 +25,7 @@ from Serverroom_UDP import UDP_Sender
 
 
 # Misc for rrdtool
-DATAFILE      = "/schild/weather/serverroom.rrd"
+DATAFILE      = "/schild/weather/serverroom.rrd"   # TODO remove after migration
 DS_TEMP       = "temp"
 DS_HUMI       = "humi"
 DS_TEMPCPU    = "tempcpu"
@@ -52,11 +52,9 @@ def main():
                    ":".join(f"{d:.2f}" for d in [temperature, \
                                                  humidity,   \
                                                  cpu_temp])
-
-        # Log(rrd_template)
-        Log(rrd_data)
+        # Log(rrd_data)
         udp.send(rrd_data)
-        try:
+        try:   # TODO remove after migration
             rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data)
         except rrdtool.OperationalError:
             Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))

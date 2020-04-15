@@ -25,7 +25,7 @@ cd ..
 
 cd weather/
 echo "Starting 'Serverroom_UDP.py' ..."
-nohup ./Serverroom_UDP.py 2>&1 > udp.log &
+nohup ./Serverroom_UDP.py 2>&1 > serverroom_udp.log &
 cd ..
 
 # eof #
