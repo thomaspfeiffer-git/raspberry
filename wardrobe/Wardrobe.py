@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #############################################################################
 # wardrobe.py                                                               #
-# (c) https://github.com/thomaspfeiffer-git 2017                            #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2020                      #
 #############################################################################
 """controls lighting of my wardrobe"""
 
@@ -13,7 +13,7 @@
 from enum import Enum
 from math import pi, sin, asin
 import RPi.GPIO as io
-import rrdtool
+import rrdtool  # TODO REMOVE
 import sys
 import threading
 from time import sleep, strftime, time
@@ -25,7 +25,7 @@ from i2c import I2C
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
 from sensors.CPU import CPU
 from sensors.HTU21DF import HTU21DF
-from sensors.TSL2561 import TSL2561 
+from sensors.TSL2561 import TSL2561
 
 from SensorQueue2 import SensorQueueClient_write
 from SensorValue2 import SensorValue, SensorValue_Data
@@ -34,6 +34,7 @@ from Logging import Log
 from Shutdown import Shutdown
 
 from Forecast import Forecast
+from Wardroom_UDP import UDP_Sender
 
 
 # sensor id | gpio-in | usage |
@@ -59,7 +60,7 @@ Actuator4_ID = 3
 
 
 # Misc for rrdtool
-RRDFILE      = "/schild/weather/wardrobe.rrd"
+RRDFILE      = "/schild/weather/wardrobe.rrd"  # TODO: REMOVE
 DS_TEMP1     = "wr_temp1"
 DS_TEMPCPU   = "wr_tempcpu"
 DS_TEMP2     = "wr_temp2"
@@ -138,7 +139,7 @@ class Sensor (threading.Thread):
             v = Switch.OFF if io.input(self.__pin) == 0 else Switch.ON
             with self.__lock:
                 self.__value = v
-            sleep(0.1) 
+            sleep(0.1)
 
     def stop (self):
         self.__running = False
@@ -209,7 +210,7 @@ class Actuator (object):
         if self.smooth.lightness > PWM.MAX:
             self.smooth.lightness = PWM.MAX
 
-        if not off:    # when switching off, lightness is supposed to 
+        if not off:    # when switching off, lightness is supposed to
                        # normal level (means: no lightness overule).
             if controls['button'].switchvalue_stretched() == 1:
                 self.smooth.lightness = PWM.MAX
@@ -269,7 +270,7 @@ class Control (threading.Thread):
     @property
     def switchvalue (self):
         with self.__lock:
-            return self.__switch    
+            return self.__switch
 
     @switchvalue.setter
     def switchvalue (self, value):
@@ -277,7 +278,7 @@ class Control (threading.Thread):
             or self.switchvalue == Switch.ON:
             self._timestretched = time() + self._stretchperiod
         with self.__lock:
-            self.__switch = value    
+            self.__switch = value
 
     def run (self):
         while self._running:
@@ -332,6 +333,8 @@ class Control_Button (Control):
 def main ():
     cpu     = CPU()
     htu21df = HTU21DF(qvalue_temp=qv_temp_wardrobe, qvalue_humi=qv_humi_wardrobe)
+    udp = UDP_Sender()
+
     lightness.start()
     forecast.start()
     for c in controls.values():
@@ -361,12 +364,13 @@ def main ():
                     ":{}".format(0)                          + \
                     ":{}".format(controls['drawer'].switchvalue_stretched()) + \
                     ":{}".format(0)
-        Log(rrd_data)
-        try:
+
+        udp.send(rrd_data)
+        try:  # TODO: remove
             rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
         except rrdtool.OperationalError:
             Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
-    
+
         sleep(50)
 
 
