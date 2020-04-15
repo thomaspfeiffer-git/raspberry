@@ -13,7 +13,7 @@ fi
 cd /home/pi/raspberry/
 
 cd weather/
-echo "Starting 'serverroom.py' ..."
+echo "Starting 'Serverroom.py' ..."
 nohup ./Serverroom.py 2>&1 >serverroom.log &
 cd ..
 
