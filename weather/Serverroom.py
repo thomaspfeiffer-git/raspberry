@@ -21,6 +21,7 @@ from sensors.CPU import CPU
 
 from Logging import Log
 from Shutdown import Shutdown
+from Serverroom_UDP import UDP_Sender
 
 
 # Misc for rrdtool
@@ -36,6 +37,7 @@ def main():
     """main part"""
     htu21df = HTU21DF()
     cpu = CPU()
+    udp = UDP_Sender()
 
     rrd_template = DS_TEMP + ":" + \
                    DS_HUMI + ":" + \
@@ -53,6 +55,7 @@ def main():
 
         # Log(rrd_template)
         Log(rrd_data)
+        udp.send(rrd_data)
         try:
             rrdtool.update(DATAFILE, "--template", rrd_template, rrd_data)
         except rrdtool.OperationalError:

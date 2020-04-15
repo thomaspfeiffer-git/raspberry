@@ -18,7 +18,6 @@ import configparser as cfgparser
 import os
 import socket
 import sys
-import threading
 import time
 
 sys.path.append("../libs/")
@@ -43,17 +42,13 @@ class CONFIG (object):
 
 ###############################################################################
 # UDP_Sender ##################################################################
-class UDP_Sender (threading.Thread):
-    def __init__ (self, data):
-        threading.Thread.__init__(self)
+class UDP_Sender (object):
+    def __init__ (self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.digest = Digest(CONFIG.SECRET)
-        self.data = data
-        self._running = True
 
-    def send (self):
-        if self.data.valid:
-            payload = "{}".format(self.data.rrd)
+    def send (self, data):
+            payload = "{}".format(data)
             datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
             try:
                 sent = self.socket.sendto(datagram,
@@ -61,17 +56,6 @@ class UDP_Sender (threading.Thread):
                 Log("Sent bytes: {}; data: {}".format(sent,datagram))
             except:
                 Log("Cannot send data: {0[0]} {0[1]} (Data: {1})".format(sys.exc_info(), datagram))
-
-    def run (self):
-        while self._running:
-            self.send()
-            for _ in range(600):      # interruptible sleep
-                if not self._running:
-                    break
-                time.sleep(0.1)
-
-    def stop (self):
-        self._running = False
 
 
 ###############################################################################
@@ -101,7 +85,7 @@ class UDP_Receiver (object):
             else:
                 Log("RRD Data received: {}".format(rrd_data))
                 try:                                      # TODO
-                    rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+                    rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
                 except rrdtool.OperationalError:
                     Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
