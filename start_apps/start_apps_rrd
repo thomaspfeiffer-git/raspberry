@@ -30,7 +30,7 @@ cd ..
 
 cd wardrobe/
 echo "Starting 'Wardrobe_UDP.py' ..."
-nohup ./Wardrobe_UDP.py 2>&1 > wardrobe_UDP.py &
+nohup ./Wardrobe_UDP.py 2>&1 > wardrobe_UDP.log &
 cd ..
 
 # eof #
