@@ -1,0 +1,21 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on pid                                                        #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
+#############################################################################
+
+if [ $HOSTNAME != "pid" ] ; then
+    echo "Wrong host! This script runs on pid only!"
+    exit 1
+fi
+
+
+cd /home/pi/raspberry/
+
+cd wardrobe/
+echo "Starting 'Wardrobe.py' ..."
+nohup ./Wardrobe.py 2>&1 >wardrobe.log &
+cd ..
+
+# eof #
+
