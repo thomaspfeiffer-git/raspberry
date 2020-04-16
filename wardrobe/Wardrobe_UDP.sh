@@ -24,13 +24,11 @@ sys.path.append("../libs/")
 from Commons import Digest
 from Logging import Log
 
-# TODO
-CREDENTIALS = os.path.expanduser("~/credentials/serverroom.cred")
+CREDENTIALS = os.path.expanduser("~/credentials/wardrobe.cred")
 cred = cfgparser.ConfigParser()
 cred.read(CREDENTIALS)
 
-# TODO
-RRDFILE = os.path.expanduser("~/rrd/databases/serverroom.rrd")
+RRDFILE = os.path.expanduser("~/rrd/databases/wardrobe.rrd")
 
 
 ###############################################################################
@@ -63,13 +61,26 @@ class UDP_Sender (object):
 ###############################################################################
 # UDP_Receiver ################################################################
 class UDP_Receiver (object):
-    # TODO: move to central place (same code in Serverroom.py)
-    DS_TEMP = "temp"
-    DS_HUMI = "humi"
-    DS_TEMPCPU = "tempcpu"
-    rrd_template = DS_TEMP + ":" + \
-                   DS_HUMI + ":" + \
-                   DS_TEMPCPU
+    # TODO: move to central place (same code in Wardroom.py)
+    DS_TEMP1     = "wr_temp1"
+    DS_TEMPCPU   = "wr_tempcpu"
+    DS_TEMP2     = "wr_temp2"
+    DS_HUMI      = "wr_humi"
+    DS_LIGHTNESS = "wr_lightness"
+    DS_OPEN1     = "wr_open1"
+    DS_OPEN2     = "wr_open2"
+    DS_OPEN3     = "wr_open3"
+    DS_OPEN4     = "wr_open4"
+    rrd_template = DS_TEMP1     + ":" + \
+                   DS_TEMPCPU   + ":" + \
+                   DS_TEMP2     + ":" + \
+                   DS_HUMI      + ":" + \
+                   DS_LIGHTNESS + ":" + \
+                   DS_OPEN1     + ":" + \
+                   DS_OPEN2     + ":" + \
+                   DS_OPEN3     + ":" + \
+                   DS_OPEN4
+
 
     def __init__ (self):
         self.digest = Digest(CONFIG.SECRET)
