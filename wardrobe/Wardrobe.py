@@ -34,7 +34,7 @@ from Logging import Log
 from Shutdown import Shutdown
 
 from Forecast import Forecast
-from Wardroom_UDP import UDP_Sender
+from Wardrobe_UDP import UDP_Sender
 
 
 # sensor id | gpio-in | usage |
