@@ -16,6 +16,7 @@ example file TODO
 
 
 import configparser
+import os
 import sys
 
 sys.path.append("../libs/")
@@ -27,7 +28,9 @@ from Logging import Log
 ###############################################################################
 class UDP (object):
     def __init__ (credentials_file):
-        # TODO check if file exists
+
+        if not os.path.isfile(credentials_file):
+            raise FileNotFoundError(f"File 'credentials_file' does not exist!")
 
         credentials = configparser.ConfigParser()
         credentials.read(credentials_file)
