@@ -1,6 +1,5 @@
 #/bin/bash
 
-
 echo -n `date`
 echo -n ": rrdtool processes running: "
 ps aux | grep "rrdtool" | wc -l
@@ -15,7 +14,7 @@ fi
 
 
 RRDPATH=/home/thomas/rrd/
-RRD_AP=$RRDPATH/airparticulates.rrd
+RRD_AP=$RRDPATH/databases/airparticulates.rrd
 PICS=$RRDPATH/temp/
 PICS_STORE=$RRDPATH/graphs/
 
@@ -49,25 +48,25 @@ printAirparticulates()
     DEF:2_pm10=$RRD_AP:2_pm10:AVERAGE                          \
     DEF:2_pm25=$RRD_AP:2_pm25:AVERAGE                          \
     LINE1:1_pm10#0000FF:"Feinstaub Wien PM10  "                \
-    GPRINT:1_pm10:LAST:"\t\tAktuell\: %5.2lf µg/m3"           \
-    GPRINT:1_pm10:AVERAGE:"Mittelwert\: %5.2lf µg/m3"        \
+    GPRINT:1_pm10:LAST:"\t\tAktuell\: %5.2lf µg/m3"            \
+    GPRINT:1_pm10:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
     GPRINT:1_pm10:MAX:"Max\: %5.2lf µg/m3"                     \
     GPRINT:1_pm10:MIN:"Min\: %5.2lf µg/m3\n"                   \
     LINE1:1_pm25#33ccff:"Feinstaub Wien PM2,5 "                \
-    GPRINT:1_pm25:LAST:"\t\tAktuell\: %5.2lf µg/m3"             \
+    GPRINT:1_pm25:LAST:"\t\tAktuell\: %5.2lf µg/m3"            \
     GPRINT:1_pm25:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
     GPRINT:1_pm25:MAX:"Max\: %5.2lf µg/m3"                     \
     GPRINT:1_pm25:MIN:"Min\: %5.2lf µg/m3\n"                   \
     LINE1:2_pm10#40FF00:"Feinstaub Kollerberg PM10  "          \
-    GPRINT:2_pm10:LAST:"\t  Aktuell\: %5.2lf µg/m3"             \
+    GPRINT:2_pm10:LAST:"\t  Aktuell\: %5.2lf µg/m3"            \
     GPRINT:2_pm10:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
     GPRINT:2_pm10:MAX:"Max\: %5.2lf µg/m3"                     \
     GPRINT:2_pm10:MIN:"Min\: %5.2lf µg/m3\n"                   \
     LINE1:2_pm25#ccffcc:"Feinstaub Kollerberg PM2,5 "          \
-    GPRINT:2_pm25:LAST:"\t  Aktuell\: %5.2lf µg/m3"             \
+    GPRINT:2_pm25:LAST:"\t  Aktuell\: %5.2lf µg/m3"            \
     GPRINT:2_pm25:AVERAGE:"Mittelwert\: %5.2lf µg/m3"          \
     GPRINT:2_pm25:MAX:"Max\: %5.2lf µg/m3"                     \
-    GPRINT:2_pm25:MIN:"Min\: %5.2lf µg/m3\n"                   &
+    GPRINT:2_pm25:MIN:"Min\: %5.2lf µg/m3\n"
  }
 
 

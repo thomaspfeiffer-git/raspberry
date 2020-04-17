@@ -2,6 +2,7 @@
 
 /home/thomas/raspberry/seti/seti_rrd_graph.sh
 /home/thomas/raspberry/pool/Ventilation_rrd_graph.sh
+/home/thomas/raspberry/airparticulates/Airparticulates_rrd_graph.sh
 
 # eof #
 
