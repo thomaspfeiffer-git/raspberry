@@ -103,8 +103,7 @@ class ToRRD (threading.Thread):
         template = template.rstrip(":")
         data     = data.rstrip(":")
         retries  = 0
-        # Log(template)
-        # Log(data)
+
         while retries < 3:
             try:
                 rrdtool.update(db, "--template", template, data)
