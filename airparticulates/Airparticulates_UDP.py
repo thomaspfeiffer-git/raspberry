@@ -13,6 +13,7 @@ TODO
 
 
 import configparser as cfgparser
+import os
 import rrdtool
 import socket
 import sys
@@ -25,8 +26,8 @@ from Commons import Digest
 from Logging import Log
 from Shutdown import Shutdown
 
-CREDENTIALS = "/home/pi/configs/weather_feed.cred"  # TODO
-RRDFILE = "/schild/weather/airparticulates.rrd"  # TODO
+CREDENTIALS = os.path.expanduser("~/credentials/airparticulates.cred")
+RRDFILE = os.path.expanduser("~/rrd/databases/airparticulates.rrd")
 
 particulates_1 = "particulates_1"
 particulates_2 = "particulates_2"
