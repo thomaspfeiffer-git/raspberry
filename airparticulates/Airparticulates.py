@@ -15,6 +15,7 @@ Measures particulates (PM10, PM2.5) using an SDS011 sensor.
 
 
 import argparse
+import os
 import socket
 import sys
 import threading
@@ -27,7 +28,7 @@ from Shutdown import Shutdown
 
 from sensors.SDS011 import SDS011
 
-CREDENTIALS = "/home/pi/credentials/weather.cred"
+CREDENTIALS = os.path.expanduser("~/credentials/airparticulates.cred")
 UPDATE_INTERVAL = 10 * 60   # time delay between two measurements (seconds)
 
 
@@ -59,7 +60,7 @@ class Sensor (threading.Thread):
             else:
                 Log("Reading SDS011 failed.")
 
-            sds011.sleep()      
+            sds011.sleep()
 
             for _ in range(UPDATE_INTERVAL*10):  # interruptible sleep
                 if not self._running:
@@ -88,13 +89,13 @@ class StoreData (threading.Thread):
         raise NotImplementedError
 
     def run (self):
-        while self._running:     
+        while self._running:
             for _ in range(int(UPDATE_INTERVAL*10/3)-100): # send UDP data frequently
-                if not self._running:    # interruptible sleep 
+                if not self._running:    # interruptible sleep
                     break
                 time.sleep(0.1)
 
-            self.rrd_data = sensor.rrd # sending data after sleep() avoids 
+            self.rrd_data = sensor.rrd # sending data after sleep() avoids
             self.store()               # empty data in first loop cycle.
 
     def stop (self):
