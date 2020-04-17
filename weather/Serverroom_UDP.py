@@ -14,9 +14,7 @@ This lib can be used either standalone as a receiver (2) or
 imported to another python program as a sender (1).
 """
 
-import configparser as cfgparser
 import os
-import socket
 import sys
 import time
 
@@ -31,20 +29,9 @@ RRDFILE = os.path.expanduser("~/rrd/databases/serverroom.rrd")
 
 ###############################################################################
 # UDP_Sender ##################################################################
-class UDP_Sender (object):
-    def __init__ (self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.digest = Digest(CONFIG.SECRET)
-
-    def send (self, data):
-        payload = "{}".format(data)
-        datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
-        try:
-            sent = self.socket.sendto(datagram,
-                                      (CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
-            Log("Sent bytes: {}; data: {}".format(sent,datagram))
-        except:
-            Log("Cannot send data: {0[0]} {0[1]} (Data: {1})".format(sys.exc_info(), datagram))
+class UDP_Sender (UDP.Sender):
+    def __init__ (self, credentials_file):
+        super().__init__(credentials_file)
 
 
 ###############################################################################

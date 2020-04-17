@@ -33,7 +33,7 @@ cd ..
 
 cd airparticulates/
 echo "Starting 'Airparticulates_UDP.py' ..."
-nohup ./Airparticulates_UDP.py 2>&1 > ./airparticulates_udp.py &
+nohup ./Airparticulates_UDP.py 2>&1 > ./airparticulates_udp.log &
 cd ..
 
 # eof #
