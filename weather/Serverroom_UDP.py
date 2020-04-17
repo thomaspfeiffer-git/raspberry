@@ -30,7 +30,7 @@ RRDFILE = os.path.expanduser("~/rrd/databases/serverroom.rrd")
 ###############################################################################
 # UDP_Sender ##################################################################
 class UDP_Sender (UDP.Sender):
-    def __init__ (self, credentials_file):
+    def __init__ (self, credentials_file=CREDENTIALS):
         super().__init__(credentials_file)
 
 

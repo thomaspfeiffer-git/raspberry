@@ -46,7 +46,7 @@ class UDP (object):
 ###############################################################################
 class Sender (UDP):
     def __init__ (self, credentials_file):
-        super().__init__(redentials_file)
+        super().__init__(credentials_file)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.digest = Digest(self.SECRET)
 
