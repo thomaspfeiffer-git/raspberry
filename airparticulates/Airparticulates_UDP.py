@@ -108,6 +108,7 @@ class ToRRD (threading.Thread):
         while retries < 3:
             try:
                 rrdtool.update(db, "--template", template, data)
+                Log(f"rrd updated: {data}")
                 break
             except rrdtool.OperationalError:
                 Log("Retry: #{0}. Cannot update rrd database: {1[0]} {1[1]}".format(retries,sys.exc_info()))
