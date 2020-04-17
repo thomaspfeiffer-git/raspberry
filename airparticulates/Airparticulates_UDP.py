@@ -75,7 +75,7 @@ class UDP_Receiver (threading.Thread):
         (source, values) = payload.split(',')
         data[source] = values
         # data['particulates_2'] = "2_pm25:2_pm10:N:11.1:5.5"
-        # Log("Data: {}".format(data))
+        Log("Data: {}".format(data))
 
     def run (self):
         while self._running:
