@@ -31,18 +31,13 @@ from Shutdown import Shutdown
 CREDENTIALS = "/home/pi/configs/weather_feed.cred"
 QUEUE_INI = "/home/pi/configs/weatherqueue.ini"
 RRDFILE_WEATHER = "/schild/weather/weather_kollerberg.rrd"
-RRDFILE_PARTICULATES = "/schild/weather/airparticulates.rrd"
 
 pik_i = "pik-i"
 pik_a = "pik-a"
 pik_k = "pik-k"
 PIs = [pik_i, pik_a, pik_k]
 
-particulates_1 = "particulates_1"
-particulates_2 = "particulates_2"
-Particulates = [particulates_1, particulates_2]
-
-data = { p: None for p in PIs+Particulates }
+data = { p: None for p in PIs }
 
 
 ###############################################################################
@@ -224,29 +219,9 @@ class ToRRD (threading.Thread):
         if data_complete:
             self.update_rrd(RRDFILE_WEATHER, rrd_template, rrd_data)
 
-    def rrd_particulates (self):
-        data_complete = True
-        rrd_template = ""
-        rrd_data = "N:"
-        for p in Particulates:
-            if not data[p]:
-                data_complete = False
-            else:
-                try:
-                    rrd_template += data[p].split(":N:")[0] + ":"
-                    rrd_data += data[p].split(":N:")[1] + ":"
-                except IndexError:
-                    Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()))
-                    Log("data[p]: {}".format(data[p]))
-                    return
-
-        if data_complete:
-            self.update_rrd(RRDFILE_PARTICULATES, rrd_template, rrd_data)
-
     def run (self):
         while self._running:
             self.rrd_weather()
-            self.rrd_particulates()
 
             for _ in range(500):  # interruptible sleep
                 if not self._running:
