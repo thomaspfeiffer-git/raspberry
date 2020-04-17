@@ -17,6 +17,7 @@ example file TODO
 
 import configparser
 import os
+import socket
 import sys
 
 sys.path.append("../libs/")
@@ -27,10 +28,10 @@ from Logging import Log
 ###############################################################################
 ###############################################################################
 class UDP (object):
-    def __init__ (credentials_file):
+    def __init__ (self, credentials_file):
 
         if not os.path.isfile(credentials_file):
-            raise FileNotFoundError(f"File 'credentials_file' does not exist!")
+            raise FileNotFoundError(f"File '{credentials_file}' does not exist!")
 
         credentials = configparser.ConfigParser()
         credentials.read(credentials_file)
@@ -45,7 +46,7 @@ class UDP (object):
 ###############################################################################
 class Sender (UDP):
     def __init__ (self, credentials_file):
-        super().__init__(credentials_file)
+        super().__init__(redentials_file)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.digest = Digest(self.SECRET)
 

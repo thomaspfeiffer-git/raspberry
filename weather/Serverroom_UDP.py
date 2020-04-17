@@ -23,21 +23,10 @@ import time
 sys.path.append("../libs/")
 from Commons import Digest
 from Logging import Log
+import UDP
 
 CREDENTIALS = os.path.expanduser("~/credentials/serverroom.cred")
-cred = cfgparser.ConfigParser()
-cred.read(CREDENTIALS)
-
 RRDFILE = os.path.expanduser("~/rrd/databases/serverroom.rrd")
-
-
-###############################################################################
-# CONFIG ######################################################################
-class CONFIG (object):
-    SECRET = cred['UDP']['SECRET']
-    IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
-    UDP_PORT = int(cred['UDP']['UDP_PORT'])
-    MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
 
 
 ###############################################################################
@@ -48,19 +37,19 @@ class UDP_Sender (object):
         self.digest = Digest(CONFIG.SECRET)
 
     def send (self, data):
-            payload = "{}".format(data)
-            datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
-            try:
-                sent = self.socket.sendto(datagram,
-                                          (CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
-                Log("Sent bytes: {}; data: {}".format(sent,datagram))
-            except:
-                Log("Cannot send data: {0[0]} {0[1]} (Data: {1})".format(sys.exc_info(), datagram))
+        payload = "{}".format(data)
+        datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
+        try:
+            sent = self.socket.sendto(datagram,
+                                      (CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
+            Log("Sent bytes: {}; data: {}".format(sent,datagram))
+        except:
+            Log("Cannot send data: {0[0]} {0[1]} (Data: {1})".format(sys.exc_info(), datagram))
 
 
 ###############################################################################
 # UDP_Receiver ################################################################
-class UDP_Receiver (object):
+class UDP_Receiver (UDP.Receiver):
     # TODO: move to central place (same code in Serverroom.py)
     DS_TEMP = "temp"
     DS_HUMI = "humi"
@@ -69,25 +58,18 @@ class UDP_Receiver (object):
                    DS_HUMI + ":" + \
                    DS_TEMPCPU
 
-    def __init__ (self):
-        self.digest = Digest(CONFIG.SECRET)
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
+    def __init__ (self, credentials_file):
+        super().__init__(credentials_file)
 
     def receive (self):
         import rrdtool
         while True:
-            datagram = self.socket.recv(CONFIG.MAX_PACKET_SIZE).decode('utf-8')
-            try:
-                (rrd_data, digest) = datagram.rsplit(',', 1)
-            except ValueError:
-                Log("WARN: Payload corrupted: {}".format(payload))
-            else:
-                Log("RRD Data received: {}".format(rrd_data))
-                try:                                      # TODO
-                    rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
-                except rrdtool.OperationalError:
-                    Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+            data = super().receive()
+            Log(f"RRD Data received: {data}")
+            try:                                      # TODO
+                rrdtool.update(RRDFILE, "--template", self.rrd_template, data)
+            except rrdtool.OperationalError:
+                Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
 
 ###############################################################################
@@ -105,7 +87,7 @@ if __name__ == "__main__":
     from Shutdown import Shutdown
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    udp = UDP_Receiver()
+    udp = UDP_Receiver(CREDENTIALS)
     udp.receive()
 
 # eof #
