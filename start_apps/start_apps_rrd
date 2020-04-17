@@ -16,12 +16,10 @@ echo "Starting 'seti_receiver.py' ..."
 nohup ./seti_receiver.py 2>&1 > seti_receiver.log &
 cd ..
 
-
 cd pool/
 echo "Starting 'Ventilation_UDP.py' ..."
 nohup ./Ventilation_UDP.py 2>&1 > udp.log &
 cd ..
-
 
 cd weather/
 echo "Starting 'Serverroom_UDP.py' ..."
@@ -31,6 +29,11 @@ cd ..
 cd wardrobe/
 echo "Starting 'Wardrobe_UDP.py' ..."
 nohup ./Wardrobe_UDP.py 2>&1 > wardrobe_UDP.log &
+cd ..
+
+cd airparticulates/
+echo "Starting 'Airparticulates_UDP.py' ..."
+nohup ./Airparticulates_UDP.py 2>&1 > ./airparticulates_udp.py &
 cd ..
 
 # eof #

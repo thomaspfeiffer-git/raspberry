@@ -11,7 +11,7 @@ Measures particulates (PM10, PM2.5) using an SDS011 sensor.
 
 
 ### Usage ###
-# nohup ./Airparticulates.py --id n >airparticulates.log 2>&1
+# nohup ./Airparticulates.py --id n >airparticulates.log 2>&1 &
 
 
 import argparse

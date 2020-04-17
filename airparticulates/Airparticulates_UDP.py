@@ -5,11 +5,11 @@
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2018, 2020             #
 ###############################################################################
 """
-TODO
+Gets data from air quality sensor SDS011 via UDP and stores them in rrd.
 """
 
 ### usage ####
-# nohup TODO
+# nohup ./Airparticulates_UDP.py 2>&1 > ./airparticulates_udp.py &
 
 
 import configparser as cfgparser
@@ -105,11 +105,9 @@ class ToRRD (threading.Thread):
         retries  = 0
         # Log(template)
         # Log(data)
-        while retries < 3:  # TODO: Check for already implemented general solution.
+        while retries < 3:
             try:
-                Log(f"rrd update: {data}")
                 rrdtool.update(db, "--template", template, data)
-                Log("rrd update done")
                 break
             except rrdtool.OperationalError:
                 Log("Retry: #{0}. Cannot update rrd database: {1[0]} {1[1]}".format(retries,sys.exc_info()))
