@@ -119,6 +119,9 @@ class Receiver (object):
         while True:
             data = self.udp.receive()
             Log(f"RRD Data received: {data}")
+            rrd_template = template.rstrip(":")
+            data = data.rstrip(":")
+
             try:
                 rrdtool.update(RRDFILE, "--template", rrd_template, data)
             except rrdtool.OperationalError:
