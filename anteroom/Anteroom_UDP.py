@@ -23,6 +23,7 @@ sys.path.append('../libs')
 from Commons import Digest
 from Logging import Log
 from Shutdown import Shutdown
+import UDP
 
 CREDENTIALS = os.path.expanduser("~/credentials/anteroom.cred")
 RRDFILE     = os.path.expanduser("~/rrd/databases/anteroom.rrd")
