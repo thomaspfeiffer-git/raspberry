@@ -116,7 +116,7 @@ class Receiver (object):
 
     def start (self):
         while True:
-            data = udp.receive()
+            data = self.udp.receive()
             Log(f"RRD Data received: {data}")
             try:
                 rrdtool.update(RRDFILE, "--template", rrd_template, data)
