@@ -96,7 +96,7 @@ class StoreData (threading.Thread):
 
     def run (self):
         while self._running:
-            for _ in range(int(UPDATE_INTERVAL*10/3)-100): # send UDP data frequently
+            for _ in range(int(UPDATE_INTERVAL-100)): # send UDP data frequently
                 if not self._running:
                     break
                 time.sleep(0.1)
@@ -112,23 +112,45 @@ class StoreData (threading.Thread):
 ###############################################################################
 # Receiver ####################################################################
 class Receiver (object):
+    particulates_1 = "particulates_1"
+    particulates_2 = "particulates_2"
+    Particulates = [particulates_1, particulates_2]
+
     def __init__ (self):
         self.udp = UDP.Receiver(CREDENTIALS)
+        self.data = { p: None for p in self.Particulates }
 
     def start (self):
         while True:
-            data = self.udp.receive()
-            Log(f"RRD Data received: {data}")
-            rrd_template += data[p].split(":N:")[0] + ":"
-            rrd_data += data[p].split(":N:")[1] + ":"
-            rrd_template = rrd_template.rstrip(":")
-            rrd_data = rrd_data.rstrip(":")
-            Log(f"template: {rrd_template}, data: {rrd_data}")
+            payload = self.udp.receive()
+            Log(f"RRD Data received: {payload}")
+            (source, values) = payload.split(',')
+            self.data[source] = values
+            # data['particulates_2'] = "2_pm25:2_pm10:N:11.1:5.5"
 
-            try:
-                rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
-            except rrdtool.OperationalError:
-                Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+            data_complete = True
+            rrd_template = ""
+            rrd_data = "N:"
+            for p in self.Particulates:
+                if not self.data[p]:
+                    data_complete = False
+                else:
+                    try:
+                        rrd_template += self.data[p].split(":N:")[0] + ":"
+                        rrd_data += self.data[p].split(":N:")[1] + ":"
+                    except IndexError:
+                        Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()))
+                        Log(f"data[p]: {data[p]}")
+                        data_complete = False
+
+            if data_complete:
+                rrd_template = rrd_template.rstrip(":")
+                rrd_data = rrd_data.rstrip(":")
+                try:
+                    Log(f"Updating rrd: {rrd_template}, {rrd_data}")
+                    rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+                except rrdtool.OperationalError:
+                    Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
 
 ###############################################################################
