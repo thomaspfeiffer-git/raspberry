@@ -32,8 +32,8 @@ nohup ./Wardrobe_UDP.py 2>&1 > wardrobe_UDP.log &
 cd ..
 
 cd airparticulates/
-echo "Starting 'Airparticulates_UDP.py' ..."
-nohup ./Airparticulates_UDP.py 2>&1 > ./airparticulates_udp.log &
+echo "Starting 'Airparticulates.py --receiver' ..."
+nohup ./Airparticulates.py --receiver 2>&1 > airparticulates_udp.log &
 cd ..
 
 # eof #

@@ -19,7 +19,7 @@ cd ..
 
 cd airparticulates/
 echo "Starting 'Airparticulates.py' ..."
-nohup ./Airparticulates.py --id 2 > airparticulates.log 2>&1 &
+nohup ./Airparticulates.py --sensor 2>&1 > airparticulates.log &
 cd ..
 
 # eof #
