@@ -8,7 +8,7 @@
 HEARTBEAT=180
 
 
-rrdtool create /schild/weather/anteroom.rrd --step 60 \
+rrdtool create anteroom.rrd --step 60 \
 DS:ar_switch:GAUGE:$HEARTBEAT:0:1 \
 DS:ar_tempcpu:GAUGE:$HEARTBEAT:-40:80 \
 DS:ar_temp:GAUGE:$HEARTBEAT:-40:80 \

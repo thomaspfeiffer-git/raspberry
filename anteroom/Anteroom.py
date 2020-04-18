@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Anteroom.py                                                                 #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2019             #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2019, 2020       #
 ###############################################################################
 """control lighting of our anteroom"""
 
@@ -25,7 +25,6 @@
 
 from enum import Enum
 from flask import Flask, request
-import rrdtool
 import signal
 import subprocess
 import sys
@@ -41,21 +40,11 @@ from Shutdown import Shutdown
 from actuators.PCA9685 import PCA9685, PCA9685_BASE_ADDRESS
 from sensors.CPU import CPU
 
-
-# Misc for rrdtool
-RRDFILE     = "/schild/weather/anteroom.rrd"
-DS_SWITCH   = "ar_switch"
-DS_TEMPCPU  = "ar_tempcpu"
-DS_TEMP     = "ar_temp"
-DS_HUMI     = "ar_humi"
-DS_RES1     = "ar_res1"
-DS_RES2     = "ar_res2"
-DS_RES3     = "ar_res3"
-
+from Anteroom_UDP import Sender
 
 app = Flask(__name__)
 
-pin_fan = 198    # Phys pin 8 
+pin_fan = 198    # Phys pin 8
 
 
 ###############################################################################
@@ -88,7 +77,7 @@ class LED_Strip (PWM):
         self.lightness += self.stepsize * 2
         if self.lightness > PWM.MAX:
             self.lightness = PWM.MAX
-        self.set_pwm(self.lightness)    
+        self.set_pwm(self.lightness)
 
     def off (self):
         self.lightness -= self.stepsize
@@ -96,7 +85,7 @@ class LED_Strip (PWM):
             self.lightness = PWM.MIN
         self.set_pwm(self.lightness)
 
-    def immediate_off (self):    
+    def immediate_off (self):
         self.lightness = PWM.MIN
         self.set_pwm(self.lightness)
 
@@ -116,7 +105,7 @@ class Relais (object):
     def status_stretchoff (self, stretchvalue=120):
         """Delay off for a couple of seconds."""
         if self._timestamp_off + stretchvalue > time() or self.status == Switch.ON:
-            return Switch.ON 
+            return Switch.ON
         else:
             return Switch.OFF
 
@@ -124,7 +113,7 @@ class Relais (object):
         """Enlarge interval of being "on"; otherwise if switch would be on
            for a short period of time only, it would not be seen in RRD."""
         if self._timestamp_on + stretchvalue > time() or self.status == Switch.ON:
-            return Switch.ON 
+            return Switch.ON
         else:
             return Switch.OFF
 
@@ -132,7 +121,7 @@ class Relais (object):
     def status (self, value):
         if self.status == Switch.OFF and value == Switch.ON:
             self._timestamp_on = time()
-        if self.status == Switch.ON and value == Switch.OFF:    
+        if self.status == Switch.ON and value == Switch.OFF:
             self._timestamp_off = time()
         self.__status = value
 
@@ -142,7 +131,7 @@ class Relais (object):
 class SaveEnergy (object):
     """if LEDs are switched on using the button AND time.hour >= 21:
        do not switch on all four LED strips
-    """   
+    """
 
     def __init__ (self):
         self.reset()
@@ -164,22 +153,22 @@ class Control (threading.Thread):
         threading.Thread.__init__(self)
         self.leds = LED_Strip(channel)
         self.__powersaving = powersaving
-        self._running = True
 
     def run (self):
+        self._running = True
         while self._running:
             if relais.status_stretchoff(stretchvalue=3) == Switch.ON:
                 if save_energy():
                     if not self.__powersaving:
                         self.leds.on()
-                else:        
+                else:
                     self.leds.on()
             else:
                 self.leds.off()
             sleep(0.05)
 
         # cleanup on exit
-        self.leds.immediate_off() 
+        self.leds.immediate_off()
 
     def stop (self):
         self._running = False
@@ -193,7 +182,6 @@ class Fan (threading.Thread):
         self.__fan = io(pin, io.OUT)
         self.__last = None
         self.off()
-        self._running = True
 
     def on (self):
         if self.__last != Switch.ON:
@@ -206,6 +194,7 @@ class Fan (threading.Thread):
             self.__last = Switch.OFF
 
     def run (self):
+        self._running = True
         while self._running:
             if relais.status_stretchoff() == Switch.ON:
                 self.on()
@@ -222,20 +211,14 @@ class Fan (threading.Thread):
 ###############################################################################
 # Statistics ##################################################################
 class Statistics (threading.Thread):
-    rrd_template = DS_SWITCH  + ":" + \
-                   DS_TEMPCPU + ":" + \
-                   DS_TEMP    + ":" + \
-                   DS_HUMI    + ":" + \
-                   DS_RES1    + ":" + \
-                   DS_RES2    + ":" + \
-                   DS_RES3
     cpu = CPU()
 
     def __init__ (self):
         threading.Thread.__init__(self)
-        self._running = True
+        self.udp = Sender()
 
-    def run (self):    
+    def run (self):
+        self._running = True
         while self._running:
             rrd_data = "N:{}".format(relais.status_stretchon().value) + \
                         ":{:.2f}".format(self.cpu.read_temperature()) + \
@@ -245,10 +228,7 @@ class Statistics (threading.Thread):
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)
             Log(rrd_data, True)
-            try:
-                rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
-            except rrdtool.OperationalError:
-                Log("Cannot write to rrd: {0[0]} {0[1]}".format(sys.exc_info()))
+            self.udp.send(rrd_data)
 
             for _ in range(500): # interruptible sleep
                 if self._running:
@@ -281,7 +261,7 @@ def API_Relais ():
 @app.route('/toggle')
 def API_Toggle ():
     triggered_by_button = request.args.get("button", "0") == "1"
-    
+
     save_energy.reset()
 
     if relais.status == Switch.ON:

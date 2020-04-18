@@ -36,5 +36,10 @@ echo "Starting 'Airparticulates.py --receiver' ..."
 nohup ./Airparticulates.py --receiver 2>&1 > airparticulates_udp.log &
 cd ..
 
+cd anteroom/
+echo "Starting 'Anteroom_UDP.py' ..."
+nohup ./Anteroom_UDP.py 2>&1 > anteroom_udp.log &
+cd ..
+
 # eof #
 
