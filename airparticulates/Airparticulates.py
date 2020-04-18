@@ -119,11 +119,14 @@ class Receiver (object):
         while True:
             data = self.udp.receive()
             Log(f"RRD Data received: {data}")
-            rrd_template = template.rstrip(":")
-            data = data.rstrip(":")
+            rrd_template += data[p].split(":N:")[0] + ":"
+            rrd_data += data[p].split(":N:")[1] + ":"
+            rrd_template = rrd_template.rstrip(":")
+            rrd_data = rrd_data.rstrip(":")
+            Log(f"template: {rrd_template}, data: {rrd_data}")
 
             try:
-                rrdtool.update(RRDFILE, "--template", rrd_template, data)
+                rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
             except rrdtool.OperationalError:
                 Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
