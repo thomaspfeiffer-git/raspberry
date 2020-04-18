@@ -126,7 +126,7 @@ class Receiver (object):
             Log(f"RRD Data received: {payload}")
             (source, values) = payload.split(',')
             self.data[source] = values
-            # data['particulates_2'] = "2_pm25:2_pm10:N:11.1:5.5"
+            data['particulates_2'] = "2_pm25:2_pm10:N:11.1:5.5"
 
             data_complete = True
             rrd_template = ""
@@ -147,7 +147,7 @@ class Receiver (object):
                 rrd_template = rrd_template.rstrip(":")
                 rrd_data = rrd_data.rstrip(":")
                 try:
-                    Log(f"Updating rrd: {rrd_template}, {rrd_data}")
+                    # Log(f"Updating rrd: {rrd_template}, {rrd_data}")
                     rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
                 except rrdtool.OperationalError:
                     Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
