@@ -21,7 +21,6 @@ nohup ./Airparticulates.py --receiver 2>&1 > airparticulates_udp.log &
 
 import argparse
 import os
-import rrdtool
 import socket
 import sys
 import threading
@@ -148,6 +147,7 @@ class Receiver (object):
                 rrd_data = rrd_data.rstrip(":")
                 try:
                     # Log(f"Updating rrd: {rrd_template}, {rrd_data}")
+                    import rrdtool
                     rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
                 except rrdtool.OperationalError:
                     Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
