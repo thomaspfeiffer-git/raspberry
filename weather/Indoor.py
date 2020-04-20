@@ -37,7 +37,7 @@ import UDP
 
 CREDENTIALS = os.path.expanduser("~/credentials/weather_indoor.cred")
 
-DATAFILE      = os.path.expanduser("~/rrd/databases/weather_indoor.rrd")
+RRDFILE      = os.path.expanduser("~/rrd/databases/weather_indoor.rrd")
 DS_TEMP       = "temp"
 DS_HUMI       = "humi"
 DS_PRESSURE   = "pressure"
