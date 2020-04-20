@@ -12,8 +12,8 @@ fi
 cd /home/pi/raspberry/
 
 cd weather/
-echo "Starting 'weather_indoor.py' ..."
-nohup ./weather_indoor.py 2>&1 > weather_indoor.log &
+echo "Starting 'Indoor.py --sensor' ..."
+nohup ./Indoor.py --sensor 2>&1 > indoor.log &
 cd ..
 
 cd openweathermap/

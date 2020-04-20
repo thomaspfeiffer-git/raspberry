@@ -12,12 +12,12 @@ fi
 cd /home/pi/raspberry/
 
 cd weather/
-echo "Starting 'weather_outdoor.py' ..."
-nohup ./weather_outdoor.py 2>&1 > weather_outdoor.log &
+echo "Starting 'Outdoor.py --sensor' ..."
+nohup ./Outdoor.py --sensor 2>&1 > outdoor.log &
 cd ..
 
 cd airparticulates/
-echo "Starting 'Airparticulates.py' ..."
+echo "Starting 'Airparticulates.py --sensor' ..."
 nohup ./Airparticulates.py --sensor 1 2>&1 > airparticulates.log &
 cd ..
 

@@ -41,5 +41,14 @@ echo "Starting 'Anteroom_UDP.py' ..."
 nohup ./Anteroom_UDP.py 2>&1 > anteroom_udp.log &
 cd ..
 
+cd weather/
+echo "Starting 'Indoor.py --receiver' ..."
+nohup ./Indoor.py --receiver 2>&1 >indoor_udp.log &
+echo "Starting 'Outdoor.py --receiver' ..."
+nohup ./Outdoor.py --receiver 2>&1 >outdoor_udp.log &
+cd ..
+
+
+
 # eof #
 

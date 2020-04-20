@@ -2,7 +2,7 @@
 
 HEARTBEAT=180
 
-rrdtool create /schild/weather/weather_outdoor.rrd --step 60 \
+rrdtool create weather_outdoor.rrd --step 60 \
 DS:temp:GAUGE:$HEARTBEAT:-40:80 \
 DS:temp_gard:GAUGE:$HEARTBEAT:-40:80 \
 DS:humi:GAUGE:$HEARTBEAT:0:125 \
