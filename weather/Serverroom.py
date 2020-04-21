@@ -8,7 +8,7 @@
 """ Collect temperature and humidity in our server room (mainly with HTU21DF). """
 
 """
-##### start with:
+####### usage ######
 ### read data from sensor and send to udp server
 nohup ./Serverroom.py --sensor 2>&1 >serverroom.log &
 
@@ -82,6 +82,8 @@ def Receiver ():
 # Exit ########################################################################
 def shutdown_application ():
     """cleanup stuff"""
+    Log("Stopping application")
+    Log("Application stopped")
     sys.exit(0)
 
 

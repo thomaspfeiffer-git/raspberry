@@ -14,7 +14,7 @@ cd ~/raspberry/
 
 cd kollerberg/
 echo "Starting 'weather.py' ..."
-nohup ./weather.py 2>&1 > weather.log &
+nohup ./Weather_Kollerberg.py --sensor 2>&1 >weather_kollerberg.log &
 cd ..
 
 cd airparticulates/

@@ -23,6 +23,9 @@ case "$HOSTNAME" in
     pik-a)
         ./start_apps_pik-a
         ;;
+    pik-k)
+        ./start_apps_pik-k
+        ;;
     pik-p)
         ./start_apps_pik-p
         ;;
