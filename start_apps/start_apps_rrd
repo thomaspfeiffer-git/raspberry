@@ -48,7 +48,10 @@ echo "Starting 'Outdoor.py --receiver' ..."
 nohup ./Outdoor.py --receiver 2>&1 >outdoor_udp.log &
 cd ..
 
-
+cd kollerberg/
+echo "Starting 'Weather_Kollerberg.py --receiver_rrd' ..."
+nohup ./Weather_Kollerberg.py --receiver_rrd 2>&1 >weather_kollerberg_rrd.log &
+cd ..
 
 # eof #
 

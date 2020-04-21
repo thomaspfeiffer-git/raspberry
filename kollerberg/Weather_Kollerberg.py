@@ -35,7 +35,7 @@ from Shutdown import Shutdown
 import UDP
 
 
-# Hosts where this app runs
+# Hosts where this app runs as --sensor
 pik_i = "pik-i"
 pik_a = "pik-a"
 pik_k = "pik-k"
@@ -54,6 +54,7 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
 # Misc for rrdtool
 CREDENTIALS_RRD = os.path.expanduser("~/credentials/weather_kollerberg_rrd.cred")
 CREDENTIALS_HA = os.path.expanduser("~/credentials/weather_kollerberg_ha.cred")
+RRDFILE = os.path.expanduser("~/rrd/databases/weather_kollerberg.rrd")
 DS_TEMP1 = "DS_TEMP1"
 DS_TEMP2 = "DS_TEMP2"
 DS_TCPU  = "DS_TCPU"
@@ -114,8 +115,67 @@ def Sensor ():
 
 ###############################################################################
 # Receiver_RRD ################################################################
-def Receiver_RRD ():
-    pass
+class Receiver_RRD (object):
+    def __init__ (self):
+        self.udp = UDP.Receiver(CREDENTIALS_RRD)
+        self.data = { p: None for p in PIs }
+        self.DS = { pik_i: { DS_TEMP1: 'kb_i_t1',
+                             DS_TEMP2: 'kb_i_t2',
+                             DS_TCPU : 'kb_i_tcpu',
+                             DS_HUMI : 'kb_i_humi',
+                             DS_PRESS: 'kb_i_press',
+                             DS_AIRQ:  'kb_i_airquality' },
+                    pik_a: { DS_TEMP1: 'kb_a_t1',
+                             DS_TEMP2: 'kb_a_t2',
+                             DS_TCPU : 'kb_a_tcpu',
+                             DS_HUMI : 'kb_a_humi',
+                             DS_PRESS: 'kb_a_press',
+                             DS_AIRQ:  'kb_a_airquality' },
+                    pik_k: { DS_TEMP1: 'kb_k_t1',
+                             DS_TEMP2: 'kb_k_t2',
+                             DS_TCPU : 'kb_k_tcpu',
+                             DS_HUMI : 'kb_k_humi',
+                             DS_PRESS: 'kb_k_press',
+                             DS_AIRQ:  'kb_k_airquality' }
+                  }
+
+    def process (self):
+        import rrdtool
+
+        data_complete = True
+        rrd_template = ""
+        rrd_data = "N:"
+
+        for p in PIs:
+            if not self.data[p]:
+                data_complete = False
+            else:
+                rrd_template += self.DS[p][DS_TEMP1] + ":" + \
+                                self.DS[p][DS_TEMP2] + ":" + \
+                                self.DS[p][DS_TCPU]  + ":" + \
+                                self.DS[p][DS_HUMI]  + ":" + \
+                                self.DS[p][DS_PRESS] + ":" + \
+                                self.DS[p][DS_AIRQ] + ":"
+                rrd_data += self.data[p].split("N:")[1].rstrip() + ":"
+
+        if data_complete:
+            rrd_template = rrd_template.rstrip(":")
+            rrd_data     = rrd_data.rstrip(":")
+            try:
+                Log(f"Update RRD database: {rrd_data}")
+                rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+            except rrdtool.OperationalError:
+                Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+
+    def run (self):
+        while True:
+            data = self.udp.receive()
+            Log(f"Data received: {data}")
+            (source, values) = data.split(',')
+            # data[pik_k] = "N:10.00:10.00:10.00:10.00:1013.25:0.00"
+            self.data[source] = values
+            # Log("Data: {}".format(self.data))
+            self.process()
 
 
 ###############################################################################
@@ -148,11 +208,10 @@ if __name__ == '__main__':
     if args.sensor:
         Sensor()
     if args.receiver_rrd:
-        Receiver_RRD()
+        r = Receiver_RRD()
+        r.run()
     if args.receiver_homeautomation:
         Receiver_Homeautomation()
 
 # eof #
-
-### eof ###
 
