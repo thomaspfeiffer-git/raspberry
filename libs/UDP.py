@@ -55,7 +55,7 @@ class Sender (UDP):
         datagram = f"{payload},{self.digest(payload)}".encode('utf-8')
         try:
             sent = self.socket.sendto(datagram, (self.IP_ADDRESS_SERVER, self.UDP_PORT))
-            Log("Sent bytes: {}; data: {}".format(sent,datagram))
+            Log("Sent bytes: {}; data: {}".format(sent,datagram)) # TODO f"... format
         except:
             Log("Cannot send data: {0[0]} {0[1]} (Data: {1})".format(sys.exc_info(), datagram))
 
@@ -75,7 +75,7 @@ class Receiver (UDP):
             (data, digest) = datagram.rsplit(',', 1)
             # TODO verify digest
         except ValueError:
-            Log("WARN: Payload corrupted: {}".format(payload))
+            Log("WARN: Payload corrupted: {}".format(payload)) # TODO f"... format
         else:
             return data
 
