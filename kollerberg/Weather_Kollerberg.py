@@ -31,6 +31,8 @@ from sensors.HTU21DF import HTU21DF
 from sensors.DS1820 import DS1820
 
 from Logging import Log
+from SensorQueue2 import SensorQueueClient_write
+from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 import UDP
 
@@ -51,7 +53,8 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
                     pik_k: "/sys/bus/w1/devices/w1_bus_master1/28-000006de535b/w1_slave" }
 
 
-# Misc for rrdtool
+# Misc for rrdtool and other config stuff
+QUEUE_INI = os.path.expanduser("~/configs/weatherqueue.ini")
 CREDENTIALS_RRD = os.path.expanduser("~/credentials/weather_kollerberg_rrd.cred")
 CREDENTIALS_HA = os.path.expanduser("~/credentials/weather_kollerberg_ha.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/weather_kollerberg.rrd")
@@ -169,9 +172,9 @@ class Receiver_RRD (object):
 
     def run (self):
         while True:
-            data = self.udp.receive()
-            Log(f"Data received: {data}")
-            (source, values) = data.split(',')
+            payload = self.udp.receive()
+            Log(f"Data received: {payload}")
+            (source, values) = payload.split(',')
             # data[pik_k] = "N:10.00:10.00:10.00:10.00:1013.25:0.00"
             self.data[source] = values
             # Log("Data: {}".format(self.data))
@@ -180,8 +183,49 @@ class Receiver_RRD (object):
 
 ###############################################################################
 # Receiver_Homeautomation #####################################################
-def Receiver_Homeautomation ():
-    pass
+class Receiver_Homeautomation (object):
+    def __init__ (self):
+        self.udp = UDP.Receiver(CREDENTIALS_HA)
+        self.data = { p: None for p in PIs }
+
+        self.sq = SensorQueueClient_write(QUEUE_INI)
+        self.qv_kb_i_t = SensorValue("ID_21", "Temp KB indoor", SensorValue_Data.Types.Temp, "°C")
+        self.qv_kb_i_h = SensorValue("ID_22", "Humi KB indoor", SensorValue_Data.Types.Humi, "% rF")
+        self.qv_kb_p   = SensorValue("ID_23", "Pressure KB",    SensorValue_Data.Types.Pressure, "hPa")
+
+        self.qv_kb_a_t = SensorValue("ID_24", "Temp KB outdoor", SensorValue_Data.Types.Temp, "°C")
+        self.qv_kb_a_h = SensorValue("ID_25", "Humi KB outdoor", SensorValue_Data.Types.Humi, "% rF")
+
+        self.qv_kb_k_t = SensorValue("ID_26", "Temp KB basement", SensorValue_Data.Types.Temp, "°C")
+        self.qv_kb_k_h = SensorValue("ID_27", "Humi KB basement", SensorValue_Data.Types.Humi, "% rF")
+
+        self.sq.register(self.qv_kb_i_t)
+        self.sq.register(self.qv_kb_i_h)
+        self.sq.register(self.qv_kb_p)
+        self.sq.register(self.qv_kb_a_t)
+        self.sq.register(self.qv_kb_a_h)
+        self.sq.register(self.qv_kb_k_t)
+        self.sq.register(self.qv_kb_k_h)
+
+    def process (self):
+        if self.data[pik_i] is not None:
+            self.qv_kb_i_t.value = "{:.1f}".format(float(self.data[pik_i].split(':')[1]))
+            self.qv_kb_i_h.value = "{:.1f}".format(float(self.data[pik_i].split(':')[4]))
+            self.qv_kb_p.value   = "{:.1f}".format(float(self.data[pik_i].split(':')[5]))
+        if self.data[pik_a] is not None:
+            self.qv_kb_a_t.value = "{:.1f}".format(float(self.data[pik_a].split(':')[1]))
+            self.qv_kb_a_h.value = "{:.1f}".format(float(self.data[pik_a].split(':')[4]))
+        if self.data[pik_k] is not None:
+            self.qv_kb_k_t.value = "{:.1f}".format(float(self.data[pik_k].split(':')[1]))
+            self.qv_kb_k_h.value = "{:.1f}".format(float(self.data[pik_k].split(':')[4]))
+
+    def run (self):
+        while True:
+            payload = self.udp.receive()
+            Log(f"Data received: {payload}")
+            (source, values) = payload.split(',')
+            self.data[source] = values
+            self.process()
 
 
 ###############################################################################
@@ -211,7 +255,8 @@ if __name__ == '__main__':
         r = Receiver_RRD()
         r.run()
     if args.receiver_homeautomation:
-        Receiver_Homeautomation()
+        r = Receiver_Homeautomation()
+        r.run()
 
 # eof #
 

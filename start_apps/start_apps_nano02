@@ -22,8 +22,8 @@ nohup ./openweather.py > openweather.log 2>&1 &
 cd ..
 
 cd kollerberg/
-echo "Starting 'weather_feed.py' ..."
-nohup ./weather_feed.py 2>&1 > weather_feed.log &
+echo "Starting 'Weather_Kollerberg.py --receiver_homeautomation' ..."
+nohup ./Weather_Kollerberg.py --receiver_homeautomation 2>&1 >weather_kollerberg_homeautomation.log &
 cd ..
 
 # eof #
