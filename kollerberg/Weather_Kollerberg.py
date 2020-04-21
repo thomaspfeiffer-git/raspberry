@@ -1,29 +1,38 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 #############################################################################
-# weather.py                                                                #
-# (c) https://github.com/thomaspfeiffer-git 2016, 2017, 2018, 2019          #
+# Weather_Kollerberg.py                                                     #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
 #############################################################################
 """Weather station at our summer cottage"""
 
-### usage ###
-# nohup ./weather.py 2>&1 > weather.log &
+"""
+###### usage #####
+### read data from sensor and send to udp server
+nohup ./Weather_Kollerberg.py --sensor 2>&1 >weather_kollerberg.log &
 
-import configparser as cfgparser
+### receive data via udp and store in rrd database
+nohup ./Weather_Kollerberg.py --receiver_rrd 2>&1 >weather_kollerberg_rrd.log &
+
+### receive data via udp and send to homeautomation server
+nohup ./Weather_Kollerberg.py --receiver_homeautomation 2>&1 >weather_kollerberg_homeautomation.log &
+"""
+
+import argparse
+import os
 import socket
 import sys
 import time
-import traceback
 
 sys.path.append('../libs')
-
-from Commons import Digest
-from Logging import Log
-from Shutdown import Shutdown
 
 from sensors.CPU import CPU
 from sensors.HTU21DF import HTU21DF
 from sensors.DS1820 import DS1820
+
+from Logging import Log
+from Shutdown import Shutdown
+import UDP
 
 
 # Hosts where this app runs
@@ -42,56 +51,36 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
                     pik_k: "/sys/bus/w1/devices/w1_bus_master1/28-000006de535b/w1_slave" }
 
 
-CREDENTIALS = "/home/pi/credentials/weather.cred"
-cred = cfgparser.ConfigParser()
-cred.read(CREDENTIALS)
+# Misc for rrdtool
+CREDENTIALS_RRD = os.path.expanduser("~/credentials/weather_kollerberg_rrd.cred")
+CREDENTIALS_HA = os.path.expanduser("~/credentials/weather_kollerberg_ha.cred")
+DS_TEMP1 = "DS_TEMP1"
+DS_TEMP2 = "DS_TEMP2"
+DS_TCPU  = "DS_TCPU"
+DS_HUMI  = "DS_HUMI"
+DS_PRESS = "DS_PRESS"
+DS_AIRQ  = "DS_AIRQ"
 
 
 ###############################################################################
-# CONFIG ######################################################################
-class CONFIG (object):
-    SECRET = cred['UDP']['SECRET']
-    IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
-    UDP_PORT = int(cred['UDP']['UDP_PORT'])
-    MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
-
-
-###############################################################################
-# UDP_Sender ##################################################################
-class UDP_Sender (object):
-    def __init__ (self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.digest = Digest(CONFIG.SECRET)
-
-    def send (self, data):
-        payload = data
-        datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
-        try:
-            sent = self.socket.sendto(datagram, 
-                                      (CONFIG.IP_ADDRESS_SERVER, 
-                                      CONFIG.UDP_PORT))
-            Log("Sent bytes: {}; data: {}".format(sent,datagram))
-        except:
-            Log("Cannot send data: {0[0]} {0[1]}".format(sys.exc_info()))
-
-
-###############################################################################
-# Main ########################################################################
-def main():
-    """main part"""
+# Sensor ######################################################################
+def Sensor ():
+    """reads data from sensor"""
 
     if this_PI not in PIs:
         Log("wrong host!")
         global shutdown_application
         shutdown_application()
 
-    udp = UDP_Sender()
     tempds  = DS1820(AddressesDS1820[this_PI])
     tempcpu = CPU()
     if this_PI == pik_i:
         bme680 = BME680(i2c_addr=BME_680_SECONDARYADDR)
     else:
         htu21df = HTU21DF()
+
+    udp_rrd = UDP.Sender(CREDENTIALS_RRD)  # Server for all rrd stuff
+    udp_ha = UDP.Sender(CREDENTIALS_HA)    # Display at home ("Homeautomation")
 
     pressure = 1013.25 # in case of no BME680 available
     airquality = 0
@@ -107,7 +96,7 @@ def main():
             pressure = bme680.data.pressure
             airquality = bme680.data.air_quality_score \
                          if bme680.data.air_quality_score != None else 0
-        else:    
+        else:
             temp = htu21df.read_temperature()
             humi = htu21df.read_humidity()
 
@@ -118,12 +107,25 @@ def main():
                     ":{:.2f}".format(pressure) + \
                     ":{:.2f}".format(airquality)
 
-        udp.send("{},{}".format(this_PI,rrd_data))
+        udp_rrd.send(f"{this_PI},{rrd_data}")
+        udp_ha.send(f"{this_PI},{rrd_data}")
         time.sleep(45)
 
 
 ###############################################################################
-# shutdown ####################################################################
+# Receiver_RRD ################################################################
+def Receiver_RRD ():
+    pass
+
+
+###############################################################################
+# Receiver_Homeautomation #####################################################
+def Receiver_Homeautomation ():
+    pass
+
+
+###############################################################################
+# Exit ########################################################################
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
@@ -136,7 +138,21 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    main()
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--sensor", help="read data from sensor and send to udp server", action="store_true")
+    group.add_argument("--receiver_rrd", help="receive data via udp and store in rrd database", action="store_true")
+    group.add_argument("--receiver_homeautomation", help="receive data via udp and send to homeautomation server", action="store_true")
+    args = parser.parse_args()
+
+    if args.sensor:
+        Sensor()
+    if args.receiver_rrd:
+        Receiver_RRD()
+    if args.receiver_homeautomation:
+        Receiver_Homeautomation()
+
+# eof #
 
 ### eof ###
 
