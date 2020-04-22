@@ -18,7 +18,6 @@ import configparser as cfgparser
 import os
 import socket
 import sys
-import time
 
 sys.path.append("../libs/")
 from Commons import Digest
@@ -61,7 +60,6 @@ class UDP_Sender (object):
 ###############################################################################
 # UDP_Receiver ################################################################
 class UDP_Receiver (object):
-    # TODO: move to central place (same code in Wardroom.py)
     DS_TEMP1     = "wr_temp1"
     DS_TEMPCPU   = "wr_tempcpu"
     DS_TEMP2     = "wr_temp2"
