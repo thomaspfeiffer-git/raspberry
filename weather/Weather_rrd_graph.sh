@@ -17,7 +17,7 @@ fi
 RRDPATH=/home/thomas/rrd/
 RRD_IN=$RRDPATH/databases/weather_indoor.rrd
 RRD_OUT=$RRDPATH/databases/weather_outdoor.rrd
-RRD_K=$RRDPATH/databases/weather_kidsroom.rrd
+RRD_K=$RRDPATH/databases/kidsroom.rrd
 RRD_KB=$RRDPATH/databases/weather_kollerberg.rrd
 RRD_WR=$RRDPATH/databases/wardrobe.rrd
 RRD_AR=$RRDPATH/databases/anteroom.rrd
