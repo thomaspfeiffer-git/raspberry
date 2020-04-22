@@ -50,8 +50,13 @@ cd ..
 
 cd kollerberg/
 echo "Starting 'Weather_Kollerberg.py --receiver_rrd' ..."
-nohup ./Weather_Kollerberg.py --receiver_rrd 2>&1 >weather_kollerberg_rrd.log &
+nohup ./Weather_Kollerberg.py --receiver_rrd 2>&1 >weather_kollerberg_udp.log &
 cd ..
+
+cd homeassistant/Sensors/
+echo "Starting 'Kitchen Sensors_UDP.py' ..."
+nohup ./Sensors_UDP.py 2>&1 >sensors_udp.log &
+cd ../..
 
 # eof #
 
