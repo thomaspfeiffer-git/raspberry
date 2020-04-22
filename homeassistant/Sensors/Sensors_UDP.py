@@ -17,7 +17,7 @@ import os
 import rrdtool
 import sys
 
-sys.path.append('../libs')
+sys.path.append('../../libs')
 from Logging import Log
 from Shutdown import Shutdown
 import UDP
