@@ -20,7 +20,6 @@ import rrdtool
 import sys
 
 sys.path.append('../libs')
-from Commons import Digest
 from Logging import Log
 from Shutdown import Shutdown
 import UDP
