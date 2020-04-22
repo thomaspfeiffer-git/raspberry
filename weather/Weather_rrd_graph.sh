@@ -23,6 +23,7 @@ RRD_WR=$RRDPATH/databases/wardrobe.rrd
 RRD_AR=$RRDPATH/databases/anteroom.rrd
 RRD_KI=$RRDPATH/databases/kitchen.rrd
 RRD_SR=$RRDPATH/databases/serverroom.rrd
+RRD_PO=$RRDPATH/databases/pool.rrd
 
 PICS=$RRDPATH/temp/weather/
 PICS_STORE=$RRDPATH/graphs/
