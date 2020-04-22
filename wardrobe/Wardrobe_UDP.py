@@ -22,17 +22,18 @@ import sys
 sys.path.append("../libs/")
 from Commons import Digest
 from Logging import Log
+import UDP
 
 CREDENTIALS = os.path.expanduser("~/credentials/wardrobe.cred")
-cred = cfgparser.ConfigParser()
-cred.read(CREDENTIALS)
-
 RRDFILE = os.path.expanduser("~/rrd/databases/wardrobe.rrd")
 
 
 ###############################################################################
 # CONFIG ######################################################################
 class CONFIG (object):
+    cred = cfgparser.ConfigParser()
+    cred.read(CREDENTIALS)
+
     SECRET = cred['UDP']['SECRET']
     IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
     UDP_PORT = int(cred['UDP']['UDP_PORT'])
@@ -79,26 +80,18 @@ class UDP_Receiver (object):
                    DS_OPEN3     + ":" + \
                    DS_OPEN4
 
-
     def __init__ (self):
-        self.digest = Digest(CONFIG.SECRET)
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
+        self.udp = UDP.Receiver(CREDENTIALS)
 
     def receive (self):
         import rrdtool
         while True:
-            datagram = self.socket.recv(CONFIG.MAX_PACKET_SIZE).decode('utf-8')
+            rrd_data = self.udp.receive()
+            Log(f"RRD Data received: {rrd_data}")
             try:
-                (rrd_data, digest) = datagram.rsplit(',', 1)
-            except ValueError:
-                Log("WARN: Payload corrupted: {}".format(payload))
-            else:
-                Log("RRD Data received: {}".format(rrd_data))
-                try:                                      # TODO
-                    rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
-                except rrdtool.OperationalError:
-                    Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+                rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
+            except rrdtool.OperationalError:
+                Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
 
 ###############################################################################
