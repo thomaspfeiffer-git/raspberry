@@ -12,7 +12,7 @@
 
 from flask import Flask
 from flask_restful import Resource, Api
-import rrdtool
+import os
 import sys
 import threading
 import time
@@ -32,22 +32,14 @@ from SensorValue2 import SensorValue, SensorValue_Data
 from Commons import Singleton
 from Logging import Log
 from Shutdown import Shutdown
+import UDP
 
 
-# Misc for rrdtool
-RRDFILE        = "/schild/weather/kitchen.rrd"
-DS_TEMP        = "ki_temp"
-DS_TEMPCPU     = "ki_tempcpu"
-DS_HUMI        = "ki_humi"
-DS_AIRPRESSURE = "ki_pressure"
-DS_LIGHTNESS   = "ki_lightness"
-DS_AIRQUALITY  = "ki_airquality"
-DS_OPEN1       = "ki_open1"
-DS_OPEN2       = "ki_open2"
-DS_OPEN3       = "ki_open3"
-DS_OPEN4       = "ki_open4"
+CREDENTIALS = os.path.expanduser("~/credentials/kitchen.cred")
 
 
+##############################################################################
+# Sensors ####################################################################
 class Sensors (threading.Thread, metaclass=Singleton):
     def __init__ (self):
         threading.Thread.__init__(self)
@@ -78,19 +70,10 @@ class Sensors (threading.Thread, metaclass=Singleton):
                               qv_pressure=self.qv_pressure, qv_airquality=self.qv_airquality)
         self.tsl2561 = TSL2561(qvalue=self.qv_light)
 
-        self.rrd_template = DS_TEMP        + ":" + \
-                            DS_TEMPCPU     + ":" + \
-                            DS_HUMI        + ":" + \
-                            DS_AIRPRESSURE + ":" + \
-                            DS_LIGHTNESS   + ":" + \
-                            DS_AIRQUALITY  + ":" + \
-                            DS_OPEN1       + ":" + \
-                            DS_OPEN2       + ":" + \
-                            DS_OPEN3       + ":" + \
-                            DS_OPEN4
-        self._running = True
+        self.udp = UDP.Sender(CREDENTIALS)
 
     def run (self):
+        self._running = True
         while self._running:
             self.bme680.get_sensor_data()
             self.values['temp']        = self.bme680.data.temperature
@@ -111,39 +94,36 @@ class Sensors (threading.Thread, metaclass=Singleton):
                         ":{}".format(0)                              + \
                         ":{}".format(0)                              + \
                         ":{}".format(0)
-            Log(rrd_data)
-            try:
-                rrdtool.update(RRDFILE, "--template", self.rrd_template, rrd_data)
-            except rrdtool.OperationalError:
-                Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+            self.udp.send(rrd_data)
 
             for _ in range(50): # interruptible sleep
                 if self._running:
                     time.sleep(1)
-                    # brightness control needs higher frequency 
-                    self.values['lightness'] = self.tsl2561.lux() 
+                    # brightness control needs higher frequency
+                    self.values['lightness'] = self.tsl2561.lux()
                 else:
                     break
 
     def stop (self):
         self._running = False
 
-   
+
 ###############################################################################
 # Flask stuff #################################################################
 class API_Values (Resource):
     def get (self):
         return sensors.values
 
- 
+
 ###############################################################################
 # shutdown_application ########################################################
 def shutdown_application ():
-    """called on shutdown; stops all threads"""
-    Log("in shutdown_application()")
+    """cleanup stuff"""
+    Log("Stopping application")
     # TODO: bme680.shutdown() while calculating baseline
     sensors.stop()
     sensors.join()
+    Log("Application stopped")
     sys.exit(0)
 
 
