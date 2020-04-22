@@ -11,7 +11,7 @@ UDP/RRD client for monitoring temperature and humidity in our kid's room.
 
 """
 ####### usage ######
-nohup ./Kidsroom_UDP.py 2>&1 >kidsroom_udp.log
+nohup ./Kidsroom_UDP.py 2>&1 >kidsroom_udp.log &
 """
 
 import os
