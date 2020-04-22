@@ -14,61 +14,64 @@ if [ $(ps aux | grep "rrdtool" | wc -l) -gt 1 ] ; then
 fi
 
 
-RRDPATH=/schild/weather/
-RRD_IN=$RRDPATH/weather_indoor.rrd
-RRD_OUT=$RRDPATH/weather_outdoor.rrd
-RRD_K=$RRDPATH/weather_kidsroom.rrd
-RRD_KB=$RRDPATH/weather_kollerberg.rrd
-RRD_WR=$RRDPATH/wardrobe.rrd
-RRD_AR=$RRDPATH/anteroom.rrd
-RRD_KI=$RRDPATH/kitchen.rrd
-RRD_SR=$RRDPATH/serverroom.rrd
+RRDPATH=/home/thomas/rrd/
+RRD_IN=$RRDPATH/databases/weather_indoor.rrd
+RRD_OUT=$RRDPATH/databases/weather_outdoor.rrd
+RRD_K=$RRDPATH/databases/weather_kidsroom.rrd
+RRD_KB=$RRDPATH/databases/weather_kollerberg.rrd
+RRD_WR=$RRDPATH/databases/wardrobe.rrd
+RRD_AR=$RRDPATH/databases/anteroom.rrd
+RRD_KI=$RRDPATH/databases/kitchen.rrd
+RRD_SR=$RRDPATH/databases/serverroom.rrd
+
+PICS=$RRDPATH/temp/weather/
+PICS_STORE=$RRDPATH/graphs/
 
 
-PNG_TEMP_D=$RRDPATH/weather_temp_d.png
-PNG_TEMP_W=$RRDPATH/weather_temp_w.png
-PNG_TEMP_M=$RRDPATH/weather_temp_m.png
-PNG_TEMP_Y=$RRDPATH/weather_temp_y.png
+PNG_TEMP_D=$PICS/weather_temp_d.png
+PNG_TEMP_W=$PICS/weather_temp_w.png
+PNG_TEMP_M=$PICS/weather_temp_m.png
+PNG_TEMP_Y=$PICS/weather_temp_y.png
 
-PNG_HUMI_D=$RRDPATH/weather_humi_d.png
-PNG_HUMI_W=$RRDPATH/weather_humi_w.png
-PNG_HUMI_M=$RRDPATH/weather_humi_m.png
-PNG_HUMI_Y=$RRDPATH/weather_humi_y.png
+PNG_HUMI_D=$PICS/weather_humi_d.png
+PNG_HUMI_W=$PICS/weather_humi_w.png
+PNG_HUMI_M=$PICS/weather_humi_m.png
+PNG_HUMI_Y=$PICS/weather_humi_y.png
 
-PNG_PRES_D=$RRDPATH/weather_pressure_d.png
-PNG_PRES_W=$RRDPATH/weather_pressure_w.png
-PNG_PRES_M=$RRDPATH/weather_pressure_m.png
-PNG_PRES_Y=$RRDPATH/weather_pressure_y.png
+PNG_PRES_D=$PICS/weather_pressure_d.png
+PNG_PRES_W=$PICS/weather_pressure_w.png
+PNG_PRES_M=$PICS/weather_pressure_m.png
+PNG_PRES_Y=$PICS/weather_pressure_y.png
 
-PNG_CPU_D=$RRDPATH/cpu_temp_d.png
-PNG_CPU_W=$RRDPATH/cpu_temp_w.png
-PNG_CPU_M=$RRDPATH/cpu_temp_m.png
-PNG_CPU_Y=$RRDPATH/cpu_temp_y.png
+PNG_CPU_D=$PICS/cpu_temp_d.png
+PNG_CPU_W=$PICS/cpu_temp_w.png
+PNG_CPU_M=$PICS/cpu_temp_m.png
+PNG_CPU_Y=$PICS/cpu_temp_y.png
 
-PNG_WARDROBE_D=$RRDPATH/wardrobe_d.png
-PNG_WARDROBE_W=$RRDPATH/wardrobe_w.png
-PNG_WARDROBE_M=$RRDPATH/wardrobe_m.png
-PNG_WARDROBE_Y=$RRDPATH/wardrobe_y.png
+PNG_WARDROBE_D=$PICS/wardrobe_d.png
+PNG_WARDROBE_W=$PICS/wardrobe_w.png
+PNG_WARDROBE_M=$PICS/wardrobe_m.png
+PNG_WARDROBE_Y=$PICS/wardrobe_y.png
 
-PNG_WR_LIGHTNESS_D=$RRDPATH/wr_lightness_d.png
-PNG_WR_LIGHTNESS_W=$RRDPATH/wr_lightness_w.png
-PNG_WR_LIGHTNESS_M=$RRDPATH/wr_lightness_m.png
-PNG_WR_LIGHTNESS_Y=$RRDPATH/wr_lightness_y.png
+PNG_WR_LIGHTNESS_D=$PICS/wr_lightness_d.png
+PNG_WR_LIGHTNESS_W=$PICS/wr_lightness_w.png
+PNG_WR_LIGHTNESS_M=$PICS/wr_lightness_m.png
+PNG_WR_LIGHTNESS_Y=$PICS/wr_lightness_y.png
 
-PNG_ANTEROOM_D=$RRDPATH/anteroom_d.png
-PNG_ANTEROOM_W=$RRDPATH/anteroom_w.png
-PNG_ANTEROOM_M=$RRDPATH/anteroom_m.png
-PNG_ANTEROOM_Y=$RRDPATH/anteroom_y.png
+PNG_ANTEROOM_D=$PICS/anteroom_d.png
+PNG_ANTEROOM_W=$PICS/anteroom_w.png
+PNG_ANTEROOM_M=$PICS/anteroom_m.png
+PNG_ANTEROOM_Y=$PICS/anteroom_y.png
 
-PNG_AIRQUALITY_D=$RRDPATH/airquality_d.png
-PNG_AIRQUALITY_W=$RRDPATH/airquality_w.png
-PNG_AIRQUALITY_M=$RRDPATH/airquality_m.png
-PNG_AIRQUALITY_Y=$RRDPATH/airquality_y.png
+PNG_AIRQUALITY_D=$PICS/airquality_d.png
+PNG_AIRQUALITY_W=$PICS/airquality_w.png
+PNG_AIRQUALITY_M=$PICS/airquality_m.png
+PNG_AIRQUALITY_Y=$PICS/airquality_y.png
 
-PNG_AIRPARTICULATES_D=$RRDPATH/airparticulates_d.png
-PNG_AIRPARTICULATES_W=$RRDPATH/airparticulates_w.png
-PNG_AIRPARTICULATES_M=$RRDPATH/airparticulates_m.png
-PNG_AIRPARTICULATES_Y=$RRDPATH/airparticulates_y.png
+PNG_AIRPARTICULATES_D=$PICS/airparticulates_d.png
+PNG_AIRPARTICULATES_W=$PICS/airparticulates_w.png
+PNG_AIRPARTICULATES_M=$PICS/airparticulates_m.png
+PNG_AIRPARTICULATES_Y=$PICS/airparticulates_y.png
 
 WIDTH=1024
 HEIGHT=160
@@ -147,7 +150,7 @@ printTemp ()
     GPRINT:kb_k_t1:LAST:"Aktuell\: %5.2lf °C"                \
     GPRINT:kb_k_t1:AVERAGE:"Mittelwert\: %5.2lf °C"          \
     GPRINT:kb_k_t1:MAX:"Max\: %5.2lf °C"                     \
-    GPRINT:kb_k_t1:MIN:"Min\: %5.2lf °C\n"                   &
+    GPRINT:kb_k_t1:MIN:"Min\: %5.2lf °C\n"
  }
 
 
@@ -230,7 +233,7 @@ printCPUTemp ()
     GPRINT:po_tempcpu:LAST:"\t Aktuell\: %5.2lf °C"                      \
     GPRINT:po_tempcpu:AVERAGE:"Mittelwert\: %5.2lf °C"                   \
     GPRINT:po_tempcpu:MAX:"Max\: %5.2lf °C"                              \
-    GPRINT:po_tempcpu:MIN:"Min\: %5.2lf °C\n"                            &
+    GPRINT:po_tempcpu:MIN:"Min\: %5.2lf °C\n"
  }
 
 
@@ -301,7 +304,7 @@ printHumidity ()
     GPRINT:kb_k_humi:LAST:"\t Aktuell\: %5.2lf %%"             \
     GPRINT:kb_k_humi:AVERAGE:"Mittelwert\: %5.2lf %%"          \
     GPRINT:kb_k_humi:MAX:"Max\: %5.2lf %%"                     \
-    GPRINT:kb_k_humi:MIN:"Min\: %5.2lf %%\n"                   &
+    GPRINT:kb_k_humi:MIN:"Min\: %5.2lf %%\n"
  }
 
 
@@ -334,7 +337,7 @@ printAirPressure ()
     GPRINT:kb_i_press:LAST:"\t Aktuell\: %5.2lf hPa"     \
     GPRINT:kb_i_press:AVERAGE:"Mittelwert\: %5.2lf hPa"  \
     GPRINT:kb_i_press:MAX:"Max\: %5.2lf hPa"             \
-    GPRINT:kb_i_press:MIN:"Min\: %5.2lf hPa\n"           &
+    GPRINT:kb_i_press:MIN:"Min\: %5.2lf hPa\n"
  }
 
 
@@ -362,7 +365,7 @@ printWardrobe()
     GPRINT:wr_open1:AVERAGE:"Mittelwert\: %5.2lf\n"      \
     STACK:wr_open3#ffff00:"Lade offen           "        \
     GPRINT:wr_open3:LAST:"\t Aktuell\: %5.0lf"           \
-    GPRINT:wr_open3:AVERAGE:"Mittelwert\: %5.2lf\n"      &
+    GPRINT:wr_open3:AVERAGE:"Mittelwert\: %5.2lf\n"
  }
 
 
@@ -384,7 +387,7 @@ printAnteroom()
     DEF:ar_switch=$RRD_AR:ar_switch:AVERAGE              \
     AREA:ar_switch#ff1493:"Licht ein           "         \
     GPRINT:ar_switch:LAST:"\t Aktuell\: %5.0lf"          \
-    GPRINT:ar_switch:AVERAGE:"Mittelwert\: %5.2lf\n"     &
+    GPRINT:ar_switch:AVERAGE:"Mittelwert\: %5.2lf\n"
  }
 
 
@@ -423,7 +426,7 @@ printLightness()
     GPRINT:out_lightness:LAST:"\t Aktuell\: %5.2lf lux"     \
     GPRINT:out_lightness:AVERAGE:"Mittelwert\: %5.2lf lux"  \
     GPRINT:out_lightness:MAX:"Max\: %5.2lf lux"             \
-    GPRINT:out_lightness:MIN:"Min\: %5.2lf lux\n"           &
+    GPRINT:out_lightness:MIN:"Min\: %5.2lf lux\n"
  }
 
 
@@ -458,7 +461,7 @@ printAirQuality()
     GPRINT:kb_airquality:LAST:"\t Aktuell\: %5.2lf %%"         \
     GPRINT:kb_airquality:AVERAGE:"Mittelwert\: %5.2lf %%"      \
     GPRINT:kb_airquality:MAX:"Max\: %5.2lf %%"                 \
-    GPRINT:kb_airquality:MIN:"Min\: %5.2lf %%\n"               &
+    GPRINT:kb_airquality:MIN:"Min\: %5.2lf %%\n"
  }
 
 
@@ -503,6 +506,8 @@ printAirQuality "36h", "$PNG_AIRQUALITY_D"
 printAirQuality "7d", "$PNG_AIRQUALITY_W"
 printAirQuality "30d", "$PNG_AIRQUALITY_M"
 printAirQuality "365d", "$PNG_AIRQUALITY_Y"
+
+mv $PICS/*png $PICS_STORE
 
 # eof #
 
