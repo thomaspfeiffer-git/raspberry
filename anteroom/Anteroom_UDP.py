@@ -42,7 +42,7 @@ class Sender (object):
         self.udp = UDP.Sender(CREDENTIALS)
 
     def send (self, data):
-        seld.udp.send(data)
+        self.udp.send(data)
 
 
 ###############################################################################
