@@ -10,7 +10,7 @@ TODO
 
 """
 ### usage ###
-TODO
+nohup ./Sensors_UDP.py 2>&1 >sensors_udp.log &
 """
 
 import os
@@ -24,7 +24,7 @@ import UDP
 
 
 # Misc for rrdtool
-CREDENTIALS = os.path.expanduser("~/credentials/kitchen.cred") # TODO
+CREDENTIALS = os.path.expanduser("~/credentials/kitchen.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/kitchen.rrd")
 DS_TEMP        = "ki_temp"
 DS_TEMPCPU     = "ki_tempcpu"
