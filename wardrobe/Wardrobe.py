@@ -13,7 +13,6 @@
 from enum import Enum
 from math import pi, sin, asin
 import RPi.GPIO as io
-import rrdtool  # TODO REMOVE
 import sys
 import threading
 from time import sleep, strftime, time
@@ -57,19 +56,6 @@ Actuator1_ID = 0
 Actuator2_ID = 1
 Actuator3_ID = 2
 Actuator4_ID = 3
-
-
-# Misc for rrdtool
-RRDFILE      = "/schild/weather/wardrobe.rrd"  # TODO: REMOVE
-DS_TEMP1     = "wr_temp1"
-DS_TEMPCPU   = "wr_tempcpu"
-DS_TEMP2     = "wr_temp2"
-DS_HUMI      = "wr_humi"
-DS_LIGHTNESS = "wr_lightness"
-DS_OPEN1     = "wr_open1"
-DS_OPEN2     = "wr_open2"
-DS_OPEN3     = "wr_open3"
-DS_OPEN4     = "wr_open4"
 
 
 # I2C._lock() works on a very low level, so an additional locking
@@ -340,16 +326,6 @@ def main ():
     for c in controls.values():
         c.start()
 
-    rrd_template = DS_TEMP1     + ":" + \
-                   DS_TEMPCPU   + ":" + \
-                   DS_TEMP2     + ":" + \
-                   DS_HUMI      + ":" + \
-                   DS_LIGHTNESS + ":" + \
-                   DS_OPEN1     + ":" + \
-                   DS_OPEN2     + ":" + \
-                   DS_OPEN3     + ":" + \
-                   DS_OPEN4
-
     while True:
         with central_i2c_lock:
             htu21df_temperature = htu21df.read_temperature()
@@ -366,11 +342,6 @@ def main ():
                     ":{}".format(0)
 
         udp.send(rrd_data)
-        try:  # TODO: remove
-            rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
-        except rrdtool.OperationalError:
-            Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
-
         sleep(50)
 
 
