@@ -125,7 +125,7 @@ class Receiver (object):
             Log(f"RRD Data received: {payload}")
             (source, values) = payload.split(',')
             self.data[source] = values
-            data['particulates_2'] = "2_pm25:2_pm10:N:11.1:5.5"
+            # data['particulates_2'] = "2_pm25:2_pm10:N:11.1:5.5"
 
             data_complete = True
             rrd_template = ""
