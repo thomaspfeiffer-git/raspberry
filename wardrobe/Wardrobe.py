@@ -349,6 +349,7 @@ def main ():
 # Exit ########################################################################
 def shutdown_application ():
     """cleanup stuff"""
+    Log("Stopping application")
     for c in controls.values():
         c.stop()
         c.join()
@@ -357,6 +358,7 @@ def shutdown_application ():
     forecast.join()
     lightness.stop()
     lightness.join()
+    Log("Application stopped")
     sys.exit(0)
 
 
