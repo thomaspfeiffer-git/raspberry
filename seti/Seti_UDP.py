@@ -115,7 +115,7 @@ class RRD (object):
         rrd_data = "N:"
 
         for p in PIs:
-            if not data[p]:
+            if not self.rrd.data[p]:
                 data_complete = False
             else:
                 rrd_template = rrd_template + self.DS[p][self.TEMPCPU]     + ":" + \
