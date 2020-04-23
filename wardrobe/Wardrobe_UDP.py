@@ -20,7 +20,6 @@ import socket
 import sys
 
 sys.path.append("../libs/")
-from Commons import Digest
 from Logging import Log
 import UDP
 
