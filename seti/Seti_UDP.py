@@ -5,12 +5,13 @@
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2020                   #
 ###############################################################################
 """
-TODO
+Receives status data from the four seti workers and
+stores data in rrd database.
 """
 
 """
 ### usage ###
-TODO
+nohup ./Seti_UDP.py 2>&1 > seti_udp.log &
 """
 
 import os
@@ -115,7 +116,7 @@ class RRD (object):
         rrd_data = "N:"
 
         for p in PIs:
-            if not self.rrd.data[p]:
+            if not self.data[p]:
                 data_complete = False
             else:
                 rrd_template = rrd_template + self.DS[p][self.TEMPCPU]     + ":" + \
@@ -131,17 +132,17 @@ class RRD (object):
                                               self.DS[p][self.RES0]        + ":" + \
                                               self.DS[p][self.RES1]        + ":" + \
                                               self.DS[p][self.RES2]        + ":"
-                rrd_data = rrd_data + data[p].split("N:")[1].rstrip() + ":"
+                rrd_data = rrd_data + self.data[p].split("N:")[1].rstrip() + ":"
 
-            if data_complete:
-                rrd_template = rrd_template.rstrip(":")
-                rrd_data     = rrd_data.rstrip(":")
+        if data_complete:
+            rrd_template = rrd_template.rstrip(":")
+            rrd_data     = rrd_data.rstrip(":")
 
-                Log(rrd_data)
-                try:
-                    rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
-                except rrdtool.OperationalError:
-                    Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+            # Log(f"rrd_data: {rrd_data}")
+            try:
+                rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+            except rrdtool.OperationalError:
+                Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
 
 ###############################################################################
