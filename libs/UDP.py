@@ -44,12 +44,13 @@ class Sender (UDP):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.digest = Digest(self.SECRET)
 
-    def send (self, data):
+    def send (self, data, log=True):
         payload = f"{data}"
         datagram = f"{payload},{self.digest(payload)}".encode('utf-8')
         try:
             sent = self.socket.sendto(datagram, (self.IP_ADDRESS_SERVER, self.UDP_PORT))
-            Log(f"Sent bytes: {sent}; data: {datagram}")
+            if log:
+                Log(f"Sent bytes: {sent}; data: {datagram}")
         except:
             Log("Cannot send data: {0[0]} {0[1]} (Data: {1})".format(sys.exc_info(), datagram))
 
@@ -63,10 +64,12 @@ class Receiver (UDP):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.bind((self.IP_ADDRESS_SERVER, self.UDP_PORT))
 
-    def receive (self):
+    def receive (self, log=True):
         datagram = self.socket.recv(self.MAX_PACKET_SIZE).decode('utf-8')
         try:
             (data, digest) = datagram.rsplit(',', 1)
+            if log:
+                Log(f"Data received: {data}")
             # TODO verify digest
         except ValueError:
             Log(f"WARN: Payload corrupted: {payload}")

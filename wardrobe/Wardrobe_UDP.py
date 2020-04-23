@@ -29,33 +29,13 @@ RRDFILE = os.path.expanduser("~/rrd/databases/wardrobe.rrd")
 
 
 ###############################################################################
-# CONFIG ######################################################################
-class CONFIG (object):
-    cred = cfgparser.ConfigParser()
-    cred.read(CREDENTIALS)
-
-    SECRET = cred['UDP']['SECRET']
-    IP_ADDRESS_SERVER = cred['UDP']['IP_ADDRESS_SERVER']
-    UDP_PORT = int(cred['UDP']['UDP_PORT'])
-    MAX_PACKET_SIZE = int(cred['UDP']['MAX_PACKET_SIZE'])
-
-
-###############################################################################
 # UDP_Sender ##################################################################
 class UDP_Sender (object):
     def __init__ (self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.digest = Digest(CONFIG.SECRET)
+        self.udp = UDP.Sender(CREDENTIALS)
 
     def send (self, data):
-            payload = "{}".format(data)
-            datagram = "{},{}".format(payload,self.digest(payload)).encode('utf-8')
-            try:
-                sent = self.socket.sendto(datagram,
-                                          (CONFIG.IP_ADDRESS_SERVER, CONFIG.UDP_PORT))
-                Log("Sent bytes: {}; data: {}".format(sent,datagram))
-            except:
-                Log("Cannot send data: {0[0]} {0[1]} (Data: {1})".format(sys.exc_info(), datagram))
+        self.udp.send(data)
 
 
 ###############################################################################
