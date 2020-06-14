@@ -18,7 +18,7 @@
                 <operator>&lt;=</operator>
             </humidity>
             <temperature location="outside">
-                <value>18.0</value>
+                <value>22.0</value>
                 <operator>&lt;=</operator>
             </temperature>
             <abs_humidity_difference>
