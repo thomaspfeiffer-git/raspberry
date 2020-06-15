@@ -77,6 +77,8 @@ def HTTP_Control ():
         Log(f"request: {action}")
         if action == "off":
             timer.off()
+        elif action == "status":
+            pass
         else:
             action, duration = action.split(":")
             if action == "on":

@@ -14,15 +14,17 @@
         font-size: 48px;
         margin: 6px 4px;
         cursor: pointer;
+        width: 100%;
     }
 
     .button_on {
         background-color: #c91625;
-        width: 100%;
     }
     .button_off {
         background-color: #10cc55;
-        width: 100%;
+    }
+    .button_status {
+        background-color: #2937ba;
     }
 
     td {
@@ -55,6 +57,9 @@
             <td><button type="submit" name="action" value="on:30" class="button button_on">30 Minuten</button></td>
             <td><button type="submit" name="action" value="on:60" class="button button_on">60 Minuten</button></td>
         </tr>
+            <td colspan="3">
+                <button type="submit" name="action" value="status" class="button button_status">Status</button>
+            </td>
     </table>
     </form>
 </body>
