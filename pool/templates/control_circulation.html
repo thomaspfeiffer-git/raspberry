@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Umw&auml;zpumpe</title>
+    <title>Umw&auml;lzpumpe</title>
 
     <style>
     .button {
@@ -32,22 +32,31 @@
     </style>
 </head>
 <body>
-     <p>
-     Dies ist ein Text.<br />
-     Dies auch.<br />
-     Jetzt: {{ now }} <br />
-     </p>
+    <table style="width:100%">
+        <tr>
+            <td>
+                <p style="font-family:verdana; font-size:48px">
+                Umw&auml;lzpumpe eingeschaltet bis: <br />
+                <b>{{ on_until }}</b>
+                </p>
+            </td>
+        </tr>
+    </table>
 
-     <table style="width:100%">
-         <tr>
-             <td colspan="3"><button class="button button_off">Ausschalten</button></td>
-         </tr>
-         <tr>
-             <td><button class="button button_on">15 Minuten</button></td>
-             <td><button class="button button_on">30 Minuten</button></td>
-             <td><button class="button button_on">60 Minuten</button></td>
-         </tr>
-     </table>
-
+    <form action="/" method="post" autocomplete="off">
+    <table style="width:100%">
+        <tr>
+            <td colspan="3">
+                <button type="submit" name="action" value="off" class="button button_off">Ausschalten</button>
+            </td>
+        </tr>
+        <tr>
+            <td><button type="submit" name="action" value="on:15" class="button button_on">15 Minuten</button></td>
+            <td><button type="submit" name="action" value="on:30" class="button button_on">30 Minuten</button></td>
+            <td><button type="submit" name="action" value="on:60" class="button button_on">60 Minuten</button></td>
+        </tr>
+    </table>
+    </form>
 </body>
 </html>
+

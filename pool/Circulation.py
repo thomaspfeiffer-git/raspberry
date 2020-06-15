@@ -13,7 +13,7 @@
 
 
 from datetime import datetime, timedelta
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import sys
 
 
@@ -70,10 +70,23 @@ class Control (object):
 
 ###############################################################################
 # Flask stuff #################################################################
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def HTTP_Control ():
-    now = datetime.now()
-    return render_template('control_circulation.html', now=now)
+    if request.method == 'POST':
+        action = request.form['action']
+        Log(f"request: {action}")
+        if action == "off":
+            timer.off()
+        else:
+            action, duration = action.split(":")
+            if action == "on":
+                timer.on(int(duration))
+
+    if timer.status != 0:
+        on_until = timer.status.strftime("%H:%M:%S")
+    else:
+        on_until = "ausgeschaltet"
+    return render_template('control_circulation.html', on_until=on_until)
 
 
 ###############################################################################
@@ -94,14 +107,8 @@ if __name__ == "__main__":
 
     timer = Timer()
 
-    Log(f"Timerstatus: {timer.status}")
-    timer.on()
-    Log(f"Timerstatus: {timer.status}")
-    timer.off()
-    Log(f"Timerstatus: {timer.status}")
-
     # app.run(host="0.0.0.0", port=80)
-#     app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0")
 
 # eof #
 
