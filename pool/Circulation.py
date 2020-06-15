@@ -12,9 +12,17 @@
 # nohup ./Circulation.py 2>&1 > circulation.log &
 
 
+### Packages you might need to install ###
+# sudo pip3 install Flask
+# sudo apt install python3-gpiozero
+
+
+
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request
+from gpiozero import Button, LED
 import sys
+import threading
 
 
 sys.path.append("../libs/")
@@ -23,12 +31,6 @@ from Shutdown import Shutdown
 
 
 app = Flask(__name__)
-
-
-###############################################################################
-# IO ##########################################################################
-class IO (object):
-    pass
 
 
 ###############################################################################
@@ -53,16 +55,23 @@ class Timer (object):
 
 ###############################################################################
 # Control #####################################################################
-class Control (object):
+class Control (threading.Thread):
     def __init__ (self):
+        threading.Thread.__init__(self)
+        self.button1 = Button(35)
+        self.button2 = Button(37)
+        self.led_on  = LED(36)
+        self.led_off = LED(38)
+        self.relais  = LED(40)
+
         self._running = False
 
+
     def run (self):
-        # TODO
         self._running = True
 
         while self._running:
-            time.sleep(0.1)
+            time.sleep(0.05)
 
     def stop (self):
         self._running = False
@@ -96,8 +105,8 @@ def HTTP_Control ():
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
-
-
+    control.stop()
+    control.join()
     Log("Application stopped")
     sys.exit(0)
 
@@ -108,6 +117,8 @@ if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
     timer = Timer()
+    control = Control()
+    control.start()
 
     # app.run(host="0.0.0.0", port=80)
     app.run(host="0.0.0.0")
