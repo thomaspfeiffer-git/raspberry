@@ -2,6 +2,30 @@
 <html>
 <head>
     <title>Umw&auml;zpumpe</title>
+
+    <style>
+    .button {
+        border: none;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 48px;
+        margin: 6px 4px;
+        cursor: pointer;
+    }
+
+    .button_on {
+        background-color: #FF0000;
+        width: 300px;
+    }
+    .button_off
+        {background-color: #00FF00;
+         width: 916px;
+    }
+
+    </style>
 </head>
 <body>
      <p>
@@ -10,6 +34,10 @@
      Jetzt: {{ now }} <br />
      </p>
 
+     <button class="button button_off">Ausschalten</button><br />
+     <button class="button button_on">15 Minuten</button>
+     <button class="button button_on">30 Minuten</button>
+     <button class="button button_on">60 Minuten</button>
 
 </body>
 </html>
