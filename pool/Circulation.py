@@ -6,6 +6,7 @@
 ###############################################################################
 
 """
+TODO
 """
 
 ### Usage ###
@@ -15,7 +16,6 @@
 ### Packages you might need to install ###
 # sudo pip3 install Flask
 # sudo apt install python3-gpiozero
-
 
 
 from datetime import datetime, timedelta
@@ -53,15 +53,40 @@ class Timer (object):
         else:
             return 0
 
-
 ###############################################################################
-# Control #####################################################################
-class Control (threading.Thread):
+###############################################################################
+class Control_Input (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.button1 = Button(16)
-        self.button2 = Button(18)
-        self.led_on  = LED(11)
+        self.button = Button(16)   # TODO: Config
+        self.button.when_pressed = self.toggle_func()
+        self._running = False
+
+    def toggle_func (self):
+        def toggle ():
+            if timer.status != 0:
+                timer.off()
+                Log("Manually switched off by button")
+            else:
+                timer.on()
+                Log("Manually switched on by button")
+        return toggle
+
+    def run (self):
+        self._running = True
+        while self._running:
+            time.sleep(0.1)
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+# Control_Output ##############################################################
+class Control_Output (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self.led_on  = LED(11)   # TODO: Config
         self.led_off = LED(13)
         self.relais  = LED(15)
         self._running = False
@@ -85,7 +110,7 @@ class Control (threading.Thread):
                     Log("Circulation pump off.")
                 last = actual
 
-            time.sleep(0.05)
+            time.sleep(0.1)
 
     def stop (self):
         self._running = False
@@ -119,8 +144,10 @@ def HTTP_Control ():
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
-    control.stop()
-    control.join()
+    control_input.stop()
+    control_input.join()
+    control_output.stop()
+    control_output.join()
     Log("Application stopped")
     sys.exit(0)
 
@@ -131,8 +158,11 @@ if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
     timer = Timer()
-    control = Control()
-    control.start()
+    control_output = Control_Output()
+    control_output.start()
+
+    control_input = Control_Input()
+    control_input.start()
 
     # app.run(host="0.0.0.0", port=80)
     app.run(host="0.0.0.0")
