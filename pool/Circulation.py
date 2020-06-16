@@ -23,6 +23,7 @@ from flask import Flask, render_template, request
 from gpiozero import Button, LED
 import sys
 import threading
+import time
 
 
 sys.path.append("../libs/")
@@ -58,19 +59,32 @@ class Timer (object):
 class Control (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.button1 = Button(35)
-        self.button2 = Button(37)
-        self.led_on  = LED(36)
-        self.led_off = LED(38)
-        self.relais  = LED(40)
-
+        self.button1 = Button(16)
+        self.button2 = Button(18)
+        self.led_on  = LED(11)
+        self.led_off = LED(13)
+        self.relais  = LED(15)
         self._running = False
-
 
     def run (self):
         self._running = True
 
+        last = None
         while self._running:
+            actual = timer.status
+            if actual != last:
+                if actual != 0:
+                    self.led_on.on()
+                    self.relais.on()
+                    self.led_off.off()
+                    Log(f"Circulation pump on until {actual.strftime('%H:%M:%S')}.")
+                else:
+                    self.led_on.off()
+                    self.relais.off()
+                    self.led_off.on()
+                    Log("Circulation pump off.")
+                last = actual
+
             time.sleep(0.05)
 
     def stop (self):
