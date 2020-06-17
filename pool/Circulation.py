@@ -6,7 +6,7 @@
 ###############################################################################
 
 """
-TODO
+Controls the circulation pump by an html interface.
 """
 
 ### Usage ###
@@ -35,6 +35,18 @@ app = Flask(__name__)
 
 
 ###############################################################################
+# CONFIG ######################################################################
+class CONFIG:
+    class LED:
+        on = 11
+        off = 13
+    class Relais:
+        pump = 15
+    class Button:
+        pump = 16
+
+
+###############################################################################
 # Timer #######################################################################
 class Timer (object):
     def __init__ (self):
@@ -58,7 +70,7 @@ class Timer (object):
 class Control_Input (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.button = Button(16)   # TODO: Config
+        self.button = Button(CONFIG.Button.pump)
         self.button.when_pressed = self.toggle_func()
         self._running = False
 
@@ -86,9 +98,9 @@ class Control_Input (threading.Thread):
 class Control_Output (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.led_on  = LED(11)   # TODO: Config
-        self.led_off = LED(13)
-        self.relais  = LED(15)
+        self.led_on  = LED(CONFIG.LED.on)
+        self.led_off = LED(CONFIG.LED.off)
+        self.relais  = LED(CONFIG.Relais.pump)
         self._running = False
 
     def run (self):
