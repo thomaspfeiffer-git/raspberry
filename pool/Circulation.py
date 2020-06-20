@@ -38,12 +38,12 @@ app = Flask(__name__)
 # CONFIG ######################################################################
 class CONFIG:
     class LED:
-        on = 11
-        off = 13
+        on = "BOARD11"
+        off = "BOARD13"
     class Relais:
-        pump = 15
+        pump = "BOARD15"
     class Button:
-        pump = 16
+        pump = "BOARD16"
 
 
 ###############################################################################
