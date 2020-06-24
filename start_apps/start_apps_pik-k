@@ -13,9 +13,17 @@ fi
 cd ~/raspberry/
 
 cd kollerberg/
-echo "Starting 'weather.py' ..."
+echo "Starting 'Weather_Kollerberg.py --sensor' ..."
 nohup ./Weather_Kollerberg.py --sensor 2>&1 >weather_kollerberg.log &
 cd ..
+
+
+cd pool/
+echo "Staring 'Circulation.py' ..."
+nohup ./Circulation.py 2>&1 > circulation.log &
+cd ..
+
+
 
 # eof #
 
