@@ -20,7 +20,7 @@ cd ..
 
 cd pool/
 echo "Staring 'Circulation.py' ..."
-nohup ./Circulation.py 2>&1 > circulation.log &
+sudo nohup ./Circulation.py --production 2>&1 > circulation.log &
 cd ..
 
 

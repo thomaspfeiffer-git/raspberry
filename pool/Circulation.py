@@ -10,7 +10,7 @@ Controls the circulation pump by an html interface.
 """
 
 ### Usage ###
-# nohup ./Circulation.py 2>&1 > circulation.log &
+# nohup ./Circulation.py --production 2>&1 > circulation.log &
 
 
 ### Packages you might need to install ###
@@ -18,6 +18,7 @@ Controls the circulation pump by an html interface.
 # sudo apt install python3-gpiozero
 
 
+import argparse
 from datetime import datetime, timedelta
 from flask import Flask, render_template, request
 from gpiozero import Button, LED
@@ -169,6 +170,10 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--production", help="run in production (port 80)", action="store_true")
+    args = parser.parse_args()
+
     timer = Timer()
     control_output = Control_Output()
     control_output.start()
@@ -176,8 +181,10 @@ if __name__ == "__main__":
     control_input = Control_Input()
     control_input.start()
 
-    # app.run(host="0.0.0.0", port=80)
-    app.run(host="0.0.0.0")
+    if args.production:
+        app.run(host="0.0.0.0", port=80)
+    else:
+        app.run(host="0.0.0.0")
 
 # eof #
 
