@@ -10,7 +10,7 @@ Controls the circulation pump by an html interface.
 """
 
 ### Usage ###
-# nohup ./Circulation.py --production 2>&1 > circulation.log &
+# nohup ./Circulation.py [--production] 2>&1 > circulation.log &
 
 
 ### Packages you might need to install ###
@@ -51,7 +51,7 @@ class CONFIG:
 # Timer #######################################################################
 class Timer (object):
     def __init__ (self):
-        self.on_until = datetime(1970, 1, 1)
+        self.off()
 
     def on (self, time_=30):
         self.on_until = datetime.now() + timedelta(seconds=time_*60)
