@@ -7,11 +7,11 @@
 """provides a class for handling the oled display SSD1306 (128 x 64)"""
 
 # Source code taken and modified from
-# https://github.com/adafruit/Adafruit_Python_SSD1306 
+# https://github.com/adafruit/Adafruit_Python_SSD1306
 #
 # Link to Amazon:
 # https://www.amazon.de/Zoll-serielle-OLED-Display-Modul-Arduino/dp/B00NHKM1C0
-# 
+#
 # Additional information:
 # https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=105635
 # https://github.com/rm-hull/ssd1306 (fonts!)
@@ -113,13 +113,13 @@ class SSD1306 (I2C):
                 I2C._bus.write_byte_data(self._address, control, c)
                 return
             except (IOError, OSError):
-                print(strftime("%Y%m%d %X:"), "error writing i2c bus in SSD1306.__command()i; retry #", retry)
+                print(strftime("%Y%m%d %X:"), "error writing i2c bus in SSD1306.__command(); retry #", retry)
                 sleep(0.5)
-                self.begin()
+                # self.begin()  causes infinite loop and stack overflow
                 retry += 1
         if retry >= max_retries:
             sys.exit()
-                
+
 
 #    def __data (self, c):
 #        """Send byte of data to display."""
@@ -133,7 +133,7 @@ class SSD1306 (I2C):
         self.clear()
         self.__initialize()
         self.__command(SSD1306.DISPLAYON)
-        
+
 
     def display(self):
         """Write display buffer to physical display."""
