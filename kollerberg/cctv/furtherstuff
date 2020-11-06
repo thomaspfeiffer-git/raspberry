@@ -26,6 +26,8 @@ ramdisk /ramdisk tmpfs nodev,nosuid,size=256M 0 0
 /etc/fstab @ pik-a:
 -------------------
 
+tmpfs /ramdisk tmpfs nodev,nosuid,size=16M 0 0
+
 # 192.168.8.215:/storage	/home/pi/cctv/pictures 	nfs	rsize=8192,wsize=8192,timeo=14,intr 0 0
 192.168.8.215:/ramdisk  /home/pi/cctv/ram_pictures      nfs     rsize=8192,wsize=8192,timeo=14,intr 0 0
 
