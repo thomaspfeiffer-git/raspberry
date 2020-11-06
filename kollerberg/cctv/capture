@@ -1,0 +1,45 @@
+#!/bin/bash
+
+STOPFILE="./stopfile"
+rm -f $STOPFILE
+
+if [ "$1" == "stop" ] ; then
+    touch $STOPFILE
+    exit
+fi
+
+TEMPDIR="/ramdisk/"
+DESTDIR="ram_pictures/"
+# DESTDIR="pictures/2020/"
+# DESTDIR="pics/"
+
+
+function Log {
+   echo "`date "+%Y%m%d-%H%M%S"`: ${1}"
+ }
+
+
+i=0
+while [ `date "+%H%M"` -lt 1715 ] ; do
+# while [ "$i" -lt 3 ] ; do
+    FILENAME="pic_`date "+%Y%m%d-%H%M%S"`_$i.jpg"
+
+    raspistill -ae 64,0xff,0x808000 -a 4 -a "Kollerberg %Y-%m-%d %X - $i" -o ${TEMPDIR}${FILENAME}
+    Log "$FILENAME captured"
+
+    mv ${TEMPDIR}${FILENAME} ${DESTDIR}
+    ( cd ${DESTDIR} ; ln -s -f ${FILENAME} latest.jpg )
+    Log "$FILENAME moved to NSF"
+
+    if [ -e $STOPFILE ] ; then
+        rm $STOPFILE
+        Log "stopped by stopfile"
+        exit
+    fi
+
+    i=$[$i+1]
+done
+
+# eof #
+
+
