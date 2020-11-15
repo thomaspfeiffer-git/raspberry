@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-PICDIR=/storage_emmc/2020/
+PICDIR=./
 VIDEO=kollerberg.mp4
 
 rm -f $VIDEO
