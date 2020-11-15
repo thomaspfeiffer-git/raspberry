@@ -7,8 +7,8 @@ rm -f $VIDEO
 
 cd $PICDIR
 rm -f $VIDEO
-# ffmpeg -thread_queue_size 5000 -framerate 30 -pattern_type glob -i "*.jpg" -c:v libx264 -acodec copy -s 1296x972 ~/$VIDEO
-cat *.jpg | ffmpeg -f image2pipe -thread_queue_size 5000 -framerate 30 -i - -c:v libx264 -acodec copy -s 1296x972 ~/$VIDEO
+# ffmpeg -thread_queue_size 5000 -framerate 30 -pattern_type glob -i "*.jpg" -c:v libx264 -acodec copy -s 1296x972 $VIDEO
+cat *.jpg | ffmpeg -f image2pipe -thread_queue_size 5000 -framerate 30 -i - -c:v libx264 -acodec copy -s 1296x972 $VIDEO
 
 # eof #
 
