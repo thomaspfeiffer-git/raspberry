@@ -27,7 +27,7 @@ while [ `date "+%H%M"` -lt 1715 ] ; do
     raspistill -ae 64,0xff,0x808000 -a 4 -a "Kollerberg %Y-%m-%d %X - $i" -o ${TEMPDIR}${FILENAME}
     Log "$FILENAME captured"
 
-    scp -q ${TEMPDIR}${FILENAME} ${DESTHOST}:${DESTDIR}
+    scp -q -o ConnectTimeout=30 ${TEMPDIR}${FILENAME} ${DESTHOST}:${DESTDIR}
     rm ${TEMPDIR}${FILENAME}
 
     # ( cd ${DESTDIR} ; ln -s -f ${FILENAME} latest.jpg )
