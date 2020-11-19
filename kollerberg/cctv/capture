@@ -27,7 +27,7 @@ while [ `date "+%H%M"` -lt 1700 ] ; do
     raspistill -ae 64,0xff,0x808000 -a 4 -a "Kollerberg %Y-%m-%d %X - $i" -o ${TEMPDIR}${FILENAME}
     Log "$FILENAME captured"
 
-    timeout -k 10 -v 90 scp -l 640 -q ${TEMPDIR}${FILENAME} ${DESTHOST}:${DESTDIR}
+    timeout -k 10 -v 90 scp -l 512 -q ${TEMPDIR}${FILENAME} ${DESTHOST}:${DESTDIR}
     Log "$FILENAME copied to server $DESTHOST."
     rm ${TEMPDIR}${FILENAME}
     Log "${FILENAME} removed"
