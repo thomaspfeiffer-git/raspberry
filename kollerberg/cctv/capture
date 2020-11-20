@@ -30,10 +30,11 @@ while [ `date "+%H%M"` -lt 1700 ] ; do
     raspistill -ae 64,0xff,0x808000 -a 4 -a "Kollerberg %Y-%m-%d %X - $i" -o ${TEMPDIR}${FILENAME}
     Log "$FILENAME captured"
 
+    ts1=`date "+%s"`
     timeout -k 10 -v $TIMEOUT scp -l $BANDWITH -q ${TEMPDIR}${FILENAME} ${DESTHOST}:${DESTDIR}
-    Log "$FILENAME copied to server $DESTHOST."
+    ts2=`date "+%s"`
     rm ${TEMPDIR}${FILENAME}
-    Log "${FILENAME} removed"
+    Log "$FILENAME moved to server $DESTHOST ($(($ts2-$ts1)) seconds)."
 
     # ( cd ${DESTDIR} ; ln -s -f ${FILENAME} latest.jpg )
 
