@@ -1,4 +1,9 @@
 #!/bin/bash
+#############################################################################
+# capture                                                                   #
+# (c) https://github.com/thomaspfeiffer-git 2020                            #
+#############################################################################
+
 
 TIMEOUT=120
 BANDWITH=512
@@ -35,8 +40,6 @@ while [ `date "+%H%M"` -lt 1700 ] ; do
     ts2=`date "+%s"`
     rm ${TEMPDIR}${FILENAME}
     Log "$FILENAME moved to server $DESTHOST ($(($ts2-$ts1)) seconds)."
-
-    # ( cd ${DESTDIR} ; ln -s -f ${FILENAME} latest.jpg )
 
     if [ -e $STOPFILE ] ; then
         rm $STOPFILE
