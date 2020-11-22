@@ -38,9 +38,12 @@ while [ `date "+%H%M"` -lt 1700 ] ; do
     ts1=`date "+%s"`
     FILESIZE=$[$(stat --printf="%s" $FILENAME)/1024]
     timeout -k 10 -v $TIMEOUT scp -l $BANDWITH -q $FILENAME ${DESTHOST}:${DESTDIR}
-    ts2=`date "+%s"`
+    if [ "$?" -eq 0 ] ; then
+        ts2=`date "+%s"`
+        Log "$FILENAME moved ($FILESIZE kB in $[$ts2-$ts1] seconds; $[$FILESIZE/$[$ts2-$ts1]] kB/s)."
+    fi
+
     rm $FILENAME
-    Log "$FILENAME moved ($FILESIZE kB in $[$ts2-$ts1] seconds; $[$FILESIZE/$[$ts2-$ts1]] kB/s)."
 
     if [ -e $STOPFILE ] ; then
         rm $STOPFILE
