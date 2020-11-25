@@ -28,7 +28,7 @@ function Log {
 
 
 i=0
-while [ `date "+%H%M"` -lt 1700 ] ; do
+while [ `date "+%H%M"` -lt 1645 ] ; do
 # while [ "$i" -lt 2 ] ; do
     FILENAME="${TEMPDIR}pic_`date "+%Y%m%d-%H%M%S"`_$i.jpg"
 
