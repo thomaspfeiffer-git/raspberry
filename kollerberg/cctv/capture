@@ -54,6 +54,7 @@ while [ `date "+%H%M"` -lt 1645 ] ; do
     i=$[$i+1]
 done
 
+ssh $DESTHOST "touch ${DESTDIR}/done"
 Log "done for today"
 
 # eof #

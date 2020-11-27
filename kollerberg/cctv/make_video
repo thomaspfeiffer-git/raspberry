@@ -1,5 +1,14 @@
 #!/usr/bin/bash
 
+if [ -e /ramdisk/done ] ; then
+    rm "/ramdisk/done"
+fi
+
+exit
+
+
+
+
 VIDEO=kollerberg_`date "+%Y%m%d"`.mp4
 
 cat *.jpg | ffmpeg -f image2pipe -thread_queue_size 5000 -framerate 30 -i - -c:v libx264 -acodec copy -s 1296x972 $VIDEO
