@@ -4,6 +4,9 @@
 # (c) https://github.com/thomaspfeiffer-git 2020                            #
 #############################################################################
 
+# for a better timing this url could be used
+# https://api.sunrise-sunset.org/json?lat=48.2&lng=15.63333&formatted=0
+
 
 TIMEOUT=120
 BANDWITH=512
