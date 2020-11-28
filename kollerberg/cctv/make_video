@@ -9,7 +9,7 @@ if [ -e /ramdisk/done ] ; then
 
     mv /storage_emmc/pictures/* .
 
-    VIDEO=kollerberg_$TODAY
+    VIDEO=kollerberg_${TODAY}.mp4
     cat *.jpg | ffmpeg -f image2pipe -thread_queue_size 5000 -framerate 30 -i - -c:v libx264 -acodec copy -s 1296x972 $VIDEO
 fi
 
