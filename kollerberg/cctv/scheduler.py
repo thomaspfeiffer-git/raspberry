@@ -1,13 +1,14 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-#                                                                             #
+# scheduler.py                                                                #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2020                   #
 ###############################################################################
 
 from attrdict import AttrDict
 from datetime import datetime, timezone, timedelta
 import json
+import sys
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
@@ -25,9 +26,7 @@ sunset  = datetime.strptime(data['results']['sunset'],  '%Y-%m-%dT%H:%M:%S%z').a
 delta = timedelta(hours=1)
 on = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
 
-print(f"sunrise: {sunrise}")
-print(f"sunset:  {sunset}")
-print(f"on: {on}")
+sys.exit(1 if on else 0)
 
 # eof #
 
