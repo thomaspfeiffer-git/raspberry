@@ -29,6 +29,7 @@ function Log {
    echo "`date "+%Y%m%d-%H%M%S"`: ${1}"
  }
 
+
 last_state=0
 while [ 1 ] ; do
     ./scheduler.py
@@ -37,8 +38,8 @@ while [ 1 ] ; do
             last_state=1
             i=0
         fi
-        FILENAME="${TEMPDIR}pic_`date "+%Y%m%d-%H%M%S"`_$i.jpg"
 
+        FILENAME="${TEMPDIR}pic_`date "+%Y%m%d-%H%M%S"`_$i.jpg"
         raspistill -ae 64,0xff,0x808000 -a 4 -a "Kollerberg %Y-%m-%d %X - $i" -o $FILENAME
         Log "$FILENAME captured"
 
