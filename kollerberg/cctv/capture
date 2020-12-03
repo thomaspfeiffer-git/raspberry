@@ -9,7 +9,7 @@
 
 
 TIMEOUT=120
-BANDWITH=512
+BANDWITHFILE="./scp_bandwith"
 
 STOPFILE="./stopfile"
 rm -f $STOPFILE
@@ -45,7 +45,7 @@ while [ 1 ] ; do
 
         ts1=`date "+%s"`
         FILESIZE=$[$(stat --printf="%s" $FILENAME)/1024]
-        timeout -k 10 -v $TIMEOUT scp -l $BANDWITH -q $FILENAME ${DESTHOST}:${DESTDIR}
+        timeout -k 10 -v $TIMEOUT scp -l `cat $BANDWITHFILE` -q $FILENAME ${DESTHOST}:${DESTDIR}
         if [ "$?" -eq 0 ] ; then
             ts2=`date "+%s"`
             Log "$FILENAME moved ($FILESIZE kB in $[$ts2-$ts1] seconds; $[$FILESIZE/$[$ts2-$ts1]] kB/s)."
