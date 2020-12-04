@@ -3,6 +3,8 @@
 if [ -e /ramdisk/done ] ; then
     rm "/ramdisk/done"
 
+    sleep 240
+
     TODAY=`date "+%Y%m%d"`
     mkdir /storage/$TODAY
     cd /storage/$TODAY
