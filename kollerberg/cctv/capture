@@ -41,7 +41,7 @@ while [ 1 ] ; do
 
         FILENAME="${TEMPDIR}pic_`date "+%Y%m%d-%H%M%S"`_$i.jpg"
         raspistill -ae 64,0xff,0x808000 -a 4 -a "Kollerberg %Y-%m-%d %X - $i" -o $FILENAME
-        Log "$FILENAME captured"
+        # Log "$FILENAME captured"
 
         ts1=`date "+%s"`
         FILESIZE=$[$(stat --printf="%s" $FILENAME)/1024]
