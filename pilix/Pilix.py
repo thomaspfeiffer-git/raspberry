@@ -62,14 +62,9 @@
 # sudo pip3 install Flask
 #
 #
-# --- xxx ---
+# --- SPI for RFM9x ---
 # sudo pip3 install spidev
 # raspi-config: enable SPI
-
-
-
-
-
 
 
 import csv
