@@ -122,7 +122,7 @@ class Payload (object):
                     return True
                 else:
                     Log("WARN: Hashes do not match on data: {}".format(payload))
-            except TypeError:    
+            except TypeError:
                 Log("WARN: non-ascii characters found: {}".format(payload))
             except:
                 raise
@@ -139,7 +139,7 @@ class UDP (object):
     def send (self, datagram):
         try:
             Log("Sending bytes (UDP): {}".format(datagram))
-            sent = self.socket.sendto(datagram, 
+            sent = self.socket.sendto(datagram,
                                       (CONFIG.Livetracking.IP_ADDRESS_SERVER,
                                        CONFIG.Livetracking.UDP_PORT))
             Log("Sent bytes (UDP): {}; data: {}".format(sent,datagram))
@@ -173,7 +173,7 @@ class Sender_UDP (threading.Thread):
                 interval = CONFIG.Livetracking.Interval_UDP_OnBattery \
                            if self.runningonbattery \
                            else CONFIG.Livetracking.Interval_UDP_OnPowersupply
-                self.udp.send(datagram)           
+                self.udp.send(datagram)
 
             for _ in range(interval * 10):
                 if self._running:
@@ -187,23 +187,23 @@ class Sender_UDP (threading.Thread):
 # Pilix_RFM96W ################################################################
 class Pilix_RFM96W (RFM9x):
     def __init__ (self, sender=True):
-        super().__init__(config=LoRa_Cfg, 
+        super().__init__(config=LoRa_Cfg,
                          frequency=CONFIG.Livetracking.LoRa_Frequency,
                          int_pin=CONFIG.Livetracking.LoRa_pinInterrupt,
                          reset_pin=CONFIG.Livetracking.LoRa_pinReset)
         if not self.init():
-            Log("Error: RFM96W not found!")  
+            Log("Error: RFM96W not found!")
             self.cleanup()    # TODO: show some message on SSD1306!
             sys.exit()
         else:
             Log("RFM96W LoRa mode ok!")
 
-        if sender:    
+        if sender:
             if CONFIG.APP.autostart:
                 self.set_tx_power(eval(CONFIG.Livetracking.LoRa_TX_Power_OnAutostart))
             else:
                 self.set_tx_power(eval(CONFIG.Livetracking.LoRa_TX_Power))
-        else:    
+        else:
             self.set_lna(LNA_BOOST_MAX)
 
 
@@ -271,7 +271,7 @@ class Display (object):
         self.font = ImageFont.load_default()
         (_, self.textheight) = self.draw.textsize("Text", font=self.font)
 
-    def showdata (self, data, rssi):        
+    def showdata (self, data, rssi):
         (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
         y = self.ypos
@@ -294,7 +294,7 @@ class Display (object):
         self.display.image(self.image)
         self.display.display()
 
-    def close (self):    
+    def close (self):
         self.display.clear()
         self.display.display()
 
@@ -314,7 +314,7 @@ class Relais (object):
         while self._running:
             while not self.rfm96w.available():
                 pass
-            
+
             data = self.rfm96w.recv()
             str = "".join(map(chr, data))
             if Payload.verify(str):
@@ -355,7 +355,7 @@ CREATE TABLE telemetry (
     alt FLOAT,
     voltage FLOAT,
     KEY timestamp (timestamp)
-); 
+);
     """
 
     def __init__ (self):
@@ -378,13 +378,13 @@ CREATE TABLE telemetry (
         try:
             self.cursor.execute(sql_command)
             self.connection.commit()
-        except:   
+        except:
             Log("Cannot execute sql: {0[0]} {0[1]}".format(sys.exc_info()))
             self.reconnect()
             try:
                 self.cursor.execute(sql_command)    # TODO improve code. DRY!
                 self.connection.commit()
-            except:    
+            except:
                 Log("Cannot re-execute sql: {0[0]} {0[1]}".format(sys.exc_info()))
 
     def close (self):
@@ -400,7 +400,7 @@ class Receiver (object):
 
         self.digest = Digest(CONFIG.Livetracking.SECRET)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.socket.bind((CONFIG.Livetracking.IP_ADDRESS_SERVER, 
+        self.socket.bind((CONFIG.Livetracking.IP_ADDRESS_SERVER,
                           CONFIG.Livetracking.UDP_PORT))
         self._running = True
 
@@ -410,7 +410,7 @@ class Receiver (object):
                 i = float(string)
             except:
                 i = -8888.8
-            return i    
+            return i
 
         (msgid, timestamp, lon, lat, alt, voltage, source) = data.split(',')
         lon = float_(lon)
@@ -419,7 +419,7 @@ class Receiver (object):
 
         sql = """INSERT INTO telemetry (timestamp, msgid, source, lon, lat, alt, voltage)
                  VALUES ('{timestamp}', '{msgid}', '{source}', {lon}, {lat}, {alt}, {voltage});"""
-        sql = sql.format(timestamp=timestamp, msgid=msgid, source=source, 
+        sql = sql.format(timestamp=timestamp, msgid=msgid, source=source,
                          lon=lon, lat=lat, alt=alt, voltage=voltage)
         Log("SQL: {}".format(sql))
         self.db.execute(sql)
@@ -433,7 +433,7 @@ class Receiver (object):
 
     def stop (self):
         self._running = False
-        self.db.close()        
+        self.db.close()
 
 
 ###############################################################################

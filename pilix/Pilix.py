@@ -14,9 +14,9 @@
 
 ### needful things ###
 # --- battery control:
-#     https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=178015 
+#     https://www.raspberrypi.org/forums/viewtopic.php?f=44&t=178015
 #
-#     /boot/config.txt 
+#     /boot/config.txt
 #     dtoverlay=gpio-poweroff,active_low,gpiopin=17
 #
 # --- autostart
@@ -60,6 +60,16 @@
 #
 # http://flask.pocoo.org/docs/0.12/
 # sudo pip3 install Flask
+#
+#
+# --- xxx ---
+# sudo pip3 install spidev
+# raspi-config: enable SPI
+
+
+
+
+
 
 
 import csv
@@ -136,10 +146,10 @@ class PictureStore (metaclass=Singleton):
     def __init__ (self):
         self.picture_count = self.get_next_segment()
 
-    def get_next_segment (self): 
-        """after restart of the application, we continue on the 
+    def get_next_segment (self):
+        """after restart of the application, we continue on the
            next (empty) directory."""
-        from os.path import isdir, join 
+        from os.path import isdir, join
         dirs = [d for d in os.listdir(CONFIG.File.picdir)
                 if isdir(join(CONFIG.File.picdir, d))]
         dirs.sort()
@@ -159,7 +169,7 @@ class PictureStore (metaclass=Singleton):
                    raise
             return directory
 
-        filename = "{:05d}_{}_{}_{}_{}.jpg".format(self.picture_count, 
+        filename = "{:05d}_{}_{}_{}_{}.jpg".format(self.picture_count,
                     time.strftime("%Y%m%d%H%M%S"),
                     control.data[V_GPS_Alt],
                     control.data[V_GPS_Lon],
@@ -183,7 +193,7 @@ class Camera (threading.Thread):
         self.camera.annotate_background = picamera.Color('black')
 
         # on autostart start taking pictures immediately
-        self._takingPictures = CONFIG.APP.autostart 
+        self._takingPictures = CONFIG.APP.autostart
         self._running = True
 
     def run (self):
@@ -252,7 +262,7 @@ class StatusLED (object):
 class Display (object):
     def __init__ (self):
         self.display = SSD1306()
- 
+
         self.display.begin()
         self.off()
 
@@ -298,10 +308,10 @@ class Display (object):
 ###############################################################################
 # CSV #########################################################################
 class CSV (object):
-    fieldnames = [V_Time, V_TemperatureBox, V_TemperatureOutside, 
-                  V_Pressure, V_Voltage, V_RunningOnBattery, V_TemperatureCPU, 
-                  V_Timestamp, V_GPS_Time, V_GPS_Lon, V_GPS_Lat, V_GPS_Alt, 
-                  V_GPS_Climb, V_GPS_Speed, V_GPS_Track, V_GPS_ErrLon, 
+    fieldnames = [V_Time, V_TemperatureBox, V_TemperatureOutside,
+                  V_Pressure, V_Voltage, V_RunningOnBattery, V_TemperatureCPU,
+                  V_Timestamp, V_GPS_Time, V_GPS_Lon, V_GPS_Lat, V_GPS_Alt,
+                  V_GPS_Climb, V_GPS_Speed, V_GPS_Track, V_GPS_ErrLon,
                   V_GPS_ErrLat, V_GPS_ErrAlt]
 
     def __init__ (self):
@@ -330,7 +340,7 @@ class Control (threading.Thread):
         self._running = True
 
     def get_gps_data (self):
-        d = gps.data_stream.time[:4] != "1970"        # kind of 'n/a' 
+        d = gps.data_stream.time[:4] != "1970"        # kind of 'n/a'
         return {V_GPS_Time: gps.data_stream.time,
                 V_GPS_Lon: gps.data_stream.lon if d else "n/a",
                 V_GPS_Lat: gps.data_stream.lat if d else "n/a",
@@ -450,8 +460,8 @@ if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
     gps = AGPS3mechanism()
-    gps.stream_data() 
-    gps.run_thread() 
+    gps.stream_data()
+    gps.run_thread()
 
     display = Display()
 
