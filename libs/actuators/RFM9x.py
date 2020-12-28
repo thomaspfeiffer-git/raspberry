@@ -5,7 +5,8 @@
 # Sourcecode taken and modified from:                                         #
 # * https://github.com/ladecadence/pyRF95                                     #
 # * https://github.com/PiInTheSky/lora-gateway/blob/master/gateway.c          #
-# (c) https://github.com/thomaspfeiffer-git 2018                              #
+# * https://pypi.org/project/pyLoraRFM9x/                                     #
+# (c) https://github.com/thomaspfeiffer-git 2018, 2020                        #
 ###############################################################################
 """Library for the RFM9x LoRa Module."""
 
