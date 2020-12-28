@@ -41,32 +41,33 @@ class RFM9x (object):
         self.rx_bad = 0     # rx error count
         self.tx_good = 0    # tx packets sent
         self.rx_good = 0    # rx packets recv
-        self.rx_buf_valid = False 
+        self.rx_buf_valid = False
 
     def init (self):
         """open SPI and initialize RF95"""
         self.spi.open(0, self.spi_cs)
         self.spi.max_speed_hz = 244000
-        self.spi.close()
 
         # set interrupt pin
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
         GPIO.setup(self.int_pin, GPIO.IN)
-        GPIO.add_event_detect(self.int_pin, GPIO.RISING, 
+        GPIO.add_event_detect(self.int_pin, GPIO.RISING,
                               callback=self.handle_interrupt)
-        
+
         # set reset pin
         if self.reset_pin != None:
             GPIO.setup(self.reset_pin, GPIO.OUT)
+            GPIO.output(self.reset_pin, GPIO.LOW)
+            time.sleep(0.05)
             GPIO.output(self.reset_pin, GPIO.HIGH)
         # wait for reset
         time.sleep(0.05)
 
         # set sleep mode and LoRa mode
         self.spi_write(REG_01_OP_MODE, MODE_SLEEP | LONG_RANGE_MODE)
-        
-        time.sleep(0.05)        
+
+        time.sleep(0.05)
         # check if we are set
         if self.spi_read(REG_01_OP_MODE) != (MODE_SLEEP | LONG_RANGE_MODE):
             return False
@@ -102,7 +103,7 @@ class RFM9x (object):
             self.spi_write(REG_12_IRQ_FLAGS, 0xff)
 
             # AFC shall be done only if a correct packet was receveived.
-            # Therefore AFC shall be called by after verification of 
+            # Therefore AFC shall be called by after verification of
             # the received data.
             # self.afc()
 
@@ -120,7 +121,7 @@ class RFM9x (object):
         elif self.mode == RADIO_MODE_CAD and irq_flags & CAD_DONE:
             self.cad = irq_flags & CAD_DETECTED
             self.set_mode_idle()
-    
+
         self.spi_write(REG_12_IRQ_FLAGS, 0xff) # Clear all IRQ flags
 
     def afc (self):
@@ -178,11 +179,11 @@ class RFM9x (object):
         self.frequency = freq
         Log("Setting frequency to {:.2f} Hz".format(freq))
         freq_value = int(freq / FSTEP)
-        
+
         self.spi_write(REG_06_FRF_MSB, (freq_value>>16)&0xff)
         self.spi_write(REG_07_FRF_MID, (freq_value>>8)&0xff)
         self.spi_write(REG_08_FRF_LSB, (freq_value)&0xff)
-    
+
     def set_mode_idle(self):
         if self.mode != RADIO_MODE_IDLE:
             self.spi_write(REG_01_OP_MODE, MODE_STDBY)
@@ -204,7 +205,7 @@ class RFM9x (object):
         if self.mode != RADIO_MODE_TX:
             self.spi_write(REG_01_OP_MODE, MODE_TX)
             self.spi_write(REG_40_DIO_MAPPING1, 0x40)
-            self.mode = RADIO_MODE_TX   
+            self.mode = RADIO_MODE_TX
         return True
 
     def set_tx_power(self, power):
@@ -218,7 +219,7 @@ class RFM9x (object):
         self.spi_write(REG_1D_MODEM_CONFIG1, self.config[LR_Cfg_Reg1])
         self.spi_write(REG_1E_MODEM_CONFIG2, self.config[LR_Cfg_Reg2])
         self.spi_write(REG_26_MODEM_CONFIG3, self.config[LR_Cfg_Reg3])
-        
+
     def set_preamble_length(self, length):
         self.spi_write(REG_20_PREAMBLE_MSB, length >> 8)
         self.spi_write(REG_21_PREAMBLE_LSB, length & 0xff)
@@ -227,8 +228,8 @@ class RFM9x (object):
     def send(self, data):
         if len(data) > MAX_MESSAGE_LEN:
             return False
-    
-        self.wait_packet_sent() 
+
+        self.wait_packet_sent()
         self.set_mode_idle()
         self.spi_write(REG_0D_FIFO_ADDR_PTR, 0)
 
@@ -279,6 +280,7 @@ class RFM9x (object):
 
     # cleans all GPIOs, etc
     def cleanup(self):
+        self.spi.close()
         if self.reset_pin:
             GPIO.output(self.reset_pin, GPIO.LOW)
             GPIO.cleanup(self.reset_pin)
