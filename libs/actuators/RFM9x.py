@@ -151,29 +151,29 @@ class RFM9x (object):
         self.set_mode_idle()
 
     def spi_write(self, reg, data):
-        self.spi.open(0,self.spi_cs)
+        # self.spi.open(0,self.spi_cs)
         # transfer one byte
         self.spi.xfer2([reg | SPI_WRITE_MASK, data])
-        self.spi.close()
+        # self.spi.close()
 
     def spi_read(self, reg):
-        self.spi.open(0,self.spi_cs)
+        # self.spi.open(0,self.spi_cs)
         data = self.spi.xfer2([reg & ~SPI_WRITE_MASK, 0])
-        self.spi.close()
+        # self.spi.close()
         return data[1]
 
     def spi_write_data(self, reg, data):
-        self.spi.open(0, self.spi_cs)
+        # self.spi.open(0, self.spi_cs)
         # transfer byte list
         self.spi.xfer2([reg | SPI_WRITE_MASK] + data)
-        self.spi.close()
+        # self.spi.close()
 
     def spi_read_data(self, reg, length):
         data = []
-        self.spi.open(0, self.spi_cs)
+        # self.spi.open(0, self.spi_cs)
         # start address + amount of bytes to read
         data = self.spi.xfer2([reg & ~SPI_WRITE_MASK] + [0]*length)
-        self.spi.close()
+        # self.spi.close()
         return data[1:] # all but first byte
 
     def set_frequency(self, freq):
