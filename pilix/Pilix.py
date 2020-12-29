@@ -335,7 +335,8 @@ class Control (threading.Thread):
         self._running = True
 
     def get_gps_data (self):
-        d = gps.data_stream.time[:4] != "1970"        # kind of 'n/a'
+        # d = gps.data_stream.time[:4] != "1970"        # kind of 'n/a'
+        d = gps.data_stream.time != "n/a"
         return {V_GPS_Time: gps.data_stream.time,
                 V_GPS_Lon: gps.data_stream.lon if d else "n/a",
                 V_GPS_Lat: gps.data_stream.lat if d else "n/a",
