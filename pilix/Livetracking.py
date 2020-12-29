@@ -282,6 +282,18 @@ class Display (object):
         (_, self.textheight) = self.draw.textsize("Text", font=self.font)
 
     def showdata (self, data, rssi):
+        def my_ip ():
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            try:
+                # doesn't even have to be reachable
+                s.connect(('10.255.255.255', 1))
+                IP = s.getsockname()[0]
+            except:
+                IP = 'x.x.x.x'
+            finally:
+                s.close()
+            return IP
+
         (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
         y = self.ypos
@@ -291,15 +303,13 @@ class Display (object):
         except:
             pass
 
-        self.draw.text((self.xpos, y), "{} {}".format(msgid, timestamp))
+        self.draw.text((self.xpos, y), f"{msgid} {timestamp}")
         y += self.textheight
-        self.draw.text((self.xpos, y), "X: {}".format(lon))
+        self.draw.text((self.xpos, y), f"Height: {alt}")
         y += self.textheight
-        self.draw.text((self.xpos, y), "Y: {}".format(lat))
+        self.draw.text((self.xpos, y), f"U: {voltage} RSSI: {rssi}")
         y += self.textheight
-        self.draw.text((self.xpos, y), "Z: {}".format(alt))
-        y += self.textheight
-        self.draw.text((self.xpos, y), "V: {} RSSI: {} ".format(voltage, rssi))
+        self.draw.text((self.xpos, y), f"IP: {my_ip()}")
 
         self.display.image(self.image)
         self.display.display()
