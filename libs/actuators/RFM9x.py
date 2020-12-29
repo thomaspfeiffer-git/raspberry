@@ -210,7 +210,11 @@ class RFM9x (object):
         return True
 
     def set_tx_power(self, power):
-        self.spi_write(REG_09_PA_CONFIG, power)
+        #self.spi_write(REG_09_PA_CONFIG, power)
+        PA_SELECT = 0x80
+        # TODO https://github.com/mugpahug/pyLoraRFM9x/blob/master/pyLoraRFM9x/lora.py#L112
+        self.spi_write(REG_4D_PA_DAC, PA_DAC_ENABLE)
+        self.spi_write(REG_09_PA_CONFIG, PA_SELECT | 23)
 
     def set_lna(self, lna):
         self.spi_write(REG_0C_LNA, lna)
