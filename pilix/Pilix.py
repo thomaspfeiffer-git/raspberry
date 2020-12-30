@@ -405,11 +405,11 @@ def API_Shutdown ():
     shutdown()
     return "shutdown ok"
 
-@app.route('/toggle')
-def API_Toggle ():
+@app.route('/camera')
+def API_ToggleCamera ():
     Log("Camera: toggle requested")
     camera.toggle_takePictures()
-    return "toggle ok"
+    return "camera toggle ok"
 
 @app.route('/battery')
 def API_Battery ():                  # looks weird, but is fail safe

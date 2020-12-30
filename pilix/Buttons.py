@@ -17,7 +17,7 @@ import RPi.GPIO as io
 import socket
 import sys
 import time
-from urllib.error import HTTPError, URLError 
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 sys.path.append("../libs/")
@@ -28,12 +28,12 @@ from config import CONFIG
 
 io.setwarnings(False)
 io.setmode(io.BOARD)
-io.setup(CONFIG.PIN.BTN_Control, io.IN) 
-io.setup(CONFIG.PIN.BTN_Battery, io.IN) 
+io.setup(CONFIG.PIN.BTN_Control, io.IN)
+io.setup(CONFIG.PIN.BTN_Battery, io.IN)
 
 
 url_shutdown = "shutdown"
-url_toggle = "toggle"
+url_camera = "camera"
 url_battery = "battery?enabled={}"
 
 
@@ -66,10 +66,10 @@ while True:
                 time_pressed = time.time()
             if act_btn_control == 1:
                 time_released = time.time()
-                if time_released - time_pressed > CONFIG.APP.delayToShutdown: 
+                if time_released - time_pressed > CONFIG.APP.delayToShutdown:
                     CallPilixControl(url_shutdown)
                 else:
-                    CallPilixControl(url_toggle)
+                    CallPilixControl(url_camera)
                 time_pressed = None
                 time_released = None
         last_btn_control = act_btn_control
