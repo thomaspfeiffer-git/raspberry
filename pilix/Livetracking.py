@@ -74,7 +74,7 @@ LoRa_Cfg_LR_2 = { LR_Cfg_Reg1: BW_125KHZ | CODING_RATE_4_8,
                   LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
                   LR_Cfg_BW:   125.0 }
 
-LoRa_Cfg_LR_3 = { LR_Cfg_Reg1: 41K7HZ | CODING_RATE_4_8,
+LoRa_Cfg_LR_3 = { LR_Cfg_Reg1: BW_41K7HZ | CODING_RATE_4_8,
                   LR_Cfg_Reg2: SPREADING_FACTOR_4096CPS | RX_PAYLOAD_CRC_ON,
                   LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
                   LR_Cfg_BW:   41.7 }
