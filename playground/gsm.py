@@ -2,7 +2,7 @@
 
 
 
-import serial   
+import serial
 import os, time
 
 # Enable Serial Communication
