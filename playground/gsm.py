@@ -1,8 +1,60 @@
 #!/usr/bin/python3 -u
 
 
+"""
+Documentation
+=============
 
-import serial   
+Status LED
+----------
+
+Blink every 1s: The module is running but hasn’t made connection to the cellular network yet.
+Blink every 2s: The GPRS data connection you requested is active.
+Blink every 3s: The module has made contact with the cellular network & can send/receive voice and SMS.
+Source: https://lastminuteengineers.com/sim800l-gsm-module-arduino-tutorial/
+
+
+Users/Groups
+------------
+
+sudo usermod -a -G dialout
+
+
+Shell access
+------------
+
+$> screen /dev/ttyUSB0 115200
+
+
+Send SMS
+--------
+
+AT
+OK
+AT+CMGF=1
+OK
+AT+CSMP=17,167,0,0
+OK
+AT+CMGS="0676xxxxxxx"
+> hello world
++CMGS: 12
+
+# don't forget to enter ctrl-z after the message text and before CR
+
+OK
+
+
+Further documentation
+---------------------
+
+https://elinux.org/RPi_Serial_Connection
+http://g-heinrichs.de/attiny/module/SIM800L.pdf
+
+"""
+
+
+
+import serial
 import os, time
 
 # Enable Serial Communication
