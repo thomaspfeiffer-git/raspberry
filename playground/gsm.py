@@ -5,7 +5,6 @@
 Documentation
 =============
 
-<<<<<<< HEAD
 Status LED
 ----------
 
@@ -42,8 +41,6 @@ AT+CMGS="0676xxxxxxx"
 
 # don't forget to enter ctrl-z after the message text and before CR
 
-OK
-
 
 Further documentation
 ---------------------
@@ -54,9 +51,6 @@ http://g-heinrichs.de/attiny/module/SIM800L.pdf
 """
 
 
-
-=======
->>>>>>> a97ae3efd764a079983f39ad34e6cd1f49a40601
 import serial
 import os, time
 
