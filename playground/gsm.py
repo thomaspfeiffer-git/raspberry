@@ -5,6 +5,7 @@
 Documentation
 =============
 
+<<<<<<< HEAD
 Status LED
 ----------
 
@@ -54,6 +55,8 @@ http://g-heinrichs.de/attiny/module/SIM800L.pdf
 
 
 
+=======
+>>>>>>> a97ae3efd764a079983f39ad34e6cd1f49a40601
 import serial
 import os, time
 
