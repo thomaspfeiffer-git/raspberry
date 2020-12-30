@@ -49,6 +49,9 @@ from csv_fieldnames import *
 # LoRa configs
 # http://www.airspayce.com/mikem/arduino/RadioHead/classRH__RF95.html#ab9605810c11c025758ea91b2813666e3
 
+# An Experimental Evaluation of the Reliability of LoRa Long-Range Low-Power Wireless Communication
+# https://www.mdpi.com/2224-2708/6/2/7/pdf
+
 LoRa_Cfg_Medium = { LR_Cfg_Reg1: BW_125KHZ | CODING_RATE_4_5,
                     LR_Cfg_Reg2: SPREADING_FACTOR_128CPS | RX_PAYLOAD_CRC_ON,
                     LR_Cfg_Reg3: MOBILE_NODE_MOBILE | AGC_AUTO_ON,
