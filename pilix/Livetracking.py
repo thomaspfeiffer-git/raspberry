@@ -336,7 +336,18 @@ class Relais (object):
         self.udp     = UDP()
         self.display = Display()
 
+        from gps3.agps3threaded import AGPS3mechanism
+        self.gps = AGPS3mechanism()
+        self.gps.stream_data()
+        self.gps.run_thread()
+
         self._running = True
+
+    def log_gps (self):
+        Log(f"GPS: time: {self.gps.data_stream.time}; lat: {self.gps.data_stream.lat}; " + \
+            f"lon: {self.gps.data_stream.lon}; alt: {self.gps.data_stream.alt}; " + \
+            f"speed: {self.gps.data_stream.speed}")
+        Log(f"URL: https://maps.google.at/maps?q=loc:{self.gps.data_stream.lat},{self.gps.data_stream.lon}")
 
     def run (self):
         while self._running:
@@ -350,6 +361,7 @@ class Relais (object):
                 Log("RFM96W: Data received: {}".format(str))
                 rssi = self.rfm96w.last_rssi
                 Log("RSSI: {}".format(rssi))
+                self.log_gps()
                 self.udp.send(str.encode('utf-8'))
                 self.display.showdata(str, rssi)
             else:
