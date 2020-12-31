@@ -22,6 +22,7 @@ This lib can be used:
 # nohup ./Livetracking.py >livetracking.log 2>&1 &
 
 
+from datetime import datetime
 import hmac
 import socket
 import sys
@@ -288,9 +289,15 @@ class Display (object):
         self.font = ImageFont.load_default()
         (_, self.textheight) = self.draw.textsize("Text", font=self.font)
 
-    def show_message (self, message):
+    def show_message (self, line1="", line2="", line3="", line4=""):
+        lines = [line1, line2, line3, line4]
+        y = self.ypos
+
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
-        self.draw.text((self.xpos, self.ypos), message)
+        for line in lines:
+            self.draw.text((self.xpos, y), line)
+            y += self.textheight
+
         self.display.image(self.image)
         self.display.display()
 
@@ -340,7 +347,7 @@ class Relais (object):
         self.rfm96w  = Pilix_RFM96W(sender=False)
         self.udp     = UDP()
         self.display = Display(address=SSD1306.I2C_SECONDARY_ADDRESS)
-        self.display.show_message("RFM96 initialized")
+        self.display.show_message(datetime.now().strftime("%Y%m%d %H:%M:%S"),"RFM96 initialized")
 
         from gps3.agps3threaded import AGPS3mechanism
         self.gps = AGPS3mechanism()
