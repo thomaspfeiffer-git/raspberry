@@ -213,7 +213,7 @@ class Pilix_RFM96W (RFM9x):
                          reset_pin=CONFIG.Livetracking.LoRa_pinReset)
         if not self.init():
             Log("Error: RFM96W not found!")
-            self.cleanup()    # TODO: show some message on SSD1306!
+            self.cleanup()
             sys.exit()
         else:
             Log("RFM96W LoRa mode ok!")
@@ -268,14 +268,13 @@ class Sender_LoRa (threading.Thread):
 ###############################################################################
 # Display #####################################################################
 class Display (object):
-    def __init__ (self):
-        from actuators.SSD1306 import SSD1306
-
+    from actuators.SSD1306 import SSD1306
+    def __init__ (self, address=SSD1306.I2C_BASE_ADDRESS):
         from PIL import Image
         from PIL import ImageDraw
         from PIL import ImageFont
 
-        self.display = SSD1306()
+        self.display = SSD1306(address)
         self.display.begin()
         self.display.clear()
         self.display.display()
@@ -288,6 +287,12 @@ class Display (object):
         self.draw = ImageDraw.Draw(self.image)
         self.font = ImageFont.load_default()
         (_, self.textheight) = self.draw.textsize("Text", font=self.font)
+
+    def show_message (self, message):
+        self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
+        self.draw.text((self.xpos, self.ypos), message)
+        self.display.image(self.image)
+        self.display.display()
 
     def showdata (self, data, rssi):
         def my_ip ():
@@ -334,7 +339,8 @@ class Relais (object):
     def __init__ (self):
         self.rfm96w  = Pilix_RFM96W(sender=False)
         self.udp     = UDP()
-        self.display = Display()
+        self.display = Display(address=SSD1306.I2C_SECONDARY_ADDRESS)
+        self.display.show_message("RFM96 initialized")
 
         from gps3.agps3threaded import AGPS3mechanism
         self.gps = AGPS3mechanism()
@@ -490,6 +496,7 @@ def shutdown_application ():
 ## main #######################################################################
 if __name__ == "__main__":
     import argparse
+    from actuators.SSD1306 import SSD1306
     from Shutdown import Shutdown
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 

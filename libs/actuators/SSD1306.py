@@ -2,7 +2,7 @@
 ###############################################################################
 # ssd1306.py                                                                  #
 # Control of OLED Display SSD1306 (128 x 64)                                  #
-# (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017, 2020                  #
 ###############################################################################
 """provides a class for handling the oled display SSD1306 (128 x 64)"""
 
@@ -25,7 +25,8 @@ from i2c import I2C
 
 class SSD1306 (I2C):
     # Constants
-    I2C_ADDRESS = 0x3C    # 011110+SA0+RW - 0x3C or 0x3D
+    I2C_BASE_ADDRESS = 0x3C
+    I2C_SECONDARY_ADDRESS = 0x3D
     SETCONTRAST = 0x81
     DISPLAYALLON_RESUME = 0xA4
     DISPLAYALLON = 0xA5
@@ -61,13 +62,13 @@ class SSD1306 (I2C):
     VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL = 0x29
     VERTICAL_AND_LEFT_HORIZONTAL_SCROLL = 0x2A
 
-    def __init__ (self, width=128, height=64, lock=None):
+    def __init__ (self, address=I2C_BASE_ADDRESS, width=128, height=64, lock=None):
         if sys.version_info >= (3,0):
             super().__init__(lock)
         else:
             super(SSD1306, self).__init__(lock)
 
-        self._address = SSD1306.I2C_ADDRESS
+        self._address = address
         self.width = width
         self.height = height
         self.__pages = height//8
