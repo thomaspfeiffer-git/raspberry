@@ -83,7 +83,7 @@ LoRa_Cfg_LR_3 = { LR_Cfg_Reg1: BW_41K7HZ | CODING_RATE_4_8,
                   LR_Cfg_BW:   41.7 }
 
 
-LoRa_Cfg = LoRa_Cfg_LR_3
+LoRa_Cfg = LoRa_Cfg_LR_2
 
 
 ###############################################################################
