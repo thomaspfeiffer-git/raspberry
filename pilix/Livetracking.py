@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Livetracking.py                                                             #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2018             #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2018, 2020, 2021 #
 ###############################################################################
 """
 ... TODO: add some useful comments here
@@ -30,7 +30,7 @@ import threading
 import time
 
 sys.path.append("../libs/")
-from Commons import Digest, Singleton
+from Commons import Digest, Singleton, MyIP
 from Logging import Log
 
 try:
@@ -45,21 +45,6 @@ from actuators.RFM9x_constants import *
 
 from config import CONFIG
 from csv_fieldnames import *
-
-
-
-def MyIP ():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        # doesn't even have to be reachable
-        s.connect(('10.255.255.255', 1))
-        IP = s.getsockname()[0]
-    except:
-        IP = 'x.x.x.x'
-    finally:
-        s.close()
-    return IP
-
 
 
 

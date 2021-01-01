@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ############################################################################
 # Commons.py                                                               #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2021          #
 ############################################################################
 
 """
@@ -30,7 +30,7 @@ class Singleton (type):
 Usage:
     TODO:
 
-"""    
+"""
 ############################################################################
 class Digest (object):
     def __init__ (self, secret):
@@ -41,10 +41,32 @@ class Digest (object):
         import hashlib
         import hmac
 
-        digest_maker = hmac.new(self.__secret, 
-                                data.encode('utf-8'), 
-                                hashlib.sha256) 
+        digest_maker = hmac.new(self.__secret,
+                                data.encode('utf-8'),
+                                hashlib.sha256)
         return base64.encodestring(digest_maker.digest()).decode('utf-8').rstrip()
+
+
+############################################################################
+# MyIP #####################################################################
+"""
+Usage:
+    TODO:
+
+"""
+############################################################################
+def MyIP ():
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except:
+        IP = 'x.x.x.x'
+    finally:
+        s.close()
+    return IP
 
 
 # eof #
