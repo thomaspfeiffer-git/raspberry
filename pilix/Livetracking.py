@@ -370,7 +370,8 @@ class Relais (object):
         (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
         (_, timestamp) = timestamp.split('T') # Show time only
 
-        self.display_pilix.show_message(f"{msgid} {timestamp}", f"Height: {alt}", f"U: {voltage} RSSI: {rssi}")
+        self.display_pilix.show_message(f"{msgid} {timestamp}", f"Lat: {lat}", f"Lon: {lon}", \
+                                        f"Alt: {alt}", f"U: {voltage} RSSI: {rssi}")
 
     def run (self):
         while self._running:
