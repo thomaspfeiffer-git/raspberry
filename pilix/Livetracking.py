@@ -47,6 +47,22 @@ from config import CONFIG
 from csv_fieldnames import *
 
 
+
+def MyIP ():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except:
+        IP = 'x.x.x.x'
+    finally:
+        s.close()
+    return IP
+
+
+
+
 # LoRa configs
 # http://www.airspayce.com/mikem/arduino/RadioHead/classRH__RF95.html#ab9605810c11c025758ea91b2813666e3
 
@@ -269,12 +285,12 @@ class Sender_LoRa (threading.Thread):
 ###############################################################################
 # Display #####################################################################
 class Display (object):
-    from actuators.SSD1306 import SSD1306
-    def __init__ (self, address=SSD1306.I2C_BASE_ADDRESS):
+    def __init__ (self, address, lock):
         from PIL import Image
         from PIL import ImageDraw
         from PIL import ImageFont
 
+        self.lock = lock
         self.display = SSD1306(address)
         self.display.begin()
         self.display.clear()
@@ -293,61 +309,61 @@ class Display (object):
         lines = [line1, line2, line3, line4]
         y = self.ypos
 
-        self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
-        for line in lines:
-            self.draw.text((self.xpos, y), line)
-            y += self.textheight
+        with self.lock:
+            self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
+            for line in lines:
+                self.draw.text((self.xpos, y), line)
+                y += self.textheight
 
-        self.display.image(self.image)
-        self.display.display()
-
-    def showdata (self, data, rssi):
-        def my_ip ():
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            try:
-                # doesn't even have to be reachable
-                s.connect(('10.255.255.255', 1))
-                IP = s.getsockname()[0]
-            except:
-                IP = 'x.x.x.x'
-            finally:
-                s.close()
-            return IP
-
-        (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
-        self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
-        y = self.ypos
-
-        try:
-            (_, timestamp) = timestamp.split('T') # Show time only
-        except:
-            pass
-
-        self.draw.text((self.xpos, y), f"{msgid} {timestamp}")
-        y += self.textheight
-        self.draw.text((self.xpos, y), f"Height: {alt}")
-        y += self.textheight
-        self.draw.text((self.xpos, y), f"U: {voltage} RSSI: {rssi}")
-        y += self.textheight
-        self.draw.text((self.xpos, y), f"IP: {my_ip()}")
-
-        self.display.image(self.image)
-        self.display.display()
+            self.display.image(self.image)
+            self.display.display()
 
     def close (self):
-        self.display.clear()
-        self.display.display()
+        with self.lock:
+            self.display.clear()
+            self.display.display()
 
 
 ###############################################################################
 # Ralais ######################################################################
 class Relais (object):
     """receives LoRa data and forwards them to the server using UDP"""
+
+    class LocalData (threading.Thread):
+        def __init__ (self, display):
+            threading.Thread.__init__(self)
+            from sensors.BME280 import BME280
+            self.bme280 = BME280()
+            self.display = display
+
+        def run (self):
+            self._running = True
+            time.sleep(30)
+
+            while self._running:
+                self.display.show_message(datetime.now().strftime("%Y%m%d %H:%M:%S"), \
+                                          f"IP: {MyIP()}", \
+                                          f"{self.bme280.read_temperature():.1f} °C", \
+                                          f"{self.bme280.read_humidity():.1f} % rF")
+
+                for _ in range(50):
+                    if self._running:
+                        time.sleep(0.1)
+
+        def stop (self):
+            self._running = False
+
     def __init__ (self):
-        self.rfm96w  = Pilix_RFM96W(sender=False)
-        self.udp     = UDP()
-        self.display = Display(address=SSD1306.I2C_SECONDARY_ADDRESS)
-        self.display.show_message(datetime.now().strftime("%Y%m%d %H:%M:%S"),"RFM96 initialized")
+        self.rfm96w = Pilix_RFM96W(sender=False)
+        self.udp = UDP()
+        self.__lock = threading.Lock()
+        self.display_pilix = Display(address=SSD1306.I2C_BASE_ADDRESS, lock=self.__lock)
+        self.display_local = Display(address=SSD1306.I2C_SECONDARY_ADDRESS, lock=self.__lock)
+
+        self.display_local.show_message(datetime.now().strftime("%Y%m%d %H:%M:%S"),\
+                                        "RFM96 initialized", f"IP: {MyIP()}")
+        self.display_local_thread = self.LocalData(self.display_local)
+        self.display_local_thread.start()
 
         from gps3.agps3threaded import AGPS3mechanism
         self.gps = AGPS3mechanism()
@@ -361,6 +377,12 @@ class Relais (object):
             f"lon: {self.gps.data_stream.lon}; alt: {self.gps.data_stream.alt}; " + \
             f"speed: {self.gps.data_stream.speed}")
         Log(f"URL: https://maps.google.at/maps?q=loc:{self.gps.data_stream.lat},{self.gps.data_stream.lon}")
+
+    def show_data (self, data, rssi):
+        (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
+        (_, timestamp) = timestamp.split('T') # Show time only
+
+        self.display_pilix.show_message(f"{msgid} {timestamp}", f"Height: {alt}", f"U: {voltage} RSSI: {rssi}")
 
     def run (self):
         while self._running:
@@ -376,15 +398,18 @@ class Relais (object):
                 Log("RSSI: {}".format(rssi))
                 self.log_gps()
                 self.udp.send(str.encode('utf-8'))
-                self.display.showdata(str, rssi)
+                self.show_data(str, rssi)
             else:
                 Log("RSSI: {}".format(self.rfm96w.last_rssi))
 
     def stop (self):
         self._running = False
+        self.display_local_thread.stop()
+        self.display_local_thread.join()
         self.rfm96w.set_mode_idle()
         self.rfm96w.cleanup()
-        self.display.close()
+        self.display_pilix.close()
+        self.display_local.close()
 
 
 ###############################################################################
