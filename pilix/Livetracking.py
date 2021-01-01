@@ -315,21 +315,24 @@ class Relais (object):
     """receives LoRa data and forwards them to the server using UDP"""
 
     class LocalData (threading.Thread):
-        def __init__ (self, display):
+        def __init__ (self, display, lock):
             threading.Thread.__init__(self)
             from sensors.BME280 import BME280
             self.bme280 = BME280()
             self.display = display
+            self.lock = lock
 
         def run (self):
             self._running = True
             time.sleep(30)
 
             while self._running:
+                with self.lock:
+                    temp = f"{self.bme280.read_temperature():.1f} °C"
+                    humi = f"{self.bme280.read_humidity():.1f} % rF"
+
                 self.display.show_message(datetime.now().strftime("%Y%m%d %H:%M:%S"), \
-                                          f"IP: {MyIP()}", \
-                                          f"{self.bme280.read_temperature():.1f} °C", \
-                                          f"{self.bme280.read_humidity():.1f} % rF")
+                                          f"IP: {MyIP()}", temp, humi)
 
                 for _ in range(50):
                     if self._running:
@@ -347,7 +350,7 @@ class Relais (object):
 
         self.display_local.show_message(datetime.now().strftime("%Y%m%d %H:%M:%S"),\
                                         "RFM96 initialized", f"IP: {MyIP()}")
-        self.display_local_thread = self.LocalData(self.display_local)
+        self.display_local_thread = self.LocalData(self.display_local, self.__lock)
         self.display_local_thread.start()
 
         from gps3.agps3threaded import AGPS3mechanism
