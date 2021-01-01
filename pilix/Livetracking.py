@@ -290,8 +290,8 @@ class Display (object):
         self.font = ImageFont.load_default()
         (_, self.textheight) = self.draw.textsize("Text", font=self.font)
 
-    def show_message (self, line1="", line2="", line3="", line4=""):
-        lines = [line1, line2, line3, line4]
+    def show_message (self, line1="", line2="", line3="", line4="", line5=""):
+        lines = [line1, line2, line3, line4, line5]
         y = self.ypos
 
         with self.lock:
