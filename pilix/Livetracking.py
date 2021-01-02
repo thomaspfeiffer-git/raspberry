@@ -351,15 +351,15 @@ class Relais (object):
 
         def run (self):
             self._running = True
-            last_btn_control = None
 
             while self._running:
-                act_btn_control = self.io.input(CONFIG.PIN.BTN_Control)
-                if act_btn_control == 0:
+                if self.io.input(CONFIG.PIN.BTN_Control) == 0:
                     Log(f"Button Shutdown: {act_btn_control}")
                     shutdown_thread = threading.Thread(target=shutdown)
                     shutdown_thread.start()
                     Log("Shutdown thread started.")
+                    while self._running: # wait until process has been stopped
+                        time.sleep(0.05)
 
                 time.sleep(0.05)
 
