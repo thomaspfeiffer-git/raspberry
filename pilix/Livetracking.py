@@ -341,6 +341,32 @@ class Relais (object):
         def stop (self):
             self._running = False
 
+    class Shutdown (threading.Thread):
+        import RPi.GPIO as io
+        def __init__ (self):
+            threading.Thread.__init__(self)
+            self.io.setwarnings(False)
+            self.io.setmode(self.io.BOARD)
+            self.io.setup(CONFIG.PIN.BTN_Control, self.io.IN)
+
+        def run (self):
+            self._running = True
+            last_btn_control = None
+
+            while self._running:
+                act_btn_control = self.io.input(CONFIG.PIN.BTN_Control)
+                if act_btn_control == 0:
+                    Log(f"Button Shutdown: {act_btn_control}")
+                    shutdown_thread = threading.Thread(target=shutdown)
+                    shutdown_thread.start()
+                    Log("Shutdown thread started.")
+
+                time.sleep(0.05)
+
+        def stop (self):
+            self._running = False
+
+
     def __init__ (self):
         self.rfm96w = Pilix_RFM96W(sender=False)
         self.udp = UDP()
@@ -352,6 +378,9 @@ class Relais (object):
                                         "RFM96 initialized", f"IP: {MyIP()}")
         self.display_local_thread = self.LocalData(self.display_local, self.__lock)
         self.display_local_thread.start()
+
+        self.shutdown = self.Shutdown()
+        self.shutdown.start()
 
         from gps3.agps3threaded import AGPS3mechanism
         self.gps = AGPS3mechanism()
@@ -393,6 +422,8 @@ class Relais (object):
 
     def stop (self):
         self._running = False
+        self.shutdown.stop()
+        self.shutdown.join()
         self.display_local_thread.stop()
         self.display_local_thread.join()
         self.rfm96w.set_mode_idle()
@@ -511,6 +542,17 @@ def shutdown_application ():
     r.stop()
     Log("Application stopped")
     sys.exit(0)
+
+
+def shutdown ():
+    """shuts down the OS"""
+    Log("Shutting down in 5 s ...")
+    Log("Stopping application")
+    r.stop()
+    Log("Application stopped")
+    time.sleep(5)
+    Log("Shutdown now")
+    subprocess.run(["sudo", "shutdown", "-h", "now"])
 
 
 ###############################################################################
