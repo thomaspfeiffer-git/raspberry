@@ -546,6 +546,8 @@ def shutdown_application ():
 
 def shutdown ():
     """shuts down the OS"""
+
+    import subprocess
     Log("Shutting down in 5 s ...")
     Log("Stopping application")
     r.stop()
