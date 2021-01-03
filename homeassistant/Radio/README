@@ -1,0 +1,27 @@
+
+
+
+
+sudo apt-get install vlc
+
+# Run in background
+# use cvlc
+cvlc http://ic2377.c900.fast-serv.com/tsonyc.mp3 &
+
+
+### The Sound of New York City ###
+http://ic2377.c900.fast-serv.com/tsonyc.mp3
+
+### BBC Radio 2 ###
+http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_q
+
+### OE3 ###
+https://orf-live.ors-shoutcast.at/oe3-q2a
+
+### 88.6 ###
+https://radio886.fluidstream.eu/886_live.mp3?FLID=7
+
+
+
+
+
