@@ -81,7 +81,7 @@ class RadioApp (tk.Frame):
             url = Stations[station][station_url]
             self.buttons.update({station: ttk.Button(self.frame, text=Stations[station][station_name],
                                                      style="Radio.TButton",
-                                                     command = lambda: self.play(url))})
+                                                     command = lambda u=url: self.play(u))})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
