@@ -326,6 +326,8 @@ class Relais (object):
 
 
     def __init__ (self):
+        from actuators.SSD1306 import SSD1306
+
         self.rfm96w = Pilix_RFM96W(sender=False)
         self.udp = UDP()
         self.__lock = threading.Lock()
@@ -355,7 +357,10 @@ class Relais (object):
 
     def show_data (self, data, rssi):
         (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
-        (_, timestamp) = timestamp.split('T') # Show time only
+        try:
+            (_, timestamp) = timestamp.split('T') # Show time only
+        except ValueError:
+            pass
 
         self.display_pilix.print(f"{msgid} {timestamp}", f"Lat: {lat}", f"Lon: {lon}", \
                                  f"Alt: {alt}", f"U: {voltage} RSSI: {rssi}")
@@ -519,7 +524,6 @@ def shutdown ():
 ## main #######################################################################
 if __name__ == "__main__":
     import argparse
-    from actuators.SSD1306 import SSD1306
     from Shutdown import Shutdown
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
