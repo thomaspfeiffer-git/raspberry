@@ -99,7 +99,7 @@ class Display1306 (object):
         self.display.begin()
         self.off()
 
-        self.xpos = 4
+        self.xpos = 6
         self.ypos = 2
         self.image = Image.new('1', (self.display.width, self.display.height))
         self.draw = ImageDraw.Draw(self.image)
