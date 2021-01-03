@@ -78,9 +78,10 @@ class RadioApp (tk.Frame):
 
         self.buttons = OrderedDict()
         for station in Stations:
-            print(f"station url: {Stations[station][station_url]}")
-            self.buttons.update({station: ttk.Button(self.frame, text=Stations[station][station_name], style="Radio.TButton",
-                                                      command = lambda: self.play(Stations[station][station_url]))})
+            url = Stations[station][station_url]
+            self.buttons.update({station: ttk.Button(self.frame, text=Stations[station][station_name],
+                                                     style="Radio.TButton",
+                                                     command = lambda: self.play(url))})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
