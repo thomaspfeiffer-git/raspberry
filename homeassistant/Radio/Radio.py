@@ -21,7 +21,10 @@ from tkinter.font import Font
 
 from collections import OrderedDict
 import os
+import subprocess
 import sys
+import threading
+import time
 
 sys.path.append('../../libs')
 from Shutdown import Shutdown
@@ -40,6 +43,45 @@ Stations.update({ 's1': { station_name: "88.6", station_url: "https://radio886.f
 Stations.update({ 's2': { station_name: "Ö3", station_url: "https://orf-live.ors-shoutcast.at/oe3-q2a" } })
 Stations.update({ 's3': { station_name: "The Sound of New York City", station_url: "http://ic2377.c900.fast-serv.com/tsonyc.mp3" } })
 Stations.update({ 's4': { station_name: "BBC Radio 2", station_url: "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_q" } })
+
+
+###############################################################################
+# Control #####################################################################
+class Control (threading.Thread):
+    def __init__ (self, master):
+        threading.Thread.__init__(self)
+        self.master = master
+        self.radio_process = None
+
+    def show_window (self):
+        self.master.deiconify()
+
+    def hide_window (self):
+        self.master.withdraw()
+
+    def play (self, station_url):
+        Log(f"Playing {station_url}")
+        if self.radio_process is not None:
+            self.stop_play()
+
+        self.radio_process = subprocess.Popen(["cvlc", station_url])
+
+    def stop_play (self):
+        Log("Stopping radio station.")
+        if self.radio_process:
+            self.radio_process.terminate()
+            self.radio_process = None
+
+    def run (self):
+        self._running = True
+
+        while self._running:
+            time.sleep(0.1)
+
+        self.stop_play()
+
+    def stop (self):
+        self._running = False
 
 
 ###############################################################################
@@ -65,7 +107,7 @@ class RadioApp (tk.Frame):
         self.create_tk_elements()
 
     def play (self, url):
-        Log(f"Playing {url}")
+        radio.control.play(url)
 
     def create_tk_elements (self):
         self.style = ttk.Style()
@@ -84,9 +126,6 @@ class RadioApp (tk.Frame):
                                                      command = lambda u=url: self.play(u))})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
-
-
-
 
 
 ###############################################################################
@@ -108,6 +147,9 @@ class Radio (object):
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = RadioApp(master=self.root)
 
+        self.control = Control(self.root)
+        self.control.start()
+
     def poll (self):
         """polling needed for ctrl-c"""
         self.root.pollid = self.root.after(50, self.poll)
@@ -119,6 +161,9 @@ class Radio (object):
 
     def stop (self):
         """stops application, called on shutdown"""
+        self.control.stop()
+        self.control.join()
+
         self.root.after_cancel(self.root.pollid)
         self.root.destroy()
         self.root.quit()
@@ -128,9 +173,9 @@ class Radio (object):
 # shutdown_application ########################################################
 def shutdown_application ():
     """called on shutdown; stops all threads"""
-    Log("shutdown_application()")
-
+    Log("Stopping application")
     radio.stop()
+    Log("Application stopped")
     sys.exit(0)
 
 
