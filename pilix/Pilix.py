@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Pilix.py                                                                    #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2021             #
 ###############################################################################
 """Pilix: my Pi in the sky project:
    control weather balloon"""
 
 
 ### usage ###
-# nohup ./Pilix.py > ./Logs/pilix.log 2>&1 &
+# nohup ./Pilix.py 2>&1 >./Logs/pilix.log &
 
 
 ### needful things ###
@@ -77,7 +77,6 @@ import time
 
 sys.path.append("../libs/")
 from Commons import Singleton, Display1306
-from i2c import I2C
 from Logging import Log
 from Shutdown import Shutdown
 
