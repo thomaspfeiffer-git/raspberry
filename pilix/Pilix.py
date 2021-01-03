@@ -44,11 +44,6 @@
 # cgps -s
 #
 #
-# --- Display ---
-# sudo apt-get install libjpeg8-dev -y
-# sudo pip3 install Pillow
-#
-#
 # --- Flask ---
 # http://flask.pocoo.org/docs/0.12/
 #
@@ -80,17 +75,12 @@ import sys
 import threading
 import time
 
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-
 sys.path.append("../libs/")
-from Commons import Singleton
+from Commons import Singleton, Display1306
 from i2c import I2C
 from Logging import Log
 from Shutdown import Shutdown
 
-from actuators.SSD1306 import SSD1306
 from sensors.CPU import CPU
 from sensors.BMP180 import BMP180
 from sensors.DS1820 import DS1820
@@ -253,54 +243,6 @@ class StatusLED (object):
 
 
 ###############################################################################
-# Display #####################################################################
-class Display (object):
-    def __init__ (self):
-        self.display = SSD1306()
-
-        self.display.begin()
-        self.off()
-
-        self.xpos = 6
-        self.ypos = 2
-
-        self.image = Image.new('1', (self.display.width, self.display.height))
-        self.draw  = ImageDraw.Draw(self.image)
-        self.font  = ImageFont.load_default()
-        (_, self.fontheight) = self.font.getsize("A")
-
-    def draw_line (self, text):
-        self.draw.text((self.xpos, self.y), text, font=self.font, fill=0)
-        self.y += self.fontheight
-
-    def print (self, data):
-        self.draw.rectangle((0,0,self.display.width,self.display.height),
-                            outline=0, fill=255)
-        self.y = self.ypos
-
-        self.draw_line("Temp: {} °C".format(data[V_TemperatureBox]))
-        self.draw_line("Press: {} hPa".format(data[V_Pressure] / 100.0))
-        self.draw_line("Voltage: {:.2f} V".format(data[V_Voltage]))
-        self.draw_line("X: {} Y: {}".format(data[V_GPS_Lon], data[V_GPS_Lat]))
-        self.draw_line("Time: {}".format(data[V_Time]))
-
-        self.display.image(self.image)
-        self.display.display()
-
-    def shutdown_message (self):
-        self.draw.rectangle((0,0,self.display.width,self.display.height),
-                            outline=0, fill=255)
-        self.y = self.ypos
-        self.draw_line("Shutting down in 5 s ...")
-        self.display.image(self.image)
-        self.display.display()
-
-    def off (self):
-        self.display.clear()
-        self.display.display()
-
-
-###############################################################################
 # CSV #########################################################################
 class CSV (object):
     fieldnames = [V_Time, V_TemperatureBox, V_TemperatureOutside,
@@ -372,7 +314,11 @@ class Control (threading.Thread):
             self.data[V_RunningOnBattery] = self.running_on_battery
             self.data.update(self.get_gps_data())
 
-            display.print(self.data)
+            display.print(f"Temp: {self.data[V_TemperatureBox]} °C",
+                          f"Press: {self.data[V_Pressure] / 100.0} hPa",
+                          f"Voltage: {self.data[V_Voltage]:.2f}",
+                          f"X: {self.data[V_GPS_Lat]} Y: {self.data[V_GPS_Lon]}",
+                          f"Time: {self.data[V_Time]}")
             self.csv.write(self.data)
             livetracking_udp.setdata(self.data)
             livetracking_lora.setdata(self.data)
@@ -436,7 +382,7 @@ def shutdown ():
     """shuts down the OS"""
     Log("Shutting down in 5 s ...")
     stop_threads()
-    display.shutdown_message()
+    display.print("Shutting down in 5 s ...")
     time.sleep(5)
     display.off()
     Log("Shutdown now")
@@ -459,7 +405,7 @@ if __name__ == "__main__":
     gps.stream_data()
     gps.run_thread()
 
-    display = Display()
+    display = Display1306()
 
     livetracking_udp = Livetracking.Sender_UDP()
     livetracking_udp.start()
