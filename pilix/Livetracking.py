@@ -30,7 +30,7 @@ import threading
 import time
 
 sys.path.append("../libs/")
-from Commons import Digest, Singleton, MyIP
+from Commons import Digest, Singleton, MyIP, Display1306
 from Logging import Log
 
 try:
@@ -268,48 +268,6 @@ class Sender_LoRa (threading.Thread):
 
 
 ###############################################################################
-# Display #####################################################################
-class Display (object):
-    def __init__ (self, address, lock):
-        from PIL import Image
-        from PIL import ImageDraw
-        from PIL import ImageFont
-
-        self.lock = lock
-        self.display = SSD1306(address)
-        self.display.begin()
-        self.display.clear()
-        self.display.display()
-
-        self.xpos = 4
-        self.ypos = 4
-        self.width = self.display.width
-        self.height = self.display.height
-        self.image = Image.new('1', (self.width, self.height))
-        self.draw = ImageDraw.Draw(self.image)
-        self.font = ImageFont.load_default()
-        (_, self.textheight) = self.draw.textsize("Text", font=self.font)
-
-    def show_message (self, line1="", line2="", line3="", line4="", line5=""):
-        lines = [line1, line2, line3, line4, line5]
-        y = self.ypos
-
-        with self.lock:
-            self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
-            for line in lines:
-                self.draw.text((self.xpos, y), line)
-                y += self.textheight
-
-            self.display.image(self.image)
-            self.display.display()
-
-    def close (self):
-        with self.lock:
-            self.display.clear()
-            self.display.display()
-
-
-###############################################################################
 # Ralais ######################################################################
 class Relais (object):
     """receives LoRa data and forwards them to the server using UDP"""
@@ -331,8 +289,8 @@ class Relais (object):
                     temp = f"{self.bme280.read_temperature():.1f} °C"
                     humi = f"{self.bme280.read_humidity():.1f} % rF"
 
-                self.display.show_message(datetime.now().strftime("%Y%m%d %H:%M:%S"), \
-                                          f"IP: {MyIP()}", temp, humi)
+                self.display.print(datetime.now().strftime("%Y%m%d %H:%M:%S"), \
+                                   f"IP: {MyIP()}", temp, humi)
 
                 for _ in range(50):
                     if self._running:
@@ -371,11 +329,11 @@ class Relais (object):
         self.rfm96w = Pilix_RFM96W(sender=False)
         self.udp = UDP()
         self.__lock = threading.Lock()
-        self.display_pilix = Display(address=SSD1306.I2C_BASE_ADDRESS, lock=self.__lock)
-        self.display_local = Display(address=SSD1306.I2C_SECONDARY_ADDRESS, lock=self.__lock)
+        self.display_pilix = Display1306(address=SSD1306.I2C_BASE_ADDRESS, lock=self.__lock)
+        self.display_local = Display1306(address=SSD1306.I2C_SECONDARY_ADDRESS, lock=self.__lock)
 
-        self.display_local.show_message(datetime.now().strftime("%Y%m%d %H:%M:%S"),\
-                                        "RFM96 initialized", f"IP: {MyIP()}")
+        self.display_local.print(datetime.now().strftime("%Y%m%d %H:%M:%S"),\
+                                 "RFM96 initialized", f"IP: {MyIP()}")
         self.display_local_thread = self.LocalData(self.display_local, self.__lock)
         self.display_local_thread.start()
 
@@ -399,8 +357,8 @@ class Relais (object):
         (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
         (_, timestamp) = timestamp.split('T') # Show time only
 
-        self.display_pilix.show_message(f"{msgid} {timestamp}", f"Lat: {lat}", f"Lon: {lon}", \
-                                        f"Alt: {alt}", f"U: {voltage} RSSI: {rssi}")
+        self.display_pilix.print(f"{msgid} {timestamp}", f"Lat: {lat}", f"Lon: {lon}", \
+                                 f"Alt: {alt}", f"U: {voltage} RSSI: {rssi}")
 
     def run (self):
         while self._running:
@@ -428,8 +386,8 @@ class Relais (object):
         self.display_local_thread.join()
         self.rfm96w.set_mode_idle()
         self.rfm96w.cleanup()
-        self.display_pilix.close()
-        self.display_local.close()
+        self.display_pilix.off()
+        self.display_local.off()
 
 
 ###############################################################################
