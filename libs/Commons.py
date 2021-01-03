@@ -69,5 +69,61 @@ def MyIP ():
     return IP
 
 
+############################################################################
+# Display1306 ##############################################################
+"""
+Usage:
+    TODO:
+
+
+"""
+############################################################################
+class Display1306 (object):
+    """ ### Packages you might need to install ###
+        # sudo apt-get install libjpeg8-dev -y
+        # sudo pip3 install Pillow
+    """
+    from actuators.SSD1306 import SSD1306
+    def __init__ (self, address=SSD1306.I2C_BASE_ADDRESS, lock=None):
+        from PIL import Image
+        from PIL import ImageDraw
+        from PIL import ImageFont
+
+        if lock != None:
+            self.lock = lock
+        else:
+            import threading
+            self.lock = threading.Lock()
+
+        self.display = self.SSD1306(address) # todo: check if 'with lock' is needed
+        self.display.begin()
+        self.off()
+
+        self.xpos = 2
+        self.ypos = 2
+        self.image = Image.new('1', (self.width, self.height))
+        self.draw = ImageDraw.Draw(self.image)
+        self.font = ImageFont.load_default()
+        (_, self.textheight) = self.draw.textsize("Text", font=self.font)
+
+    def show_message (self, line1="", line2="", line3="", line4="", line5=""):
+        lines = [line1, line2, line3, line4, line5]
+        y = self.ypos
+
+        with self.lock:
+            self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
+            for line in lines:
+                self.draw.text((self.xpos, y), line)
+                y += self.textheight
+
+            self.display.image(self.image)
+            self.display.display()
+
+    def off (self):
+        with self.lock:
+            self.display.clear()
+            self.display.display()
+
+
 # eof #
 
