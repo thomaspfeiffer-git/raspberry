@@ -112,19 +112,32 @@ class Radio_TK (tk.Frame):
         self.style = ttk.Style()
         self.style.configure("Radio.TButton",
                              font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
-                             width=25, background=CONFIG.COLORS.BUTTON)
+                             width=15, background=CONFIG.COLORS.BUTTON)
         self.style.map("Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON)],
                                         relief=[('pressed', 'groove'),
                                                 ('!pressed', 'ridge')])
 
+        frame_stations = tk.Frame(master=self.frame)
+        frame_stations.pack()
+        frame_control = tk.Frame(master=self.frame)
+        frame_control.pack()
+
+        i = 0
         self.buttons = OrderedDict()
         for station in Stations:
-            self.buttons.update({station: ttk.Button(self.frame, text=Stations[station][station_name],
+            frame = tk.Frame(master=frame_stations)
+            frame.grid(row=i // 2, column=i % 2)
+
+            self.buttons.update({station: ttk.Button(frame, text=Stations[station][station_name],
                                                      style="Radio.TButton",
                                                      command = lambda url=Stations[station][station_url]: radio.control.play(url))})
+            i += 1
 
-        self.buttons.update({'off': ttk.Button(self.frame, text="Ausschalten",
-                             style="Radio.TButton", command = lambda: radio.control.stop_play())})
+        # frame = tk.Frame(master=self.frame)
+        # frame.grid(row=i // 2, column=i % 2)
+        # frame.pack()
+        self.buttons.update({'off': ttk.Button(frame_control, text="Ausschalten",
+                                               style="Radio.TButton", command = lambda: radio.control.stop_play())})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
