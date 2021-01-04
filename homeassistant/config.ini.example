@@ -1,10 +1,11 @@
 [Queue]
-Hostname = hostname.domain.org
+Hostname = host.domain.org
 Port     = 50001
 Key      = my pretty cool passphrase
 
 [Brightness]
-URL      = http://<hostname>:5000/touchevent
+URL = http://server/touchevent
+port = 5000
 
 [Weatherstation]
 width  = 280
@@ -29,4 +30,16 @@ width  = 110
 height = 80
 xpos   = 690
 ypos   = 400
+
+[Radio]
+width  = 600
+height = 400
+xpos   = 50
+ypos   = 50
+port   = 5002
+
+[Sensors]
+port=5001
+
+# eof #
 

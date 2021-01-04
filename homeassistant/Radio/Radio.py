@@ -41,8 +41,10 @@ station_url  = "url"
 Stations = OrderedDict()
 Stations.update({ 's1': { station_name: "88.6", station_url: "https://radio886.fluidstream.eu/886_live.mp3?FLID=7" } })
 Stations.update({ 's2': { station_name: "Ö3", station_url: "https://orf-live.ors-shoutcast.at/oe3-q2a" } })
-Stations.update({ 's3': { station_name: "The Sound of New York City", station_url: "http://ic2377.c900.fast-serv.com/tsonyc.mp3" } })
-Stations.update({ 's4': { station_name: "BBC Radio 2", station_url: "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_q" } })
+Stations.update({ 's3': { station_name: "Radio Wien", station_url: "https://orf-live.ors-shoutcast.at/wie-q2a" } })
+Stations.update({ 's4': { station_name: "Lounge FM", station_url: "https://s35.derstream.net/ukwwien.mp3" } })
+Stations.update({ 's5': { station_name: "The Sound of New York City", station_url: "http://ic2377.c900.fast-serv.com/tsonyc.mp3" } })
+Stations.update({ 's6': { station_name: "BBC Radio 2", station_url: "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_q" } })
 
 
 ###############################################################################
