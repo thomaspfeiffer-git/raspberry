@@ -122,6 +122,9 @@ class Radio_TK (tk.Frame):
             self.buttons.update({station: ttk.Button(self.frame, text=Stations[station][station_name],
                                                      style="Radio.TButton",
                                                      command = lambda url=Stations[station][station_url]: radio.control.play(url))})
+
+        self.buttons.update({'off': ttk.Button(self.frame, text="Ausschalten",
+                             style="Radio.TButton", command = lambda: radio.control.stop_play())})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 

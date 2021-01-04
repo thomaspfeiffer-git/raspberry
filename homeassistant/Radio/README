@@ -1,6 +1,10 @@
 
 
 
+bluetooth:
+https://scribles.net/streaming-bluetooth-audio-from-phone-to-raspberry-pi-using-alsa/
+
+
 
 sudo apt-get install vlc
 
