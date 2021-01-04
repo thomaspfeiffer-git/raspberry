@@ -11,20 +11,18 @@
 # ./Radio.py 2>&1 > radio.log &
 
 
-# Packages you might install
-# sudo apt-get install python3-pil.imagetk
-
-
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.font import Font
 
 from collections import OrderedDict
+from flask import Flask
 import os
 import subprocess
 import sys
 import threading
 import time
+from werkzeug.serving import make_server
 
 sys.path.append('../../libs')
 from Shutdown import Shutdown
@@ -34,6 +32,8 @@ sys.path.append('../libraries')
 from touchevent import Touchevent
 
 from config import CONFIG
+
+app = Flask(__name__)
 
 
 station_name = "name"
@@ -85,8 +85,8 @@ class Control (threading.Thread):
 
 
 ###############################################################################
-# RadioApp ####################################################################
-class RadioApp (tk.Frame):
+# Radio_TK ####################################################################
+class Radio_TK (tk.Frame):
     def __init__ (self, master=None):
         super().__init__(master)
 
@@ -106,9 +106,6 @@ class RadioApp (tk.Frame):
         self.master.bind("<Button-1>", Touchevent.event) # brightness control
         self.create_tk_elements()
 
-    def play (self, url):
-        radio.control.play(url)
-
     def create_tk_elements (self):
         self.style = ttk.Style()
         self.style.configure("Radio.TButton",
@@ -120,10 +117,9 @@ class RadioApp (tk.Frame):
 
         self.buttons = OrderedDict()
         for station in Stations:
-            url = Stations[station][station_url]
             self.buttons.update({station: ttk.Button(self.frame, text=Stations[station][station_name],
                                                      style="Radio.TButton",
-                                                     command = lambda u=url: self.play(u))})
+                                                     command = lambda url=Stations[station][station_url]: radio.control.play(url))})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
@@ -145,7 +141,7 @@ class Radio (object):
                                                 CONFIG.COORDINATES.XPOS,
                                                 CONFIG.COORDINATES.YPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
-        self.app = RadioApp(master=self.root)
+        self.app = Radio_TK(master=self.root)
 
         self.control = Control(self.root)
         self.control.start()
@@ -160,7 +156,6 @@ class Radio (object):
         self.app.mainloop()
 
     def stop (self):
-        """stops application, called on shutdown"""
         self.control.stop()
         self.control.join()
 
@@ -170,12 +165,48 @@ class Radio (object):
 
 
 ###############################################################################
+# FlaskThread #################################################################
+class FlaskThread (threading.Thread):
+    def __init__ (self, app):
+        threading.Thread.__init__(self)
+        self.srv = make_server('0.0.0.0', CONFIG.APPLICATION.PORT, app)
+        self.ctx = app.app_context()
+        self.ctx.push()
+
+    def run (self):
+        Log("Starting flask server.")
+        self.srv.serve_forever()
+
+    def shutdown (self):
+        self.srv.shutdown()
+
+
+###############################################################################
+# Flask stuff #################################################################
+@app.route('/showapp')
+def API_ShowApp ():
+    radio.control.show_window()
+    return "OK.\n"
+
+@app.route('/hideapp')
+def API_HideApp ():
+    radio.control.hide_window()
+    return "OK.\n"
+
+@app.route('/radiooff')
+def API_RadioOff ():
+    radio.control.stop_play()
+    return "OK.\n"
+
+
+###############################################################################
 # shutdown_application ########################################################
 def shutdown_application ():
     """called on shutdown; stops all threads"""
-    Log("Stopping application")
+    Log("Stopping application.")
+    flask_server.shutdown()
     radio.stop()
-    Log("Application stopped")
+    Log("Application stopped.")
     sys.exit(0)
 
 
@@ -189,6 +220,9 @@ if __name__ == '__main__':
         os.environ["DISPLAY"] = ":0.0"
 
     shutdown = Shutdown(shutdown_func=shutdown_application)
+
+    flask_server = FlaskThread(app)
+    flask_server.start()
 
     radio = Radio()
     radio.run()
