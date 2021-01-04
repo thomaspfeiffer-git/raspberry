@@ -41,6 +41,9 @@ class CONFIG:
         XPOS   = int(cfg['Radio']['xpos'])
         YPOS   = int(cfg['Radio']['ypos'])
 
+    class APPLICATION:
+        PORT   = int(cfg['Radio']['port'])
+
     URL_BRIGHTNESS_CONTROL = cfg['Brightness']['URL']
 
 # eof #
