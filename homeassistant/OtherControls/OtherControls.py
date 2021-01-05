@@ -56,21 +56,21 @@ class Control (threading.Thread):
         self.style = ttk.Style()
         self.style.configure("Radio.TButton",
                              font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
-                             width=5, background="Yellow") ## TODO Config!
-        self.style.map("Radio.TButton", background=[('active', "Yellow")],  # TODO Config
+                             width=5, background=CONFIG.COLORS.BUTTON_RADIO)
+        self.style.map("Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON_RADIO)],
                                            relief=[('pressed', 'groove'),
                                                    ('!pressed', 'ridge')])
         font_off = Font(family=CONFIG.FONTS.FAMILY, size=CONFIG.FONTS.SIZE_NORMAL, overstrike=True)
         self.style.configure("Off.Radio.TButton",
                              font=font_off,
-                             width=5, background="Yellow") ## TODO Config!
-        self.style.map("Off.Radio.TButton", background=[('active', "Yellow")],  # TODO Config
+                             width=5, background=CONFIG.COLORS.BUTTON_RADIO)
+        self.style.map("Off.Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON_RADIO)],
                                            relief=[('pressed', 'groove'),
                                                    ('!pressed', 'ridge')])
         self.style.configure("Anteroom.TButton",
                              font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
-                             width=5, background=CONFIG.COLORS.BUTTON)
-        self.style.map("Anteroom.TButton", background=[('active', CONFIG.COLORS.BUTTON)],
+                             width=5, background=CONFIG.COLORS.BUTTON_ANTEROOM)
+        self.style.map("Anteroom.TButton", background=[('active', CONFIG.COLORS.BUTTON_ANTEROOM)],
                                            relief=[('pressed', 'groove'),
                                                    ('!pressed', 'ridge')])
 

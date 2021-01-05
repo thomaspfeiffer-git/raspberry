@@ -32,7 +32,8 @@ class CONFIG:
     class COLORS:
         """definitions of colors"""
         BACKGROUND = "Moccasin"
-        BUTTON     = "Magenta"
+        BUTTON_ANTEROOM = "yellow2"
+        BUTTON_RADIO = "SeaGreen1"
 
     class COORDINATES:
         WIDTH  = int(cfg['Anteroom']['width'])
