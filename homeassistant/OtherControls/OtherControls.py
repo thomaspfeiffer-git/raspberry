@@ -90,28 +90,28 @@ class Control (threading.Thread):
         # - brightness is high: return True
         self.frame.bind("<Button-1>", Touchevent.event) # brightness control
 
+    @staticmethod
+    def call_url (request):
+        Log(f"Request: {request}")
+        try:
+            urlopen(request, timeout=2)
+        except (HTTPError, URLError):
+            Log("HTTPError, URLError: {0[0]} {0[1]}".format(sys.exc_info()))
+        except socket.timeout:
+            Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+
     def toggle_radio (self, on):
         if Touchevent.event():   # brightness control
             Sound.play(CONFIG.CLICK_SOUND)
+
             request = CONFIG.RADIO.BASE_URL
             request += "showapp" if on else "radiooff"
-            Log(f"Request: {request}")
-            try:   # TODO: dedicated method
-                urlopen(request, timeout=2)
-            except (HTTPError, URLError):
-                Log("HTTPError, URLError: {0[0]} {0[1]}".format(sys.exc_info()))
-            except socket.timeout:
-                Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+            self.call_url(request)
 
     def toggle_light (self):
         if Touchevent.event():   # brightness control
             Sound.play(CONFIG.CLICK_SOUND)
-            try:   # TODO: dedicated method
-                urlopen(CONFIG.URL_ANTEROOM_CONTROL, timeout=2)
-            except (HTTPError, URLError):
-                Log("HTTPError, URLError: {0[0]} {0[1]}".format(sys.exc_info()))
-            except socket.timeout:
-                Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+            self.call_url(CONFIG.URL_ANTEROOM_CONTROL)
 
     def run (self):
         self._running = True
