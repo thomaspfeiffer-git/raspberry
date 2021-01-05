@@ -57,7 +57,14 @@ class Control (threading.Thread):
         self.style.configure("Radio.TButton",
                              font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
                              width=5, background="Yellow") ## TODO Config!
-        self.style.map("Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON)],
+        self.style.map("Radio.TButton", background=[('active', "Yellow")],  # TODO Config
+                                           relief=[('pressed', 'groove'),
+                                                   ('!pressed', 'ridge')])
+        font_off = Font(family=CONFIG.FONTS.FAMILY, size=CONFIG.FONTS.SIZE_NORMAL, overstrike=True)
+        self.style.configure("Off.Radio.TButton",
+                             font=font_off,
+                             width=5, background="Yellow") ## TODO Config!
+        self.style.map("Off.Radio.TButton", background=[('active', "Yellow")],  # TODO Config
                                            relief=[('pressed', 'groove'),
                                                    ('!pressed', 'ridge')])
         self.style.configure("Anteroom.TButton",
@@ -67,12 +74,12 @@ class Control (threading.Thread):
                                            relief=[('pressed', 'groove'),
                                                    ('!pressed', 'ridge')])
 
-        self.button_radio_on = ttk.Button(self.frame, text="Radio", style="Radio.TButton")
-        self.button_radio_off = ttk.Button(self.frame, text="Aus", style="Radio.TButton")
+        self.button_radio_on = ttk.Button(self.frame, text="Radio", style="Radio.TButton", command=lambda: self.toggle_radio(on=True))
+        self.button_radio_off = ttk.Button(self.frame, text="Radio", style="Off.Radio.TButton", command=lambda: self.toggle_radio(on=False))
         self.button_radio_on.pack(padx=5, pady=5)
         self.button_radio_off.pack(padx=5, pady=5)
 
-        self.button_anteroom = ttk.Button(self.frame, text="Licht", style="Anteroom.TButton", command = self.toggle_light)
+        self.button_anteroom = ttk.Button(self.frame, text="Licht", style="Anteroom.TButton", command=self.toggle_light)
         self.button_anteroom.pack(padx=5, pady=5)
 
         # brightness control:
@@ -82,6 +89,13 @@ class Control (threading.Thread):
         # - brightness is low:  set brightness to max and return False
         # - brightness is high: return True
         self.frame.bind("<Button-1>", Touchevent.event) # brightness control
+
+    def toggle_radio (self, on):
+        if Touchevent.event():   # brightness control
+            Sound.play(CONFIG.CLICK_SOUND)
+
+            Log(f"Radio on: {on}")
+
 
     def toggle_light (self):
         if Touchevent.event():   # brightness control
@@ -103,8 +117,8 @@ class Control (threading.Thread):
 
 
 ###############################################################################
-# AnteroomApp #################################################################
-class AnteroomApp (tk.Frame):
+# OtherControlsApp ############################################################
+class OtherControlsApp (tk.Frame):
     def __init__ (self, master=None):
         super().__init__(master)
 
@@ -117,7 +131,7 @@ class AnteroomApp (tk.Frame):
 
 ###############################################################################
 # Anteroom ####################################################################
-class Anteroom (object):
+class OtherControls (object):
     def __init__ (self):
         self.root = tk.Tk()
 
@@ -134,7 +148,7 @@ class Anteroom (object):
                                                 CONFIG.COORDINATES.XPOS,
                                                 CONFIG.COORDINATES.YPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
-        self.app = AnteroomApp(master=self.root)
+        self.app = OtherControlsApp(master=self.root)
 
     def poll (self):
         """polling needed for ctrl-c"""
@@ -149,7 +163,7 @@ class Anteroom (object):
         """stops application, called on shutdown"""
         self.root.after_cancel(self.root.pollid)
         self.root.destroy()
-        self.root.quit() # TODO: check usage of destroy() and quit()
+        self.root.quit()
 
 
 ###############################################################################
@@ -179,7 +193,7 @@ if __name__ == '__main__':
 
     control = Control()
 
-    other_controls = Anteroom()
+    other_controls = OtherControls()
     other_controls.run()
 
 # eof #
