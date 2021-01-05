@@ -31,6 +31,7 @@ from Logging import Log
 
 sys.path.append('../libraries')
 from touchevent import Touchevent
+from sound import Sound
 
 from config import CONFIG
 
@@ -77,18 +78,24 @@ class Control (threading.Thread):
 
     @triggered
     def play (self, station_url):
-        Log(f"Playing {station_url}")
-        if self.radio_process is not None:
-            self.stop_play()
+        if Touchevent.event():   # brightness control
+            Sound.play(CONFIG.CLICK_SOUND)
 
-        self.radio_process = subprocess.Popen(["cvlc", station_url])
+            Log(f"Playing {station_url}")
+            if self.radio_process is not None:
+                self.stop_play()
+
+            self.radio_process = subprocess.Popen(["cvlc", station_url])
 
     @triggered
     def stop_play (self):
-        Log("Stopping radio station.")
-        if self.radio_process:
-            self.radio_process.terminate()
-            self.radio_process = None
+        if Touchevent.event():   # brightness control
+            Sound.play(CONFIG.CLICK_SOUND)
+
+            Log("Stopping radio station.")
+            if self.radio_process:
+                self.radio_process.terminate()
+                self.radio_process = None
 
     def run (self):
         self._running = True

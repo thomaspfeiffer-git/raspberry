@@ -46,6 +46,7 @@ class CONFIG:
         PORT   = int(cfg['Radio']['port'])
         DELAY_TO_HIDE = int(cfg['Radio']['delay_to_hide'])
 
+    CLICK_SOUND = "../sounds/click.mp3"
     URL_BRIGHTNESS_CONTROL = cfg['Brightness']['URL']
 
 # eof #
