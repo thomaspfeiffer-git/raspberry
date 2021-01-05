@@ -48,11 +48,22 @@ cd ..
 
 
 echo
-echo "Starting anteroom lighting control"
-cd Anteroom
-nohup ./Anteroom.py &
-echo "Anteroom lighting control started"
+echo "Starting other controls ('OtherControls')"
+cd OtherControls
+nohup ./OtherControls.py &
+echo "OtherControls started"
 cd ..
+
+
+echo
+echo "Starting Radio.py"
+cd Radio
+nohup ./Radio.py &
+echo "Radio.py started"
+cd ..
+
+
+
 
 
 # eof #
