@@ -44,6 +44,7 @@ class CONFIG:
 
     class APPLICATION:
         PORT   = int(cfg['Radio']['port'])
+        DELAY_TO_HIDE = int(cfg['Radio']['delay_to_hide'])
 
     URL_BRIGHTNESS_CONTROL = cfg['Brightness']['URL']
 

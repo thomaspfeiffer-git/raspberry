@@ -17,6 +17,7 @@ from tkinter.font import Font
 
 from collections import OrderedDict
 from flask import Flask
+from functools import wraps
 import os
 import subprocess
 import sys
@@ -54,13 +55,27 @@ class Control (threading.Thread):
         threading.Thread.__init__(self)
         self.master = master
         self.radio_process = None
+        self.timestamp = time.time()
+        self.window_hidden = False
 
+    def triggered (func):
+        @wraps(func)
+        def trigger (self, *args, **kwargs):
+            self.timestamp = time.time()
+            func(self, *args, **kwargs)
+        return trigger
+
+    @triggered
     def show_window (self):
         self.master.deiconify()
+        self.window_hidden = False
 
     def hide_window (self):
-        self.master.withdraw()
+        if not self.window_hidden:
+            self.master.withdraw()
+            self.window_hidden = True
 
+    @triggered
     def play (self, station_url):
         Log(f"Playing {station_url}")
         if self.radio_process is not None:
@@ -68,6 +83,7 @@ class Control (threading.Thread):
 
         self.radio_process = subprocess.Popen(["cvlc", station_url])
 
+    @triggered
     def stop_play (self):
         Log("Stopping radio station.")
         if self.radio_process:
@@ -79,6 +95,8 @@ class Control (threading.Thread):
 
         while self._running:
             time.sleep(0.1)
+            if self.timestamp + CONFIG.APPLICATION.DELAY_TO_HIDE < time.time():
+                self.hide_window()
 
         self.stop_play()
 
