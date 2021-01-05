@@ -1,13 +1,14 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# Anteroom.py                                                                 #
-# (c) https://github.com/thomaspfeiffer-git 2017                              #
+# OtherControls.py                                                            #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2021                        #
 ###############################################################################
-"""Part of the homeautomation project: switch lights on/off in anteroom."""
+"""Part of the homeautomation project: switch lights on/off in anteroom
+   and control radio application"""
 
 ### usage ###
-# nohup ./Anteroom.py &
+# nohup ./OtherControls.py &
 
 
 import tkinter as tk
@@ -19,7 +20,7 @@ import socket
 import sys
 import threading
 import time
-from urllib.error import HTTPError, URLError 
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 
@@ -47,30 +48,42 @@ class Control (threading.Thread):
     def create_elements (self, frame):
         self.master = frame
         self.frame  = tk.Frame(self.master, bg=CONFIG.COLORS.BACKGROUND,
-                               width=CONFIG.COORDINATES.WIDTH, 
+                               width=CONFIG.COORDINATES.WIDTH,
                                height=CONFIG.COORDINATES.HEIGHT)
         self.frame.pack_propagate(0)
         self.frame.pack()
- 
+
         self.style = ttk.Style()
-        self.style.configure("Anteroom.TButton", 
+        self.style.configure("Radio.TButton",
+                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
+                             width=5, background="Yellow") ## TODO Config!
+        self.style.map("Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON)],
+                                           relief=[('pressed', 'groove'),
+                                                   ('!pressed', 'ridge')])
+        self.style.configure("Anteroom.TButton",
                              font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
                              width=5, background=CONFIG.COLORS.BUTTON)
         self.style.map("Anteroom.TButton", background=[('active', CONFIG.COLORS.BUTTON)],
                                            relief=[('pressed', 'groove'),
                                                    ('!pressed', 'ridge')])
-        self.button = ttk.Button(self.frame, text="Licht", style="Anteroom.TButton", command = self.toggle)
-        self.button.pack(padx=5, pady=5)
+
+        self.button_radio_on = ttk.Button(self.frame, text="Radio", style="Radio.TButton")
+        self.button_radio_off = ttk.Button(self.frame, text="Aus", style="Radio.TButton")
+        self.button_radio_on.pack(padx=5, pady=5)
+        self.button_radio_off.pack(padx=5, pady=5)
+
+        self.button_anteroom = ttk.Button(self.frame, text="Licht", style="Anteroom.TButton", command = self.toggle_light)
+        self.button_anteroom.pack(padx=5, pady=5)
 
         # brightness control:
         # brightness control runs in a dedicated application (see ../Brightness/).
-        # each touch event is first sent to the brightness control 
+        # each touch event is first sent to the brightness control
         # (Touchevent.event()):
         # - brightness is low:  set brightness to max and return False
         # - brightness is high: return True
         self.frame.bind("<Button-1>", Touchevent.event) # brightness control
 
-    def toggle (self):
+    def toggle_light (self):
         if Touchevent.event():   # brightness control
             Sound.play(CONFIG.CLICK_SOUND)
             try:
@@ -116,9 +129,9 @@ class Anteroom (object):
         self.root.height = CONFIG.COORDINATES.HEIGHT
         self.root.borderwidth = 10
 
-        self.root.geometry("{}x{}+{}+{}".format(self.root.width, 
+        self.root.geometry("{}x{}+{}+{}".format(self.root.width,
                                                 self.root.height,
-                                                CONFIG.COORDINATES.XPOS, 
+                                                CONFIG.COORDINATES.XPOS,
                                                 CONFIG.COORDINATES.YPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = AnteroomApp(master=self.root)
@@ -148,7 +161,7 @@ def shutdown_application ():
     control.stop()
     control.join()
 
-    anteroom.stop()
+    other_controls.stop()
 
     sys.exit(0)
 
@@ -166,8 +179,8 @@ if __name__ == '__main__':
 
     control = Control()
 
-    anteroom = Anteroom()
-    anteroom.run()
+    other_controls = Anteroom()
+    other_controls.run()
 
 # eof #
 
