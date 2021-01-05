@@ -34,6 +34,7 @@ class CONFIG:
         BACKGROUND = "LightSkyBlue"
         FONT = "Black"
         BUTTON = "DodgerBlue"
+        BUTTON_OFF = "Red"
 
     class COORDINATES:
         WIDTH  = int(cfg['Radio']['width'])
