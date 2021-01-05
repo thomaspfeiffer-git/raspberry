@@ -88,9 +88,10 @@ class Control (threading.Thread):
             self.radio_process = subprocess.Popen(["cvlc", station_url])
 
     @triggered
-    def stop_play (self):
+    def stop_play (self, api_call=False):
         if Touchevent.event():   # brightness control
-            Sound.play(CONFIG.CLICK_SOUND)
+            if not api_call:
+                Sound.play(CONFIG.CLICK_SOUND)
 
             Log("Stopping radio station.")
             if self.radio_process:
@@ -235,7 +236,7 @@ def API_HideApp ():
 
 @app.route('/radiooff')
 def API_RadioOff ():
-    radio.control.stop_play()
+    radio.control.stop_play(api_call=True)
     return "OK.\n"
 
 

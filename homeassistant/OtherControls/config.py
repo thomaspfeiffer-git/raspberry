@@ -16,7 +16,7 @@ import configparser
 import os
 
 
-CONFIGFILE = "../config.ini"    
+CONFIGFILE = "../config.ini"
 cfg = configparser.ConfigParser()
 cfg.read(CONFIGFILE)
 
@@ -39,6 +39,10 @@ class CONFIG:
         HEIGHT = int(cfg['Anteroom']['height'])
         XPOS   = int(cfg['Anteroom']['xpos'])
         YPOS   = int(cfg['Anteroom']['ypos'])
+
+    class RADIO:
+        BASE_URL = cfg['Radio']['base_url']
+
 
     CLICK_SOUND = "../sounds/click.mp3"
 
