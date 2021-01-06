@@ -36,10 +36,10 @@ class CONFIG:
         BUTTON_RADIO = "SeaGreen1"
 
     class COORDINATES:
-        WIDTH  = int(cfg['Anteroom']['width'])
-        HEIGHT = int(cfg['Anteroom']['height'])
-        XPOS   = int(cfg['Anteroom']['xpos'])
-        YPOS   = int(cfg['Anteroom']['ypos'])
+        WIDTH  = int(cfg['OtherControls']['width'])
+        HEIGHT = int(cfg['OtherControls']['height'])
+        XPOS   = int(cfg['OtherControls']['xpos'])
+        YPOS   = int(cfg['OtherControls']['ypos'])
 
     class RADIO:
         BASE_URL = cfg['Radio']['base_url']

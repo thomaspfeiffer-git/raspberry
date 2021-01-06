@@ -1,10 +1,10 @@
 [Queue]
-Hostname = host.domain.org
+Hostname = host.domain.com
 Port     = 50001
-Key      = my pretty cool passphrase
+Key      = my passphrase
 
 [Brightness]
-URL = http://server/touchevent
+URL = http://host.domain.com:5000/touchevent
 port = 5000
 
 [Weatherstation]
@@ -15,7 +15,7 @@ ypos   = 0
 
 [Timer]
 width  = 110
-height = 400
+height = 310
 xpos   = 690
 ypos   = 0
 
@@ -25,18 +25,20 @@ height = 480
 xpos   = 280
 ypos   = 0
 
-[Anteroom]
+[OtherControls]
 width  = 110
-height = 80
+height = 170
 xpos   = 690
-ypos   = 400
+ypos   = 310
 
 [Radio]
-width  = 600
+width = 600
 height = 400
-xpos   = 50
-ypos   = 50
-port   = 5002
+xpos = 50
+ypos = 50
+delay_to_hide = 10
+port = 5002
+base_url = http://host.domain.com:5002/
 
 [Sensors]
 port=5001
