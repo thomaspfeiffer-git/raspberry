@@ -45,51 +45,6 @@ class Control (threading.Thread):
         self._running = False
         threading.Thread.__init__(self)
 
-    def create_elements (self, frame):
-        self.master = frame
-        self.frame  = tk.Frame(self.master, bg=CONFIG.COLORS.BACKGROUND,
-                               width=CONFIG.COORDINATES.WIDTH,
-                               height=CONFIG.COORDINATES.HEIGHT)
-        self.frame.pack_propagate(0)
-        self.frame.pack()
-
-        self.style = ttk.Style()
-        self.style.configure("Radio.TButton",
-                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
-                             width=5, background=CONFIG.COLORS.BUTTON_RADIO)
-        self.style.map("Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON_RADIO)],
-                                           relief=[('pressed', 'groove'),
-                                                   ('!pressed', 'ridge')])
-        font_off = Font(family=CONFIG.FONTS.FAMILY, size=CONFIG.FONTS.SIZE_NORMAL, overstrike=True)
-        self.style.configure("Off.Radio.TButton",
-                             font=font_off,
-                             width=5, background=CONFIG.COLORS.BUTTON_RADIO)
-        self.style.map("Off.Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON_RADIO)],
-                                           relief=[('pressed', 'groove'),
-                                                   ('!pressed', 'ridge')])
-        self.style.configure("Anteroom.TButton",
-                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
-                             width=5, background=CONFIG.COLORS.BUTTON_ANTEROOM)
-        self.style.map("Anteroom.TButton", background=[('active', CONFIG.COLORS.BUTTON_ANTEROOM)],
-                                           relief=[('pressed', 'groove'),
-                                                   ('!pressed', 'ridge')])
-
-        self.button_radio_on = ttk.Button(self.frame, text="Radio", style="Radio.TButton", command=lambda: self.toggle_radio(on=True))
-        self.button_radio_off = ttk.Button(self.frame, text="Radio", style="Off.Radio.TButton", command=lambda: self.toggle_radio(on=False))
-        self.button_radio_on.pack(padx=5, pady=5)
-        self.button_radio_off.pack(padx=5, pady=5)
-
-        self.button_anteroom = ttk.Button(self.frame, text="Licht", style="Anteroom.TButton", command=self.toggle_light)
-        self.button_anteroom.pack(padx=5, pady=5)
-
-        # brightness control:
-        # brightness control runs in a dedicated application (see ../Brightness/).
-        # each touch event is first sent to the brightness control
-        # (Touchevent.event()):
-        # - brightness is low:  set brightness to max and return False
-        # - brightness is high: return True
-        self.frame.bind("<Button-1>", Touchevent.event) # brightness control
-
     @staticmethod
     def call_url (request):
         Log(f"Request: {request}")
@@ -131,8 +86,51 @@ class OtherControlsApp (tk.Frame):
         self.master = master
         self.pack()
 
-        control.create_elements(self)
-        control.start()
+        self.create_elements()
+
+    def create_elements (self):
+        self.frame  = tk.Frame(self.master, bg=CONFIG.COLORS.BACKGROUND,
+                               width=CONFIG.COORDINATES.WIDTH,
+                               height=CONFIG.COORDINATES.HEIGHT)
+        self.frame.pack_propagate(0)
+        self.frame.pack()
+
+        self.style = ttk.Style()
+        self.style.configure("Radio.TButton",
+                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
+                             width=5, background=CONFIG.COLORS.BUTTON_RADIO)
+        self.style.map("Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON_RADIO)],
+                                           relief=[('pressed', 'groove'),
+                                                   ('!pressed', 'ridge')])
+        font_off = Font(family=CONFIG.FONTS.FAMILY, size=CONFIG.FONTS.SIZE_NORMAL, overstrike=True)
+        self.style.configure("Off.Radio.TButton",
+                             font=font_off,
+                             width=5, background=CONFIG.COLORS.BUTTON_RADIO)
+        self.style.map("Off.Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON_RADIO)],
+                                           relief=[('pressed', 'groove'),
+                                                   ('!pressed', 'ridge')])
+        self.style.configure("Anteroom.TButton",
+                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
+                             width=5, background=CONFIG.COLORS.BUTTON_ANTEROOM)
+        self.style.map("Anteroom.TButton", background=[('active', CONFIG.COLORS.BUTTON_ANTEROOM)],
+                                           relief=[('pressed', 'groove'),
+                                                   ('!pressed', 'ridge')])
+
+        self.button_radio_on = ttk.Button(self.frame, text="Radio", style="Radio.TButton", command=lambda: control.toggle_radio(on=True))
+        self.button_radio_off = ttk.Button(self.frame, text="Radio", style="Off.Radio.TButton", command=lambda: control.toggle_radio(on=False))
+        self.button_radio_on.pack(padx=5, pady=5)
+        self.button_radio_off.pack(padx=5, pady=5)
+
+        self.button_anteroom = ttk.Button(self.frame, text="Licht", style="Anteroom.TButton", command=control.toggle_light)
+        self.button_anteroom.pack(padx=5, pady=5)
+
+        # brightness control:
+        # brightness control runs in a dedicated application (see ../Brightness/).
+        # each touch event is first sent to the brightness control
+        # (Touchevent.event()):
+        # - brightness is low:  set brightness to max and return False
+        # - brightness is high: return True
+        self.frame.bind("<Button-1>", Touchevent.event) # brightness control
 
 
 ###############################################################################
@@ -176,13 +174,11 @@ class OtherControls (object):
 # shutdown_application ########################################################
 def shutdown_application ():
     """called on shutdown; stops all threads"""
-    Log("shutdown_application()")
-
+    Log("Stopping application")
     control.stop()
     control.join()
-
     other_controls.stop()
-
+    Log("Application stopped")
     sys.exit(0)
 
 
@@ -198,6 +194,7 @@ if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     control = Control()
+    control.start()
 
     other_controls = OtherControls()
     other_controls.run()
