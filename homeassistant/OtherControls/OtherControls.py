@@ -37,13 +37,9 @@ from config import CONFIG
 
 ###############################################################################
 # Control #####################################################################
-class Control (threading.Thread):
-    """creates all display elements and corresponding callback methods
-       for the business logic (increase and decrease timer; alarm).
-    """
+class Control (object):
     def __init__ (self):
-        self._running = False
-        threading.Thread.__init__(self)
+        pass
 
     @staticmethod
     def call_url (request):
@@ -67,14 +63,6 @@ class Control (threading.Thread):
         if Touchevent.event():   # brightness control
             Sound.play(CONFIG.CLICK_SOUND)
             self.call_url(CONFIG.URL_ANTEROOM_CONTROL)
-
-    def run (self):
-        self._running = True
-        while self._running:
-            time.sleep(0.05)
-
-    def stop (self):
-        self._running = False
 
 
 ###############################################################################
@@ -175,8 +163,6 @@ class OtherControls (object):
 def shutdown_application ():
     """called on shutdown; stops all threads"""
     Log("Stopping application")
-    control.stop()
-    control.join()
     other_controls.stop()
     Log("Application stopped")
     sys.exit(0)
@@ -194,8 +180,6 @@ if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     control = Control()
-    control.start()
-
     other_controls = OtherControls()
     other_controls.run()
 
