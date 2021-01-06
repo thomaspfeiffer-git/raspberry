@@ -6,4 +6,5 @@ __pycache__
 *.key
 *.ini
 *.cred
+.ropeproject
 nohup.out
