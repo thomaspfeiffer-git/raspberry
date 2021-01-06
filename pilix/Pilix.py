@@ -62,6 +62,16 @@
 # raspi-config: enable SPI
 
 
+import Livetracking
+from csv_fieldnames import *
+from config import CONFIG
+from sensors.PCF8591 import PCF8591
+from sensors.DS1820 import DS1820
+from sensors.BMP180 import BMP180
+from sensors.CPU import CPU
+from Shutdown import Shutdown
+from Logging import Log
+from Commons import Singleton, Display1306
 import csv
 from gps3.agps3threaded import AGPS3mechanism
 from enum import Enum
@@ -76,18 +86,6 @@ import threading
 import time
 
 sys.path.append("../libs/")
-from Commons import Singleton, Display1306
-from Logging import Log
-from Shutdown import Shutdown
-
-from sensors.CPU import CPU
-from sensors.BMP180 import BMP180
-from sensors.DS1820 import DS1820
-from sensors.PCF8591 import PCF8591
-
-from config import CONFIG
-from csv_fieldnames import *
-import Livetracking
 
 
 app = Flask(__name__)
@@ -97,7 +95,7 @@ app = Flask(__name__)
 # Switch ######################################################################
 class Switch (Enum):
     OFF = 0
-    ON  = 1
+    ON = 1
 
 
 ###############################################################################
@@ -105,13 +103,13 @@ class Switch (Enum):
 class Sensors (object):
     v_ref = 8.77
 
-    def __init__ (self):
+    def __init__(self):
         self.cpu = CPU()
         self.bmp180 = BMP180()   # air pressure, temperature
         self.ds1820 = DS1820("/sys/bus/w1/devices/28-00000855fdfe/w1_slave")
-        self.pcf8591 = PCF8591() # ADC for measurement of supply voltage
+        self.pcf8591 = PCF8591()  # ADC for measurement of supply voltage
 
-    def read (self):
+    def read(self):
         timestamp = time.time()
         return{V_TemperatureBox: self.bmp180.read_temperature(),
                V_TemperatureOutside: self.ds1820.read_temperature(),
@@ -127,10 +125,10 @@ class Sensors (object):
 class PictureStore (metaclass=Singleton):
     size_of_segment = 100
 
-    def __init__ (self):
+    def __init__(self):
         self.picture_count = self.get_next_segment()
 
-    def get_next_segment (self):
+    def get_next_segment(self):
         """after restart of the application, we continue on the
            next (empty) directory."""
         from os.path import isdir, join
@@ -142,22 +140,22 @@ class PictureStore (metaclass=Singleton):
         except (IndexError, ValueError):
             return 0
 
-    def get_next_filename (self):
-        def get_directory ():
+    def get_next_filename(self):
+        def get_directory():
             directory = "{}/{:03d}".format(CONFIG.File.picdir,
                                            self.picture_count//self.size_of_segment)
             try:
                 os.makedirs(directory)
             except OSError as exception:
                 if exception.errno != errno.EEXIST:
-                   raise
+                    raise
             return directory
 
         filename = "{:05d}_{}_{}_{}_{}.jpg".format(self.picture_count,
-                    time.strftime("%Y%m%d%H%M%S"),
-                    control.data[V_GPS_Alt],
-                    control.data[V_GPS_Lon],
-                    control.data[V_GPS_Lat]).replace("/", "")
+                                                   time.strftime("%Y%m%d%H%M%S"),
+                                                   control.data[V_GPS_Alt],
+                                                   control.data[V_GPS_Lon],
+                                                   control.data[V_GPS_Lat]).replace("/", "")
         self.picture_count += 1
         return "{}/{}".format(get_directory(), filename)
 
@@ -167,7 +165,7 @@ class PictureStore (metaclass=Singleton):
 class Camera (threading.Thread):
     intervall = CONFIG.Camera.Intervall
 
-    def __init__ (self):
+    def __init__(self):
         threading.Thread.__init__(self)
         self.statusled = StatusLED(CONFIG.PIN.LED_Picture)
         self.picturestore = PictureStore()
@@ -180,7 +178,7 @@ class Camera (threading.Thread):
         self._takingPictures = CONFIG.APP.autostart
         self._running = True
 
-    def run (self):
+    def run(self):
         time.sleep(10)
 
         while self._running:
@@ -189,8 +187,8 @@ class Camera (threading.Thread):
                 self.statusled.on()
                 Log("taking picture {}".format(filename))
                 self.camera.annotate_text = \
-                      "{} - Alt: {} m".format(time.strftime("%Y%m%d %H%M%S"),
-                                              control.data[V_GPS_Alt])
+                    "{} - Alt: {} m".format(time.strftime("%Y%m%d %H%M%S"),
+                                            control.data[V_GPS_Alt])
                 self.camera.capture(filename, quality=CONFIG.Camera.Quality)
                 self.statusled.off()
 
@@ -200,21 +198,21 @@ class Camera (threading.Thread):
             else:
                 time.sleep(0.1)
 
-    def toggle_takePictures (self):
+    def toggle_takePictures(self):
         self._takingPictures = not self._takingPictures
         Log("Camera: {}".format(self._takingPictures))
         for _ in range(4 if self._takingPictures else 2):
             self.statusled.flash()
             time.sleep(0.1)
 
-    def stop (self):
+    def stop(self):
         self._running = False
 
 
 ###############################################################################
 # StatusLED ###################################################################
 class StatusLED (object):
-    def __init__ (self, pin):
+    def __init__(self, pin):
         self.__pin = pin
         io.setwarnings(False)
         io.setmode(io.BOARD)
@@ -222,20 +220,20 @@ class StatusLED (object):
         self.__last = None
         self.off()
 
-    def io_write (self, status):
+    def io_write(self, status):
         io.output(self.__pin, status)
 
-    def on (self):
+    def on(self):
         if self.__last != Switch.ON:
             self.io_write(1)
             self.__last = Switch.ON
 
-    def off (self):
+    def off(self):
         if self.__last != Switch.OFF:
             self.io_write(0)
             self.__last = Switch.OFF
 
-    def flash (self):
+    def flash(self):
         self.on()
         time.sleep(0.05)
         self.off()
@@ -250,12 +248,12 @@ class CSV (object):
                   V_GPS_Climb, V_GPS_Speed, V_GPS_Track, V_GPS_ErrLon,
                   V_GPS_ErrLat, V_GPS_ErrAlt]
 
-    def __init__ (self):
+    def __init__(self):
         with open(CONFIG.File.csv, 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
             writer.writeheader()
 
-    def write (self, data):
+    def write(self, data):
         with open(CONFIG.File.csv, 'a', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=self.fieldnames, delimiter=',')
             writer.writerow(data)
@@ -264,10 +262,10 @@ class CSV (object):
 ###############################################################################
 # Control #####################################################################
 class Control (threading.Thread):
-    def __init__ (self):
+    def __init__(self):
         threading.Thread.__init__(self)
-        self.csv       = CSV()
-        self.sensors   = Sensors()
+        self.csv = CSV()
+        self.sensors = Sensors()
         self.statusled = StatusLED(CONFIG.PIN.LED_Status)
 
         self.data = None
@@ -275,7 +273,7 @@ class Control (threading.Thread):
         self.last_timestamp_voltage_over_limit = time.time()
         self._running = True
 
-    def get_gps_data (self):
+    def get_gps_data(self):
         # d = gps.data_stream.time[:4] != "1970"        # kind of 'n/a'
         d = gps.data_stream.time != "n/a"
         return {V_GPS_Time: gps.data_stream.time,
@@ -289,9 +287,9 @@ class Control (threading.Thread):
                 V_GPS_ErrLat: gps.data_stream.epy,
                 V_GPS_ErrAlt: gps.data_stream.epv}
 
-    def monitor_battery (self):
+    def monitor_battery(self):
         if self.running_on_battery:
-            if self.data[V_Voltage] >= 6.2: # Battery under 6.2 V for more than 60 s.
+            if self.data[V_Voltage] >= 6.2:  # Battery under 6.2 V for more than 60 s.
                 self.last_timestamp_voltage_over_limit = time.time()
             if self.last_timestamp_voltage_over_limit + 60 <= time.time():
                 Log("Battery low. Shutting down.")
@@ -303,11 +301,11 @@ class Control (threading.Thread):
         else:
             self.last_timestamp_voltage_over_limit = time.time()
 
-    def reset_watchdog (self):
-        if CONFIG.APP.autostart: # watchdog only in autostart mode
+    def reset_watchdog(self):
+        if CONFIG.APP.autostart:  # watchdog only in autostart mode
             subprocess.run(["sudo", "bash", "-c", "echo 'hi' > /dev/watchdog"])
 
-    def run (self):
+    def run(self):
         while self._running:
             self.data = self.sensors.read()
             self.data[V_RunningOnBattery] = self.running_on_battery
@@ -338,26 +336,28 @@ class Control (threading.Thread):
 
         display.off()
 
-    def stop (self):
+    def stop(self):
         self._running = False
 
 
 ###############################################################################
 # Flask stuff #################################################################
 @app.route('/shutdown')
-def API_Shutdown ():
+def API_Shutdown():
     Log("Shutdown requested")
     shutdown()
     return "shutdown ok"
 
+
 @app.route('/camera')
-def API_ToggleCamera ():
+def API_ToggleCamera():
     Log("Camera: toggle requested")
     camera.toggle_takePictures()
     return "camera toggle ok"
 
+
 @app.route('/battery')
-def API_Battery ():                  # looks weird, but is fail safe
+def API_Battery():                  # looks weird, but is fail safe
     running_on_battery = not (request.args.get('enabled', 'False') != "True")
     Log("Running on battery: {}".format(running_on_battery))
     control.running_on_battery = running_on_battery
@@ -366,7 +366,7 @@ def API_Battery ():                  # looks weird, but is fail safe
 
 ###############################################################################
 # Shutdown stuff ##############################################################
-def stop_threads ():
+def stop_threads():
     """stops all threads"""
     camera.stop()
     camera.join()
@@ -377,7 +377,8 @@ def stop_threads ():
     control.stop()
     control.join()
 
-def shutdown ():
+
+def shutdown():
     """shuts down the OS"""
     Log("Shutting down in 5 s ...")
     stop_threads()
@@ -387,7 +388,8 @@ def shutdown ():
     Log("Shutdown now")
     subprocess.run(["sudo", "shutdown", "-h", "now"])
 
-def shutdown_application ():
+
+def shutdown_application():
     """cleanup stuff"""
     Log("Stopping application")
     stop_threads()
@@ -420,4 +422,3 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=False)
 
 # eof #
-
