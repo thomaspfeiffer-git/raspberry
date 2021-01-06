@@ -121,7 +121,10 @@ class Radio_TK (tk.Frame):
         self.master = master
         self.frame  = tk.Frame(self.master, bg=CONFIG.COLORS.BACKGROUND,
                                width=CONFIG.COORDINATES.WIDTH,
-                               height=CONFIG.COORDINATES.HEIGHT)
+                               height=CONFIG.COORDINATES.HEIGHT,
+                               borderwidth=25,
+                               highlightthickness=5,
+                               highlightbackground=CONFIG.COLORS.BORDER)
         self.frame.pack_propagate(0)
         self.frame.pack()
 
@@ -143,6 +146,12 @@ class Radio_TK (tk.Frame):
                                         relief=[('pressed', 'groove'),
                                                 ('!pressed', 'ridge')])
 
+        self.style.configure("Off.Radio.TButton",
+                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
+                             width=15, background=CONFIG.COLORS.BUTTON_OFF)
+        self.style.map("Off.Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON_OFF)],
+                                            relief=[('pressed', 'groove'),
+                                                    ('!pressed', 'ridge')])
         frame_stations = tk.Frame(master=self.frame)
         frame_stations.pack()
         frame_control = tk.Frame(master=self.frame)
@@ -160,7 +169,7 @@ class Radio_TK (tk.Frame):
             i += 1
 
         self.buttons.update({'off': ttk.Button(frame_control, text="Ausschalten",
-                                               style="Radio.TButton", command=lambda: radio.control.stop_play())})
+                                               style="Off.Radio.TButton", command=lambda: radio.control.stop_play())})
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 

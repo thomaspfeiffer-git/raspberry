@@ -13,13 +13,10 @@
 """
 
 import configparser
-import os
-
 
 CONFIGFILE = "../config.ini"
 cfg = configparser.ConfigParser()
 cfg.read(CONFIGFILE)
-
 
 class CONFIG:
     """various config stuff"""
@@ -31,10 +28,11 @@ class CONFIG:
 
     class COLORS:
         """definitions of colors"""
-        BACKGROUND = "LightSkyBlue"
+        BACKGROUND = "SeaGreen1"
+        BORDER = "DodgerBlue"
         FONT = "Black"
         BUTTON = "DodgerBlue"
-        BUTTON_OFF = "Red"
+        BUTTON_OFF = "light slate blue"
 
     class COORDINATES:
         WIDTH  = int(cfg['Radio']['width'])
