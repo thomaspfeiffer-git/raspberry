@@ -88,9 +88,9 @@ class Control (threading.Thread):
             self.radio_process = subprocess.Popen(["cvlc", station_url])
 
     @triggered
-    def stop_play (self, api_call=False):
+    def stop_play (self, nosound=False):
         if Touchevent.event():   # brightness control
-            if not api_call:
+            if not nosound:
                 Sound.play(CONFIG.CLICK_SOUND)
 
             Log("Stopping radio station.")
@@ -106,7 +106,7 @@ class Control (threading.Thread):
             if self.timestamp + CONFIG.APPLICATION.DELAY_TO_HIDE < time.time():
                 self.hide_window()
 
-        self.stop_play()
+        self.stop_play(nosound=True)
 
     def stop (self):
         self._running = False
@@ -145,7 +145,6 @@ class Radio_TK (tk.Frame):
         self.style.map("Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON)],
                                         relief=[('pressed', 'groove'),
                                                 ('!pressed', 'ridge')])
-
         self.style.configure("Off.Radio.TButton",
                              font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
                              width=15, background=CONFIG.COLORS.BUTTON_OFF)
@@ -245,7 +244,7 @@ def API_HideApp ():
 
 @app.route('/radiooff')
 def API_RadioOff ():
-    radio.control.stop_play(api_call=True)
+    radio.control.stop_play(nosound=True)
     return "OK.\n"
 
 
