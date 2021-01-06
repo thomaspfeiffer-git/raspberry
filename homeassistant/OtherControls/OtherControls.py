@@ -18,7 +18,6 @@ from tkinter.font import Font
 import os
 import socket
 import sys
-import threading
 import time
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
@@ -161,7 +160,6 @@ class OtherControls (object):
 ###############################################################################
 # shutdown_application ########################################################
 def shutdown_application ():
-    """called on shutdown; stops all threads"""
     Log("Stopping application")
     other_controls.stop()
     Log("Application stopped")
