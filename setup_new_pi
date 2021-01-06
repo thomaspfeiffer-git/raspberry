@@ -67,13 +67,13 @@ sudo chmod 644 8192cu.conf
 NFS:
 ====
 
-local: 
+local:
   /etc/fstab
 
-  jessie: 
+  jessie:
       sudo update-rc.d rpcbind enable
 
-server: 
+server:
   /etc/exports
   exportfs -r
 
@@ -101,7 +101,7 @@ Misc
 sudo apt-get install debian-goodies
 sudo apt-get install screen
 
-sudo apt-get install vim  
+sudo apt-get install vim
 
 # ~/.vimrc
 syntax on
@@ -115,6 +115,21 @@ set softtabstop=4
 
 http://www.vim.org/scripts/script.php?script_id=790
 http://www.vim.org/scripts/script.php?script_id=850
+
+# vim python mode
+
+# https://vi.stackexchange.com/questions/11526/how-to-enable-python-feature-in-vim
+sudo apt install vim-gtk
+
+# https://github.com/python-mode/python-mode#manually
+git clone --recurse-submodules https://github.com/python-mode/python-mode.git
+cd python-mode
+cp -R * ~/.vim
+# Then rebuild helptags in vim:
+:helptags ~/.vim/doc/
+
+
+
 
 
 
@@ -243,7 +258,7 @@ Audio on USB:
 
 sudo apt-get -y install mpg321
 
-aplay -l 
+aplay -l
    ==> card X = USB
 
 /etc/asound.conf:
@@ -272,7 +287,7 @@ Big Data
 ========
 
 sudo apt-get install python3-numpy
-sudo apt-get install python3-scipy 
+sudo apt-get install python3-scipy
 sudo apt-get install python3-pandas
 sudo pip3 install scikit-learn
 
