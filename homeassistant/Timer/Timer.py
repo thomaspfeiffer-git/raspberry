@@ -19,7 +19,6 @@ from tkinter.font import Font
 from collections import OrderedDict
 from datetime import datetime
 import os
-import subprocess
 import sys
 import threading
 import time
