@@ -16,6 +16,7 @@ class Sound (object):
         command = ["mpg321", "-g 100", "-q"] + [mp3] * runs
         process = subprocess.Popen(command)
         process.wait()
+        process.communicate()
 
 # eof #
 
