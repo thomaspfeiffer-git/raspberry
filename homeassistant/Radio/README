@@ -10,6 +10,41 @@ https://scribles.net/streaming-bluetooth-audio-from-phone-to-raspberry-pi-using-
 https://github.com/nicokaiser/rpi-audio-receiver
 https://www.instructables.com/Turn-your-Raspberry-Pi-into-a-Portable-Bluetooth-A/
 
+# partly used:
+https://forum-raspberrypi.de/forum/thread/38887-bluetooth-audio-fuer-headless-raspbian-jessie/
+
+
+### -------------------------------------------------------------------------###
+### from https://scribles.net/streaming-bluetooth-audio-from-phone-to-raspberry-pi-using-alsa/
+# 1-1. Open the configuration file for bluealsa service
+sudo nano /lib/systemd/system/bluealsa.service
+
+# 1-2. Search the line starts with “ExecStart” and add a profile option with a2dp-sink as below.
+ExecStart=/usr/bin/bluealsa -p a2dp-sink
+
+# 1-3. Reboot.
+sudo reboot
+
+### -------------------------------------------------------------------------###
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+############################################################
+
 
 ### Playing audio streams ###
 sudo apt-get install vlc
