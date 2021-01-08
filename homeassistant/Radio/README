@@ -1,11 +1,17 @@
 
 
 
-bluetooth:
+### Play sound via USB ###
+https://forum-raspberrypi.de/forum/thread/23362-tutorial-mpd-und-usb-soundkarte-unter-raspbian-jessie-einrichten/
+
+
+### bluetooth ###
 https://scribles.net/streaming-bluetooth-audio-from-phone-to-raspberry-pi-using-alsa/
+https://github.com/nicokaiser/rpi-audio-receiver
+https://www.instructables.com/Turn-your-Raspberry-Pi-into-a-Portable-Bluetooth-A/
 
 
-
+### Playing audio streams ###
 sudo apt-get install vlc
 
 # Run in background
@@ -13,19 +19,17 @@ sudo apt-get install vlc
 cvlc http://ic2377.c900.fast-serv.com/tsonyc.mp3 &
 
 
-### The Sound of New York City ###
+### Radio stations ###
++++ The Sound of New York City +++
 http://ic2377.c900.fast-serv.com/tsonyc.mp3
 
-### BBC Radio 2 ###
++++ BBC Radio 2 +++
 http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_q
 
-### OE3 ###
++++ OE3 +++
 https://orf-live.ors-shoutcast.at/oe3-q2a
 
-### 88.6 ###
++++ 88.6 +++
 https://radio886.fluidstream.eu/886_live.mp3?FLID=7
-
-
-
 
 

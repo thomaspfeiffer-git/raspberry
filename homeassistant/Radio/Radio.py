@@ -11,14 +11,6 @@
 # ./Radio.py 2>&1 > radio.log &
 
 
-### things todo ###
-## bluetooth ##
-# https://scribles.net/streaming-bluetooth-audio-from-phone-to-raspberry-pi-using-alsa/
-# https://github.com/nicokaiser/rpi-audio-receiver
-# https://www.instructables.com/Turn-your-Raspberry-Pi-into-a-Portable-Bluetooth-A/
-
-
-
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.font import Font
