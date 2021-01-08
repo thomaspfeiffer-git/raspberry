@@ -14,7 +14,8 @@ class Sound (object):
     @staticmethod
     def play (mp3, runs=1):
         command = ["mpg321", "-g 100", "-q"] + [mp3] * runs
-        subprocess.Popen(command) 
+        process = subprocess.Popen(command)
+        process.wait()
 
 # eof #
 

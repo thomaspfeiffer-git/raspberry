@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Timer.py                                                                    #
-# (c) https://github.com/thomaspfeiffer-git 2017                              #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2021                        #
 ###############################################################################
 """Part of the homeautomation project: timer for my kitchen (for perfect
    eggs or noodles :-) ).
@@ -29,22 +29,10 @@ from Shutdown import Shutdown
 from Logging import Log
 
 sys.path.append('../libraries')
+from sound import Sound
 from touchevent import Touchevent
 
 from config import CONFIG
-
-
-###############################################################################
-# Sound #######################################################################
-class Sound (object):
-    """plays a sound
-       - mp3: path to mp3 file
-       - runs: how often the mp3 file shall be played
-    """
-    @staticmethod
-    def play (mp3, runs=1):
-        command = ["mpg321", "-g 100", "-q"] + [mp3] * runs
-        subprocess.Popen(command) 
 
 
 ###############################################################################
@@ -63,7 +51,7 @@ class Countdown (threading.Thread):
 
     @property
     def counter (self):
-        return self.__counter 
+        return self.__counter
 
     @counter.setter
     def counter (self, value):
@@ -78,7 +66,7 @@ class Countdown (threading.Thread):
 
     def reset (self, value=0):
         self.counter = value
- 
+
     def run (self):
         self.__running = True
         now = datetime.now().timestamp()
@@ -86,12 +74,12 @@ class Countdown (threading.Thread):
             time.sleep(0.1)
             if datetime.now().timestamp() > now + 1.0:
                 self.alter(-1)
-                now = datetime.now().timestamp() 
+                now = datetime.now().timestamp()
 
     def stop (self):
         self.__running = False
 
- 
+
 ###############################################################################
 # Control #####################################################################
 class Control (threading.Thread):
@@ -108,13 +96,13 @@ class Control (threading.Thread):
     def create_elements (self, frame):
         self.master = frame
         self.frame  = tk.Frame(self.master, bg=CONFIG.COLORS.BACKGROUND,
-                               width=CONFIG.COORDINATES.WIDTH, 
+                               width=CONFIG.COORDINATES.WIDTH,
                                height=CONFIG.COORDINATES.HEIGHT)
         self.frame.pack_propagate(0)
         self.frame.pack()
- 
+
         self.style = ttk.Style()
-        self.style.configure("Timer.TButton", 
+        self.style.configure("Timer.TButton",
                              font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
                              width=5, background=CONFIG.COLORS.BUTTON)
         self.style.map("Timer.TButton", background=[('active', CONFIG.COLORS.BUTTON)],
@@ -132,14 +120,14 @@ class Control (threading.Thread):
 
         # brightness control:
         # brightness control runs in a dedicated application (see ../Brightness/).
-        # each touch event is first sent to the brightness control 
+        # each touch event is first sent to the brightness control
         # (Touchevent.event()):
         # - brightness is low:  set brightness to max and return False
         # - brightness is high: return True
         self.frame.bind("<Button-1>", Touchevent.event) # brightness control
 
         self.timer = tk.StringVar()
-        self.timerdisplay = ttk.Label(self.frame, textvariable=self.timer, 
+        self.timerdisplay = ttk.Label(self.frame, textvariable=self.timer,
                                       style="Timer.TButton")
         self.timerdisplay.pack(padx=5, pady=5)
         self.timerdisplay.pack_forget()
@@ -155,7 +143,7 @@ class Control (threading.Thread):
             if countdown.counter > 0:
                 self.timerdisplay.pack(padx=5, pady=5)
                 self.reset_event = False
-    
+
     def reset_counter (self):
         """resets the timer and switches alarm off"""
         if Touchevent.event():   # brightness control
@@ -170,12 +158,12 @@ class Control (threading.Thread):
            and not self.reset_event and not self.set_event:
             self.timerdisplay.config(background=
                      CONFIG.ALARM.COLORS[counter % len(CONFIG.ALARM.COLORS)])
-            self.alarm_id = self.master.after(CONFIG.ALARM.DELAY, 
+            self.alarm_id = self.master.after(CONFIG.ALARM.DELAY,
                                 lambda: self.alarm_blink(counter-1))
         else:
             self.alarm_id = None
             self.timerdisplay.config(background=CONFIG.COLORS.BUTTON)
-            if not self.set_event: 
+            if not self.set_event:
                 self.timerdisplay.pack_forget()
             self.set_event = False
 
@@ -186,7 +174,7 @@ class Control (threading.Thread):
            3) play a sound
         """
         self.timer.set("Alarm")
-        self.alarm_id = self.master.after(CONFIG.ALARM.DELAY, 
+        self.alarm_id = self.master.after(CONFIG.ALARM.DELAY,
                                 lambda: self.alarm_blink(CONFIG.ALARM.COUNT))
         Sound.play(CONFIG.ALARM.SOUND, runs=3)
 
@@ -235,9 +223,9 @@ class Timer (object):
         self.root.height = CONFIG.COORDINATES.HEIGHT
         self.root.borderwidth = 10
 
-        self.root.geometry("{}x{}+{}+{}".format(self.root.width, 
+        self.root.geometry("{}x{}+{}+{}".format(self.root.width,
                                                 self.root.height,
-                                                CONFIG.COORDINATES.XPOS, 
+                                                CONFIG.COORDINATES.XPOS,
                                                 CONFIG.COORDINATES.YPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = TimerApp(master=self.root)

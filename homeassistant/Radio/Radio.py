@@ -96,6 +96,7 @@ class Control (threading.Thread):
             Log("Stopping radio station.")
             if self.radio_process:
                 self.radio_process.terminate()
+                self.radio_process.wait()
                 self.radio_process = None
 
     def run (self):
