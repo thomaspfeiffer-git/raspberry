@@ -47,6 +47,7 @@ Stations.update({ 's3': { station_name: "Radio Wien", station_url: "https://orf-
 Stations.update({ 's4': { station_name: "Lounge FM", station_url: "https://s35.derstream.net/ukwwien.mp3" } })
 Stations.update({ 's5': { station_name: "The Sound of New York City", station_url: "http://ic2377.c900.fast-serv.com/tsonyc.mp3" } })
 Stations.update({ 's6': { station_name: "BBC Radio 2", station_url: "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_q" } })
+Stations.update({ 's7': { station_name: "DeepLazz Radio", station_url: "http://stream.zenolive.com/m32839kywrquv" } })
 
 
 ###############################################################################
