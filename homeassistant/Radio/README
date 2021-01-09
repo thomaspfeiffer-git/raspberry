@@ -13,7 +13,7 @@ https://forum-raspberrypi.de/forum/thread/38887-bluetooth-audio-fuer-headless-ra
 # Finally only this worked
 https://github.com/nicokaiser/rpi-audio-receiver
 
-
+sudo amixer cset numid=3 2
 
 
 

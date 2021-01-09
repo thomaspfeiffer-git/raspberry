@@ -51,11 +51,28 @@ Stations.update({ 's7': { station_name: "DeepLazz Radio", station_url: "http://s
 
 
 ###############################################################################
+###############################################################################
+def set_volume (volume:int = 25):
+    """sets the volume [percent]
+       shell command: amixer -D pulse sset Master 50%
+    """
+    if not 0 <= volume <= 100:
+        raise ValueError(f"volume is {volume}, must be in 0..100")
+
+    command = ["amixer", "-D", "pulse", "sset", "Master", f"{volume}%"]
+    process = subprocess.Popen(command)
+    process.wait()
+    process.communicate()
+
+
+###############################################################################
 # Control #####################################################################
 class Control (threading.Thread):
     def __init__ (self, master):
         threading.Thread.__init__(self)
         self.master = master
+        self.__volume = CONFIG.APPLICATION.VOLUME_DEFAULT
+        set_volume(self.__volume)
         self.radio_process = None
         self.timestamp = time.time()
         self.window_hidden = False
@@ -76,6 +93,18 @@ class Control (threading.Thread):
         if not self.window_hidden:
             self.master.withdraw()
             self.window_hidden = True
+
+    @property
+    def volume (self):
+        return self.__volume
+
+    @triggered
+    @volume.setter
+    def volume (self, value):
+        value = 0 if value < 0
+        value = 100 if value > 100
+        self.__volume = value
+        set_volume(self.__volume)
 
     @triggered
     def play (self, station_url):

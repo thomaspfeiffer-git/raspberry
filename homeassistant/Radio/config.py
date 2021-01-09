@@ -43,6 +43,8 @@ class CONFIG:
     class APPLICATION:
         PORT   = int(cfg['Radio']['port'])
         DELAY_TO_HIDE = int(cfg['Radio']['delay_to_hide'])
+        VOLUME_DEFAULT = int(cfg['Radio']['default_volume'])
+
 
     CLICK_SOUND = "../sounds/click.mp3"
     URL_BRIGHTNESS_CONTROL = cfg['Brightness']['URL']
