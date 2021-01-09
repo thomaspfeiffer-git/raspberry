@@ -101,8 +101,8 @@ class Control (threading.Thread):
     @triggered
     @volume.setter
     def volume (self, value):
-        value = 0 if value < 0
-        value = 100 if value > 100
+        if value > 100: value = 100
+        if value < 0: value = 0
         self.__volume = value
         set_volume(self.__volume)
 
