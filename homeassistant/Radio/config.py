@@ -33,6 +33,7 @@ class CONFIG:
         FONT = "Black"
         BUTTON = "DodgerBlue"
         BUTTON_OFF = "light slate blue"
+        BUTTON_VOLUME = "salmon"
 
     class COORDINATES:
         WIDTH  = int(cfg['Radio']['width'])

@@ -99,11 +99,10 @@ class Control (threading.Thread):
         return self.__volume
 
     @triggered
-    @volume.setter
-    def volume (self, value):
-        if value > 100: value = 100
-        if value < 0: value = 0
-        self.__volume = value
+    def adjust_volume (self, value):
+        self.__volume += value
+        if self.__volume > 100: self.__volume = 100
+        if self.__volume < 0: self.__volume = 0
         set_volume(self.__volume)
 
     @triggered
@@ -178,14 +177,18 @@ class Radio_TK (tk.Frame):
                                                 ('!pressed', 'ridge')])
         self.style.configure("Off.Radio.TButton",
                              font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
-                             width=15, background=CONFIG.COLORS.BUTTON_OFF)
+                             width=10, background=CONFIG.COLORS.BUTTON_OFF)
         self.style.map("Off.Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON_OFF)],
+                                            relief=[('pressed', 'groove'),
+                                                    ('!pressed', 'ridge')])
+        self.style.configure("Volume.Radio.TButton",
+                             font=(CONFIG.FONTS.FAMILY, CONFIG.FONTS.SIZE_NORMAL),
+                             width=8, background=CONFIG.COLORS.BUTTON_VOLUME)
+        self.style.map("Volume.Radio.TButton", background=[('active', CONFIG.COLORS.BUTTON_VOLUME)],
                                             relief=[('pressed', 'groove'),
                                                     ('!pressed', 'ridge')])
         frame_stations = tk.Frame(master=self.frame)
         frame_stations.pack()
-        frame_control = tk.Frame(master=self.frame)
-        frame_control.pack()
 
         i = 0
         self.buttons = OrderedDict()
@@ -198,8 +201,23 @@ class Radio_TK (tk.Frame):
                                                      command=lambda url=Stations[station][station_url]: radio.control.play(url))})
             i += 1
 
-        self.buttons.update({'off': ttk.Button(frame_control, text="Ausschalten",
+        frame_control = tk.Frame(master=self.frame)
+        frame_control.pack()
+        # TODO: loop
+        frame_control_1 = tk.Frame(master=frame_control)
+        frame_control_1.grid(row=0, column=0)
+        frame_control_2 = tk.Frame(master=frame_control)
+        frame_control_2.grid(row=0, column=1)
+        frame_control_3 = tk.Frame(master=frame_control)
+        frame_control_3.grid(row=0, column=2)
+
+        self.buttons.update({'off': ttk.Button(frame_control_2, text="Ausschalten",
                                                style="Off.Radio.TButton", command=lambda: radio.control.stop_play())})
+        self.buttons.update({'vol_minus': ttk.Button(frame_control_1, text="Leiser",
+                                               style="Volume.Radio.TButton", command=lambda: radio.control.adjust_volume(-5))})
+        self.buttons.update({'vol_plus': ttk.Button(frame_control_3, text="Lauter",
+                                               style="Volume.Radio.TButton", command=lambda: radio.control.adjust_volume(+5))})
+
         for btn in self.buttons.values():
             btn.pack(padx=5, pady=5)
 
