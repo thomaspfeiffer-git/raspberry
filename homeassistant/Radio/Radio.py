@@ -201,21 +201,18 @@ class Radio_TK (tk.Frame):
                                                      command=lambda url=Stations[station][station_url]: radio.control.play(url))})
             i += 1
 
-        frame_control = tk.Frame(master=self.frame)
-        frame_control.pack()
-        # TODO: loop
-        frame_control_1 = tk.Frame(master=frame_control)
-        frame_control_1.grid(row=0, column=0)
-        frame_control_2 = tk.Frame(master=frame_control)
-        frame_control_2.grid(row=0, column=1)
-        frame_control_3 = tk.Frame(master=frame_control)
-        frame_control_3.grid(row=0, column=2)
+        frame_control_master = tk.Frame(master=self.frame)
+        frame_control_master.pack()
+        frame_control = []
+        for i in range(3):
+            frame_control.append(tk.Frame(master=frame_control_master))
+            frame_control[i].grid(row=0, column=i)
 
-        self.buttons.update({'off': ttk.Button(frame_control_2, text="Ausschalten",
+        self.buttons.update({'off': ttk.Button(frame_control[1], text="Ausschalten",
                                                style="Off.Radio.TButton", command=lambda: radio.control.stop_play())})
-        self.buttons.update({'vol_minus': ttk.Button(frame_control_1, text="Leiser",
+        self.buttons.update({'vol_minus': ttk.Button(frame_control[0], text="Leiser",
                                                style="Volume.Radio.TButton", command=lambda: radio.control.adjust_volume(-5))})
-        self.buttons.update({'vol_plus': ttk.Button(frame_control_3, text="Lauter",
+        self.buttons.update({'vol_plus': ttk.Button(frame_control[2], text="Lauter",
                                                style="Volume.Radio.TButton", command=lambda: radio.control.adjust_volume(+5))})
 
         for btn in self.buttons.values():
