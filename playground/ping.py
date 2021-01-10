@@ -5,9 +5,7 @@
 # (c) https://github.com/thomaspfeiffer-git 2021                              #
 ###############################################################################
 """
-ping.py
-
-Pings a varioius number of hosts.
+Pings a various number of hosts.
 Is used standalone, thus no libraries are included (eg Log and Shutdown).
 """
 
@@ -55,9 +53,9 @@ class Ping(threading.Thread):
 
     def run(self):
         self._running = True
-        command = shlex.split(ping_command.format(self.__host))
 
         while self._running:
+            command = shlex.split(ping_command.format(self.__host))
             with subprocess.Popen(command, stdout=subprocess.PIPE) as process:
                 result = process.stdout.read().decode(encoding='UTF-8').split('\n')
             with self.__lock:
