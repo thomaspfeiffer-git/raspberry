@@ -48,17 +48,17 @@ class Shutdown(object):
 class Ping(threading.Thread):
     def __init__(self, host, log_lock):
         threading.Thread.__init__(self)
-        self.__host = host
-        self.__lock = log_lock
+        self.host = host
+        self.lock = log_lock
+        self.command = shlex.split(ping_command.format(self.host))
 
     def run(self):
         self._running = True
 
         while self._running:
-            command = shlex.split(ping_command.format(self.__host))
-            with subprocess.Popen(command, stdout=subprocess.PIPE) as process:
+            with subprocess.Popen(self.command, stdout=subprocess.PIPE) as process:
                 result = process.stdout.read().decode(encoding='UTF-8').split('\n')
-            with self.__lock:
+            with self.lock:
                 Log(f"{result[1]}")
             time.sleep(1)
 
