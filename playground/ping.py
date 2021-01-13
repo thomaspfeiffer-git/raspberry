@@ -21,7 +21,12 @@ import time
 hosts = ["arverner.smtp.at", "orf.at"]
 ping_threads = []
 
-ping_command = "ping -c 1 {}"
+if sys.platform.lower() == "win32":
+    ping_command = "ping -n 1 {}"
+    codepage = 'cp437'
+else:
+    ping_command = "ping -c 1 {}"
+    codepage = 'UTF-8'
 
 
 ###############################################################################
@@ -57,7 +62,7 @@ class Ping(threading.Thread):
 
         while self._running:
             with subprocess.Popen(self.command, stdout=subprocess.PIPE) as process:
-                result = process.stdout.read().decode(encoding='UTF-8').split('\n')
+                result = process.stdout.read().decode(encoding=codepage).split('\n')
             with self.lock:
                 Log(f"{result[1]}")
             time.sleep(1)
