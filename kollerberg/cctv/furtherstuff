@@ -4,7 +4,7 @@
 crontab @ seti-05:
 ------------------
 
-* * * * *   find /ramdisk/ -name "*jpg" -mmin +3 -exec mv {} /storage_emmc/2020/ \;
+* * * * *   find /ramdisk/ -name "*jpg" -mmin +3 -exec mv {} /storage_emmc/2021/ \;
 
 
 
@@ -12,7 +12,7 @@ crontab @ seti-05:
 ---------------------
 
 UUID="a6f9fe2a-6bc2-4c05-a418-3db9f6b05353"     /storage    ext4   auto,nofail,sync,users,rw   0   0
-/dev/mmcblk0p1                                  /storage_emmc   ext4    auto,nofail,sync,users,rw   0   0
+/dev/mmcblk0p1                                  /storage_emmc   btrfs   auto,nofail,sync,users,rw   0   0
 ramdisk /ramdisk tmpfs nodev,nosuid,size=256M 0 0
 
 
