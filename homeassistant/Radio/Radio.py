@@ -49,6 +49,10 @@ Stations.update({ 's5': { station_name: "The Sound of New York City", station_ur
 Stations.update({ 's6': { station_name: "BBC Radio 2", station_url: "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_q" } })
 Stations.update({ 's7': { station_name: "DeepLazz Radio", station_url: "http://stream.zenolive.com/m32839kywrquv" } })
 
+# ORF1: https://orf1.mdn.ors.at/out/u/orf1/q6a/manifest.m3u8
+# ORF2: https://orf2.mdn.ors.at/out/u/orf2/q6a/manifest.m3u8
+# ORF3: https://orf3.mdn.ors.at/out/u/orf3/q6a/manifest.m3u8
+# http://blog.peterseil.com/orf-stream-links/
 
 ###############################################################################
 ###############################################################################
