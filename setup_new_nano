@@ -41,13 +41,13 @@ git clone https://github.com/thomaspfeiffer-git/raspberry
 
 
 #------- swap off -------------------------
-sudo swapoff -a
-
+sudo vi /etc/default/armbian-zram-config
+ENABLED=false
 
 
 #------- 1-wire DS18B20 --------------------
 # enable 1-wire
-sudo armbian-config 
+sudo armbian-config
 
 # set PIN to PG11/203/phys 7
 ## /boot/armbianEnv.txt
@@ -57,7 +57,7 @@ param_w1_pin=PG11
 cd /boot/dtb/overlay/
 cp sun8i-h3-w1-gpio.dtbo ~/sun8i-h3-w1-gpio.dtbo.orig
 dtc -I dtb -O dts sun8i-h3-w1-gpio.dtbo > sun8i-h3-w1-gpio.dts
-# sun8i-h3-w1-gpio.dts: 
+# sun8i-h3-w1-gpio.dts:
 w1_pins {
           pins = "PG11";
 
@@ -102,7 +102,7 @@ sudo apt-get install vim git man python3-pip nfs-common debian-goodies -y
 sudo apt-get install --reinstall rsyslog -y # fixes missing files in /var/log
 sudo pip3 install --upgrade pip
 
-# .vimrc  
+# .vimrc
    # get from pi@pia
 
 
@@ -159,7 +159,7 @@ Kernel Sources:
 # taken from https://wiki.ubuntuusers.de/Kernel/Kompilierung/
 
 sudo apt-get install linux-source build-essential kernel-package libssl-dev  -y
-mkdir kernel 
+mkdir kernel
 cd kernel
 tar xvjf /usr/src/linux-*tar.bz2
 
@@ -182,9 +182,9 @@ sudo apt-get install kernel-headers-$(uname -r)
 # GPIO
 echo 203 > /sys/class/gpio/export
 echo out > /sys/class/gpio/gpio203/direction
-echo 1 > /sys/class/gpio/gpio203/value 
-echo 0 > /sys/class/gpio/gpio203/value 
-echo 1 > /sys/class/gpio/gpio203/value 
+echo 1 > /sys/class/gpio/gpio203/value
+echo 0 > /sys/class/gpio/gpio203/value
+echo 1 > /sys/class/gpio/gpio203/value
 
 
 # python installer
@@ -232,7 +232,7 @@ ln -s /dev/null /etc/systemd/network/99-default.link
 
 # Basic setup
 dpkg-reconfigure tzdata
-usermod -aG sudo fa 
+usermod -aG sudo fa
 
 locale-gen de_DE.UTF-8
 locale-gen en_US.UTF-8
@@ -248,7 +248,7 @@ apt-get install git -y
 apt-get install man -y
 
 apt-get install nfs-common -y
-schild.smtp.at:/exports/share/pi        /schild nfs comment=systemd.automount,_netdev,auto,vers=2,rsize=8192,wsize=8192,timeo=14,intr 0 0 
+schild.smtp.at:/exports/share/pi        /schild nfs comment=systemd.automount,_netdev,auto,vers=2,rsize=8192,wsize=8192,timeo=14,intr 0 0
 
 apt-get install i2c-tools -y
 apt-get install python-smbus -y
@@ -305,7 +305,7 @@ options w1-gpio-board gpio=203
 
 
    . wifi
- 
+
 2) copy image to nfs share
 3) copy image to sd card
 4) start from sd card
@@ -332,11 +332,11 @@ Getting started:
 http://dietpi.com/phpbb/viewtopic.php?f=8&t=9#p9
 
 
-fdisk -l DietPi_v127_NanoPiNEO-armv7-Jessie.img 
+fdisk -l DietPi_v127_NanoPiNEO-armv7-Jessie.img
 mount -v -o loop,offset=68157440 DietPi_v127_NanoPiNEO-armv7-Jessie.img dietpi/
 
 
-#### i2c (draft, does not work so far) ### 
+#### i2c (draft, does not work so far) ###
 
 /boot/config.txt when mounted image or /DietPi/config.txt when running
 #-------i2c-------------
