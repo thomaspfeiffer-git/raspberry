@@ -102,8 +102,7 @@ class TakePictures(threading.Thread):
             if daylight():
                 filename = f"{TEMPDIR}pic_{datetime.now().strftime('%Y%m%d-%H%M%S')}_{i:05d}.jpg"
                 cmd = shlex.split(self.raspistill.format(i, filename))
-                # TODO: call raspistill
-                # run_command(cmd)
+                run_command(cmd)
                 Log(f"Putting '{filename}' to queue")
                 self.queue.put(filename)
                 i += 1
@@ -144,9 +143,9 @@ class Deliver(threading.Thread):
                 self._running = False
             else:
                 time.sleep(1)   # TODO remove
-                cmd = shlex.split(self.scp.format(self.bandwidth, filename))
-                # run_command(cmd)
-                # TODO call scp
+                # cmd = shlex.split(self.scp.format(self.bandwidth, filename))
+                cmd = shlex.split(f"rm {filename}")
+                run_command(cmd)
         Log(f"'{self.__class__.__name__}' stopped")
 
     def stop(self):
