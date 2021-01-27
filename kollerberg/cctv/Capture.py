@@ -18,6 +18,7 @@ import queue
 import threading
 import shlex
 import socket
+import subprocess
 import sys
 import time
 from urllib.error import HTTPError, URLError
@@ -31,9 +32,18 @@ from Logging import Log
 QSTOP = None
 
 SCP_TIMEOUT = 120
+SCP_BANDWIDTHFILE = "./scp_bandwidth"
 TEMPDIR = "/ramdisk/"
 DESTHOST = "seti-05"
 DESTDIR = "/ramdisk/"
+
+
+###############################################################################
+# run_command #################################################################
+def run_command(command):
+    process = subprocess.Popen(command)
+    process.wait()
+    process.communicate()
 
 
 ###############################################################################
@@ -62,7 +72,6 @@ class Daylight(threading.Thread):
 
         delta = timedelta(hours=1)
         self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
-        Log(f"daylight: {daylight()}")
 
     def run(self):
         self._running = True
@@ -94,6 +103,7 @@ class TakePictures(threading.Thread):
                 filename = f"{TEMPDIR}pic_{datetime.now().strftime('%Y%m%d-%H%M%S')}_{i:05d}.jpg"
                 cmd = shlex.split(self.raspistill.format(i, filename))
                 # TODO: call raspistill
+                # run_command(cmd)
                 Log(f"Putting '{filename}' to queue")
                 self.queue.put(filename)
                 i += 1
@@ -115,25 +125,27 @@ class Deliver(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.queue = queue
-        """
-        SCP_TIMEOUT=120
-        BANDWITHFILE="./scp_bandwith"
-        DESTHOST="seti-05"
-        DESTDIR="/ramdisk/"
-        timeout -k 10 -v $SCP_TIMEOUT scp -l `cat $BANDWITHFILE` -q $FILENAME ${DESTHOST}:${DESTDIR}
-        """
+        self.scp = f"timeout -k 10 -v {SCP_TIMEOUT} scp -l {{}} -q {{}} {DESTHOST}:{DESTDIR}"
+
+    @property
+    def bandwidth(self):
+        # BANDWITHFILE="./scp_bandwidth"
+        # TODO read from bandwidthfile
+        return "1024"
 
     def run(self):
         self._running = True
 
         while self._running:
-            item = self.queue.get()
-            Log(f"Got '{item}' from queue")
+            filename = self.queue.get()
+            Log(f"Got '{filename}' from queue")
             self.queue.task_done()
-            if item == QSTOP:
+            if filename == QSTOP:
                 self._running = False
             else:
-                time.sleep(1)
+                time.sleep(1)   # TODO remove
+                cmd = shlex.split(self.scp.format(self.bandwidth, filename))
+                # run_command(cmd)
                 # TODO call scp
         Log(f"'{self.__class__.__name__}' stopped")
 
