@@ -34,13 +34,16 @@ QSTOP = None
 SCP_TIMEOUT = 120
 SCP_BANDWIDTHFILE = "./scp_bandwidth"
 TEMPDIR = "/ramdisk/"
-DESTHOST = "seti-05"
-DESTDIR = "/ramdisk/"
+# DESTHOST = "seti-05"
+# DESTDIR = "/ramdisk/"
+DESTHOST = "thomas@arverner.smtp.at"
+DESTDIR = "/home/thomas/fotos_kollerberg/"
 
 
 ###############################################################################
 # run_command #################################################################
 def run_command(command):
+    Log(f"run command {command}")
     process = subprocess.Popen(command)
     process.wait()
     process.communicate()
@@ -71,7 +74,8 @@ class Daylight(threading.Thread):
         sunset = datetime.strptime(data['results']['sunset'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
 
         delta = timedelta(hours=1)
-        self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
+        # self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
+        self.__daylight = True   # TODO
 
     def run(self):
         self._running = True
@@ -130,7 +134,7 @@ class Deliver(threading.Thread):
     def bandwidth(self):
         # BANDWITHFILE="./scp_bandwidth"
         # TODO read from bandwidthfile
-        return "1024"
+        return "102400"
 
     def run(self):
         self._running = True
@@ -142,9 +146,7 @@ class Deliver(threading.Thread):
             if filename == QSTOP:
                 self._running = False
             else:
-                time.sleep(1)   # TODO remove
-                # cmd = shlex.split(self.scp.format(self.bandwidth, filename))
-                cmd = shlex.split(f"rm {filename}")
+                cmd = shlex.split(self.scp.format(self.bandwidth, filename))
                 run_command(cmd)
         Log(f"'{self.__class__.__name__}' stopped")
 
