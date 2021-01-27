@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Capture.py                                                                  #
@@ -10,20 +10,18 @@
 ### usage ###
 # TODO
 
-# TODO
-
 
 from attrdict import AttrDict
 from datetime import datetime, timezone, timedelta
 import json
 import queue
 import threading
+import shlex
 import socket
 import sys
 import time
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
-
 
 sys.path.append('../../libs')
 from Shutdown import Shutdown
@@ -31,6 +29,11 @@ from Logging import Log
 
 
 QSTOP = None
+
+SCP_TIMEOUT = 120
+TEMPDIR = "/ramdisk/"
+DESTHOST = "seti-05"
+DESTDIR = "/ramdisk/"
 
 
 ###############################################################################
@@ -41,8 +44,7 @@ class Daylight(threading.Thread):
         self.url = "https://api.sunrise-sunset.org/json?lat=48.2&lng=15.63333&formatted=0"
         self.__daylight = False
 
-    @property
-    def daylight(self):
+    def __call__(self):
         return self.__daylight
 
     def calculate(self):
@@ -60,7 +62,7 @@ class Daylight(threading.Thread):
 
         delta = timedelta(hours=1)
         self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
-        Log(f"daylight: {self.daylight}")
+        Log(f"daylight: {daylight()}")
 
     def run(self):
         self._running = True
@@ -81,16 +83,19 @@ class TakePictures(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.queue = queue
+        self.raspistill = 'raspistill -ae 64,0xff,0x808000 -a 4 -a "Kollerberg %Y-%m-%d %X - {:05d}" -o {}'
 
     def run(self):
         self._running = True
 
         i = 0
         while self._running:
-            if daylight.daylight:
+            if daylight():
+                filename = f"{TEMPDIR}pic_{datetime.now().strftime('%Y%m%d-%H%M%S')}_{i:05d}.jpg"
+                cmd = shlex.split(self.raspistill.format(i, filename))
                 # TODO: call raspistill
-                Log(f"Putting '{i}' to queue")
-                self.queue.put(i)
+                Log(f"Putting '{filename}' to queue")
+                self.queue.put(filename)
                 i += 1
             else:
                 time.sleep(0.5)
@@ -110,6 +115,13 @@ class Deliver(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.queue = queue
+        """
+        SCP_TIMEOUT=120
+        BANDWITHFILE="./scp_bandwith"
+        DESTHOST="seti-05"
+        DESTDIR="/ramdisk/"
+        timeout -k 10 -v $SCP_TIMEOUT scp -l `cat $BANDWITHFILE` -q $FILENAME ${DESTHOST}:${DESTDIR}
+        """
 
     def run(self):
         self._running = True
