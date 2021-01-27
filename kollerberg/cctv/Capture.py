@@ -43,7 +43,6 @@ DESTDIR = "/home/thomas/fotos_kollerberg/"
 ###############################################################################
 # run_command #################################################################
 def run_command(command):
-    Log(f"run command {command}")
     process = subprocess.Popen(command)
     process.wait()
     process.communicate()
@@ -74,8 +73,8 @@ class Daylight(threading.Thread):
         sunset = datetime.strptime(data['results']['sunset'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
 
         delta = timedelta(hours=1)
-        # self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
-        self.__daylight = True   # TODO
+        self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
+        # self.__daylight = True
 
     def run(self):
         self._running = True
@@ -107,18 +106,16 @@ class TakePictures(threading.Thread):
                 filename = f"{TEMPDIR}pic_{datetime.now().strftime('%Y%m%d-%H%M%S')}_{i:05d}.jpg"
                 cmd = shlex.split(self.raspistill.format(i, filename))
                 run_command(cmd)
-                Log(f"Putting '{filename}' to queue")
+                Log(f"{filename} captured")
                 self.queue.put(filename)
                 i += 1
             else:
                 time.sleep(0.5)
 
-        Log("Sending QSTOP")
+        # Log("Sending QSTOP")
         self.queue.put(QSTOP)
-        Log(f"'{self.__class__.__name__}' stopped")
 
     def stop(self):
-        Log(f"Stopping '{self.__class__.__name__}'")
         self._running = False
 
 
@@ -141,17 +138,18 @@ class Deliver(threading.Thread):
 
         while self._running:
             filename = self.queue.get()
-            Log(f"Got '{filename}' from queue")
             self.queue.task_done()
             if filename == QSTOP:
+                Log(f"Got '{filename}' from queue")
                 self._running = False
             else:
                 cmd = shlex.split(self.scp.format(self.bandwidth, filename))
                 run_command(cmd)
-        Log(f"'{self.__class__.__name__}' stopped")
+                cmd = shlex.split(f"rm -f {filename}")
+                run_command(cmd)
+                Log(f"{filename} delivered")
 
     def stop(self):
-        Log(f"Stopping '{self.__class__.__name__}'")
         self._running = False
 
 
