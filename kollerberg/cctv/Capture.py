@@ -1,4 +1,4 @@
-#!/usr/bin/python3 -u
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Capture.py                                                                  #
@@ -8,27 +8,68 @@
 """
 
 ### usage ###
+# TODO
 
+# TODO
+
+
+from attrdict import AttrDict
+from datetime import datetime, timezone, timedelta
+import json
 import queue
 import threading
-import time
+import socket
 import sys
+import time
+from urllib.error import HTTPError, URLError
+from urllib.request import urlopen
+
 
 sys.path.append('../../libs')
 from Shutdown import Shutdown
 from Logging import Log
 
 
+QSTOP = None
+
+
 ###############################################################################
 # Daylight ####################################################################
-class Daylight(object):
+class Daylight(threading.Thread):
     def __init__(self):
-        pass
+        threading.Thread.__init__(self)
+        self.url = "https://api.sunrise-sunset.org/json?lat=48.2&lng=15.63333&formatted=0"
+        self.__daylight = False
+
+    @property
+    def daylight(self):
+        return self.__daylight
+
+    def calculate(self):
+        try:
+            with urlopen(self.url) as response:
+                data = AttrDict(json.loads(response.read().decode("utf-8")))
+        except (HTTPError, URLError, ConnectionResetError):
+            Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
+        except socket.timeout:
+            Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+
+        local_tz = datetime.now(timezone(timedelta(0))).astimezone().tzinfo
+        sunrise = datetime.strptime(data['results']['sunrise'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
+        sunset = datetime.strptime(data['results']['sunset'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
+
+        delta = timedelta(hours=1)
+        self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
+        Log(f"daylight: {self.daylight}")
 
     def run(self):
         self._running = True
         while self._running:
-            time.sleep(0.1)
+            self.calculate()
+            for _ in range(6000):    # interrruptible sleep for 10 minutes
+                if not self._running:
+                    break
+                time.sleep(0.1)
 
     def stop(self):
         self._running = False
@@ -46,14 +87,20 @@ class TakePictures(threading.Thread):
 
         i = 0
         while self._running:
-            Log(f"Putting '{i}' to queue")
-            self.queue.put(i)
-            i += 1
-            time.sleep(0.1)
-        Log("'TakePictures' stopped")
+            if daylight.daylight:
+                # TODO: call raspistill
+                Log(f"Putting '{i}' to queue")
+                self.queue.put(i)
+                i += 1
+            else:
+                time.sleep(0.5)
+
+        Log("Sending QSTOP")
+        self.queue.put(QSTOP)
+        Log(f"'{self.__class__.__name__}' stopped")
 
     def stop(self):
-        Log("Stopping 'TakePictures'")
+        Log(f"Stopping '{self.__class__.__name__}'")
         self._running = False
 
 
@@ -71,11 +118,15 @@ class Deliver(threading.Thread):
             item = self.queue.get()
             Log(f"Got '{item}' from queue")
             self.queue.task_done()
-            time.sleep(1)
-        Log("'Deliver' stopped")
+            if item == QSTOP:
+                self._running = False
+            else:
+                time.sleep(1)
+                # TODO call scp
+        Log(f"'{self.__class__.__name__}' stopped")
 
     def stop(self):
-        Log("Stopping 'Deliver'")
+        Log(f"Stopping '{self.__class__.__name__}'")
         self._running = False
 
 
@@ -84,10 +135,11 @@ class Deliver(threading.Thread):
 def shutdown_application():
     """called on shutdown; stops all threads"""
     Log("Stopping application.")
-    deliver.stop()
-    deliver.join()
     pictures.stop()
     pictures.join()
+    deliver.join()         # stopping itself due to QSTOP
+    daylight.stop()
+    daylight.join()
     Log("Application stopped.")
     sys.exit(0)
 
@@ -96,15 +148,18 @@ def shutdown_application():
 # Main ########################################################################
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
-    queue = queue.Queue(maxsize=5)
+    queue_ = queue.Queue(maxsize=3)
 
-    pictures = TakePictures(queue)
+    daylight = Daylight()
+    daylight.start()
+
+    pictures = TakePictures(queue_)
     pictures.start()
 
-    deliver = Deliver(queue)
+    deliver = Deliver(queue_)
     deliver.start()
 
     while True:
-        time.sleep(0.1)
+        time.sleep(0.5)
 
 # eof #
