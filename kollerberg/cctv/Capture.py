@@ -8,7 +8,7 @@
 """
 
 ### usage ###
-# TODO
+# nohup ./Capture.py 2>&1 >capture.log &
 
 
 from attrdict import AttrDict
