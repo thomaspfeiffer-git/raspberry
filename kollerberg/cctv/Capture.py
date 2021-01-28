@@ -171,7 +171,7 @@ def shutdown_application():
 # Main ########################################################################
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
-    queue_ = queue.Queue(maxsize=3)
+    queue_ = queue.Queue(maxsize=2)
 
     daylight = Daylight()
     daylight.start()
