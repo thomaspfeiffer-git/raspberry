@@ -51,6 +51,7 @@ Stations.update({ 's7': { station_name: "DeepLazz Radio", station_url: "http://s
 
 # ORF1: https://orf1.mdn.ors.at/out/u/orf1/q6a/manifest.m3u8
 # ORF2: https://orf2.mdn.ors.at/out/u/orf2/q6a/manifest.m3u8
+#       https://orf2.mdn.ors.at/out/u/orf2/q4a/manifest.m3u8
 # ORF3: https://orf3.mdn.ors.at/out/u/orf3/q6a/manifest.m3u8
 # http://blog.peterseil.com/orf-stream-links/
 
