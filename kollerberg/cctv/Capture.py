@@ -67,14 +67,14 @@ class Daylight(threading.Thread):
             Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
         except socket.timeout:
             Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
+        else:
+            local_tz = datetime.now(timezone(timedelta(0))).astimezone().tzinfo
+            sunrise = datetime.strptime(data['results']['sunrise'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
+            sunset = datetime.strptime(data['results']['sunset'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
 
-        local_tz = datetime.now(timezone(timedelta(0))).astimezone().tzinfo
-        sunrise = datetime.strptime(data['results']['sunrise'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
-        sunset = datetime.strptime(data['results']['sunset'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
-
-        delta = timedelta(hours=1)
-        self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
-        # self.__daylight = True
+            delta = timedelta(hours=1)
+            self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
+            # self.__daylight = True
 
     def run(self):
         self._running = True
