@@ -133,10 +133,19 @@ class Deliver(threading.Thread):
         self.queue = queue
         self.scp = f"timeout -k 10 -v {SCP_TIMEOUT} scp -l {{}} -q {{}} {DESTHOST}:{DESTDIR}"
 
-    @property
-    def bandwidth(self):
-        with open(SCP_BANDWIDTHFILE) as f:
-            return f.readline().strip()
+    @staticmethod
+    def bandwidth():
+        last_bw = None
+
+        def read_bandwidth():
+            nonlocal last_bw
+            with open(SCP_BANDWIDTHFILE) as f:
+                bw = f.readline().strip()
+            if last_bw != bw:
+                last_bw = bw
+                Log(f"scp bandwidth set to {bw} Kbit/s")
+            return bw
+        return read_bandwidth()
 
     def run(self):
         self._running = True
@@ -148,7 +157,7 @@ class Deliver(threading.Thread):
                 Log(f"Got '{filename}' from queue")
                 self._running = False
             else:
-                cmd = shlex.split(self.scp.format(self.bandwidth, filename))
+                cmd = shlex.split(self.scp.format(self.bandwidth(), filename))
                 run_command(cmd)
                 cmd = shlex.split(f"rm -f {filename}")
                 run_command(cmd)
@@ -185,7 +194,6 @@ if __name__ == '__main__':
     pictures.start()
 
     deliver = Deliver(queue_)
-    deliver.bandwidth
     deliver.start()
 
     while True:
