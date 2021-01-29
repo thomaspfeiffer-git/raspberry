@@ -49,6 +49,22 @@ def run_command(command):
 
 
 ###############################################################################
+# bandwidth ###################################################################
+def bandwidth():
+    last_bw = None
+
+    def read():
+        nonlocal last_bw
+        with open(SCP_BANDWIDTHFILE) as f:
+            bw = f.readline().strip()
+        if last_bw != bw:
+            last_bw = bw
+            Log(f"scp bandwidth set to {bw} Kbit/s")
+        return bw
+    return read
+
+
+###############################################################################
 # Daylight ####################################################################
 class Daylight(threading.Thread):
     def __init__(self):
@@ -132,21 +148,6 @@ class Deliver(threading.Thread):
         threading.Thread.__init__(self)
         self.queue = queue
         self.scp = f"timeout -k 10 -v {SCP_TIMEOUT} scp -l {{}} -q {{}} {DESTHOST}:{DESTDIR}"
-        self.bandwidth = self.read_bandwidth()
-
-    @staticmethod
-    def read_bandwidth():
-        last_bw = None
-
-        def read():
-            nonlocal last_bw
-            with open(SCP_BANDWIDTHFILE) as f:
-                bw = f.readline().strip()
-            if last_bw != bw:
-                last_bw = bw
-                Log(f"scp bandwidth set to {bw} Kbit/s")
-            return bw
-        return read
 
     def run(self):
         self._running = True
@@ -158,7 +159,7 @@ class Deliver(threading.Thread):
                 Log(f"Got '{filename}' from queue")
                 self._running = False
             else:
-                cmd = shlex.split(self.scp.format(self.bandwidth(), filename))
+                cmd = shlex.split(self.scp.format(bandwidth(), filename))
                 run_command(cmd)
                 cmd = shlex.split(f"rm -f {filename}")
                 run_command(cmd)
@@ -186,6 +187,7 @@ def shutdown_application():
 # Main ########################################################################
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
+    bandwidth = bandwidth()
     queue_ = queue.Queue(maxsize=2)
 
     daylight = Daylight()
