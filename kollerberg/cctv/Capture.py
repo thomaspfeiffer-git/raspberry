@@ -55,6 +55,7 @@ class Daylight(threading.Thread):
         threading.Thread.__init__(self)
         self.url = "https://api.sunrise-sunset.org/json?lat=48.2&lng=15.63333&formatted=0"
         self.__daylight = False
+        self.last = None
 
     def __call__(self):
         return self.__daylight
@@ -69,11 +70,16 @@ class Daylight(threading.Thread):
             Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
         else:
             local_tz = datetime.now(timezone(timedelta(0))).astimezone().tzinfo
-            sunrise = datetime.strptime(data['results']['sunrise'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
-            sunset = datetime.strptime(data['results']['sunset'], '%Y-%m-%dT%H:%M:%S%z').astimezone(local_tz)
+            t_format = '%Y-%m-%dT%H:%M:%S%z'
+            sunrise = datetime.strptime(data['results']['sunrise'], t_format).astimezone(local_tz)
+            sunset = datetime.strptime(data['results']['sunset'], t_format).astimezone(local_tz)
 
             delta = timedelta(hours=1)
             self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
+            if self.__daylight != self.last:
+                Log(f"Daylight: {self.__daylight}")
+                self.last = self.__daylight
+
             # self.__daylight = True
 
     def run(self):
@@ -129,9 +135,8 @@ class Deliver(threading.Thread):
 
     @property
     def bandwidth(self):
-        # BANDWITHFILE="./scp_bandwidth"
-        # TODO read from bandwidthfile
-        return "102400"
+        with open(SCP_BANDWIDTHFILE) as f:
+            return f.readline().strip()
 
     def run(self):
         self._running = True
@@ -180,6 +185,7 @@ if __name__ == '__main__':
     pictures.start()
 
     deliver = Deliver(queue_)
+    deliver.bandwidth
     deliver.start()
 
     while True:
