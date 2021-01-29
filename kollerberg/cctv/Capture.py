@@ -132,12 +132,13 @@ class Deliver(threading.Thread):
         threading.Thread.__init__(self)
         self.queue = queue
         self.scp = f"timeout -k 10 -v {SCP_TIMEOUT} scp -l {{}} -q {{}} {DESTHOST}:{DESTDIR}"
+        self.bandwidth = self.read_bandwidth()
 
     @staticmethod
-    def bandwidth():
+    def read_bandwidth():
         last_bw = None
 
-        def read_bandwidth():
+        def read():
             nonlocal last_bw
             with open(SCP_BANDWIDTHFILE) as f:
                 bw = f.readline().strip()
@@ -145,7 +146,7 @@ class Deliver(threading.Thread):
                 last_bw = bw
                 Log(f"scp bandwidth set to {bw} Kbit/s")
             return bw
-        return read_bandwidth()
+        return read
 
     def run(self):
         self._running = True
