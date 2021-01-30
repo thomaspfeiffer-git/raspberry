@@ -4,23 +4,17 @@
 crontab @ seti-05:
 ------------------
 
-* * * * *   find /ramdisk/ -name "*jpg" -mmin +3 -exec mv {} /storage_emmc/2021/ \;
+* * * * *   find /ramdisk/ -name "*jpg" -mmin +3 -exec mv {} /mnt/ssd/work/ \;
+
 
 
 
 /etc/fstab @ seti-05:
 ---------------------
 
-UUID="a6f9fe2a-6bc2-4c05-a418-3db9f6b05353"     /storage    ext4   auto,nofail,sync,users,rw   0   0
-/dev/mmcblk0p1                                  /storage_emmc   btrfs   auto,nofail,sync,users,rw   0   0
+/dev/mmcblk2p1                                  /storage_emmc   btrfs    auto,nofail,sync,users,rw   0   0
 ramdisk /ramdisk tmpfs nodev,nosuid,size=256M 0 0
-
-
-/etc/exports @ seti-05:
------------------------
-
-# /ramdisk    192.168.8.202(rw,fsid=23,sync,no_subtree_check)
-/ramdisk    10.14.1.31(rw,fsid=23,sync,no_subtree_check)
+/dev/sda1	/mnt/ssd	ext4
 
 
 
@@ -36,9 +30,4 @@ sudo apt-get install ffmpeg
 
 tmpfs /ramdisk tmpfs nodev,nosuid,size=16M 0 0
 
-# 192.168.8.215:/storage	/home/pi/cctv/pictures 	nfs	rsize=8192,wsize=8192,timeo=14,intr 0 0
-192.168.8.215:/ramdisk  /home/pi/cctv/ram_pictures      nfs     rsize=8192,wsize=8192,timeo=14,intr 0 0
-
-
-
-
+# eof #
