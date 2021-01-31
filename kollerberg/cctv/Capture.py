@@ -35,7 +35,7 @@ SCP_TIMEOUT = 120
 SCP_BANDWIDTHFILE = "./scp_bandwidth"
 TEMPDIR = "/ramdisk/"
 DESTHOST = "seti-05"
-DESTDIR = "/mnt/ssd/work/"
+DESTDIR = "ramdisk"
 
 
 ###############################################################################
