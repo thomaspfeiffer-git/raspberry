@@ -34,10 +34,8 @@ QSTOP = None
 SCP_TIMEOUT = 120
 SCP_BANDWIDTHFILE = "./scp_bandwidth"
 TEMPDIR = "/ramdisk/"
-# DESTHOST = "seti-05"
-# DESTDIR = "/ramdisk/"
-DESTHOST = "thomas@arverner.smtp.at"
-DESTDIR = "/home/thomas/fotos_kollerberg/"
+DESTHOST = "seti-05"
+DESTDIR = "/ramdisk/"
 
 
 ###############################################################################
