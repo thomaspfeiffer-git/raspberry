@@ -132,6 +132,7 @@ class TakePictures(threading.Thread):
                 self.queue.put(filename)
                 i += 1
             else:
+                i = 0   # Reset counter during the night
                 time.sleep(0.5)
 
         # Log("Sending QSTOP")
