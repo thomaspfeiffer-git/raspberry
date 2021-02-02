@@ -40,7 +40,8 @@ DESTDIR = "/ramdisk/"
 
 ###############################################################################
 # run_command #################################################################
-def run_command(command):
+def run_command(command: str):
+    command = shlex.split(command)
     process = subprocess.Popen(command)
     process.wait()
     process.communicate()
@@ -124,8 +125,7 @@ class TakePictures(threading.Thread):
         while self._running:
             if daylight():
                 filename = f"{TEMPDIR}pic_{datetime.now().strftime('%Y%m%d-%H%M%S')}_{i:05d}.jpg"
-                cmd = shlex.split(self.raspistill.format(i, filename))
-                run_command(cmd)
+                run_command(self.raspistill.format(i, filename))
                 Log(f"{filename} captured")
                 self.queue.put(filename)
                 i += 1
@@ -158,10 +158,8 @@ class Deliver(threading.Thread):
                 Log(f"Got '{filename}' from queue")
                 self._running = False
             else:
-                cmd = shlex.split(self.scp.format(bandwidth(), filename))
-                run_command(cmd)
-                cmd = shlex.split(f"rm -f {filename}")
-                run_command(cmd)
+                run_command(self.scp.format(bandwidth(), filename))
+                run_command(f"rm -f {filename}")
                 Log(f"{filename} delivered")
 
     def stop(self):
