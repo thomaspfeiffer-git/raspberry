@@ -95,8 +95,6 @@ class Daylight(threading.Thread):
                 Log(f"Daylight: {self.__daylight}")
                 self.last = self.__daylight
 
-            # self.__daylight = True
-
     def run(self):
         self._running = True
         while self._running:
