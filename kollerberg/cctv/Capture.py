@@ -98,7 +98,7 @@ class Daylight(object):
         self._running = True
         while self._running:
             self.calculate()
-            for _ in range(6000):    # interrruptible sleep for 10 minutes
+            for _ in range(6000):    # interruptible sleep for 10 minutes
                 if not self._running:
                     break
                 time.sleep(0.1)
