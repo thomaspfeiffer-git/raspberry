@@ -4,9 +4,8 @@
 crontab @ seti-05:
 ------------------
 
-* * * * *   find /ramdisk/ -name "*jpg" -mmin +3 -exec mv {} /mnt/ssd/work/ \;
-
-
+0 1 * * *   bash -c "mkdir /mnt/ssd/$(date '+\%Y\%m\%d')"
+* 3-23 * * *   bash -c "find /ramdisk/ -name '*jpg' -mmin +3 -exec mv {} /mnt/ssd/$(date '+\%Y\%m\%d')/ \;"
 
 
 /etc/fstab @ seti-05:
