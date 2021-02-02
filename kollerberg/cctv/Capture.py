@@ -65,9 +65,8 @@ def bandwidth():
 
 ###############################################################################
 # Daylight ####################################################################
-class Daylight(threading.Thread):
+class Daylight(object):
     def __init__(self):
-        threading.Thread.__init__(self)
         self.url = "https://api.sunrise-sunset.org/json?lat=48.2&lng=15.63333&formatted=0"
         self.__daylight = False
         self.last = None
@@ -173,7 +172,7 @@ def shutdown_application():
     pictures.join()
     deliver.join()         # stopping itself due to QSTOP
     daylight.stop()
-    daylight.join()
+    daylight_thread.join()
     Log("Application stopped.")
     sys.exit(0)
 
@@ -186,7 +185,8 @@ if __name__ == '__main__':
     queue_ = queue.Queue(maxsize=2)
 
     daylight = Daylight()
-    daylight.start()
+    daylight_thread = threading.Thread(target=daylight.run)
+    daylight_thread.start()
 
     pictures = TakePictures(queue_)
     pictures.start()
