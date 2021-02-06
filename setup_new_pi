@@ -29,6 +29,20 @@ network={
 }
 
 
+# For TP-Link TL-WN725N
+# Realtek Semiconductor Corp. RTL8188EUS 802.11n Wireless Network Adapter
+# change /etc/dhcpcd.conf:
+
+interface wlan0
+env ifwireless=1
+env wpa_supplicant_driver=nl80211,wext
+# taken from https://www.rigacci.org/wiki/doku.php/doc/appunti/hardware/raspberrypi_wpa_supplicant_problem
+
+
+
+
+
+
 
 Fast setup of most important modules/libraries:
 ===============================================
