@@ -69,12 +69,17 @@ class Daylight(object):
     def __init__(self):
         self.url = "https://api.sunrise-sunset.org/json?lat=48.2&lng=15.63333&formatted=0"
         self.__daylight = False
-        self.last = None
+        self.last_daylight = None
+        self.sunrise = None
+        self.sunset = None
+        self.local_tz = datetime.now(timezone(timedelta(0))).astimezone().tzinfo
+        self.update_data()
 
     def __call__(self):
+        self.calculate()
         return self.__daylight
 
-    def calculate(self):
+    def update_data(self):
         try:
             with urlopen(self.url) as response:
                 data = AttrDict(json.loads(response.read().decode("utf-8")))
@@ -83,25 +88,28 @@ class Daylight(object):
         except socket.timeout:
             Log("socket.timeout: {0[0]} {0[1]}".format(sys.exc_info()))
         else:
-            local_tz = datetime.now(timezone(timedelta(0))).astimezone().tzinfo
             t_format = '%Y-%m-%dT%H:%M:%S%z'
-            sunrise = datetime.strptime(data['results']['sunrise'], t_format).astimezone(local_tz)
-            sunset = datetime.strptime(data['results']['sunset'], t_format).astimezone(local_tz)
+            self.sunrise = datetime.strptime(data['results']['sunrise'], t_format).astimezone(self.local_tz)
+            self.sunset = datetime.strptime(data['results']['sunset'], t_format).astimezone(self.local_tz)
+            Log(f"Sunrise: {self.sunrise}")
+            Log(f"Sunset: {self.sunset}")
 
-            delta = timedelta(hours=1)
-            self.__daylight = sunrise-delta <= datetime.now(tz=local_tz) <= sunset+delta
-            if self.__daylight != self.last:
-                Log(f"Daylight: {self.__daylight}")
-                self.last = self.__daylight
+    def calculate(self):
+        delta = timedelta(hours=1)
+        self.__daylight = self.sunrise-delta <= datetime.now(tz=self.local_tz) <= self.sunset+delta
+        if self.__daylight != self.last_daylight:
+            Log(f"Daylight: {self.__daylight}")
+            self.last_daylight = self.__daylight
 
     def run(self):
         self._running = True
         while self._running:
-            self.calculate()
-            for _ in range(6000):    # interruptible sleep for 10 minutes
+            for _ in range(6*36000):    # interruptible sleep for 6 hours = 6 * 3600 seconds
                 if not self._running:
                     break
                 time.sleep(0.1)
+            else:
+                self.update_data()
 
     def stop(self):
         self._running = False
