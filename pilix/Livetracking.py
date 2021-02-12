@@ -164,7 +164,7 @@ class UDP (object):
             sent = self.socket.sendto(datagram,
                                       (CONFIG.Livetracking.IP_ADDRESS_SERVER,
                                        CONFIG.Livetracking.UDP_PORT))
-            Log("Sent bytes (UDP): {}; data: {}".format(sent,datagram))
+            Log("Sent bytes (UDP): {}; data: {}".format(sent, datagram))
         except:
             Log("Cannot send data (UDP): {0[0]} {0[1]}".format(sys.exc_info()))
 
@@ -289,7 +289,7 @@ class Relais (object):
                     temp = f"{self.bme280.read_temperature():.1f} °C"
                     humi = f"{self.bme280.read_humidity():.1f} % rF"
 
-                self.display.print(datetime.now().strftime("%Y%m%d %H:%M:%S"), \
+                self.display.print(datetime.now().strftime("%Y%m%d %H:%M:%S"),
                                    f"IP: {MyIP()}", temp, humi)
 
                 for _ in range(50):
@@ -333,7 +333,7 @@ class Relais (object):
         self.display_pilix = Display1306(address=SSD1306.I2C_BASE_ADDRESS, lock=self.__lock)
         self.display_local = Display1306(address=SSD1306.I2C_SECONDARY_ADDRESS, lock=self.__lock)
 
-        self.display_local.print(datetime.now().strftime("%Y%m%d %H:%M:%S"),\
+        self.display_local.print(datetime.now().strftime("%Y%m%d %H:%M:%S"),
                                  "RFM96 initialized", f"IP: {MyIP()}")
         self.display_local_thread = self.LocalData(self.display_local, self.__lock)
         self.display_local_thread.start()
@@ -349,19 +349,19 @@ class Relais (object):
         self._running = True
 
     def log_gps (self):
-        Log(f"GPS: time: {self.gps.data_stream.time}; lat: {self.gps.data_stream.lat}; " + \
-            f"lon: {self.gps.data_stream.lon}; alt: {self.gps.data_stream.alt}; " + \
+        Log(f"GPS: time: {self.gps.data_stream.time}; lat: {self.gps.data_stream.lat}; " +
+            f"lon: {self.gps.data_stream.lon}; alt: {self.gps.data_stream.alt}; " +
             f"speed: {self.gps.data_stream.speed}")
         Log(f"URL: https://maps.google.at/maps?q=loc:{self.gps.data_stream.lat},{self.gps.data_stream.lon}")
 
     def show_data (self, data, rssi):
         (msgid, timestamp, lon, lat, alt, voltage, source, digest) = data.split(',')
         try:
-            (_, timestamp) = timestamp.split('T') # Show time only
+            (_, timestamp) = timestamp.split('T')    # Show time only
         except ValueError:
             pass
 
-        self.display_pilix.print(f"{msgid} {timestamp}", f"Lat: {lat}", f"Lon: {lon}", \
+        self.display_pilix.print(f"{msgid} {timestamp}", f"Lat: {lat}", f"Lon: {lon}",
                                  f"Alt: {alt}", f"U: {voltage} RSSI: {rssi}")
 
     def run (self):
@@ -372,7 +372,7 @@ class Relais (object):
             data = self.rfm96w.recv()
             str = "".join(map(chr, data))
             if Payload.verify(str):
-                self.rfm96w.afc() # AFC only on good data
+                self.rfm96w.afc()      # AFC only on good data
                 Log("RFM96W: Data received: {}".format(str))
                 rssi = self.rfm96w.last_rssi
                 Log("RSSI: {}".format(rssi))
@@ -508,7 +508,6 @@ def shutdown_application ():
 
 def shutdown ():
     """shuts down the OS"""
-
     import subprocess
     Log("Shutting down in 5 s ...")
     Log("Stopping application")
@@ -520,7 +519,7 @@ def shutdown ():
 
 
 ###############################################################################
-## main #######################################################################
+# main ########################################################################
 if __name__ == "__main__":
     import argparse
     from Shutdown import Shutdown
@@ -541,4 +540,3 @@ if __name__ == "__main__":
     r.run()
 
 # eof #
-

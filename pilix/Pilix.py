@@ -97,7 +97,7 @@ app = Flask(__name__)
 # Switch ######################################################################
 class Switch (Enum):
     OFF = 0
-    ON  = 1
+    ON = 1
 
 
 ###############################################################################
@@ -113,13 +113,13 @@ class Sensors (object):
 
     def read (self):
         timestamp = time.time()
-        return{V_TemperatureBox: self.bmp180.read_temperature(),
-               V_TemperatureOutside: self.ds1820.read_temperature(),
-               V_Pressure: self.bmp180.read_pressure(),
-               V_Voltage: self.pcf8591.read(channel=0) / 255.0 * self.v_ref,
-               V_TemperatureCPU: self.cpu.read_temperature(),
-               V_Timestamp: timestamp,
-               V_Time: time.strftime("%X", time.localtime(timestamp))}
+        return {V_TemperatureBox: self.bmp180.read_temperature(),
+                V_TemperatureOutside: self.ds1820.read_temperature(),
+                V_Pressure: self.bmp180.read_pressure(),
+                V_Voltage: self.pcf8591.read(channel=0) / 255.0 * self.v_ref,
+                V_TemperatureCPU: self.cpu.read_temperature(),
+                V_Timestamp: timestamp,
+                V_Time: time.strftime("%X", time.localtime(timestamp))}
 
 
 ###############################################################################
@@ -187,7 +187,7 @@ class Camera (threading.Thread):
             if self._takingPictures:
                 filename = self.picturestore.get_next_filename()
                 self.statusled.on()
-                Log("taking picture {}".format(filename))
+                Log(f"taking picture {filename}")
                 self.camera.annotate_text = \
                       "{} - Alt: {} m".format(time.strftime("%Y%m%d %H%M%S"),
                                               control.data[V_GPS_Alt])
