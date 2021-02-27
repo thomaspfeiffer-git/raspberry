@@ -34,7 +34,7 @@ QSTOP = None
 SCP_TIMEOUT = 120
 SCP_BANDWIDTHFILE = "./scp_bandwidth"
 TEMPDIR = "/ramdisk/"
-DESTHOST = "seti-05"
+DESTHOST = "seti-05a"
 DESTDIR = "/ramdisk/"
 
 
