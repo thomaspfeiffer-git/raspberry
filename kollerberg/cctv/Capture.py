@@ -11,11 +11,17 @@
 # nohup ./Capture.py 2>&1 >capture.log &
 
 
+# === you might need to install ===
+# sudo pip3 install attrdict
+# sudo pip3 install schedule
+
+
 from attrdict import AttrDict
 from datetime import datetime, timezone, timedelta
 import json
 import queue
 import threading
+import schedule
 import shlex
 import socket
 import subprocess
@@ -74,6 +80,8 @@ class Daylight(object):
         self.sunset = None
         self.local_tz = datetime.now(timezone(timedelta(0))).astimezone().tzinfo
         self.update_data()
+        schedule.every().day.at("00:30").do(self.update_data)
+        schedule.every().day.at("04:30").do(self.update_data)
 
     def __call__(self):
         self.calculate()
@@ -101,18 +109,8 @@ class Daylight(object):
             Log(f"Daylight: {self.__daylight}")
             self.last_daylight = self.__daylight
 
-    def run(self):
-        self._running = True
-        while self._running:
-            for _ in range(6*36000):    # interruptible sleep for 6 hours = 6 * 3600 seconds
-                if not self._running:
-                    break
-                time.sleep(0.1)
-            else:
-                self.update_data()
-
-    def stop(self):
-        self._running = False
+    def scheduler(self):
+        schedule.run_pending()
 
 
 ###############################################################################
@@ -130,9 +128,13 @@ class TakePictures(threading.Thread):
         while self._running:
             if daylight():
                 filename = f"{TEMPDIR}pic_{datetime.now().strftime('%Y%m%d-%H%M%S')}_{i:05d}.jpg"
+                """
                 run_command(self.raspistill.format(i, filename))
                 Log(f"{filename} captured")
                 self.queue.put(filename)
+                """
+                time.sleep(1)
+
                 i += 1
             else:
                 i = 0   # Reset counter during the night
@@ -179,8 +181,6 @@ def shutdown_application():
     pictures.stop()
     pictures.join()
     deliver.join()         # stopping itself due to QSTOP
-    daylight.stop()
-    daylight_thread.join()
     Log("Application stopped.")
     sys.exit(0)
 
@@ -193,8 +193,6 @@ if __name__ == '__main__':
     queue_ = queue.Queue(maxsize=2)
 
     daylight = Daylight()
-    daylight_thread = threading.Thread(target=daylight.run)
-    daylight_thread.start()
 
     pictures = TakePictures(queue_)
     pictures.start()
@@ -203,6 +201,7 @@ if __name__ == '__main__':
     deliver.start()
 
     while True:
-        time.sleep(0.5)
+        daylight.scheduler()
+        time.sleep(1)
 
 # eof #
