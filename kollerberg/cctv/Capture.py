@@ -20,12 +20,12 @@ from attrdict import AttrDict
 from datetime import datetime, timezone, timedelta
 import json
 import queue
-import threading
 import schedule
 import shlex
 import socket
 import subprocess
 import sys
+import threading
 import time
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
