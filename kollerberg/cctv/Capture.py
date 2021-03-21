@@ -128,13 +128,9 @@ class TakePictures(threading.Thread):
         while self._running:
             if daylight():
                 filename = f"{TEMPDIR}pic_{datetime.now().strftime('%Y%m%d-%H%M%S')}_{i:05d}.jpg"
-                """
                 run_command(self.raspistill.format(i, filename))
                 Log(f"{filename} captured")
                 self.queue.put(filename)
-                """
-                time.sleep(1)
-
                 i += 1
             else:
                 i = 0   # Reset counter during the night
