@@ -1,0 +1,64 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on host 'nuernberg'                                           #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2021                      #
+#############################################################################
+
+if [ $HOSTNAME != "nuernberg" ] ; then
+    echo "Wrong host! This script runs on host 'nuernberg' only!"
+    exit 1
+fi
+
+cd /home/thomas/raspberry/
+
+cd seti/
+echo "Starting 'seti_receiver.py' ..."
+nohup ./Seti_UDP.py 2>&1 > seti_udp.log &
+cd ..
+
+cd pool/
+echo "Starting 'Ventilation_UDP.py' ..."
+nohup ./Ventilation_UDP.py 2>&1 > udp.log &
+cd ..
+
+cd weather/
+echo "Starting 'Serverroom.py --receiver' ..."
+nohup ./Serverroom.py --receiver 2>&1 >serverroom_udp.log &
+cd ..
+
+cd wardrobe/
+echo "Starting 'Wardrobe_UDP.py' ..."
+nohup ./Wardrobe_UDP.py 2>&1 > wardrobe_udp.log &
+cd ..
+
+cd airparticulates/
+echo "Starting 'Airparticulates.py --receiver' ..."
+nohup ./Airparticulates.py --receiver 2>&1 > airparticulates_udp.log &
+cd ..
+
+cd anteroom/
+echo "Starting 'Anteroom_UDP.py' ..."
+nohup ./Anteroom_UDP.py 2>&1 > anteroom_udp.log &
+cd ..
+
+cd weather/
+echo "Starting 'Indoor.py --receiver' ..."
+nohup ./Indoor.py --receiver 2>&1 >indoor_udp.log &
+echo "Starting 'Outdoor.py --receiver' ..."
+nohup ./Outdoor.py --receiver 2>&1 >outdoor_udp.log &
+echo "Startung 'Kidsroom_UDP.py' ..."
+nohup ./Kidsroom_UDP.py 2>&1 >kidsroom_udp.log &
+cd ..
+
+cd kollerberg/
+echo "Starting 'Weather_Kollerberg.py --receiver_rrd' ..."
+nohup ./Weather_Kollerberg.py --receiver_rrd 2>&1 >weather_kollerberg_udp.log &
+cd ..
+
+cd homeassistant/Sensors/
+echo "Starting 'Kitchen Sensors_UDP.py' ..."
+nohup ./Sensors_UDP.py 2>&1 >sensors_udp.log &
+cd ../..
+
+# eof #
+

@@ -32,6 +32,8 @@ case "$HOSTNAME" in
     v2202004118613114435)
         ./start_apps_rrd
         ;;
+    nuernberg)
+        ./start_apps_nuernberg
     *)
         echo "Unknown host '$HOSTNAME'."
         exit 1
