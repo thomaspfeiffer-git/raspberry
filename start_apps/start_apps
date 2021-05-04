@@ -29,9 +29,6 @@ case "$HOSTNAME" in
     pik-p)
         ./start_apps_pik-p
         ;;
-    v2202004118613114435)
-        ./start_apps_rrd
-        ;;
     nuernberg)
         ./start_apps_nuernberg
         ;;
