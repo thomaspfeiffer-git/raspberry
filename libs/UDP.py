@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # UDP.py                                                                      #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2020                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2020, 2021             #
 ###############################################################################
 
 """
@@ -72,7 +72,7 @@ class Receiver (UDP):
                 Log(f"Data received: {data}")
             # TODO verify digest
         except ValueError:
-            Log(f"WARN: Payload corrupted: {payload}")
+            Log(f"WARN: Payload corrupted: {datagram}")
         else:
             return data
 
