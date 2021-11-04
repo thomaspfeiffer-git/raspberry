@@ -61,6 +61,7 @@ class DatagramError (ValueError):
     def __init__ (self, datagram):
         self.datagram = datagram
 
+
 ###############################################################################
 ###############################################################################
 class Receiver (UDP):
