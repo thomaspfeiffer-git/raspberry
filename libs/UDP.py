@@ -57,6 +57,12 @@ class Sender (UDP):
 
 ###############################################################################
 ###############################################################################
+class DatagramError (ValueError):
+    def __init__ (self, datagram):
+        self.datagram = datagram
+
+###############################################################################
+###############################################################################
 class Receiver (UDP):
     def __init__ (self, credentials_file):
         super().__init__(credentials_file)
@@ -73,8 +79,8 @@ class Receiver (UDP):
             # TODO verify digest
         except ValueError:
             Log(f"WARN: Payload corrupted: {datagram}")
+            raise DatagramError(datagram)
         else:
             return data
 
 # eof #
-
