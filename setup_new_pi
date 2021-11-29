@@ -224,6 +224,8 @@ copy .git/config
 
     git config --global user.email "thomas.pfeiffer@smtp.at"
     git config --global user.name "thomaspfeiffer-git"
+    git remote set-url origin git@github.com:thomaspfeiffer-git/raspberry
+    git remote -v
 
     https://help.github.com/articles/changing-a-remote-s-url/
 
