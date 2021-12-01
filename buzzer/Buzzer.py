@@ -20,6 +20,7 @@
 import tkinter as tk
 from tkinter.font import Font
 
+from datetime import datetime
 import os
 import subprocess
 import sys
@@ -29,7 +30,6 @@ import time
 sys.path.append('../libs')
 from Shutdown import Shutdown
 from Logging import Log
-
 
 
 ###############################################################################
@@ -60,6 +60,8 @@ class Sender (object):
         self.directory = "www/sonstiges/"
 
     def send (self, data):
+        data = f"{data} - {datetime.now().strftime('%H:%M:%S')}"
+        Log(f"Sending data \"{data}\" to host {self.host}")
         subprocess.run(["bash", "-c", f"echo \"{data}\" > {self.filename}"])
         subprocess.run(["scp", f"{self.filename}",
                                f"{self.user}@{self.host}:{self.directory}"])
@@ -84,7 +86,10 @@ class Counter (threading.Thread):
             self.counter += 1
             self.counter_tk.set(self.counter)
             self.sender.send(self.counter)
-            time.sleep(1)
+            for _ in range(100):
+                if not self._running:
+                    break
+                time.sleep(0.1)
 
     def stop (self):
         self._running = False
