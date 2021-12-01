@@ -33,7 +33,7 @@ from Logging import Log
 
 
 ###############################################################################
-###############################################################################
+# Display #####################################################################
 class Display (threading.Thread):
     """ """
     def __init__ (self):
@@ -50,7 +50,7 @@ class Display (threading.Thread):
 
 
 ###############################################################################
-###############################################################################
+# Sender ######################################################################
 class Sender (object):
     """ """
     def __init__ (self):
@@ -61,11 +61,12 @@ class Sender (object):
 
     def send (self, data):
         subprocess.run(["bash", "-c", f"echo \"{data}\" > {self.filename}"])
-        subprocess.run(["scp", f"{self.filename}", f"{self.user}@{self.host}:{self.directory}"])
+        subprocess.run(["scp", f"{self.filename}",
+                               f"{self.user}@{self.host}:{self.directory}"])
 
 
 ###############################################################################
-###############################################################################
+# Counter #####################################################################
 class Counter (threading.Thread):
     """ """
     def __init__ (self):
@@ -75,7 +76,7 @@ class Counter (threading.Thread):
         self._running = False
 
     def init_values (self, master):
-        self.counter_tk = tk.StringVar(master)  # todo: improve? only one variable?
+        self.counter_tk = tk.StringVar(master)
 
     def run (self):
         self._running = True
@@ -90,7 +91,7 @@ class Counter (threading.Thread):
 
 
 ###############################################################################
-###############################################################################
+# ScreenApp ###################################################################
 class ScreenApp (tk.Frame):
     def __init__ (self, master=None):
         super().__init__(master)
@@ -116,7 +117,7 @@ class ScreenApp (tk.Frame):
 
 
 ###############################################################################
-###############################################################################
+# Screen ######################################################################
 class Screen (object):
     """  """
     def __init__ (self):
@@ -155,6 +156,8 @@ def shutdown_application ():
     """called on shutdown; stops all threads"""
     Log("Shutdown.")
 
+    display.stop()
+    display.join()
     counter.stop()
     counter.join()
 
@@ -175,6 +178,8 @@ if __name__ == '__main__':
 
     counter = Counter()
 
+    display = Display()
+    display.run()
     screen = Screen()
     screen.run()
 
