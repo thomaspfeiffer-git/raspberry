@@ -8,22 +8,20 @@
 
 
 ### usage ###
-# nohup ./Weatherstation.py 2>&1 >buzzer.log &
+# nohup ./Buzzer.py 2>&1 >buzzer.log &
 
 
 ### useful ressources ###
 # turn off screen saver:
 # sudo apt-get install xscreensaver
 # start xscreensaver and set screensaver off manually
-#
-# Packages you might install
-# sudo apt-get install python3-pil.imagetk
 
 
 import tkinter as tk
 from tkinter.font import Font
 
 import os
+import subprocess
 import sys
 import threading
 import time
@@ -33,13 +31,47 @@ from Shutdown import Shutdown
 from Logging import Log
 
 
+
+###############################################################################
+###############################################################################
+class Display (threading.Thread):
+    """ """
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self._running = False
+
+    def run (self):
+        self._running = True
+        while self._running:
+            time.sleep(0.5)
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+###############################################################################
+class Sender (object):
+    """ """
+    def __init__ (self):
+        self.filename  = "counter.txt"
+        self.user      = "thomas"
+        self.host      = "arverner.smtp.at"
+        self.directory = "www/sonstiges/"
+
+    def send (self, data):
+        subprocess.run(["bash", "-c", f"echo \"{data}\" > {self.filename}"])
+        subprocess.run(["scp", f"{self.filename}", f"{self.user}@{self.host}:{self.directory}"])
+
+
 ###############################################################################
 ###############################################################################
 class Counter (threading.Thread):
     """ """
     def __init__ (self):
-        threading.Thread.__init__(self)  # todo: improve?
+        threading.Thread.__init__(self)
         self.counter = 0
+        self.sender = Sender()
         self._running = False
 
     def init_values (self, master):
@@ -50,6 +82,7 @@ class Counter (threading.Thread):
         while self._running:
             self.counter += 1
             self.counter_tk.set(self.counter)
+            self.sender.send(self.counter)
             time.sleep(1)
 
     def stop (self):
