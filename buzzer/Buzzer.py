@@ -179,7 +179,7 @@ if __name__ == '__main__':
     counter = Counter()
 
     display = Display()
-    display.run()
+    display.start()
     screen = Screen()
     screen.run()
 
