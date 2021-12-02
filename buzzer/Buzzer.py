@@ -29,6 +29,11 @@ import sys
 import threading
 import time
 
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+
+
 sys.path.append('../libs')
 from actuators.SSD1306 import SSD1306
 from Commons import MyIP
@@ -43,19 +48,43 @@ class Display (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
         self.ip = MyIP()
-        self.data = ""
+        self.__data = ""
+
+        self.display = SSD1306()
+        self.display.begin()
+        self.display.clear()
+        self.display.display()
+
+        self.xpos = 4
+        self.ypos = 4
+        self.image = Image.new('1', (self.display.width, self.display.height))
+        self.draw = ImageDraw.Draw(self.image)
+        self.font = ImageFont.load_default()
+        _, self.textheight = self.draw.textsize("Text", font=self.font)
+
         self._running = False
 
     def data (self, data):
-        self.data = data
+        self.__data = data
 
     def run (self):
         self._running = True
 
-        Log(f"IP: {self.ip}")
-
         while self._running:
-            time.sleep(0.5)
+            self.draw.rectangle((0,0,self.display.width,self.display.height),
+                                outline=0, fill=255)
+            y = self.ypos
+            self.draw.text((self.xpos, y), self.__data, font=self.font, fill=0)
+            y += self.textheight
+            self.draw.text((self.xpos, y), "IP: {}".format(MyIP()), font=self.font, fill=0)
+            y += self.textheight
+            self.draw.text((self.xpos, y), "Zeit: {}".format(time.strftime("%X")),
+                           font=self.font, fill=0)
+
+            self.display.image(self.image)
+            self.display.display()
+
+            time.sleep(0.1)
 
     def stop (self):
         self._running = False
