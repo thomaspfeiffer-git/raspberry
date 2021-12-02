@@ -54,17 +54,32 @@ class Display (threading.Thread):
 class Sender (object):
     """ """
     def __init__ (self):
-        self.filename  = "counter.txt"
+        self.filename  = "rounds.txt"
         self.user      = "thomas"
         self.host      = "arverner.smtp.at"
         self.directory = "www/sonstiges/"
 
     def send (self, data):
-        data = f"{data} - {datetime.now().strftime('%H:%M:%S')}"
-        Log(f"Sending data \"{data}\" to host {self.host}")
-        subprocess.run(["bash", "-c", f"echo \"{data}\" > {self.filename}"])
+        Log(f"Sending to host {self.host}: {data.csv}")
+        subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename}"])
         subprocess.run(["scp", f"{self.filename}",
                                f"{self.user}@{self.host}:{self.directory}"])
+
+
+###############################################################################
+# Data ########################################################################
+class Data (object):
+    """ """
+    distance = 247
+
+    def __init__ (self, rounds):
+        self.__csv = f"{rounds};{rounds*self.distance};" + \
+                     f"{rounds*self.distance/1000:.{2}} km;" + \
+                     f"{datetime.now().strftime('%H:%M:%S')}"
+
+    @property
+    def csv (self):
+        return self.__csv
 
 
 ###############################################################################
@@ -73,19 +88,19 @@ class Counter (threading.Thread):
     """ """
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.counter = 0
+        self.rounds = 0
         self.sender = Sender()
         self._running = False
 
     def init_values (self, master):
-        self.counter_tk = tk.StringVar(master)
+        self.rounds_tk = tk.StringVar(master)
 
     def run (self):
         self._running = True
         while self._running:
-            self.counter += 1
-            self.counter_tk.set(self.counter)
-            self.sender.send(self.counter)
+            self.rounds += 1
+            self.rounds_tk.set(self.rounds)
+            self.sender.send(Data(self.rounds))
             for _ in range(100):
                 if not self._running:
                     break
@@ -111,9 +126,9 @@ class ScreenApp (tk.Frame):
 
         counter.init_values(self)
         counter.start()
-        self.counter = counter.counter_tk
+        self.rounds = counter.rounds_tk
 
-        self.text = tk.Label(self.screen, textvariable=self.counter,
+        self.text = tk.Label(self.screen, textvariable=self.rounds,
                              foreground="red", background="white",
                              font=self.font)
         self.text.place(relx=.5, rely=.5, anchor="center")
@@ -152,7 +167,7 @@ class Screen (object):
         """stops application, called on shutdown"""
         self.root.after_cancel(self.root.pollid)
         self.root.destroy()
-        self.root.quit() # TODO: check usage of destroy() and quit()
+        self.root.quit()
 
 
 ###############################################################################
