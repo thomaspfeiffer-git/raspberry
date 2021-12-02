@@ -54,7 +54,7 @@ class Display (threading.Thread):
 class Sender (object):
     """ """
     def __init__ (self):
-        self.filename  = "rounds.txt"
+        self.filename  = "counter.txt"
         self.user      = "thomas"
         self.host      = "arverner.smtp.at"
         self.directory = "www/sonstiges/"
