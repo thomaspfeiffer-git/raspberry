@@ -12,6 +12,8 @@
 
 
 ### useful ressources ###
+# sudo pip3 install Pillow
+#
 # turn off screen saver:
 # sudo apt-get install xscreensaver
 # start xscreensaver and set screensaver off manually
@@ -28,6 +30,8 @@ import threading
 import time
 
 sys.path.append('../libs')
+from actuators.SSD1306 import SSD1306
+from Commons import MyIP
 from Shutdown import Shutdown
 from Logging import Log
 
@@ -38,10 +42,18 @@ class Display (threading.Thread):
     """ """
     def __init__ (self):
         threading.Thread.__init__(self)
+        self.ip = MyIP()
+        self.data = ""
         self._running = False
+
+    def data (self, data):
+        self.data = data
 
     def run (self):
         self._running = True
+
+        Log(f"IP: {self.ip}")
+
         while self._running:
             time.sleep(0.5)
 
@@ -101,6 +113,8 @@ class Counter (threading.Thread):
             self.rounds += 1
             self.rounds_tk.set(self.rounds)
             self.sender.send(Data(self.rounds))
+            display.data(f"Runden: {self.rounds}")
+
             for _ in range(100):
                 if not self._running:
                     break
