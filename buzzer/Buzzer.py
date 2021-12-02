@@ -74,7 +74,7 @@ class Data (object):
 
     def __init__ (self, rounds):
         self.__csv = f"{rounds};{rounds*self.distance};" + \
-                     f"{rounds*self.distance/1000:.{2}} km;" + \
+                     f"{rounds*self.distance/1000:.2f} km;".replace('.',',') + \
                      f"{datetime.now().strftime('%H:%M:%S')}"
 
     @property
