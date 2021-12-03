@@ -20,6 +20,7 @@
 
 
 from datetime import datetime
+from gpiozero import Button
 import os
 import subprocess
 import sys
@@ -67,18 +68,6 @@ class Data (object):
         return self.__csv
 
 
-
-###############################################################################
-# Sound #######################################################################
-class Sound (object):
-    """plays a sound
-       - mp3: path to mp3 file
-    """
-    @staticmethod
-    def play (mp3)
-        subprocess.run(["mpg321", "-g 100", "-q", mp3])
-
-
 ###############################################################################
 # Counter #####################################################################
 class Counter (threading.Thread):
@@ -87,25 +76,32 @@ class Counter (threading.Thread):
         threading.Thread.__init__(self)
         self.rounds = 0
         self.sender = Sender()
+        self.button = Button(4)
+        self.button.when_pressed = lambda s: self.pressed()
         self._running = False
 
     def init_values (self, master):
         self.rounds_tk = tkinter.StringVar(master)
 
+    def display (self):
+        display.print(f"Rounds: {self.rounds}",
+                      f"IP: {MyIP()}",
+                      f"Time: {datetime.now().strftime('%H:%M:%S')}")
+
+    def pressed (self):
+        self.rounds += 1
+        Log(f"Round #{self.rounds}")
+        self.rounds_tk.set(self.rounds)
+        self.sender.send(Data(self.rounds))
+        # subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
+
     def run (self):
         self._running = True
         while self._running:
-            self.rounds += 1
-            self.rounds_tk.set(self.rounds)
-            self.sender.send(Data(self.rounds))
+            self.display()
+            time.sleep(0.1)
 
-            for _ in range(100):
-                display.print(f"Rounds: {self.rounds}",
-                              f"IP: {MyIP()}",
-                              f"Time: {datetime.now().strftime('%H:%M:%S')}")
-                if not self._running:
-                    break
-                time.sleep(0.1)
+        self.button.close()
         display.off()
 
     def stop (self):
