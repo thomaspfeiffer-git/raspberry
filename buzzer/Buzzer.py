@@ -184,10 +184,6 @@ def shutdown_application ():
     sys.exit(0)
 
 
-def signal_47 (s, f):
-    Log("in signal 47")
-
-
 ###############################################################################
 # Main ########################################################################
 if __name__ == '__main__':
@@ -200,7 +196,6 @@ if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     counter = Counter()
-
     display = Display1306()
     screen = Screen()
     screen.run()
