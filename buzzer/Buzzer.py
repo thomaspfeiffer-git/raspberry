@@ -19,75 +19,19 @@
 # start xscreensaver and set screensaver off manually
 
 
-import tkinter as tk
-from tkinter.font import Font
-
 from datetime import datetime
 import os
 import subprocess
 import sys
 import threading
 import time
-
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
-
+import tkinter
+from tkinter.font import Font
 
 sys.path.append('../libs')
-from actuators.SSD1306 import SSD1306
-from Commons import MyIP
+from Commons import Display1306, MyIP
 from Shutdown import Shutdown
 from Logging import Log
-
-
-###############################################################################
-# Display #####################################################################
-class Display (threading.Thread):
-    """ """
-    def __init__ (self):
-        threading.Thread.__init__(self)
-        self.ip = MyIP()
-        self.__data = ""
-
-        self.display = SSD1306()
-        self.display.begin()
-        self.display.clear()
-        self.display.display()
-
-        self.xpos = 4
-        self.ypos = 4
-        self.image = Image.new('1', (self.display.width, self.display.height))
-        self.draw = ImageDraw.Draw(self.image)
-        self.font = ImageFont.load_default()
-        _, self.textheight = self.draw.textsize("Text", font=self.font)
-
-        self._running = False
-
-    def data (self, data):
-        self.__data = data
-
-    def run (self):
-        self._running = True
-
-        while self._running:
-            self.draw.rectangle((0,0,self.display.width,self.display.height),
-                                outline=0, fill=255)
-            y = self.ypos
-            self.draw.text((self.xpos, y), self.__data, font=self.font, fill=0)
-            y += self.textheight
-            self.draw.text((self.xpos, y), "IP: {}".format(MyIP()), font=self.font, fill=0)
-            y += self.textheight
-            self.draw.text((self.xpos, y), "Zeit: {}".format(time.strftime("%X")),
-                           font=self.font, fill=0)
-
-            self.display.image(self.image)
-            self.display.display()
-
-            time.sleep(0.1)
-
-    def stop (self):
-        self._running = False
 
 
 ###############################################################################
@@ -134,7 +78,7 @@ class Counter (threading.Thread):
         self._running = False
 
     def init_values (self, master):
-        self.rounds_tk = tk.StringVar(master)
+        self.rounds_tk = tkinter.StringVar(master)
 
     def run (self):
         self._running = True
@@ -142,12 +86,15 @@ class Counter (threading.Thread):
             self.rounds += 1
             self.rounds_tk.set(self.rounds)
             self.sender.send(Data(self.rounds))
-            display.data(f"Runden: {self.rounds}")
 
             for _ in range(100):
+                display.print(f"Rounds: {self.rounds}",
+                              f"IP: {MyIP()}",
+                              f"Time: {datetime.now().strftime('%H:%M:%S')}")
                 if not self._running:
                     break
                 time.sleep(0.1)
+        display.off()
 
     def stop (self):
         self._running = False
@@ -155,7 +102,7 @@ class Counter (threading.Thread):
 
 ###############################################################################
 # ScreenApp ###################################################################
-class ScreenApp (tk.Frame):
+class ScreenApp (tkinter.Frame):
     def __init__ (self, master=None):
         super().__init__(master)
 
@@ -163,7 +110,7 @@ class ScreenApp (tk.Frame):
 
         self.font = Font(family="Arial", size=400, weight="bold")
 
-        self.screen = tk.Frame(self.master)
+        self.screen = tkinter.Frame(self.master)
         self.screen.config(bg="white", width=self.master.width,
                                        height=self.master.height)
 
@@ -171,7 +118,7 @@ class ScreenApp (tk.Frame):
         counter.start()
         self.rounds = counter.rounds_tk
 
-        self.text = tk.Label(self.screen, textvariable=self.rounds,
+        self.text = tkinter.Label(self.screen, textvariable=self.rounds,
                              foreground="red", background="white",
                              font=self.font)
         self.text.place(relx=.5, rely=.5, anchor="center")
@@ -184,7 +131,7 @@ class ScreenApp (tk.Frame):
 class Screen (object):
     """  """
     def __init__ (self):
-        self.root = tk.Tk()
+        self.root = tkinter.Tk()
         self.root.overrideredirect(1)
         self.root.config(cursor='none')
         self.root.resizable(width=False, height=False)
@@ -219,8 +166,7 @@ def shutdown_application ():
     """called on shutdown; stops all threads"""
     Log("Shutdown.")
 
-    display.stop()
-    display.join()
+    display.off()
     counter.stop()
     counter.join()
 
@@ -241,8 +187,7 @@ if __name__ == '__main__':
 
     counter = Counter()
 
-    display = Display()
-    display.start()
+    display = Display1306()
     screen = Screen()
     screen.run()
 
