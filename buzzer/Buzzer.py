@@ -22,6 +22,7 @@
 from datetime import datetime
 from gpiozero import Button
 import os
+import signal
 import subprocess
 import sys
 import threading
@@ -77,7 +78,8 @@ class Counter (threading.Thread):
         self.rounds = 0
         self.sender = Sender()
         self.button = Button(4)
-        self.button.when_pressed = lambda s: self.pressed()
+        self.button.when_pressed = lambda: self.pressed()
+        signal.signal(signal.SIGUSR1, lambda s, f: self.pressed())
         self._running = False
 
     def init_values (self, master):
@@ -180,6 +182,10 @@ def shutdown_application ():
 
     screen.stop()
     sys.exit(0)
+
+
+def signal_47 (s, f):
+    Log("in signal 47")
 
 
 ###############################################################################

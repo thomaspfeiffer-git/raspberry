@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+while [ 1 ] ; do killall -SIGUSR1 Buzzer.py ; sleep 10 ; done
+
