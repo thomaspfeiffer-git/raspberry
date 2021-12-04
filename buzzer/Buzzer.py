@@ -84,6 +84,7 @@ class Counter (threading.Thread):
 
     def init_values (self, master):
         self.rounds_tk = tkinter.StringVar(master)
+        self.rounds_tk.set(self.rounds)
 
     def display (self):
         display.print(f"Rounds: {self.rounds}",
