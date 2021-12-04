@@ -75,7 +75,7 @@ class Counter (threading.Thread):
     """ """
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.rounds = 0
+        self.__rounds = 0
         self.sender = Sender()
         self.button = Button(4)
         self.button.when_pressed = lambda: self.pressed()
@@ -93,10 +93,18 @@ class Counter (threading.Thread):
 
     def pressed (self):
         self.rounds += 1
+        # subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
+
+    @property
+    def rounds (self):
+        return self.__rounds
+
+    @rounds.setter
+    def rounds (self, value):
+        self.__rounds = value
         Log(f"Round #{self.rounds}")
         self.rounds_tk.set(self.rounds)
         self.sender.send(Data(self.rounds))
-        # subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
 
     def run (self):
         self._running = True
@@ -132,9 +140,16 @@ class ScreenApp (tkinter.Frame):
         self.text = tkinter.Label(self.screen, textvariable=self.rounds,
                                   foreground="red", background="white",
                                   font=self.font)
-        self.text.place(relx=.5, rely=.5, anchor="center")
+        self.text.pack()
 
-        self.screen.grid()
+        self.button = tkinter.Button(self.screen, text="Reset", fg="red",
+                command=lambda: self.set_counter(0))
+        self.button.pack()
+
+        self.screen.pack(expand=True)
+
+    def set_counter (self, value):
+        counter.rounds = value
 
 
 ###############################################################################
@@ -144,7 +159,7 @@ class Screen (object):
     def __init__ (self):
         self.root = tkinter.Tk()
         self.root.overrideredirect(1)
-        self.root.config(cursor='none')
+        # self.root.config(cursor='none')
         self.root.resizable(width=False, height=False)
 
         self.root.width  = self.root.winfo_screenwidth()
@@ -152,7 +167,7 @@ class Screen (object):
         self.root.borderwidth = 10
         self.root.geometry("{}x{}+{}+{}".format(self.root.width,
                                                 self.root.height, 0, 0))
-        self.root.config(bg="lightblue")
+        self.root.config(bg="white")
         self.app = ScreenApp(master=self.root)
 
     def poll (self):
