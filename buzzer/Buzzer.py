@@ -129,8 +129,8 @@ class ScreenApp (tkinter.Frame):
         self.rounds = counter.rounds_tk
 
         self.text = tkinter.Label(self.screen, textvariable=self.rounds,
-                             foreground="red", background="white",
-                             font=self.font)
+                                  foreground="red", background="white",
+                                  font=self.font)
         self.text.place(relx=.5, rely=.5, anchor="center")
 
         self.screen.grid()
