@@ -44,6 +44,7 @@ class CONFIG:
     class COLORS:
         bg = "white"
         fg = "red"
+        bg_btn_start = "light green"
 
 
 ###############################################################################
@@ -66,12 +67,12 @@ class Statistics (object):
         self.tk_distance = tkinter.StringVar(master)
 
         self.rounds = 0
-        self.start() # TODO --> delete; use Button "Start" instead
 
     def start (self):
         self.starttime = self.starttime_round = datetime.now()
         self.tk_start_time.set(self.starttime.strftime('%H:%M:%S'))
         self.started = True
+        Log("Started.")
 
     def timings (self):
         if self.started:
@@ -94,7 +95,8 @@ class Statistics (object):
 
         if self.started:
             now = datetime.now()
-            self.round_time = str(now-self.starttime_round).split('.', 2)[0]
+            d = (str(now-self.starttime_round).split('.', 2)[0]).split(':')
+            self.round_time = f"{d[1]}:{d[2]}"
             self.starttime_round = now
 
         self.tk_round_time.set(self.round_time)
@@ -123,7 +125,7 @@ class Sender (object):
 # Data ########################################################################
 class Data (object):
     """ """
-    def __init__ (self, rounds):  # TODO: use Statistics
+    def __init__ (self):
         self.__csv = f"{statistics.rounds};{statistics.rounds*CONFIG.distance};" + \
                      f"{statistics.rounds*CONFIG.distance/1000:.2f} km;".replace('.',',') + \
                      f"{datetime.now().strftime('%H:%M:%S')}"
@@ -203,12 +205,19 @@ class ScreenApp (tkinter.Frame):
         for _ in range(4):
             self.add_spacer()
 
+        self.button_start = tkinter.Button(self.screen, text="Start",
+                                           bg=CONFIG.COLORS.bg_btn_start,
+                                           font=self.font_button,
+                                           width=50, height=2,
+                                           command=lambda: statistics.start())
+        self.button_start.pack()
+        self.add_spacer()
+
         self.button_reset = tkinter.Button(self.screen, text="Reset Counter",
                                            fg=CONFIG.COLORS.fg, font=self.font_button,
                                            width=50, height=2,
                                            command=lambda: self.set_counter(0))
         self.button_reset.pack()
-
         self.add_spacer()
 
         value = tkinter.StringVar(self.screen)
@@ -228,11 +237,12 @@ class ScreenApp (tkinter.Frame):
         self.spacer.append(tkinter.Label(self.screen, text="", bg=CONFIG.COLORS.bg).pack())
 
     def set_counter (self, value):
-        Log(f"Manually set counter to {value}.")
         try:
             counter.rounds = int(value)
         except ValueError:
             Log(f"Value '{value}' is not an integer.")
+        else:
+            Log(f"Manually set counter to {value}.")
 
 
 ###############################################################################
