@@ -47,7 +47,7 @@ class CONFIG:
 
 
 ###############################################################################
-# Statistic ###################################################################
+# Statistics ##################################################################
 class Statistics (object):
     def __init__ (self):
         self.starttime = None
@@ -100,7 +100,6 @@ class Statistics (object):
         self.tk_round_time.set(self.round_time)
 
         Log(f"Round #{self.rounds}")
-        # self.sender.send(Data(self.rounds))      # TODO
 
 
 ###############################################################################
@@ -125,8 +124,8 @@ class Sender (object):
 class Data (object):
     """ """
     def __init__ (self, rounds):  # TODO: use Statistics
-        self.__csv = f"{rounds};{rounds*CONFIG.distance};" + \
-                     f"{rounds*CONFIG.distance/1000:.2f} km;".replace('.',',') + \
+        self.__csv = f"{statistics.rounds};{statistics.rounds*CONFIG.distance};" + \
+                     f"{statistics.rounds*CONFIG.distance/1000:.2f} km;".replace('.',',') + \
                      f"{datetime.now().strftime('%H:%M:%S')}"
 
     @property
@@ -153,6 +152,7 @@ class Counter (threading.Thread):
 
     def pressed (self):
         statistics.rounds += 1
+        self.sender.send(Data())
         # subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
 
     def run (self):
