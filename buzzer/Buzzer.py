@@ -51,7 +51,9 @@ class CONFIG:
 class Statistics (object):
     def __init__ (self):
         self.starttime = None
+        self.starttime_round = None
         self.__rounds = 0
+        self.round_time = "n/a"
         self.distance = 0
         self.started = False
 
@@ -64,11 +66,20 @@ class Statistics (object):
         self.tk_distance = tkinter.StringVar(master)
 
         self.rounds = 0
+        self.start() # TODO --> delete; use Button "Start" instead
 
     def start (self):
-        self.starttime = datetime.now()
+        self.starttime = self.starttime_round = datetime.now()
         self.tk_start_time.set(self.starttime.strftime('%H:%M:%S'))
         self.started = True
+
+    def timings (self):
+        if self.started:
+            elapsed_time = str(datetime.now()-self.starttime).split('.', 2)[0]
+        else:
+            elapsed_time = "0:00:00"
+        self.tk_elapsed_time.set(elapsed_time)
+        self.tk_timings.set(f"{elapsed_time} | {self.round_time}")
 
     @property
     def rounds (self):
@@ -82,14 +93,11 @@ class Statistics (object):
         self.tk_distance.set(self.distance)
 
         if self.started:
-            elapsed_time = "1:02:03" # TODO
-        else:
-            elapsed_time = "0:00:00"
-        self.tk_elapsed_time.set(elapsed_time)
+            now = datetime.now()
+            self.round_time = str(now-self.starttime_round).split('.', 2)[0]
+            self.starttime_round = now
 
-        round_time = "1:23"   # TODO
-        self.tk_round_time.set(round_time)
-        self.tk_timings.set(f"{elapsed_time} | {round_time}")
+        self.tk_round_time.set(self.round_time)
 
         Log(f"Round #{self.rounds}")
         # self.sender.send(Data(self.rounds))      # TODO
@@ -132,7 +140,6 @@ class Counter (threading.Thread):
     """ """
     def __init__ (self):
         threading.Thread.__init__(self)
-        # self.__rounds = 0
         self.sender = Sender()
         self.button = Button(4)
         self.button.when_pressed = lambda: self.pressed()
@@ -249,6 +256,7 @@ class Screen (object):
     def poll (self):
         """polling needed for ctrl-c"""
         self.root.pollid = self.root.after(50, self.poll)
+        statistics.timings()
 
     def run (self):
         """start polling and run application"""
