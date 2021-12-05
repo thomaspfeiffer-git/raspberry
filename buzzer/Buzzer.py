@@ -154,12 +154,13 @@ class Counter (threading.Thread):
                       f"Time: {datetime.now().strftime('%H:%M:%S')}")
 
     def pressed (self):
-        if (datetime.now()-self.last_pressed).seconds > 2:
+        if (datetime.now()-self.last_pressed).seconds > 2:  # Debouncing
+            self.last_pressed = datetime.now()
             statistics.rounds += 1
             self.sender.send(Data())
             # subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
         else:
-            Log("Do not click too fast!")
+            Log("Do not press button too fast!")
 
     def run (self):
         self._running = True
@@ -256,7 +257,6 @@ class Screen (object):
     def __init__ (self):
         self.root = tkinter.Tk()
         self.root.overrideredirect(1)
-        # self.root.config(cursor='none')
         self.root.resizable(width=False, height=False)
 
         self.root.width  = self.root.winfo_screenwidth()
