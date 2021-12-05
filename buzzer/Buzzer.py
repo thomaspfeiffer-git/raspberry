@@ -142,6 +142,7 @@ class Counter (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
         self.sender = Sender()
+        self.last_pressed = datetime.now()
         self.button = Button(4)
         self.button.when_pressed = lambda: self.pressed()
         signal.signal(signal.SIGUSR1, lambda s, f: self.pressed())
@@ -153,9 +154,12 @@ class Counter (threading.Thread):
                       f"Time: {datetime.now().strftime('%H:%M:%S')}")
 
     def pressed (self):
-        statistics.rounds += 1
-        self.sender.send(Data())
-        # subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
+        if (datetime.now()-self.last_pressed).seconds > 2:
+            statistics.rounds += 1
+            self.sender.send(Data())
+            # subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
+        else:
+            Log("Do not click too fast!")
 
     def run (self):
         self._running = True
