@@ -149,21 +149,28 @@ class ScreenApp (tkinter.Frame):
                                           command=lambda: self.set_counter(0))
         self.button_reset.pack()
 
+        self.spacer = tkinter.Label(self.screen, text="", bg="white")
+        self.spacer.pack()
+
         value = tkinter.StringVar(self.screen)
-        self.entry = tkinter.Entry(self.screen, width=50, font=self.btnfont, textvariable=value)
-        self.entry.pack()
+        self.entry = tkinter.Entry(self.screen, textvariable=value,
+                                   width=50, font=self.btnfont)
+        self.entry.pack(pady=10)
 
         self.button_set = tkinter.Button(self.screen, text="Set Counter",
-                                          fg="red", font=self.btnfont,
-                                          width=50, height=2,
-                                          command=lambda: self.set_counter(0))
+                                         fg="red", font=self.btnfont,
+                                         width=50, height=2,
+                                         command=lambda: self.set_counter(value.get()))
         self.button_set.pack()
 
         self.screen.pack(expand=True)
 
     def set_counter (self, value):
         Log(f"Manually set counter to {value}.")
-        counter.rounds = value
+        try:
+            counter.rounds = int(value)
+        except ValueError:
+            Log(f"Value '{value}' is not an integer.")
 
 
 ###############################################################################
