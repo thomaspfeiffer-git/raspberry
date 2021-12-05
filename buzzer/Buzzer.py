@@ -58,6 +58,8 @@ class Statistics (object):
     def init_tk_values (self, master):
         self.tk_start_time = tkinter.StringVar(master)
         self.tk_elapsed_time = tkinter.StringVar(master)
+        self.tk_round_time = tkinter.StringVar(master)
+        self.tk_timings = tkinter.StringVar(master)
         self.tk_rounds = tkinter.StringVar(master)
         self.tk_distance = tkinter.StringVar(master)
 
@@ -84,6 +86,10 @@ class Statistics (object):
         else:
             elapsed_time = "0:00:00"
         self.tk_elapsed_time.set(elapsed_time)
+
+        round_time = "1:23"   # TODO
+        self.tk_round_time.set(round_time)
+        self.tk_timings.set(f"{elapsed_time} | {round_time}")
 
         Log(f"Round #{self.rounds}")
         # self.sender.send(Data(self.rounds))      # TODO
@@ -181,7 +187,7 @@ class ScreenApp (tkinter.Frame):
                                     font=self.font)
         self.rounds.pack()
 
-        self.timings = tkinter.Label(self.screen, text="Elapsed Time | Last Round Time",
+        self.timings = tkinter.Label(self.screen, textvariable=statistics.tk_timings,
                                      foreground=CONFIG.COLORS.fg,
                                      background=CONFIG.COLORS.bg,
                                      font=self.font_timing)
