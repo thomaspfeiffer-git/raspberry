@@ -69,7 +69,7 @@ class Data (object):
     """ """
     def __init__ (self, rounds):
         self.__csv = f"{rounds};{rounds*CONFIG.distance};" + \
-                     f"{rounds*self.distance/1000:.2f} km;".replace('.',',') + \
+                     f"{rounds*CONFIG.distance/1000:.2f} km;".replace('.',',') + \
                      f"{datetime.now().strftime('%H:%M:%S')}"
 
     @property
@@ -90,7 +90,7 @@ class Counter (threading.Thread):
         signal.signal(signal.SIGUSR1, lambda s, f: self.pressed())
         self._running = False
 
-    def init_values (self, master):
+    def init_tk_values (self, master):
         self.rounds_tk = tkinter.StringVar(master)
         self.rounds_tk.set(self.rounds)
 
@@ -134,45 +134,58 @@ class ScreenApp (tkinter.Frame):
         super().__init__(master)
 
         self.master = master
+        self.spacer = []
 
-        self.font = Font(family="Arial", size=400, weight="bold")
-        self.btnfont = Font(family="Arial", size=18)
+        self.font = Font(family="Arial", size=300, weight="bold")
+        self.font_timing = Font(family="Arial", size=80)
+        self.font_button = Font(family="Arial", size=18)
 
         self.screen = tkinter.Frame(self.master)
         self.screen.config(bg=CONFIG.COLORS.bg, width=self.master.width,
                                        height=self.master.height)
 
-        counter.init_values(self)
+        counter.init_tk_values(self)
         counter.start()
         self.rounds = counter.rounds_tk
 
-        self.text = tkinter.Label(self.screen, textvariable=self.rounds,
-                                  foreground=CONFIG.COLORS.fg,
-                                  background=CONFIG.COLORS.bg,
-                                  font=self.font)
-        self.text.pack()
+        self.rounds = tkinter.Label(self.screen, textvariable=self.rounds,
+                                    foreground=CONFIG.COLORS.fg,
+                                    background=CONFIG.COLORS.bg,
+                                    font=self.font)
+        self.rounds.pack()
+
+        self.timings = tkinter.Label(self.screen, text="Elapsed Time | Last Round Time",
+                                     foreground=CONFIG.COLORS.fg,
+                                     background=CONFIG.COLORS.bg,
+                                     font=self.font_timing)
+        self.timings.pack()
+
+        for _ in range(4):
+            self.add_spacer()
 
         self.button_reset = tkinter.Button(self.screen, text="Reset Counter",
-                                          fg=CONFIG.COLORS.fg, font=self.btnfont,
-                                          width=50, height=2,
-                                          command=lambda: self.set_counter(0))
+                                           fg=CONFIG.COLORS.fg, font=self.font_button,
+                                           width=50, height=2,
+                                           command=lambda: self.set_counter(0))
         self.button_reset.pack()
 
-        self.spacer = tkinter.Label(self.screen, text="", bg=CONFIG.COLORS.bg)
-        self.spacer.pack()
+        self.add_spacer()
 
         value = tkinter.StringVar(self.screen)
         self.entry = tkinter.Entry(self.screen, textvariable=value,
-                                   width=50, font=self.btnfont)
+                                   width=50, font=self.font_button)
         self.entry.pack(pady=10)
 
         self.button_set = tkinter.Button(self.screen, text="Set Counter",
-                                         fg=CONFIG.COLORS.fg, font=self.btnfont,
+                                         fg=CONFIG.COLORS.fg, font=self.font_button,
                                          width=50, height=2,
                                          command=lambda: self.set_counter(value.get()))
         self.button_set.pack()
 
         self.screen.pack(expand=True)
+
+    def add_spacer (self):
+        self.spacer.append(tkinter.Label(self.screen, text="", bg=CONFIG.COLORS.bg).pack())
 
     def set_counter (self, value):
         Log(f"Manually set counter to {value}.")
