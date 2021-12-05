@@ -37,6 +37,16 @@ from Logging import Log
 
 
 ###############################################################################
+# CONFIG ######################################################################
+class CONFIG:
+    distance = 247
+
+    class COLORS:
+        bg = "white"
+        fg = "red"
+
+
+###############################################################################
 # Sender ######################################################################
 class Sender (object):
     """ """
@@ -57,10 +67,8 @@ class Sender (object):
 # Data ########################################################################
 class Data (object):
     """ """
-    distance = 247
-
     def __init__ (self, rounds):
-        self.__csv = f"{rounds};{rounds*self.distance};" + \
+        self.__csv = f"{rounds};{rounds*CONFIG.distance};" + \
                      f"{rounds*self.distance/1000:.2f} km;".replace('.',',') + \
                      f"{datetime.now().strftime('%H:%M:%S')}"
 
@@ -131,7 +139,7 @@ class ScreenApp (tkinter.Frame):
         self.btnfont = Font(family="Arial", size=18)
 
         self.screen = tkinter.Frame(self.master)
-        self.screen.config(bg="white", width=self.master.width,
+        self.screen.config(bg=CONFIG.COLORS.bg, width=self.master.width,
                                        height=self.master.height)
 
         counter.init_values(self)
@@ -139,17 +147,18 @@ class ScreenApp (tkinter.Frame):
         self.rounds = counter.rounds_tk
 
         self.text = tkinter.Label(self.screen, textvariable=self.rounds,
-                                  foreground="red", background="white",
+                                  foreground=CONFIG.COLORS.fg,
+                                  background=CONFIG.COLORS.bg,
                                   font=self.font)
         self.text.pack()
 
         self.button_reset = tkinter.Button(self.screen, text="Reset Counter",
-                                          fg="red", font=self.btnfont,
+                                          fg=CONFIG.COLORS.fg, font=self.btnfont,
                                           width=50, height=2,
                                           command=lambda: self.set_counter(0))
         self.button_reset.pack()
 
-        self.spacer = tkinter.Label(self.screen, text="", bg="white")
+        self.spacer = tkinter.Label(self.screen, text="", bg=CONFIG.COLORS.bg)
         self.spacer.pack()
 
         value = tkinter.StringVar(self.screen)
@@ -158,7 +167,7 @@ class ScreenApp (tkinter.Frame):
         self.entry.pack(pady=10)
 
         self.button_set = tkinter.Button(self.screen, text="Set Counter",
-                                         fg="red", font=self.btnfont,
+                                         fg=CONFIG.COLORS.fg, font=self.btnfont,
                                          width=50, height=2,
                                          command=lambda: self.set_counter(value.get()))
         self.button_set.pack()
@@ -188,7 +197,7 @@ class Screen (object):
         self.root.borderwidth = 10
         self.root.geometry("{}x{}+{}+{}".format(self.root.width,
                                                 self.root.height, 0, 0))
-        self.root.config(bg="white")
+        self.root.config(bg=CONFIG.COLORS.bg)
         self.app = ScreenApp(master=self.root)
 
     def poll (self):
