@@ -128,6 +128,7 @@ class ScreenApp (tkinter.Frame):
         self.master = master
 
         self.font = Font(family="Arial", size=400, weight="bold")
+        self.btnfont = Font(family="Arial", size=18)
 
         self.screen = tkinter.Frame(self.master)
         self.screen.config(bg="white", width=self.master.width,
@@ -142,13 +143,26 @@ class ScreenApp (tkinter.Frame):
                                   font=self.font)
         self.text.pack()
 
-        self.button = tkinter.Button(self.screen, text="Reset", fg="red",
-                command=lambda: self.set_counter(0))
-        self.button.pack()
+        self.button_reset = tkinter.Button(self.screen, text="Reset Counter",
+                                          fg="red", font=self.btnfont,
+                                          width=50, height=2,
+                                          command=lambda: self.set_counter(0))
+        self.button_reset.pack()
+
+        value = tkinter.StringVar(self.screen)
+        self.entry = tkinter.Entry(self.screen, width=50, font=self.btnfont, textvariable=value)
+        self.entry.pack()
+
+        self.button_set = tkinter.Button(self.screen, text="Set Counter",
+                                          fg="red", font=self.btnfont,
+                                          width=50, height=2,
+                                          command=lambda: self.set_counter(0))
+        self.button_set.pack()
 
         self.screen.pack(expand=True)
 
     def set_counter (self, value):
+        Log(f"Manually set counter to {value}.")
         counter.rounds = value
 
 
