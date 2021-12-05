@@ -50,15 +50,23 @@ class CONFIG:
 # Statistic ###################################################################
 class Statistics (object):
     def __init__ (self):
-        self.__starttime = None
+        self.starttime = None
         self.__rounds = 0
         self.distance = 0
+        self.started = False
 
     def init_tk_values (self, master):
         self.tk_start_time = tkinter.StringVar(master)
         self.tk_elapsed_time = tkinter.StringVar(master)
         self.tk_rounds = tkinter.StringVar(master)
         self.tk_distance = tkinter.StringVar(master)
+
+        self.rounds = 0
+
+    def start (self):
+        self.starttime = datetime.now()
+        self.tk_start_time.set(self.starttime.strftime('%H:%M:%S'))
+        self.started = True
 
     @property
     def rounds (self):
@@ -67,10 +75,18 @@ class Statistics (object):
     @rounds.setter
     def rounds (self, value):
         self.__rounds = value
-        self.tk_rounds.set(value)
-        self.tk_elapsed_time.set()
+        self.tk_rounds.set(self.rounds)
         self.distance = self.rounds * CONFIG.distance
-        self.tk_distance.set()
+        self.tk_distance.set(self.distance)
+
+        if self.started:
+            elapsed_time = "1:02:03" # TODO
+        else:
+            elapsed_time = "0:00:00"
+        self.tk_elapsed_time.set(elapsed_time)
+
+        Log(f"Round #{self.rounds}")
+        # self.sender.send(Data(self.rounds))      # TODO
 
 
 ###############################################################################
@@ -94,7 +110,7 @@ class Sender (object):
 # Data ########################################################################
 class Data (object):
     """ """
-    def __init__ (self, rounds):
+    def __init__ (self, rounds):  # TODO: use Statistics
         self.__csv = f"{rounds};{rounds*CONFIG.distance};" + \
                      f"{rounds*CONFIG.distance/1000:.2f} km;".replace('.',',') + \
                      f"{datetime.now().strftime('%H:%M:%S')}"
@@ -110,36 +126,21 @@ class Counter (threading.Thread):
     """ """
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.__rounds = 0
+        # self.__rounds = 0
         self.sender = Sender()
         self.button = Button(4)
         self.button.when_pressed = lambda: self.pressed()
         signal.signal(signal.SIGUSR1, lambda s, f: self.pressed())
         self._running = False
 
-    def init_tk_values (self, master):
-        self.rounds_tk = tkinter.StringVar(master)
-        self.rounds_tk.set(self.rounds)
-
     def display (self):
-        display.print(f"Rounds: {self.rounds}",
+        display.print(f"Rounds: {statistics.rounds}",
                       f"IP: {MyIP()}",
                       f"Time: {datetime.now().strftime('%H:%M:%S')}")
 
     def pressed (self):
-        self.rounds += 1
+        statistics.rounds += 1
         # subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
-
-    @property
-    def rounds (self):
-        return self.__rounds
-
-    @rounds.setter
-    def rounds (self, value):
-        self.__rounds = value
-        Log(f"Round #{self.rounds}")
-        self.rounds_tk.set(self.rounds)
-        self.sender.send(Data(self.rounds))
 
     def run (self):
         self._running = True
@@ -169,13 +170,12 @@ class ScreenApp (tkinter.Frame):
 
         self.screen = tkinter.Frame(self.master)
         self.screen.config(bg=CONFIG.COLORS.bg, width=self.master.width,
-                                       height=self.master.height)
+                           height=self.master.height)
 
-        counter.init_tk_values(self)
+        statistics.init_tk_values(self)
         counter.start()
-        self.rounds = counter.rounds_tk
 
-        self.rounds = tkinter.Label(self.screen, textvariable=self.rounds,
+        self.rounds = tkinter.Label(self.screen, textvariable=statistics.tk_rounds,
                                     foreground=CONFIG.COLORS.fg,
                                     background=CONFIG.COLORS.bg,
                                     font=self.font)
@@ -281,6 +281,7 @@ if __name__ == '__main__':
 
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
+    statistics = Statistics()
     counter = Counter()
     display = Display1306()
     screen = Screen()
