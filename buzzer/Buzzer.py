@@ -88,20 +88,23 @@ class Statistics (object):
 
     @rounds.setter
     def rounds (self, value):
-        self.__rounds = value
-        self.tk_rounds.set(self.rounds)
-        self.distance = self.rounds * CONFIG.distance
-        self.tk_distance.set(self.distance)
+        if not self.started:
+            self.tk_rounds.set(0)
+            Log("Not started.")
+        else:
+            self.__rounds = value
+            self.tk_rounds.set(self.rounds)
+            self.distance = self.rounds * CONFIG.distance
+            self.tk_distance.set(self.distance)
 
-        if self.started:
             now = datetime.now()
             d = (str(now-self.starttime_round).split('.', 2)[0]).split(':')
             self.round_time = f"{d[1]}:{d[2]}"
             self.starttime_round = now
 
-        self.tk_round_time.set(self.round_time)
+            self.tk_round_time.set(self.round_time)
 
-        Log(f"Round #{self.rounds}")
+            Log(f"Round #{self.rounds}")
 
 
 ###############################################################################
