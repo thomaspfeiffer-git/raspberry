@@ -47,6 +47,33 @@ class CONFIG:
 
 
 ###############################################################################
+# Statistic ###################################################################
+class Statistics (object):
+    def __init__ (self):
+        self.__starttime = None
+        self.__rounds = 0
+        self.distance = 0
+
+    def init_tk_values (self, master):
+        self.tk_start_time = tkinter.StringVar(master)
+        self.tk_elapsed_time = tkinter.StringVar(master)
+        self.tk_rounds = tkinter.StringVar(master)
+        self.tk_distance = tkinter.StringVar(master)
+
+    @property
+    def rounds (self):
+        return self.__rounds
+
+    @rounds.setter
+    def rounds (self, value):
+        self.__rounds = value
+        self.tk_rounds.set(value)
+        self.tk_elapsed_time.set()
+        self.distance = self.rounds * CONFIG.distance
+        self.tk_distance.set()
+
+
+###############################################################################
 # Sender ######################################################################
 class Sender (object):
     """ """
