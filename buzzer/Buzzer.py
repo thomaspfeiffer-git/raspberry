@@ -128,7 +128,7 @@ class Sender (object):
 # Data ########################################################################
 class Data (object):
     """ """
-    def __init__ (self):
+    def __init__ (self):   # TODO: use statistics.distance
         self.__csv = f"{statistics.rounds};{statistics.rounds*CONFIG.distance};" + \
                      f"{statistics.rounds*CONFIG.distance/1000:.2f} km;".replace('.',',') + \
                      f"{datetime.now().strftime('%H:%M:%S')}"
