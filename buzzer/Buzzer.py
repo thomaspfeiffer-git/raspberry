@@ -40,7 +40,7 @@ from Logging import Log
 # CONFIG ######################################################################
 class CONFIG:
     distance = 247
-    in_production = True
+    in_production = False
 
     class COLORS:
         bg = "white"
@@ -79,8 +79,6 @@ class Statistics (object):
     def timings (self):
         if self.started:
             self.elapsed_time = str(datetime.now()-self.starttime).split('.', 2)[0]
-        else:
-            self.elapsed_time = "0:00:00"
         self.tk_elapsed_time.set(self.elapsed_time)
         self.tk_timings.set(f"{self.elapsed_time} | {self.round_time}")
 
@@ -116,7 +114,6 @@ class Sender (object):
     def __init__ (self):
         self.filename_csv = "counter.txt"
         self.filename_html = "counter.html"
-        self.filenames = "counter.*"
 
         self.user = "thomas"
         self.host = "arverner.smtp.at"
@@ -124,9 +121,9 @@ class Sender (object):
 
     def send (self, data):
         Log(f"Sending to host {self.host}: {data.csv}")
-        subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename_csv}"])
-        subprocess.run(["scp", f"{self.filename_csv}",
-                               f"{self.user}@{self.host}:{self.directory}"])
+        # subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename_csv}"])
+        # subprocess.run(["scp", f"{self.filename_csv}",
+        #                        f"{self.user}@{self.host}:{self.directory}"])
         subprocess.run(["bash", "-c", f"echo \"{data.html}\" > {self.filename_html}"])
         subprocess.run(["scp", f"{self.filename_html}",
                                f"{self.user}@{self.host}:{self.directory}"])
