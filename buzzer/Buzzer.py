@@ -40,6 +40,7 @@ from Logging import Log
 # CONFIG ######################################################################
 class CONFIG:
     distance = 247
+    in_production = True
 
     class COLORS:
         bg = "white"
@@ -54,6 +55,7 @@ class Statistics (object):
         self.starttime = None
         self.starttime_round = None
         self.__rounds = 0
+        self.elapsed_time = "n/a"
         self.round_time = "n/a"
         self.distance = 0
         self.started = False
@@ -76,11 +78,11 @@ class Statistics (object):
 
     def timings (self):
         if self.started:
-            elapsed_time = str(datetime.now()-self.starttime).split('.', 2)[0]
+            self.elapsed_time = str(datetime.now()-self.starttime).split('.', 2)[0]
         else:
-            elapsed_time = "0:00:00"
-        self.tk_elapsed_time.set(elapsed_time)
-        self.tk_timings.set(f"{elapsed_time} | {self.round_time}")
+            self.elapsed_time = "0:00:00"
+        self.tk_elapsed_time.set(self.elapsed_time)
+        self.tk_timings.set(f"{self.elapsed_time} | {self.round_time}")
 
     @property
     def rounds (self):
@@ -112,15 +114,21 @@ class Statistics (object):
 class Sender (object):
     """ """
     def __init__ (self):
-        self.filename  = "counter.txt"
-        self.user      = "thomas"
-        self.host      = "arverner.smtp.at"
+        self.filename_csv = "counter.txt"
+        self.filename_html = "counter.html"
+        self.filenames = "counter.*"
+
+        self.user = "thomas"
+        self.host = "arverner.smtp.at"
         self.directory = "www/sonstiges/"
 
     def send (self, data):
         Log(f"Sending to host {self.host}: {data.csv}")
-        subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename}"])
-        subprocess.run(["scp", f"{self.filename}",
+        subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename_csv}"])
+        subprocess.run(["scp", f"{self.filename_csv}",
+                               f"{self.user}@{self.host}:{self.directory}"])
+        subprocess.run(["bash", "-c", f"echo \"{data.html}\" > {self.filename_html}"])
+        subprocess.run(["scp", f"{self.filename_html}",
                                f"{self.user}@{self.host}:{self.directory}"])
 
 
@@ -128,14 +136,36 @@ class Sender (object):
 # Data ########################################################################
 class Data (object):
     """ """
-    def __init__ (self):   # TODO: use statistics.distance
-        self.__csv = f"{statistics.rounds};{statistics.rounds*CONFIG.distance};" + \
-                     f"{statistics.rounds*CONFIG.distance/1000:.2f} km;".replace('.',',') + \
+    def __init__ (self):
+        self.__csv = f"{statistics.rounds};{statistics.distance};" + \
+                     f"{statistics.distance/1000:.2f} km;".replace('.',',') + \
                      f"{datetime.now().strftime('%H:%M:%S')}"
+
+        self.__html = "<html>\n" + \
+                      "<head>\n" + \
+                      "<meta http-equiv='refresh' content='5' />\n" + \
+                      "<title>willhaben Christmas</title>\n" + \
+                      "<style>\n table, th, td { border: 1px solid black; border-collapse: collapse; }\n</style>\n" + \
+                      "</head>\n" + \
+                      "<body>\n" + \
+                      "<table style='width:50%'>\n" + \
+                      "<tr><th>Rounds</th><th>Distance</th><th>Elapsed Time</th><th>Round Time</th><th>Timestamp</th></tr>\n" + \
+                      f"<tr><td>{statistics.rounds}</td>\n" + \
+                      f"    <td>{statistics.distance}</td>\n" + \
+                      f"    <td>{statistics.elapsed_time}</td>\n" + \
+                      f"    <td>{statistics.round_time}</td>\n" + \
+                      f"    <td>{datetime.now().strftime('%H:%M:%S')}</td></tr>\n" + \
+                      "</table>\n" + \
+                      "</body>\n" + \
+                      "</html>\n"
 
     @property
     def csv (self):
         return self.__csv
+
+    @property
+    def html (self):
+        return self.__html
 
 
 ###############################################################################
@@ -157,11 +187,14 @@ class Counter (threading.Thread):
                       f"Time: {datetime.now().strftime('%H:%M:%S')}")
 
     def pressed (self):
-        if (datetime.now()-self.last_pressed).seconds > 2:  # Debouncing
+        if not statistics.started:
+            Log("Not started.")
+        elif (datetime.now()-self.last_pressed).seconds > 2:  # Debouncing
             self.last_pressed = datetime.now()
             statistics.rounds += 1
+            if CONFIG.in_production:
+                subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
             self.sender.send(Data())
-            # subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
         else:
             Log("Do not press button too fast!")
 
