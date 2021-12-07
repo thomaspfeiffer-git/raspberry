@@ -146,9 +146,10 @@ class Data (object):
                       "</head>\n" + \
                       "<body>\n" + \
                       "<table style='width:50%'>\n" + \
-                      "<tr><th>Rounds</th><th>Distance</th><th>Elapsed Time</th><th>Round Time</th><th>Timestamp</th></tr>\n" + \
+                      "<tr><th>Rounds</th><th>Distance</th><th>Distance km</th><th>Elapsed Time</th><th>Round Time</th><th>Timestamp</th></tr>\n" + \
                       f"<tr><td>{statistics.rounds}</td>\n" + \
                       f"    <td>{statistics.distance}</td>\n" + \
+                      f"    <td>{statistics.distance/1000:.2f}</td>\n".replace('.',',') + \
                       f"    <td>{statistics.elapsed_time}</td>\n" + \
                       f"    <td>{statistics.round_time}</td>\n" + \
                       f"    <td>{datetime.now().strftime('%H:%M:%S')}</td></tr>\n" + \
@@ -308,6 +309,7 @@ class Screen (object):
     def run (self):
         """start polling and run application"""
         self.root.pollid = self.root.after(50, self.poll)
+        statistics.start() ################################ TODO TODO TODO REMOVE
         self.app.mainloop()
 
     def stop (self):
