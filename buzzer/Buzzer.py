@@ -134,9 +134,10 @@ class Sender (object):
 class Data (object):
     """ """
     def __init__ (self):
+        now = datetime.now().strftime('%H:%M:%S')
         self.__csv = f"{statistics.rounds};{statistics.distance};" + \
                      f"{statistics.distance/1000:.2f} km;".replace('.',',') + \
-                     f"{datetime.now().strftime('%H:%M:%S')}"
+                     f"{now}"
 
         self.__html = "<html>\n" + \
                       "<head>\n" + \
@@ -146,13 +147,13 @@ class Data (object):
                       "</head>\n" + \
                       "<body>\n" + \
                       "<table style='width:50%'>\n" + \
-                      "<tr><th>Rounds</th><th>Distance</th><th>Distance km</th><th>Elapsed Time</th><th>Round Time</th><th>Timestamp</th></tr>\n" + \
+                      "<tr><th>Rounds</th><th>Distance (m)</th><th>Distance (km)</th><th>Elapsed Time</th><th>Round Time</th><th>Timestamp</th></tr>\n" + \
                       f"<tr><td>{statistics.rounds}</td>\n" + \
                       f"    <td>{statistics.distance}</td>\n" + \
                       f"    <td>{statistics.distance/1000:.2f}</td>\n".replace('.',',') + \
                       f"    <td>{statistics.elapsed_time}</td>\n" + \
                       f"    <td>{statistics.round_time}</td>\n" + \
-                      f"    <td>{datetime.now().strftime('%H:%M:%S')}</td></tr>\n" + \
+                      f"    <td>{now}</td></tr>\n" + \
                       "</table>\n" + \
                       "</body>\n" + \
                       "</html>\n"
