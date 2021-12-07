@@ -41,6 +41,7 @@ from Logging import Log
 class CONFIG:
     distance = 247
     in_production = False
+    auto_start = True
 
     class COLORS:
         bg = "white"
@@ -121,11 +122,8 @@ class Sender (object):
 
     def send (self, data):
         Log(f"Sending to host {self.host}: {data.csv}".replace('\n',' '))
-        subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename_csv}"])
-        subprocess.run(["scp", f"{self.filename_csv}",
-                               f"{self.user}@{self.host}:{self.directory}"])
         subprocess.run(["bash", "-c", f"echo \"{data.html}\" > {self.filename_html}"])
-        subprocess.run(["scp", f"{self.filename_html}",
+        subprocess.run(["scp", f"{self.filename_html}", f"{self.filename_csv}",
                                f"{self.user}@{self.host}:{self.directory}"])
 
 
@@ -314,7 +312,8 @@ class Screen (object):
     def run (self):
         """start polling and run application"""
         self.root.pollid = self.root.after(50, self.poll)
-        statistics.start() ################################ TODO TODO TODO REMOVE
+        if CONFIG.auto_start:
+            statistics.start()
         self.app.mainloop()
 
     def stop (self):
