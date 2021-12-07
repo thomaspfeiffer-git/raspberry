@@ -40,7 +40,6 @@ from Logging import Log
 # CONFIG ######################################################################
 class CONFIG:
     distance = 247
-    in_production = False
     auto_start = True
 
     class COLORS:
@@ -188,15 +187,21 @@ class Counter (threading.Thread):
                       f"IP: {MyIP()}",
                       f"Time: {datetime.now().strftime('%H:%M:%S')}")
 
+    def sound (self):
+        subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
+
     def pressed (self):
         if not statistics.started:
             Log("Not started.")
         elif (datetime.now()-self.last_pressed).seconds > 2:  # Debouncing
             self.last_pressed = datetime.now()
             statistics.rounds += 1
-            if CONFIG.in_production:
-                subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
+
+            # Have applause and updating data/csv in parallel #
+            t = threading.Thread(name=f"thread-mpg321", target=self.sound)
+            t.start()
             self.sender.send(Data())
+            t.join()
         else:
             Log("Do not press button too fast!")
 
