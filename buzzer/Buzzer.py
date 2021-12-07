@@ -121,9 +121,9 @@ class Sender (object):
 
     def send (self, data):
         Log(f"Sending to host {self.host}: {data.csv}")
-        # subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename_csv}"])
-        # subprocess.run(["scp", f"{self.filename_csv}",
-        #                        f"{self.user}@{self.host}:{self.directory}"])
+        subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename_csv}"])
+        subprocess.run(["scp", f"{self.filename_csv}",
+                               f"{self.user}@{self.host}:{self.directory}"])
         subprocess.run(["bash", "-c", f"echo \"{data.html}\" > {self.filename_html}"])
         subprocess.run(["scp", f"{self.filename_html}",
                                f"{self.user}@{self.host}:{self.directory}"])
@@ -135,9 +135,13 @@ class Data (object):
     """ """
     def __init__ (self):
         now = datetime.now().strftime('%H:%M:%S')
-        self.__csv = f"{statistics.rounds};{statistics.distance};" + \
-                     f"{statistics.distance/1000:.2f} km;".replace('.',',') + \
-                     f"{now}"
+        self.__csv = "Rounds,Distance (m),Distance (km),Elapsed Time,Round Time,Timestamp\n" + \
+                     f"{statistics.rounds}," + \
+                     f"{statistics.distance}," + \
+                     f"{statistics.distance/1000:.2f}," + \
+                     f"{statistics.elapsed_time}," + \
+                     f"{statistics.round_time}," + \
+                     f"{now}\n"
 
         self.__html = "<html>\n" + \
                       "<head>\n" + \
