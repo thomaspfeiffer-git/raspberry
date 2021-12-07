@@ -120,7 +120,7 @@ class Sender (object):
         self.directory = "www/sonstiges/"
 
     def send (self, data):
-        Log(f"Sending to host {self.host}: {data.csv}")
+        Log(f"Sending to host {self.host}: {data.csv}".replace('\n',' '))
         subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename_csv}"])
         subprocess.run(["scp", f"{self.filename_csv}",
                                f"{self.user}@{self.host}:{self.directory}"])
