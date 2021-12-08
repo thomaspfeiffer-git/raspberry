@@ -4,7 +4,10 @@
 # Buzzer.py                                                                   #
 # (c) https://github.com/thomaspfeiffer-git 2021                              #
 ###############################################################################
-""" """
+"""
+willhaben christmas runner.
+count rounds during willhaben christmas party
+"""
 
 
 ### usage ###
@@ -110,27 +113,32 @@ class Statistics (object):
 ###############################################################################
 # Sender ######################################################################
 class Sender (object):
-    """ """
+    """Sends data (html, csv) via ssh/scp to http servers.
+       Data is shown in the live stream during the event."""
     def __init__ (self):
         self.filename_csv = "counter.txt"
         self.filename_html = "counter.html"
 
         self.user = "thomas"
-        self.host = "arverner.smtp.at"
-        self.directory = "www/sonstiges/"
+        self.host1 = "arverner.smtp.at"
+        self.directory1 = "www/sonstiges/"
+        self.host2 = "ssh.rekmp.net"
+        self.directory2 = "public_html/"
 
     def send (self, data):
-        Log(f"Sending to host {self.host}: {data.csv}".replace('\n',' '))
+        Log(f"Sending data: {data.csv}".replace('\n',' '))
         subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename_csv}"])
         subprocess.run(["bash", "-c", f"echo \"{data.html}\" > {self.filename_html}"])
         subprocess.run(["scp", f"{self.filename_html}", f"{self.filename_csv}",
-                               f"{self.user}@{self.host}:{self.directory}"])
+                               f"{self.user}@{self.host1}:{self.directory1}"])
+        subprocess.run(["scp", f"{self.filename_html}", f"{self.filename_csv}",
+                               f"{self.user}@{self.host2}:{self.directory2}"])
 
 
 ###############################################################################
 # Data ########################################################################
 class Data (object):
-    """ """
+    """Data (html, csv) sent to http servers."""
     def __init__ (self):
         now = datetime.now().strftime('%H:%M:%S')
         self.__csv = "Rounds,Distance (m),Distance (km),Elapsed Time,Round Time,Timestamp\n" + \
@@ -206,6 +214,8 @@ class Counter (threading.Thread):
             Log("Do not press button too fast!")
 
     def run (self):
+        # Send initial data (0 rounds, 0 km) on start of program. #
+        self.sender.send(Data())
         self._running = True
         while self._running:
             self.display()
