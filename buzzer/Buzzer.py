@@ -42,7 +42,7 @@ from Logging import Log
 ###############################################################################
 # CONFIG ######################################################################
 class CONFIG:
-    distance = 247
+    distance = 194   # Peter Hanisch, 9th Dec 2021
     auto_start = True
 
     class COLORS:
