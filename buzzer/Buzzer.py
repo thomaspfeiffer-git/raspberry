@@ -5,9 +5,16 @@
 # (c) https://github.com/thomaspfeiffer-git 2021                              #
 ###############################################################################
 """
-willhaben christmas runner.
-count rounds during willhaben christmas party
+willhaben christmas runner:
+count rounds during willhaben christmas party.
 """
+
+
+# TODO
+# Pace overall
+# Pace last round
+# TODO
+
 
 
 ### usage ###
@@ -60,6 +67,8 @@ class Statistics (object):
         self.__rounds = 0
         self.elapsed_time = "n/a"
         self.round_time = "n/a"
+        self.pace = "n/a"
+        self.pace_round = "n/a"
         self.distance = 0
         self.started = False
 
@@ -125,14 +134,22 @@ class Sender (object):
         self.host2 = "ssh.rekmp.net"
         self.directory2 = "public_html/"
 
+    def scp (self, destination):
+        subprocess.run(["scp", f"{self.filename_html}",
+                        f"{self.filename_csv}", destination])
+
     def send (self, data):
         Log(f"Sending data: {data.csv}".replace('\n',' '))
         subprocess.run(["bash", "-c", f"echo \"{data.csv}\" > {self.filename_csv}"])
         subprocess.run(["bash", "-c", f"echo \"{data.html}\" > {self.filename_html}"])
-        subprocess.run(["scp", f"{self.filename_html}", f"{self.filename_csv}",
-                               f"{self.user}@{self.host1}:{self.directory1}"])
-        subprocess.run(["scp", f"{self.filename_html}", f"{self.filename_csv}",
-                               f"{self.user}@{self.host2}:{self.directory2}"])
+        t1 = threading.Thread(target=self.scp,
+                              args=(f"{self.user}@{self.host1}:{self.directory1}",))
+        t2 = threading.Thread(target=self.scp,
+                              args=(f"{self.user}@{self.host2}:{self.directory2}",))
+        t1.start()
+        t2.start()
+        t1.join
+        t2.join
 
 
 ###############################################################################
