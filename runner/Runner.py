@@ -10,13 +10,6 @@ count rounds during willhaben christmas party.
 """
 
 
-# TODO
-# Pace overall
-# Pace last round
-# TODO
-
-
-
 ### usage ###
 # nohup ./Runner.py 2>&1 >runner.log &
 
@@ -96,6 +89,14 @@ class Statistics (object):
         self.tk_timings.set(f"{self.elapsed_time} | {self.round_time}")
         self.tk_paces.set(f"{self.pace} | {self.pace_round}")
 
+    @staticmethod
+    def calc_pace (distance, minutes, seconds):
+        distance /= 1000
+        minutes += seconds/60
+        pace_minutes = int(minutes // distance)
+        pace_seconds = round(((minutes / distance) - pace_minutes) * 60)
+        return f"{pace_minutes}:{pace_seconds:02}"
+
     @property
     def rounds (self):
         return self.__rounds
@@ -111,12 +112,19 @@ class Statistics (object):
             self.distance = self.rounds * CONFIG.distance
             self.tk_distance.set(self.distance)
 
+            t = list(map(int, self.elapsed_time.split(':')))
+            self.pace = self.calc_pace(distance=self.distance,
+                                       minutes=t[0]*60+t[1], seconds=t[2])
+
             now = datetime.now()
             d = (str(now-self.starttime_round).split('.', 2)[0]).split(':')
             self.round_time = f"{d[1]}:{d[2]}"
+            self.tk_round_time.set(self.round_time)
             self.starttime_round = now
 
-            self.tk_round_time.set(self.round_time)
+            t = list(map(int, self.round_time.split(':')))
+            self.pace_round = self.calc_pace(distance=CONFIG.distance,
+                                             minutes=t[0], seconds=t[1])
 
             Log(f"Round #{self.rounds}")
 
