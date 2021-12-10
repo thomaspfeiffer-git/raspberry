@@ -1,7 +1,7 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# Buzzer.py                                                                   #
+# Runner.py                                                                   #
 # (c) https://github.com/thomaspfeiffer-git 2021                              #
 ###############################################################################
 """
@@ -18,7 +18,7 @@ count rounds during willhaben christmas party.
 
 
 ### usage ###
-# nohup ./Buzzer.py 2>&1 >buzzer.log &
+# nohup ./Runner.py 2>&1 >runner.log &
 
 
 ### useful ressources ###
@@ -78,6 +78,7 @@ class Statistics (object):
         self.tk_round_time = tkinter.StringVar(master)
         self.tk_timings = tkinter.StringVar(master)
         self.tk_rounds = tkinter.StringVar(master)
+        self.tk_paces = tkinter.StringVar(master)
         self.tk_distance = tkinter.StringVar(master)
 
         self.rounds = 0
