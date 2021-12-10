@@ -94,6 +94,7 @@ class Statistics (object):
             self.elapsed_time = str(datetime.now()-self.starttime).split('.', 2)[0]
         self.tk_elapsed_time.set(self.elapsed_time)
         self.tk_timings.set(f"{self.elapsed_time} | {self.round_time}")
+        self.tk_paces.set(f"{self.pace} | {self.pace_round}")
 
     @property
     def rounds (self):
@@ -159,12 +160,14 @@ class Data (object):
     """Data (html, csv) sent to http servers."""
     def __init__ (self):
         now = datetime.now().strftime('%H:%M:%S')
-        self.__csv = "Rounds,Distance (m),Distance (km),Elapsed Time,Round Time,Timestamp\n" + \
+        self.__csv = "Rounds,Distance (m),Distance (km),Elapsed Time,Round Time,Pace,Pace Last Round,Timestamp\n" + \
                      f"{statistics.rounds}," + \
                      f"{statistics.distance}," + \
                      f"{statistics.distance/1000:.2f}," + \
                      f"{statistics.elapsed_time}," + \
                      f"{statistics.round_time}," + \
+                     f"{statistics.pace}," + \
+                     f"{statistics.pace_round}," + \
                      f"{now}\n"
 
         self.__html = "<html>\n" + \
@@ -174,13 +177,15 @@ class Data (object):
                       "<style>\n table, th, td { border: 1px solid black; border-collapse: collapse; }\n</style>\n" + \
                       "</head>\n" + \
                       "<body>\n" + \
-                      "<table style='width:50%'>\n" + \
-                      "<tr><th>Rounds</th><th>Distance (m)</th><th>Distance (km)</th><th>Elapsed Time</th><th>Round Time</th><th>Timestamp</th></tr>\n" + \
+                      "<table style='width:75%'>\n" + \
+                      "<tr><th>Rounds</th><th>Distance (m)</th><th>Distance (km)</th><th>Elapsed Time</th><th>Round Time</th><th>Pace</th><th>Pace Last Round</th><th>Timestamp</th></tr>\n" + \
                       f"<tr><td>{statistics.rounds}</td>\n" + \
                       f"    <td>{statistics.distance}</td>\n" + \
                       f"    <td>{statistics.distance/1000:.2f}</td>\n".replace('.',',') + \
                       f"    <td>{statistics.elapsed_time}</td>\n" + \
                       f"    <td>{statistics.round_time}</td>\n" + \
+                      f"    <td>{statistics.pace}</td>\n" + \
+                      f"    <td>{statistics.pace_round}</td>\n" + \
                       f"    <td>{now}</td></tr>\n" + \
                       "</table>\n" + \
                       "</body>\n" + \
@@ -277,6 +282,12 @@ class ScreenApp (tkinter.Frame):
                                      background=CONFIG.COLORS.bg,
                                      font=self.font_timing)
         self.timings.pack()
+
+        self.paces = tkinter.Label(self.screen, textvariable=statistics.tk_paces,
+                                   foreground=CONFIG.COLORS.fg,
+                                   background=CONFIG.COLORS.bg,
+                                   font=self.font_timing)
+        self.paces.pack()
 
         for _ in range(4):
             self.add_spacer()
