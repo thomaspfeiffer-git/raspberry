@@ -1,0 +1,4 @@
+#!/usr/bin/bash
+
+while [ 1 ] ; do killall -SIGUSR1 Runner.py ; sleep $((45 + $RANDOM % 30)) ; done
+
