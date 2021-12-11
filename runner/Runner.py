@@ -296,9 +296,8 @@ class ScreenApp (tkinter.Frame):
                                    background=CONFIG.COLORS.bg,
                                    font=self.font_timing)
         self.paces.pack()
-
-        for _ in range(4):
-            self.add_spacer()
+        self.add_spacer()
+        self.add_spacer()
 
         self.button_start = tkinter.Button(self.screen, text="Start",
                                            bg=CONFIG.COLORS.bg_btn_start,
