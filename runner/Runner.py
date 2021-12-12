@@ -227,6 +227,7 @@ class Counter (threading.Thread):
                       f"Time: {datetime.now().strftime('%H:%M:%S')}")
 
     def sound (self):
+        subprocess.run(["mpg321", "-g 100", "-q", "gong.mp3"])
         subprocess.run(["mpg321", "-g 100", "-q", "applause3.mp3"])
 
     def pressed (self):
