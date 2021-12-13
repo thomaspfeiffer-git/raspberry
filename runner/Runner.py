@@ -337,7 +337,6 @@ class ScreenApp (tkinter.Frame):
 
     def set_counter (self, value):
         try:
-            Log(f"value: {value}")
             value = int(value)
         except ValueError:
             Log(f"Value '{value}' is not an integer.")
