@@ -43,7 +43,7 @@ from Logging import Log
 # CONFIG ######################################################################
 class CONFIG:
     distance = 194   # Peter Hanisch, 9th Dec 2021
-    auto_start = True
+    auto_start = False
 
     class COLORS:
         bg = "white"
@@ -93,8 +93,12 @@ class Statistics (object):
     def calc_pace (distance, minutes, seconds):
         distance /= 1000
         minutes += seconds/60
-        pace_minutes = int(minutes // distance)
-        pace_seconds = round(((minutes / distance) - pace_minutes) * 60)
+        try:
+            pace_minutes = int(minutes // distance)
+            pace_seconds = round(((minutes / distance) - pace_minutes) * 60)
+        except ZeroDivisionError:
+            return "n/a"
+
         return f"{pace_minutes}:{pace_seconds:02}"
 
     @property
@@ -332,11 +336,14 @@ class ScreenApp (tkinter.Frame):
         self.spacer.append(tkinter.Label(self.screen, text="", bg=CONFIG.COLORS.bg).pack())
 
     def set_counter (self, value):
+
         try:
-            counter.rounds = int(value)
+            Log(f"value: {value}")
+            value = int(value)
         except ValueError:
             Log(f"Value '{value}' is not an integer.")
         else:
+            statistics.rounds = value
             Log(f"Manually set counter to {value}.")
 
 
