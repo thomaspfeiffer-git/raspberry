@@ -319,15 +319,15 @@ class ScreenApp (tkinter.Frame):
         self.button_reset.pack()
         self.add_spacer()
 
-        value = tkinter.StringVar(self.screen)
-        self.entry = tkinter.Entry(self.screen, textvariable=value,
+        self.value_setcounter = tkinter.StringVar(self.screen)
+        self.entry = tkinter.Entry(self.screen, textvariable=self.value_setcounter,
                                    width=50, font=self.font_button)
         self.entry.pack(pady=10)
 
         self.button_set = tkinter.Button(self.screen, text="Set Counter",
                                          fg=CONFIG.COLORS.fg, font=self.font_button,
                                          width=50, height=2,
-                                         command=lambda: self.set_counter(value.get()))
+                                         command=lambda: self.set_counter(self.value_setcounter.get()))
         self.button_set.pack()
 
         self.screen.pack(expand=True)
@@ -336,7 +336,6 @@ class ScreenApp (tkinter.Frame):
         self.spacer.append(tkinter.Label(self.screen, text="", bg=CONFIG.COLORS.bg).pack())
 
     def set_counter (self, value):
-
         try:
             Log(f"value: {value}")
             value = int(value)
