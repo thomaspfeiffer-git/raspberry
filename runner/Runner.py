@@ -116,6 +116,7 @@ class Statistics (object):
             self.distance = self.rounds * CONFIG.distance
             self.tk_distance.set(self.distance)
 
+            Log(f"Elapsed Time: {self.elapsed_time}")
             t = list(map(int, self.elapsed_time.split(':')))
             self.pace = self.calc_pace(distance=self.distance,
                                        minutes=t[0]*60+t[1], seconds=t[2])
