@@ -10,6 +10,22 @@ screen /dev/ttyUSB0 115200
 
 
 
+############################################################################
+# Armbian Bullseye
+############################################################################
+
+
+# Image:
+http://armbian.hosthatch.com/archive/nanopiair/archive/
+Armbian_21.08.1_Nanopiair_bullseye_current_5.10.60.img
+
+
+# make ssh working
+/etc/ssh/sshd_config
+
+IPQoS cs0 cs0
+
+
 
 ############################################################################
 # Armbian Stretch
