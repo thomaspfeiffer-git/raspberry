@@ -29,6 +29,9 @@ network={
 }
 
 
+#######################
+# in case of not working wifi
+# "nl80211: Driver does not support authentication/association or connect commands"
 # For TP-Link TL-WN725N
 # Realtek Semiconductor Corp. RTL8188EUS 802.11n Wireless Network Adapter
 # change /etc/dhcpcd.conf:
@@ -39,8 +42,8 @@ env wpa_supplicant_driver=nl80211,wext
 # taken from https://www.rigacci.org/wiki/doku.php/doc/appunti/hardware/raspberrypi_wpa_supplicant_problem
 
 
-
-
+# alternative:
+wpa_supplicant -B -i wlan0 -D wext -c /etc/wpa_supplicant/wpa_supplicant.conf
 
 
 
