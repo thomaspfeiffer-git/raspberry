@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Capture.py                                                                  #
-# (c) https://github.com/thomaspfeiffer-git 2021                              #
+# (c) https://github.com/thomaspfeiffer-git 2021, 2022                        #
 ###############################################################################
 """
 """
@@ -14,6 +14,11 @@
 # === you might need to install ===
 # sudo pip3 install attrdict
 # sudo pip3 install schedule
+
+
+# === crontab of destination host ===
+# 05 1 * * *  mkdir /mnt/ssd/$(date "+%Y%m%d")
+#  * 3-23 * * *   bash -c "find /ramdisk/ -name '*jpg' -mmin +2 -exec mv {} /mnt/ssd/$(date '+\%Y\%m\%d')/ \;"
 
 
 from attrdict import AttrDict
