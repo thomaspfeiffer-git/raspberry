@@ -99,7 +99,7 @@ def Receiver ():
         try:
             data = udp.receive()
         except DatagramError:
-            Log("Datagram errir")
+            Log("Datagram error")
         else:
             Log(f"RRD Data received: {data}")
             try:
