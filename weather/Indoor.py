@@ -3,7 +3,7 @@
 ###############################################################################
 # Indoor.py                                                                   #
 # Monitors temperature, humidity, and air pressure in our living room.        #
-# (c) https://github.com/thomaspfeiffer-git 2019, 2020                        #
+# (c) https://github.com/thomaspfeiffer-git 2019, 2020, 2022                  #
 ###############################################################################
 """ Collect weather and some other data indoor (mainly with BME680). """
 
@@ -96,12 +96,16 @@ def Receiver ():
     udp = UDP.Receiver(CREDENTIALS)
 
     while True:
-        data = udp.receive()
-        Log(f"RRD Data received: {data}")
         try:
-            rrdtool.update(RRDFILE, "--template", rrd_template, data)
-        except rrdtool.OperationalError:
-            Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+            data = udp.receive()
+        except DatagramError:
+            Log("Datagram errir")
+        else:
+            Log(f"RRD Data received: {data}")
+            try:
+                rrdtool.update(RRDFILE, "--template", rrd_template, data)
+            except rrdtool.OperationalError:
+                Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
 
 ###############################################################################
