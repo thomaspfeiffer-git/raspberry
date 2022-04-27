@@ -17,7 +17,7 @@
 
 
 # === crontab of destination host ===
-# 05 1 * * *  mkdir /mnt/ssd/$(date "+%Y%m%d")
+# 05 1 * * *  bash -c "mkdir /mnt/ssd/$(date '+\%Y\%m\%d')"
 #  * 3-23 * * *   bash -c "find /ramdisk/ -name '*jpg' -mmin +2 -exec mv {} /mnt/ssd/$(date '+\%Y\%m\%d')/ \;"
 
 
