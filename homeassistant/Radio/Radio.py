@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Radio.py                                                                    #
-# (c) https://github.com/thomaspfeiffer-git 2021                              #
+# (c) https://github.com/thomaspfeiffer-git 2021, 2022                        #
 ###############################################################################
 """
 """
@@ -47,7 +47,8 @@ Stations.update({ 's3': { station_name: "Radio Wien", station_url: "https://orf-
 Stations.update({ 's4': { station_name: "Lounge FM", station_url: "https://s35.derstream.net/ukwwien.mp3" } })
 Stations.update({ 's5': { station_name: "The Sound of New York City", station_url: "http://ic2377.c900.fast-serv.com/tsonyc.mp3" } })
 Stations.update({ 's6': { station_name: "BBC Radio 2", station_url: "https://stream.live.vc.bbcmedia.co.uk/bbc_radio_two" } })
-Stations.update({ 's7': { station_name: "DeepLazz Radio", station_url: "http://stream.zenolive.com/m32839kywrquv" } })
+Stations.update({ 's7': { station_name: "Downbeat Radio", station_url: "https://stream.laut.fm/lounge" } })
+Stations.update({ 's8': { station_name: "DeepLazz Radio", station_url: "http://stream.zenolive.com/m32839kywrquv" } })
 
 # ORF1: https://orf1.mdn.ors.at/out/u/orf1/q6a/manifest.m3u8
 # ORF2: https://orf2.mdn.ors.at/out/u/orf2/q6a/manifest.m3u8
