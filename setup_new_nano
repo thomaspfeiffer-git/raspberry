@@ -32,6 +32,13 @@ in /etc/rc.local
 
 
 
+#--- zram /var/log off ---
+# /etc/default/armbian-zram-config
+ENABLED=false
+SWAP=false
+
+# /etc/default/armbian-ramlog
+ENABLED=false
 
 ############################################################################
 # Armbian Stretch
