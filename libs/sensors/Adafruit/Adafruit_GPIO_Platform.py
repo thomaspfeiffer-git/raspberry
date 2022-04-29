@@ -47,19 +47,21 @@ def platform_detect():
         return NANOPI
     elif plat.lower().find('armv7l-with-glibc2.4') > -1:
         return NANOPI
-    elif plat.lower().find('s5p6818-aarch64') > -1:    
+    elif plat.lower().find('armv7l-with-glibc2.31') > -1:
+        return NANOPI
+    elif plat.lower().find('s5p6818-aarch64') > -1:
         return NANOPC_T3
-    
-        
+
+
     # Handle Minnowboard
     # Assumption is that mraa is installed
-    try: 
-        import mraa 
+    try:
+        import mraa
         if mraa.getPlatformName()=='MinnowBoard MAX':
             return MINNOWBOARD
     except ImportError:
         pass
-    
+
     # Couldn't figure out the platform, just return unknown.
     return UNKNOWN
 
