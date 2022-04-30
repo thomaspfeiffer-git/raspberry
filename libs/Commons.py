@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ############################################################################
 # Commons.py                                                               #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2021          #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2021, 2022    #
 ############################################################################
 
 """
@@ -44,7 +44,7 @@ class Digest (object):
         digest_maker = hmac.new(self.__secret,
                                 data.encode('utf-8'),
                                 hashlib.sha256)
-        return base64.encodestring(digest_maker.digest()).decode('utf-8').rstrip()
+        return base64.encodebytes(digest_maker.digest()).decode('utf-8').rstrip()
 
 
 ############################################################################
