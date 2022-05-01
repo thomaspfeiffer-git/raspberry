@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Timer.py                                                                    #
-# (c) https://github.com/thomaspfeiffer-git 2017, 2021                        #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2021, 2022                  #
 ###############################################################################
 """Part of the homeautomation project: timer for my kitchen (for perfect
    eggs or noodles :-) ).
@@ -10,6 +10,10 @@
 
 ### usage ###
 # nohup ./Timer.py &
+
+
+### things you might need to install ###
+# sudo apt-get install mpg321
 
 
 import tkinter as tk
