@@ -24,7 +24,7 @@ import subprocess
 import sys
 import threading
 import time
-from urllib.error import HTTPError, URLError 
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 sys.path.append('../../libs')
@@ -47,7 +47,7 @@ api = Api(app)
 # CONFIG ######################################################################
 class CONFIG (object):
     URL_API_LIGHTNESS = "http://pih:5001"
-    CONTROLBRIGHTNESS = '/sys/class/backlight/rpi_backlight/brightness'
+    CONTROLBRIGHTNESS = '/sys/class/backlight/10-0045/brightness'
     # if necessary:
     #   config = configparser.ConfigParser()
     #   config.read(configfilename)
@@ -89,7 +89,7 @@ class Sensor (threading.Thread):
         self.__running = False
 
     def _read_sensor (self):
-        lightness = self.__lux 
+        lightness = self.__lux
         try:
             with urlopen(self.url, timeout=15) as response:
                 lightness = int(AttrDict(json.loads(response.read().decode("utf-8")))['lightness'])
@@ -166,11 +166,11 @@ class Control (threading.Thread):
         return self.__switchedon
 
     def prettybright (self):
-        """no need to set display to full brightness 
+        """no need to set display to full brightness
            if it is already very bright"""
         return self.measurements.avg() > Sensor.MAX - 5
 
-    @staticmethod 
+    @staticmethod
     def schedule_on ():
         """full brightness from 6 am to 10 pm"""
         return 6 <= datetime.now().hour < 22
@@ -184,8 +184,8 @@ class Control (threading.Thread):
             self.measurements.append(sensor.lux_calced)
                     # full brightness between 6 am and 10 pm or
                     # if manually switched on
-            if self.schedule_on() or self.switched_on(): 
-                set_brightness(Sensor.MAX)   
+            if self.schedule_on() or self.switched_on():
+                set_brightness(Sensor.MAX)
             else:
                 set_brightness(int(self.measurements.avg()))
             time.sleep(0.02)
