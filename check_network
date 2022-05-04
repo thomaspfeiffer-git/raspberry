@@ -12,6 +12,11 @@
 
 
 
+
+# /sys/firmware/devicetree/base/model
+# - Raspberry Pi 3 Model B Rev 1.2
+# - FriendlyARM NanoPi NEO Air
+
 /sbin/ifconfig wlan0 | grep "inet " 2>&1 >/dev/null
 
 if [ $? -eq 0 ] ; then
