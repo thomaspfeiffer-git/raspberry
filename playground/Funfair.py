@@ -7,7 +7,7 @@
 
 
 iterations = 10
-rounds = 10000000
+rounds = 100000000
 
 
 red = 0
