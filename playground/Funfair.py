@@ -7,7 +7,7 @@
 
 
 iterations = 10
-rounds = 1000000
+rounds = 10000000
 
 
 red = 0
@@ -36,7 +36,7 @@ for i in range(iterations):
         else:
             wins += 1
 
-    print(f"Iteration: {i}: stakes: {stake}; wins: {wins}; ratio: {stake/wins:.2f}")
+    print(f"Iteration {i}: stakes: {stake}; wins: {wins}; ratio: {stake/wins:.2f}")
 
 # eof #
 
