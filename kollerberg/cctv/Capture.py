@@ -93,6 +93,7 @@ class Daylight(object):
         return self.__daylight
 
     def update_data(self):
+        """
         try:
             with urlopen(self.url) as response:
                 data = AttrDict(json.loads(response.read().decode("utf-8")))
@@ -106,6 +107,19 @@ class Daylight(object):
             self.sunset = datetime.strptime(data['results']['sunset'], t_format).astimezone(self.local_tz)
             Log(f"Sunrise: {self.sunrise}")
             Log(f"Sunset: {self.sunset}")
+        """
+
+        # work around due to:
+        # Error: <class 'urllib.error.URLError'> <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED]
+        # certificate verify failed: certificate has expired (_ssl.c:1056)>
+        # in urlopen()
+
+        import datetime
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        self.sunrise = f"{today}T06:00:00+0100"
+        self.sunset = f"{today}T21:00:00+0100"
+        Log(f"Sunrise: {self.sunrise}")
+        Log(f"Sunset: {self.sunset}")
 
     def calculate(self):
         delta = timedelta(hours=1)
