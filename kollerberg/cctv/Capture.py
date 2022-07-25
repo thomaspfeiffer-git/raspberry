@@ -114,10 +114,12 @@ class Daylight(object):
         # certificate verify failed: certificate has expired (_ssl.c:1056)>
         # in urlopen()
 
-        import datetime
-        today = datetime.datetime.now().strftime("%Y-%m-%d")
-        self.sunrise = f"{today}T06:00:00+0100"
-        self.sunset = f"{today}T21:00:00+0100"
+        t_format = '%Y-%m-%dT%H:%M:%S%z'
+        today = datetime.now().strftime("%Y-%m-%d")
+        self.sunrise = datetime.strptime(f"{today}T06:00:00+0200", t_format).astimezone(self.local_tz)
+        self.sunset = datetime.strptime(f"{today}T21:00:00+0200", t_format).astimezone(self.local_tz)
+        # self.sunrise = f"{today}T06:00:00".astimezone(self.local_tz)
+        # self.sunset = f"{today}T21:00:00".astimezone(self.local_tz)
         Log(f"Sunrise: {self.sunrise}")
         Log(f"Sunset: {self.sunset}")
 
