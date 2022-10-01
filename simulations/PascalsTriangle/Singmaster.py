@@ -13,6 +13,7 @@ from collections import defaultdict
 
 iterations = 500
 max_appaerances = 50
+max_number = 0
 
 def pascal (line):
     next_line = []
@@ -35,6 +36,8 @@ if __name__ == '__main__':
         for number in line:
             if count[number] < max_appaerances:
                 count[number] += 1
+            if number > max_number:
+                max_number = number
 
     for number in count.keys():
         appearances[count[number]].append(number)
@@ -46,4 +49,7 @@ if __name__ == '__main__':
             appearances[i].sort()
             print(f"{i}: {appearances[i]}")
 
+print(f"Max number: {max_number:e}")
+
+# eof #
 
