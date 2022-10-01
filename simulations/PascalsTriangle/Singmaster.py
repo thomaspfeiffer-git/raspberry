@@ -11,7 +11,7 @@ https://en.wikipedia.org/wiki/Singmaster%27s_conjecture
 
 from collections import defaultdict
 
-iterations = 10000
+iterations = 1000
 
 def pascal (line):
     next_line = []
@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     for i in appearances:
         if len(appearances[i]) > 20:
-            print(f"{i}: more than 20 items")
+            print(f"{i}: [{len(appearances[i])} items]")
         else:
             appearances[i].sort()
             print(f"{i}: {appearances[i]}")
