@@ -11,7 +11,7 @@ https://en.wikipedia.org/wiki/Singmaster%27s_conjecture
 
 from collections import defaultdict
 
-iterations = 10000
+iterations = 3000
 
 def pascal (line):
     next_line = []
