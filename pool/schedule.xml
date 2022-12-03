@@ -21,9 +21,10 @@
                 <value>2.0</value>
                 <operator>&gt;=</operator>
             </temperature>
-            <abs_humidity_difference>
+            <!-- <abs_humidity_difference>
                 <value>0.75</value>
             </abs_humidity_difference>
+            -->
         </conditions>
     </schedule>
 </schedules>
