@@ -12,6 +12,9 @@ https://en.wikipedia.org/wiki/Singmaster%27s_conjecture
 from collections import defaultdict
 
 iterations = 3000
+iterations = 500
+max_appaerances = 50
+max_number = 0
 
 def pascal (line):
     next_line = []
@@ -32,16 +35,22 @@ if __name__ == '__main__':
     for i in range(iterations):
         line = pascal(line)
         for number in line:
-            count[number] += 1
+            if count[number] < max_appaerances:
+                count[number] += 1
+            if number > max_number:
+                max_number = number
 
     for number in count.keys():
         appearances[count[number]].append(number)
 
     for i in appearances:
-        if len(appearances[i]) > 20:
-            print(f"{i}: more than 20 items")
+        if len(appearances[i]) >= max_appaerances:
+            print(f"{i}: [more than {max_appaerances} items]")
         else:
             appearances[i].sort()
             print(f"{i}: {appearances[i]}")
 
+print(f"Max number: {max_number:e}")
+
+# eof #
 
