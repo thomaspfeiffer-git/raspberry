@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Timer.py                                                                    #
-# (c) https://github.com/thomaspfeiffer-git 2017, 2021, 2022                  #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2021, 2022, 2023            #
 ###############################################################################
 """Part of the homeautomation project: timer for my kitchen (for perfect
    eggs or noodles :-) ).
@@ -179,7 +179,10 @@ class Control (threading.Thread):
         self.timer.set("Alarm")
         self.alarm_id = self.master.after(CONFIG.ALARM.DELAY,
                                 lambda: self.alarm_blink(CONFIG.ALARM.COUNT))
+        old_volume = Sound.volume
+        Sound.set_volume(old_volume+20)
         Sound.play(CONFIG.ALARM.SOUND, runs=3)
+        Sound.set_volume(old_volume)
 
     def run (self):
         self.__running = True

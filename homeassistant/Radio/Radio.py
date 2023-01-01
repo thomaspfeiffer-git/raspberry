@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Radio.py                                                                    #
-# (c) https://github.com/thomaspfeiffer-git 2021, 2022                        #
+# (c) https://github.com/thomaspfeiffer-git 2021, 2022, 2023                  #
 ###############################################################################
 """
 """
@@ -57,28 +57,13 @@ Stations.update({ 's8': { station_name: "DeepLazz Radio", station_url: "http://s
 # http://blog.peterseil.com/orf-stream-links/
 
 ###############################################################################
-###############################################################################
-def set_volume (volume:int = 25):
-    """sets the volume [percent]
-       shell command: amixer -D pulse sset Master 50%
-    """
-    if not 0 <= volume <= 100:
-        raise ValueError(f"volume is {volume}, must be in 0..100")
-
-    command = ["amixer", "-D", "pulse", "sset", "Master", f"{volume}%"]
-    process = subprocess.Popen(command)
-    process.wait()
-    process.communicate()
-
-
-###############################################################################
 # Control #####################################################################
 class Control (threading.Thread):
     def __init__ (self, master):
         threading.Thread.__init__(self)
         self.master = master
         self.__volume = CONFIG.APPLICATION.VOLUME_DEFAULT
-        set_volume(self.__volume)
+        Sound.set_volume(self.__volume)   # TODO: move to class /libraries/sound.Sound
         self.radio_process = None
         self.timestamp = time.time()
         self.window_hidden = False
@@ -101,15 +86,15 @@ class Control (threading.Thread):
             self.window_hidden = True
 
     @property
-    def volume (self):
+    def volume (self):  # TODO: move to class /libraries/sound.Sound
         return self.__volume
 
     @triggered
     def adjust_volume (self, value):
-        self.__volume += value
+        self.__volume += value # TODO: move to class /libraries/sound.Sound
         if self.__volume > 100: self.__volume = 100
         if self.__volume < 0: self.__volume = 0
-        set_volume(self.__volume)
+        Sound.set_volume(self.__volume)
 
     @triggered
     def play (self, station_url):
