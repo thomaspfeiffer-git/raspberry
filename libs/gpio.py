@@ -28,12 +28,12 @@ class gpio (object):
         if unexport:
             try:
                 o = open("/sys/class/gpio/unexport", "w")
+            except OSError:
+                Log(f"Port {self.__pin} was not exported, cannot unexport again")
+            else:
                 o.write(self.__pin)
                 o.close()
                 time.sleep(0.5)
-            except OSError:
-                Log(f"Port {self.__pin} was not exported, cannot unexport again")
-            # else:
 
         self.__direction = direction
         o = open("/sys/class/gpio/export", "w")
