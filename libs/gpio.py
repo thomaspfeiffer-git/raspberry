@@ -8,6 +8,7 @@ import sys
 import time
 
 sys.path.append('../libs')
+from Logging import Log
 from sensors.Adafruit import Adafruit_GPIO_Platform as Platform
 
 ##############################################################################
