@@ -25,10 +25,14 @@ class gpio (object):
             raise ValueError("direction must be 'gpio.IN' or 'gpio.OUT'.")
 
         if unexport:
-            o = open("/sys/class/gpio/unexport", "w")
-            o.write(self.__pin)
-            o.close()
-            time.sleep(0.5)
+            try:
+                o = open("/sys/class/gpio/unexport", "w")
+            except OSError:
+                Log(f"Port {} was not exported, cannot unexport again")
+            else:
+                o.write(self.__pin)
+                o.close()
+                time.sleep(0.5)
 
         self.__direction = direction
         o = open("/sys/class/gpio/export", "w")
