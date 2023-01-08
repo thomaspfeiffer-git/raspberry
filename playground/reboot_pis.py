@@ -33,10 +33,10 @@ class Switch (object):
         self.__io = io(pin, io.OUT, unexport=True)
 
     def on (self):
-        self.__io.write("0")
+        self.__io.write("1")
 
     def off (self):
-        self.__io.write("1")
+        self.__io.write("0")
 
 
 ###############################################################################
