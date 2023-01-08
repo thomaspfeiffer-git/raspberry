@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 # gpio.py                                                                    #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020            #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020, 2021      #
 ##############################################################################
 
 import sys
@@ -16,13 +16,19 @@ class gpio (object):
     IN  = 'in'
     OUT = 'out'
 
-    def __init__ (self, linux_gpio, direction):
+    def __init__ (self, linux_gpio, direction, unexport=False):
         if Platform.platform_detect() != Platform.NANOPI:
             raise RuntimeError("This library works on NanoPi NEO Air only.")
 
         self.__pin = "{}".format(linux_gpio)
         if direction != gpio.IN and direction != gpio.OUT:
             raise ValueError("direction must be 'gpio.IN' or 'gpio.OUT'.")
+
+        if unexport:
+            o = open("/sys/class/gpio/unexport", "w")
+            o.write(self.__pin)
+            o.close()
+            time.sleep(0.5)
 
         self.__direction = direction
         o = open("/sys/class/gpio/export", "w")
@@ -49,8 +55,8 @@ class gpio (object):
         o.close()
 
     def close (self):
-        o = open("/sys/class/gpio/unexport", "w"); 
-        o.write(self.__pin); 
+        o = open("/sys/class/gpio/unexport", "w");
+        o.write(self.__pin);
         o.close()
 
 # eof #
