@@ -135,6 +135,8 @@ class Sensors (threading.Thread):
         self.ds1820_outdoor = DS1820("/sys/bus/w1/devices/28-0000085607ec/w1_slave")
         self.ds1820_room = DS1820("/sys/bus/w1/devices/28-000008561957/w1_slave")
         self.ds1820_water = DS1820("/sys/bus/w1/devices/28-030c979462a8/w1_slave")
+        ### new DS1820
+        # self.ds1820_water = DS1820("/sys/bus/w1/devices/28-030c979407ac/w1_slave")
         self.bme280_box = BME280()
         self.sht31_airin = SHT31(addr=SHT31_BASEADDR)
         self.sht31_airout = HTU21DF()
