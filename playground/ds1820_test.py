@@ -9,7 +9,7 @@ sys.path.append('../libs/sensors')
 from Logging import Log
 from DS1820 import DS1820
 
-ds1820_1 = DS1820("/sys/bus/w1/devices/28-000006de535b/w1_slave")
+ds1820_1 = DS1820("/sys/bus/w1/devices/28-030c979407ac/w1_slave")
 # ds1820_2 = DS1820("/sys/bus/w1/devices/28-000008386a83/w1_slave")
 
 while True:
