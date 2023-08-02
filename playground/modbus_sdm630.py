@@ -13,6 +13,7 @@ prototyping usage of SDM630 via modbus
 """
 # software
 
+# https://minimalmodbus.readthedocs.io/en/stable/usage.html
 sudo pip3 install -U minimalmodbus
 
 """
