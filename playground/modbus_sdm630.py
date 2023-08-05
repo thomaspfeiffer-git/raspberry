@@ -28,33 +28,38 @@ sdm630 = minimalmodbus.Instrument('/dev/ttyUSB0', 1)
 sdm630.serial.baudrate = 9600
 
 input_register = {
-    "Spannung_L1": {
+    "Spannung L1": {
         "port": 0, "digits": 2, "Unit": "V"},
-    "Spannung_L2": {
+    "Spannung L2": {
         "port": 2, "digits": 2, "Unit": "V"},
-    "Spannung_L3": {
+    "Spannung L3": {
         "port": 4, "digits": 2, "Unit": "V"},
-    "Strom_L1": {
+    "Strom L1": {
         "port": 6, "digits": 2, "Unit": "A"},
-    "Strom_L2": {
+    "Strom L2": {
         "port": 8, "digits": 2, "Unit": "A"},
-    "Strom_L3": {
+    "Strom L3": {
         "port": 10, "digits": 2, "Unit": "A"},
-    "aktueller_Gesamtstrom": {
+    "aktueller Gesamtstrom": {
         "port": 48, "digits": 2, "Unit": "A"},
-    "aktuelle_Gesamtwirkleistung": {
+    "aktuelle Gesamtwirkleistung": {
         "port": 52, "digits": 2, "Unit": "W"}
 }
 
 
 for key in input_register:
     measurement = key
-    value = sdm630.read_float(functioncode=4,
-                              registeraddress=input_register[key]["port"],
-                              number_of_registers=input_register[key]["digits"])
+    try:
+       value = sdm630.read_float(functioncode=4,
+                                 registeraddress=input_register[key]["port"],
+                                 number_of_registers=input_register[key]["digits"])
+    except:
+        value = "n/a"
+    else:
+        value = f"{value:.2f}"
     unit = input_register[key]["Unit"]
 
-    print(f"{measurement}: {value:.2f} {unit}")
+    print(f"{measurement}: {value} {unit}")
     time.sleep(0.5)
 
 # eof #
