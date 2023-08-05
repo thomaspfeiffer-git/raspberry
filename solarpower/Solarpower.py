@@ -39,6 +39,7 @@ csv_I_L2 = "Current L2"
 csv_I_L3 = "Current L3"
 csv_I    = "Current total"
 csv_P    = "Power"
+csv_fields = [csv_date, csv_V_L1, csv_V_L2, csv_V_L3, csv_I_L1, csv_I_L2, csv_I_L3, csv_I, csv_P]
 
 input_register = {
     csv_V_L1: {
@@ -59,8 +60,6 @@ input_register = {
         "port": 52, "digits": 2, "Unit": "W"}
 }
 
-
-csv_fields = [csv_date, csv_V_L1, csv_V_L2, csv_V_L3, csv_I_L1, csv_I_L2, csv_I_L3, csv_I, csv_P]
 
 with open(csv_file, 'w', newline='') as file:
     writer = csv.DictWriter(file, fieldnames = csv_fields)
@@ -89,7 +88,6 @@ while True:
 
     for _ in range(500):  # interruptible sleep
         time.sleep(0.1)
-
 
 # eof #
 
