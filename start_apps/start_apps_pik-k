@@ -1,7 +1,7 @@
 #!/bin/bash
 #############################################################################
 # Starts apps on pik-k                                                      #
-# (c) https://github.com/thomaspfeiffer-git 2020                            #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2023                      #
 #############################################################################
 
 if [ $HOSTNAME != "pik-k" ] ; then
@@ -23,6 +23,10 @@ echo "Staring 'Circulation.py' ..."
 sudo nohup ./Circulation.py --production 2>&1 > circulation.log &
 cd ..
 
+
+cd solarpower/
+echo "Starting 'Solarpower.py' ..."
+nohup ./Solarpower.py 2>&1 >solarpower.log &
 
 
 # eof #
