@@ -81,7 +81,7 @@ while True:
         writer = csv.DictWriter(file, fieldnames = csv_fields)
         writer.writerow(main_meter_values)
 
-    for _ in range(600):  # interruptible sleep
+    for _ in range(500):  # interruptible sleep
         time.sleep(0.1)
 
 
