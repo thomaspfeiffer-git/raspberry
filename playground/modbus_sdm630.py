@@ -53,14 +53,14 @@ for key in input_register:
        value = sdm630.read_float(functioncode=4,
                                  registeraddress=input_register[key]["port"],
                                  number_of_registers=input_register[key]["digits"])
-    except:
+    except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError):
         value = "n/a"
     else:
         value = f"{value:.2f}"
     unit = input_register[key]["Unit"]
 
     print(f"{measurement}: {value} {unit}")
-    time.sleep(0.5)
+    # time.sleep(0.5)
 
 # eof #
 
