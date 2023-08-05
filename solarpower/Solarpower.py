@@ -30,6 +30,7 @@ main_meter.serial.baudrate = 9600
 
 
 csv_file = "solar.csv"
+csv_date = "Timestamp"
 csv_V_L1 = "Voltage L1"
 csv_V_L2 = "Voltage L2"
 csv_V_L3 = "Voltage L3"
@@ -59,7 +60,7 @@ input_register = {
 }
 
 
-csv_fields = ["Date", csv_V_L1, csv_V_L2, csv_V_L3, csv_I_L1, csv_I_L2, csv_I_L3, csv_I, csv_P]
+csv_fields = [csv_date, csv_V_L1, csv_V_L2, csv_V_L3, csv_I_L1, csv_I_L2, csv_I_L3, csv_I, csv_P]
 
 with open(csv_file, 'w', newline='') as file:
     writer = csv.DictWriter(file, fieldnames = csv_fields)
@@ -81,7 +82,7 @@ while True:
         else:
             main_meter_values[key] = f"{value:.2f}"
 
-    main_meter_values["Date"] = datetime.now().strftime("%Y%m%d %H:%M:%S")
+    main_meter_values[csv_date] = datetime.now().strftime("%Y%m%d %H:%M:%S")
     with open(csv_file, 'a', newline='') as file:
         writer = csv.DictWriter(file, fieldnames = csv_fields)
         writer.writerow(main_meter_values)
