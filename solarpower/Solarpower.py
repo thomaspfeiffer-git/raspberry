@@ -18,6 +18,8 @@ sudo pip3 install -U minimalmodbus
 
 """
 
+import csv
+from datetime import datetime
 import time
 import minimalmodbus
 
@@ -25,6 +27,10 @@ main_meter = minimalmodbus.Instrument('/dev/ttyUSB0', 1)
 main_meter.serial.baudrate = 9600
 # solar_meter = minimalmodbus.Instrument('/dev/ttyUSB1', 1)
 # solar_meter.serial.baudrate = 9600
+
+
+csv_file = "solar.csv"
+
 
 input_register = {
     "Spannung L1": {
@@ -46,25 +52,38 @@ input_register = {
 }
 
 
+csv_fields = ["Date", "Spannung L1", "Spannung L2", "Spannung L3",
+              "Strom L1", "Strom L2", "Strom L3",
+              "aktueller Gesamtstrom", "aktuelle Gesamtwirkleistung"]
+
+with open(csv_file, 'w', newline='') as file:
+    writer = csv.DictWriter(file, fieldnames = csv_fields)
+    writer.writeheader()
+
+
 main_meter_values = {}
 for key in input_register:
     main_meter_values[key] = 0
 
+while True:
+    for key in input_register:
+        try:
+           value = main_meter.read_float(functioncode=4,
+                                         registeraddress=input_register[key]["port"],
+                                         number_of_registers=input_register[key]["digits"])
+        except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError):
+            pass
+        else:
+            main_meter_values[key] = f"{value:.2f}"
 
-for key in input_register:
-    measurement = key
-    try:
-       value = main_meter.read_float(functioncode=4,
-                                     registeraddress=input_register[key]["port"],
-                                     number_of_registers=input_register[key]["digits"])
-    except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError):
-        value = "n/a"
-    else:
-        value = f"{value:.2f}"
-    unit = input_register[key]["Unit"]
+    main_meter_values["Date"] = datetime.now().strftime("%Y%m%d %H:%M:%S")
+    with open(csv_file, 'a', newline='') as file:
+        writer = csv.DictWriter(file, fieldnames = csv_fields)
+        writer.writerow(main_meter_values)
 
-    print(f"{measurement}: {value} {unit}")
-#    time.sleep(0.5)
+    for _ in range(600):  # interruptible sleep
+        time.sleep(0.1)
+
 
 # eof #
 
