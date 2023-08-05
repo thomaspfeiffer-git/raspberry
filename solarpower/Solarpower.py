@@ -30,31 +30,36 @@ main_meter.serial.baudrate = 9600
 
 
 csv_file = "solar.csv"
-
+csv_V_L1 = "Voltage L1"
+csv_V_L2 = "Voltage L2"
+csv_V_L3 = "Voltage L3"
+csv_I_L1 = "Current L1"
+csv_I_L2 = "Current L2"
+csv_I_L3 = "Current L3"
+csv_I    = "Current total"
+csv_P    = "Power"
 
 input_register = {
-    "Spannung L1": {
+    csv_V_L1: {
         "port": 0, "digits": 2, "Unit": "V"},
-    "Spannung L2": {
+    csv_V_L2: {
         "port": 2, "digits": 2, "Unit": "V"},
-    "Spannung L3": {
+    csv_V_L3: {
         "port": 4, "digits": 2, "Unit": "V"},
-    "Strom L1": {
+    csv_I_L1: {
         "port": 6, "digits": 2, "Unit": "A"},
-    "Strom L2": {
+    csv_I_L2: {
         "port": 8, "digits": 2, "Unit": "A"},
-    "Strom L3": {
+    csv_I_L3: {
         "port": 10, "digits": 2, "Unit": "A"},
-    "aktueller Gesamtstrom": {
+    csv_I: {
         "port": 48, "digits": 2, "Unit": "A"},
-    "aktuelle Gesamtwirkleistung": {
+    csv_P: {
         "port": 52, "digits": 2, "Unit": "W"}
 }
 
 
-csv_fields = ["Date", "Spannung L1", "Spannung L2", "Spannung L3",
-              "Strom L1", "Strom L2", "Strom L3",
-              "aktueller Gesamtstrom", "aktuelle Gesamtwirkleistung"]
+csv_fields = ["Date", csv_V_L1, csv_V_L2, csv_V_L3, csv_I_L1, csv_I_L2, csv_I_L3, csv_I, csv_P]
 
 with open(csv_file, 'w', newline='') as file:
     writer = csv.DictWriter(file, fieldnames = csv_fields)
