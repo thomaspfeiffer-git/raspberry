@@ -85,18 +85,20 @@ class Main_Meter (Meter):
     field_I_L1 = "Current L1"
     field_I_L2 = "Current L2"
     field_I_L3 = "Current L3"
+    field_I_N  = "Current N"
     field_I    = "Current total"
     field_P    = "Power"
 
     input_register = {
-        field_V_L1: { "port":  0, "digits": 2, "Unit": "V" },
-        field_V_L2: { "port":  2, "digits": 2, "Unit": "V" },
-        field_V_L3: { "port":  4, "digits": 2, "Unit": "V" },
-        field_I_L1: { "port":  6, "digits": 2, "Unit": "A" },
-        field_I_L2: { "port":  8, "digits": 2, "Unit": "A" },
-        field_I_L3: { "port": 10, "digits": 2, "Unit": "A" },
-        field_I:    { "port": 48, "digits": 2, "Unit": "A" },
-        field_P:    { "port": 52, "digits": 2, "Unit": "W" }
+        field_V_L1: { "port":   0, "digits": 2, "Unit": "V" },
+        field_V_L2: { "port":   2, "digits": 2, "Unit": "V" },
+        field_V_L3: { "port":   4, "digits": 2, "Unit": "V" },
+        field_I_L1: { "port":   6, "digits": 2, "Unit": "A" },
+        field_I_L2: { "port":   8, "digits": 2, "Unit": "A" },
+        field_I_L3: { "port":  10, "digits": 2, "Unit": "A" },
+        field_I_N:  { "port": 224, "digits": 2, "Unit": "A" },
+        field_I:    { "port":  48, "digits": 2, "Unit": "A" },
+        field_P:    { "port":  52, "digits": 2, "Unit": "W" }
     }
 
     def __init__ (self, usb_id, bus_id):
@@ -154,9 +156,10 @@ if __name__ == "__main__":
     csv_I_L1 = "Current L1"
     csv_I_L2 = "Current L2"
     csv_I_L3 = "Current L3"
+    csv_I_N  = "Current N"
     csv_I    = "Current total"
     csv_P    = "Power"
-    csv_fields = [csv_date, csv_V_L1, csv_V_L2, csv_V_L3, csv_I_L1, csv_I_L2, csv_I_L3, csv_I, csv_P]
+    csv_fields = [csv_date, csv_V_L1, csv_V_L2, csv_V_L3, csv_I_L1, csv_I_L2, csv_I_L3, csv_I_N, csv_I, csv_P]
 
     with open(csv_file, 'w', newline='') as file:
         writer = csv.DictWriter(file, fieldnames = csv_fields)
