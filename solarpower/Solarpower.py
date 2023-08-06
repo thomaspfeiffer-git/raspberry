@@ -60,6 +60,22 @@ class Meter (object):
         self.meter = minimalmodbus.Instrument(self.__usb, self.__id)
         self.meter.serial.baudrate = 9600
 
+        self.values = {}
+        for key in self.input_register:
+            self.values[key] = 0
+
+    def read (self):
+        self.values[self.field_timestamp] = datetime.now().strftime("%Y%m%d %H:%M:%S")
+        for key in self.input_register:
+           try:
+               value = self.meter.read_float(functioncode=4,
+                                             registeraddress=self.input_register[key]["port"],
+                                             number_of_registers=self.input_register[key]["digits"])
+           except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError):
+               pass
+           else:
+               self.values[key] = f"{value:.2f}"
+
 
 ###############################################################################
 ###############################################################################
@@ -95,22 +111,6 @@ class Main_Meter (Meter):
 
     def __init__ (self, usb_id, bus_id):
         super().__init__(usb_id, bus_id)
-
-        self.values = {}
-        for key in self.input_register:
-            self.values[key] = 0
-
-    def read (self):
-        self.values[self.field_timestamp] = datetime.now().strftime("%Y%m%d %H:%M:%S")
-        for key in self.input_register:
-           try:
-               value = self.meter.read_float(functioncode=4,
-                                             registeraddress=self.input_register[key]["port"],
-                                             number_of_registers=self.input_register[key]["digits"])
-           except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError):
-               pass
-           else:
-               self.values[key] = f"{value:.2f}"
 
 
 ###############################################################################
