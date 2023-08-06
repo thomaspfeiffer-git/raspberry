@@ -26,7 +26,7 @@ cd ..
 
 cd solarpower/
 echo "Starting 'Solarpower.py' ..."
-nohup ./Solarpower.py 2>&1 >solarpower.log &
+nohup ./Solarpower.py --sensor 2>&1 >solarpower.log &
 
 
 # eof #
