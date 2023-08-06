@@ -12,9 +12,13 @@ Measuring local photovoltaics.
 
 """
 ### Libraries you might need to install:
-
 # https://minimalmodbus.readthedocs.io/en/stable/usage.html
 sudo pip3 install -U minimalmodbus
+
+
+### Useful documentation:
+# Registers of power meters:
+# https://github.com/belba/SDMxxx/blob/master/sdm.py#L76
 
 """
 
@@ -53,6 +57,8 @@ UPDATE_INTERVAL = 50   # time delay between two measurements (seconds)
 # Meter #######################################################################
 class Meter (object):
     def __init__ (self, usb_id, bus_id):
+        self.valid_data = False
+
         self.__usb = usb_id
         self.__id = bus_id
         self.meter = minimalmodbus.Instrument(self.__usb, self.__id)
@@ -63,7 +69,6 @@ class Meter (object):
             self.values[key] = 0
 
     def read (self):
-        self.values[self.field_timestamp] = datetime.now().strftime("%Y%m%d %H:%M:%S")
         for key in self.input_register:
            try:
                value = self.meter.read_float(functioncode=4,
@@ -73,32 +78,34 @@ class Meter (object):
                pass
            else:
                self.values[key] = f"{value:.2f}"
+               self.valid_data = True
 
 
 ###############################################################################
 # Main_Meter ##################################################################
 class Main_Meter (Meter):
-    field_timestamp = "Timestamp"
-    field_V_L1 = "Voltage L1"
-    field_V_L2 = "Voltage L2"
-    field_V_L3 = "Voltage L3"
-    field_I_L1 = "Current L1"
-    field_I_L2 = "Current L2"
-    field_I_L3 = "Current L3"
-    field_I_N  = "Current N"
-    field_I    = "Current total"
-    field_P    = "Power"
+    field_V_L1 = "Main Voltage L1"
+    field_V_L2 = "Main Voltage L2"
+    field_V_L3 = "Main Voltage L3"
+    field_I_L1 = "Main Current L1"
+    field_I_L2 = "Main Current L2"
+    field_I_L3 = "Main Current L3"
+    field_I_N  = "Main Current N"
+    field_I    = "Main Current total"
+    field_P    = "Main Power"
+    fields = [field_V_L1, field_V_L2, field_V_L3,
+              field_I_L1, field_I_L2, field_I_L3, field_I_N, field_I, field_P]
 
     input_register = {
-        field_V_L1: { "port":   0, "digits": 2, "Unit": "V" },
-        field_V_L2: { "port":   2, "digits": 2, "Unit": "V" },
-        field_V_L3: { "port":   4, "digits": 2, "Unit": "V" },
-        field_I_L1: { "port":   6, "digits": 2, "Unit": "A" },
-        field_I_L2: { "port":   8, "digits": 2, "Unit": "A" },
-        field_I_L3: { "port":  10, "digits": 2, "Unit": "A" },
-        field_I_N:  { "port": 224, "digits": 2, "Unit": "A" },
-        field_I:    { "port":  48, "digits": 2, "Unit": "A" },
-        field_P:    { "port":  52, "digits": 2, "Unit": "W" }
+        field_V_L1: { "port":   0, "digits": 2, "unit": "V" },
+        field_V_L2: { "port":   2, "digits": 2, "unit": "V" },
+        field_V_L3: { "port":   4, "digits": 2, "unit": "V" },
+        field_I_L1: { "port":   6, "digits": 2, "unit": "A" },
+        field_I_L2: { "port":   8, "digits": 2, "unit": "A" },
+        field_I_L3: { "port":  10, "digits": 2, "unit": "A" },
+        field_I_N:  { "port": 224, "digits": 2, "unit": "A" },
+        field_I:    { "port":  48, "digits": 2, "unit": "A" },
+        field_P:    { "port":  52, "digits": 2, "unit": "W" }
     }
 
     def __init__ (self, usb_id, bus_id):
@@ -108,15 +115,15 @@ class Main_Meter (Meter):
 ###############################################################################
 # Solar_Meter #################################################################
 class Solar_Meter (Meter):
-    field_timestamp = "Timestamp"
-    field_V = "Voltage"
-    field_I = "Current"
-    field_P = "Power"
+    field_V = "Solar Voltage"
+    field_I = "Solar Current"
+    field_P = "Solar Power"
+    fields = [field_V, field_I, field_P]
 
-    input_register = {  ### https://github.com/belba/SDMxxx/blob/master/sdm.py#L76
-        field_V: { "port":  0, "digits": 2, "Unit": "V" },
-        field_I: { "port":  6, "digits": 2, "Unit": "A" },
-        field_P: { "port": 12, "digits": 2, "Unit": "W" }
+    input_register = {
+        field_V: { "port":  0, "digits": 2, "unit": "V" },
+        field_I: { "port":  6, "digits": 2, "unit": "A" },
+        field_P: { "port": 12, "digits": 2, "unit": "W" }
     }
 
     def __init__ (self, usb_id, bus_id):
@@ -148,18 +155,7 @@ if __name__ == "__main__":
     # solar_meter = Solar_Meter('/dev/ttyUSB1', 2)
 
 
-    csv_file = "solar.csv"
-    csv_date = "Timestamp"
-    csv_V_L1 = "Voltage L1"
-    csv_V_L2 = "Voltage L2"
-    csv_V_L3 = "Voltage L3"
-    csv_I_L1 = "Current L1"
-    csv_I_L2 = "Current L2"
-    csv_I_L3 = "Current L3"
-    csv_I_N  = "Current N"
-    csv_I    = "Current total"
-    csv_P    = "Power"
-    csv_fields = [csv_date, csv_V_L1, csv_V_L2, csv_V_L3, csv_I_L1, csv_I_L2, csv_I_L3, csv_I_N, csv_I, csv_P]
+    csv_fields = ["Timestamp"] + Main_Meter.fields + Solar_Meter.fields
 
     with open(csv_file, 'w', newline='') as file:
         writer = csv.DictWriter(file, fieldnames = csv_fields)
@@ -167,8 +163,10 @@ if __name__ == "__main__":
 
     while True:
         main_meter.read()
+        timestamp = datetime.now().strftime("%Y%m%d %H:%M:%S")
         with open(csv_file, 'a', newline='') as file:
             writer = csv.DictWriter(file, fieldnames = csv_fields)
+            ### TODO ###
             writer.writerow(main_meter.values)
 
         for _ in range(UPDATE_INTERVAL*10):  # interruptible sleep
