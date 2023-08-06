@@ -89,22 +89,14 @@ class Main_Meter (Meter):
     field_P    = "Power"
 
     input_register = {
-        field_V_L1: {
-            "port": 0, "digits": 2, "Unit": "V"},
-        field_V_L2: {
-            "port": 2, "digits": 2, "Unit": "V"},
-        field_V_L3: {
-            "port": 4, "digits": 2, "Unit": "V"},
-        field_I_L1: {
-            "port": 6, "digits": 2, "Unit": "A"},
-        field_I_L2: {
-            "port": 8, "digits": 2, "Unit": "A"},
-        field_I_L3: {
-            "port": 10, "digits": 2, "Unit": "A"},
-        field_I: {
-            "port": 48, "digits": 2, "Unit": "A"},
-        field_P: {
-            "port": 52, "digits": 2, "Unit": "W"}
+        field_V_L1: { "port":  0, "digits": 2, "Unit": "V" },
+        field_V_L2: { "port":  2, "digits": 2, "Unit": "V" },
+        field_V_L3: { "port":  4, "digits": 2, "Unit": "V" },
+        field_I_L1: { "port":  6, "digits": 2, "Unit": "A" },
+        field_I_L2: { "port":  8, "digits": 2, "Unit": "A" },
+        field_I_L3: { "port": 10, "digits": 2, "Unit": "A" },
+        field_I:    { "port": 48, "digits": 2, "Unit": "A" },
+        field_P:    { "port": 52, "digits": 2, "Unit": "W" }
     }
 
     def __init__ (self, usb_id, bus_id):
@@ -119,8 +111,14 @@ class Solar_Meter (Meter):
     field_I = "Current"
     field_P = "Power"
 
-    # input_register = ### https://github.com/belba/SDMxxx/blob/master/sdm.py#L76
+    input_register = {  ### https://github.com/belba/SDMxxx/blob/master/sdm.py#L76
+        field_V: { "port":  0, "digits": 2, "Unit": "V" },
+        field_I: { "port":  6, "digits": 2, "Unit": "A" },
+        field_P: { "port": 12, "digits": 2, "Unit": "W" }
+    }
 
+    def __init__ (self, usb_id, bus_id):
+        super().__init__(usb_id, bus_id)
 
 
 ###############################################################################
