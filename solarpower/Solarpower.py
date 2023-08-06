@@ -39,6 +39,7 @@ from datetime import datetime
 import minimalmodbus
 import os
 import sys
+import threading
 import time
 
 
@@ -65,34 +66,47 @@ class Meter (object):
         self.meter.serial.baudrate = 9600
 
         self.values = {}
-        for key in self.input_register:
-            self.values[key] = 0
+        for register in self.input_register:
+            self.values[register] = 0
 
     def read (self):
-        for key in self.input_register:
+        for register in self.input_register:
            try:
                value = self.meter.read_float(functioncode=4,
-                                             registeraddress=self.input_register[key]["port"],
-                                             number_of_registers=self.input_register[key]["digits"])
+                                             registeraddress=self.input_register[register]["port"],
+                                             number_of_registers=self.input_register[register]["digits"])
            except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError):
                pass
            else:
-               self.values[key] = f"{value:.2f}"
+               self.values[register] = value
                self.valid_data = True
+
+    def rrd (self):
+        if self.valid_data:
+            result = ""
+            for i in self.fields:
+                result += f"{self.values[i]:.2f}:"
+            return result[:-1]
+        else:
+            pass ### TODO
+
+    def rrd_template (self):
+        result = ":"
+        return (result.join(self.fields))
 
 
 ###############################################################################
 # Main_Meter ##################################################################
 class Main_Meter (Meter):
-    field_V_L1 = "Main Voltage L1"
-    field_V_L2 = "Main Voltage L2"
-    field_V_L3 = "Main Voltage L3"
-    field_I_L1 = "Main Current L1"
-    field_I_L2 = "Main Current L2"
-    field_I_L3 = "Main Current L3"
-    field_I_N  = "Main Current N"
-    field_I    = "Main Current total"
-    field_P    = "Main Power"
+    field_V_L1 = "Main_U_L1"
+    field_V_L2 = "Main_U_L2"
+    field_V_L3 = "Main_U_L3"
+    field_I_L1 = "Main_I_L1"
+    field_I_L2 = "Main_I_L2"
+    field_I_L3 = "Main_I_L3"
+    field_I_N  = "Main_I_N"
+    field_I    = "Main_I_tot"
+    field_P    = "Main_P"
     fields = [field_V_L1, field_V_L2, field_V_L3,
               field_I_L1, field_I_L2, field_I_L3, field_I_N, field_I, field_P]
 
@@ -115,9 +129,9 @@ class Main_Meter (Meter):
 ###############################################################################
 # Solar_Meter #################################################################
 class Solar_Meter (Meter):
-    field_V = "Solar Voltage"
-    field_I = "Solar Current"
-    field_P = "Solar Power"
+    field_V = "Solar_U"
+    field_I = "Solar_I"
+    field_P = "Solar_P"
     fields = [field_V, field_I, field_P]
 
     input_register = {
@@ -131,10 +145,62 @@ class Solar_Meter (Meter):
 
 
 ###############################################################################
+# StoreData ###################################################################
+class StoreData (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+
+        self.udp = UDP.Sender(CREDENTIALS)
+        self.rrd_template = main_meter.rrd_template()  ### TODO
+        # self.rrd_template = f"{main_meter.rrd_template()}:{solar_meter.rrd_template()}"
+
+    def run (self):
+        self._running = True
+        while self._running:
+            for _ in range(UPDATE_INTERVAL*10):
+                if not self._running:
+                    break
+                time.sleep(0.1)
+
+            if self._running:
+                payload = f"{self.rrd_template}:N:{main_meter.rrd()}"  ### TODO
+                # payload = f"{self.rrd_template}:N:{main_meter.rrd()}:{solar_meter.rrd()}"
+                self.udp.send(payload)
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+# CSV #########################################################################
+class CSV (object):
+    def __init__ (self):
+        self.csv_file = "solar.csv"
+        self.csv_fields = ["Timestamp"] + Main_Meter.fields
+        # self.csv_fields = ["Timestamp"] + Main_Meter.fields + Solar_Meter.fields
+
+        with open(self.csv_file, 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=self.csv_fields)
+            writer.writeheader()
+
+    def write (self):
+        timestamp = datetime.now().strftime("%Y%m%d %H:%M:%S")
+        with open(self.csv_file, 'a', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=self.csv_fields)
+            values = { "Timestamp": timestamp } | main_meter.values
+            # values = { "Timestamp": timestamp } | main_meter.values | solar_meter.values
+            writer.writerow(values)
+
+
+###############################################################################
 # Shutdown stuff ##############################################################
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
+    if args.sensor is not None:
+        storedata.stop()
+        storedata.join()
+
     Log("Application stopped")
     sys.exit(0)
 
@@ -150,27 +216,21 @@ if __name__ == "__main__":
     group.add_argument("--receiver", help="receive data via udp and store in rrd database", action="store_true")
     args = parser.parse_args()
 
+    if args.sensor is not None:
+        main_meter = Main_Meter('/dev/ttyUSB0', 1)
+        # solar_meter = Solar_Meter('/dev/ttyUSB1', 2)
 
-    main_meter = Main_Meter('/dev/ttyUSB0', 1)
-    # solar_meter = Solar_Meter('/dev/ttyUSB1', 2)
+        my_csv = CSV()
 
+        storedata = StoreData()
+        storedata.start()
 
-    csv_fields = ["Timestamp"] + Main_Meter.fields + Solar_Meter.fields
+        while True:
+            main_meter.read()
+            my_csv.write()
 
-    with open(csv_file, 'w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames = csv_fields)
-        writer.writeheader()
-
-    while True:
-        main_meter.read()
-        timestamp = datetime.now().strftime("%Y%m%d %H:%M:%S")
-        with open(csv_file, 'a', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames = csv_fields)
-            ### TODO ###
-            writer.writerow(main_meter.values)
-
-        for _ in range(UPDATE_INTERVAL*10):  # interruptible sleep
-            time.sleep(0.1)
+            for _ in range(UPDATE_INTERVAL*10):  # interruptible sleep
+                time.sleep(0.1)
 
 # eof #
 
