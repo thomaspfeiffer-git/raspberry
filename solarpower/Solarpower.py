@@ -34,9 +34,7 @@ import csv                         #### TODO to be removed later?
 from datetime import datetime
 import minimalmodbus
 import os
-import socket
 import sys
-import threading
 import time
 
 
@@ -52,7 +50,7 @@ UPDATE_INTERVAL = 50   # time delay between two measurements (seconds)
 
 
 ###############################################################################
-###############################################################################
+# Meter #######################################################################
 class Meter (object):
     def __init__ (self, usb_id, bus_id):
         self.__usb = usb_id
@@ -78,7 +76,7 @@ class Meter (object):
 
 
 ###############################################################################
-###############################################################################
+# Main_Meter ##################################################################
 class Main_Meter (Meter):
     field_timestamp = "Timestamp"
     field_V_L1 = "Voltage L1"
@@ -111,6 +109,18 @@ class Main_Meter (Meter):
 
     def __init__ (self, usb_id, bus_id):
         super().__init__(usb_id, bus_id)
+
+
+###############################################################################
+# Solar_Meter #################################################################
+class Solar_Meter (Meter):
+    field_timestamp = "Timestamp"
+    field_V = "Voltage"
+    field_I = "Current"
+    field_P = "Power"
+
+    # input_register = ### https://github.com/belba/SDMxxx/blob/master/sdm.py#L76
+
 
 
 ###############################################################################
