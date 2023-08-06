@@ -187,9 +187,11 @@ class CSV (object):
         timestamp = datetime.now().strftime("%Y%m%d %H:%M:%S")
         with open(self.csv_file, 'a', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=self.csv_fields)
-            values = { "Timestamp": timestamp } | main_meter.values
+            values = main_meter.values.copy()
             # values = { "Timestamp": timestamp } | main_meter.values | solar_meter.values
-            writer.writerow(values)
+            for k in values.keys():
+                values[k] = f"{values[k]:.2f}"
+            writer.writerow({ "Timestamp": timestamp } | values)
 
 
 ###############################################################################
