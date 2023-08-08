@@ -26,7 +26,7 @@ sudo pip3 install -U minimalmodbus
 """
 ###### Usage ######
 ### Sensor
-nohup ./Solarpower.py --sensor id 2>&1 > solar.log &
+nohup ./Solarpower.py --sensor 2>&1 > solar.log &
 
 ### Receiver
 nohup ./Solarpower.py --receiver 2>&1 > solar.log &
@@ -41,7 +41,6 @@ import os
 import sys
 import threading
 import time
-
 
 sys.path.append("../libs/")
 from Logging import Log
@@ -61,7 +60,7 @@ class Meter (object):
         self.valid_data = False
 
         self.__usb = usb_id
-        self.__id = bus_id
+        self.__id = bus_id   ### TODO: check ID
         self.meter = minimalmodbus.Instrument(self.__usb, self.__id)
         self.meter.serial.baudrate = 9600
 
@@ -151,7 +150,6 @@ class StoreData (threading.Thread):
         threading.Thread.__init__(self)
 
         self.udp = UDP.Sender(CREDENTIALS)
-        #self.rrd_template = main_meter.rrd_template()  ### TODO
         self.rrd_template = f"{main_meter.rrd_template()}:{solar_meter.rrd_template()}"
 
     def run (self):
@@ -163,7 +161,6 @@ class StoreData (threading.Thread):
                 time.sleep(0.1)
 
             if self._running:
-                # payload = f"{self.rrd_template}:N:{main_meter.rrd()}"  ### TODO
                 payload = f"{self.rrd_template}:N:{main_meter.rrd()}:{solar_meter.rrd()}"
                 self.udp.send(payload)
 
@@ -184,12 +181,12 @@ class CSV (object):
 
     def write (self):
         timestamp = datetime.now().strftime("%Y%m%d %H:%M:%S")
+        values = main_meter.values | solar_meter.values
+        for k in values.keys():
+            values[k] = f"{values[k]:.2f}"
+
         with open(self.csv_file, 'a', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=self.csv_fields)
-            # values = main_meter.values.copy()
-            values = main_meter.values | solar_meter.values
-            for k in values.keys():
-                values[k] = f"{values[k]:.2f}"
             writer.writerow({ "Timestamp": timestamp } | values)
 
 
