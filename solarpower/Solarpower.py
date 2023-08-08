@@ -151,8 +151,8 @@ class StoreData (threading.Thread):
         threading.Thread.__init__(self)
 
         self.udp = UDP.Sender(CREDENTIALS)
-        self.rrd_template = main_meter.rrd_template()  ### TODO
-        # self.rrd_template = f"{main_meter.rrd_template()}:{solar_meter.rrd_template()}"
+        #self.rrd_template = main_meter.rrd_template()  ### TODO
+        self.rrd_template = f"{main_meter.rrd_template()}:{solar_meter.rrd_template()}"
 
     def run (self):
         self._running = True
@@ -163,8 +163,8 @@ class StoreData (threading.Thread):
                 time.sleep(0.1)
 
             if self._running:
-                payload = f"{self.rrd_template}:N:{main_meter.rrd()}"  ### TODO
-                # payload = f"{self.rrd_template}:N:{main_meter.rrd()}:{solar_meter.rrd()}"
+                # payload = f"{self.rrd_template}:N:{main_meter.rrd()}"  ### TODO
+                payload = f"{self.rrd_template}:N:{main_meter.rrd()}:{solar_meter.rrd()}"
                 self.udp.send(payload)
 
     def stop (self):
@@ -176,8 +176,7 @@ class StoreData (threading.Thread):
 class CSV (object):
     def __init__ (self):
         self.csv_file = "solar.csv"
-        self.csv_fields = ["Timestamp"] + Main_Meter.fields
-        # self.csv_fields = ["Timestamp"] + Main_Meter.fields + Solar_Meter.fields
+        self.csv_fields = ["Timestamp"] + Main_Meter.fields + Solar_Meter.fields
 
         with open(self.csv_file, 'w', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=self.csv_fields)
@@ -187,8 +186,8 @@ class CSV (object):
         timestamp = datetime.now().strftime("%Y%m%d %H:%M:%S")
         with open(self.csv_file, 'a', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=self.csv_fields)
-            values = main_meter.values.copy()
-            # values = { "Timestamp": timestamp } | main_meter.values | solar_meter.values
+            # values = main_meter.values.copy()
+            values = main_meter.values | solar_meter.values
             for k in values.keys():
                 values[k] = f"{values[k]:.2f}"
             writer.writerow({ "Timestamp": timestamp } | values)
@@ -220,7 +219,7 @@ if __name__ == "__main__":
 
     if args.sensor is not None:
         main_meter = Main_Meter('/dev/ttyUSB0', 1)
-        # solar_meter = Solar_Meter('/dev/ttyUSB1', 2)
+        solar_meter = Solar_Meter('/dev/ttyUSB1', 2)
 
         my_csv = CSV()
 
@@ -229,6 +228,7 @@ if __name__ == "__main__":
 
         while True:
             main_meter.read()
+            solar_meter.read()
             my_csv.write()
 
             for _ in range(UPDATE_INTERVAL*10):  # interruptible sleep
