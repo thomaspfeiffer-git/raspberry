@@ -210,7 +210,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--sensor", help="read data from power meter and send to udp server", action="store_true")
+    group.add_argument("--sensor", help="read data from power meters and send to udp server", action="store_true")
     group.add_argument("--receiver", help="receive data via udp and store in rrd database", action="store_true")
     args = parser.parse_args()
 
