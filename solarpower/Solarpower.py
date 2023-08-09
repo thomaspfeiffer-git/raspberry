@@ -36,7 +36,6 @@ nohup ./Solarpower.py --receiver 2>&1 > solar.log &
 import argparse
 import csv                         #### TODO to be removed later?
 from datetime import datetime
-import minimalmodbus
 import os
 import sys
 import threading
@@ -57,6 +56,7 @@ UPDATE_INTERVAL = 50   # time delay between two measurements (seconds)
 # Meter #######################################################################
 class Meter (object):
     def __init__ (self, usb_id, bus_id):
+        import minimalmodbus
         self.valid_data = False
 
         self.__usb = usb_id
@@ -191,6 +191,20 @@ class CSV (object):
 
 
 ###############################################################################
+# Receiver ####################################################################
+class Receiver (object):
+    def __init__ (self):
+        self.udp = UDP.Receiver(CREDENTIALS)
+
+    def start (self):
+        while True:
+            payload = self.udp.receive()
+            Log(f"RRD Data received: {payload}")
+
+
+
+
+###############################################################################
 # Shutdown stuff ##############################################################
 def shutdown_application ():
     """cleanup stuff"""
@@ -213,6 +227,10 @@ if __name__ == "__main__":
     group.add_argument("--sensor", help="read data from power meters and send to udp server", action="store_true")
     group.add_argument("--receiver", help="receive data via udp and store in rrd database", action="store_true")
     args = parser.parse_args()
+
+    if args.receiver:
+        r = Receiver()
+        r.start()
 
     if args.sensor is not None:
         main_meter = Main_Meter('/dev/ttyUSB0', 1)
