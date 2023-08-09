@@ -4,6 +4,7 @@
 /home/thomas/raspberry/pool/Ventilation_rrd_graph.sh
 /home/thomas/raspberry/airparticulates/Airparticulates_rrd_graph.sh
 /home/thomas/raspberry/weather/Weather_rrd_graph.sh
+/home/thomas/raspberry/weather/Solarpower_rrd_graph.ssh
 
 # eof #
 
