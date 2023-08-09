@@ -48,7 +48,7 @@ import UDP
 
 
 CREDENTIALS = os.path.expanduser("~/credentials/solarpower.cred")
-RRDFILE = os.path.expanduser("~/rrd/databases/solarpower.rrd")
+RRDFILE = os.path.expanduser("~/rrd/databases/solar.rrd")
 UPDATE_INTERVAL = 50   # time delay between two measurements (seconds)
 
 
@@ -199,9 +199,17 @@ class Receiver (object):
     def start (self):
         while True:
             payload = self.udp.receive()
-            Log(f"RRD Data received: {payload}")
-
-
+            try:
+                rrd_template = payload.split(":N:")[0]
+                rrd_data = "N:" + payload.split(":N:")[1]
+            except IndexError:
+                Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()))
+            else:
+                try:
+                    import rrdtool
+                    rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
+                except rrdtool.OperationalError:
+                    Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
 
 
 ###############################################################################
@@ -209,7 +217,7 @@ class Receiver (object):
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
-    if args.sensor is not None:
+    if args.sensor:
         storedata.stop()
         storedata.join()
 
@@ -232,7 +240,7 @@ if __name__ == "__main__":
         r = Receiver()
         r.start()
 
-    if args.sensor is not None:
+    if args.sensor:
         main_meter = Main_Meter('/dev/ttyUSB0', 1)
         solar_meter = Solar_Meter('/dev/ttyUSB1', 2)
 
