@@ -19,7 +19,7 @@ PICS=$RRDPATH/temp/
 PICS_STORE=$RRDPATH/graphs/
 
 WIDTH=1024
-HEIGHT=160
+HEIGHT=480
 WATERMARK=`date  "+%e. %B %Y, %H:%M:%S"`
 
 
