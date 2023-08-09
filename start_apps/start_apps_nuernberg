@@ -60,5 +60,9 @@ echo "Starting 'Kitchen Sensors_UDP.py' ..."
 nohup ./Sensors_UDP.py 2>&1 >sensors_udp.log &
 cd ../..
 
+cd solarpower/
+echo "Starting 'Solarpower.py --receiver ..."
+nohup ./Solarpower.py --receiver 2>&1 >solarpower_udp.log &
+
 # eof #
 
