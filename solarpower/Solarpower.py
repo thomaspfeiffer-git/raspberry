@@ -55,7 +55,6 @@ UPDATE_INTERVAL = 50   # time delay between two measurements (seconds)
 # Meter #######################################################################
 class Meter (object):
     def __init__ (self, usb_id, bus_id):
-        import minimalmodbus
         self.valid_data = False
 
         self.__usb = usb_id
@@ -218,6 +217,7 @@ if __name__ == "__main__":
         r.start()
 
     if args.sensor:
+        import minimalmodbus
         main_meter = Main_Meter('/dev/ttyUSB0', 1)   # TODO: ID instead of fixed number
         solar_meter = Solar_Meter('/dev/ttyUSB1', 2)
 
