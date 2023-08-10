@@ -54,7 +54,8 @@ printSolar()
     GPRINT:Solar_P:LAST:"\t\tAktuell\: %5.2lf W"               \
     GPRINT:Solar_P:AVERAGE:"Mittelwert\: %5.2lf W"             \
     GPRINT:Solar_P:MAX:"Max\: %5.2lf W"                        \
-    GPRINT:Solar_P:MIN:"Min\: %5.2lf W\n"
+    GPRINT:Solar_P:MIN:"Min\: %5.2lf W\n"                      \
+    HRULE:0#0000FF
 }
 
 #######################################################################
