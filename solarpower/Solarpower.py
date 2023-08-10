@@ -34,7 +34,6 @@ nohup ./Solarpower.py --receiver 2>&1 > solar.log &
 
 
 import argparse
-import csv                         #### TODO to be removed later?
 from datetime import datetime
 import os
 import sys
@@ -169,28 +168,6 @@ class StoreData (threading.Thread):
 
 
 ###############################################################################
-# CSV #########################################################################
-class CSV (object):
-    def __init__ (self):
-        self.csv_file = "solar.csv"
-        self.csv_fields = ["Timestamp"] + Main_Meter.fields + Solar_Meter.fields
-
-        with open(self.csv_file, 'w', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=self.csv_fields)
-            writer.writeheader()
-
-    def write (self):
-        timestamp = datetime.now().strftime("%Y%m%d %H:%M:%S")
-        values = main_meter.values | solar_meter.values
-        for k in values.keys():
-            values[k] = f"{values[k]:.2f}"
-
-        with open(self.csv_file, 'a', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=self.csv_fields)
-            writer.writerow({ "Timestamp": timestamp } | values)
-
-
-###############################################################################
 # Receiver ####################################################################
 class Receiver (object):
     def __init__ (self):
@@ -243,8 +220,6 @@ if __name__ == "__main__":
     if args.sensor:
         main_meter = Main_Meter('/dev/ttyUSB0', 1)
         solar_meter = Solar_Meter('/dev/ttyUSB1', 2)
-
-        my_csv = CSV()
 
         storedata = StoreData()
         storedata.start()
