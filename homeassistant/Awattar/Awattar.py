@@ -24,7 +24,7 @@ import threading
 import time
 from urllib.request import urlopen
 
-sys.path.append("../libs/")
+sys.path.append("../../libs/")
 from Logging import Log
 from Shutdown import Shutdown
 
