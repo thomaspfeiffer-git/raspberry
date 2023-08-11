@@ -19,7 +19,6 @@ sudo pip3 install schedule
 from datetime import datetime
 from flask import Flask, request
 import json
-from schedule import every, repeat, run_pending
 import sys
 import threading
 import time
@@ -28,6 +27,8 @@ from urllib.request import urlopen
 sys.path.append("../libs/")
 from Logging import Log
 from Shutdown import Shutdown
+
+app = Flask(__name__)
 
 
 ###############################################################################
@@ -40,7 +41,6 @@ class Awattar (threading.Thread):
         self.data = { 'hourly ratings': None,
                       'lowest price': None }
 
-    @repeat(every().hour.at(":01"))
     def update_data (self):
         data = json.loads(urlopen(self.url).read())['data']
         lowest_price = data[0]
@@ -61,12 +61,22 @@ class Awattar (threading.Thread):
         self._running = True
         self.update_data()
         while self._running:
-            run_pending()   # run self.update_data() every hour
-            for _ in range(10):
+            now = datetime.now()
+            if now.minute == 01:
+                self.update_data()
+            for _ in range(500): # interruptible sleep for 50 seconds
                 time.sleep(0.1)
 
     def stop (self):
         self._running = False
+
+###############################################################################
+# Flask stuff #################################################################
+@app.route('/awattar')
+def API_Data ():
+    Log("Data requested.")
+    return "OK\n"
+
 
 
 ###############################################################################
@@ -88,9 +98,7 @@ if __name__ == "__main__":
     awattar = Awattar()
     awattar.start()
 
-
-    while True:
-        pass
+    app.run(host="0.0.0.0")
 
 # eof #
 
