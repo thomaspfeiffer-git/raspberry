@@ -61,14 +61,16 @@ class Awattar (threading.Thread):
         self._running = True
         self.update_data()
         while self._running:
-            now = datetime.now()
-            if now.minute == 01:
+            if datetime.now().minute == 1:
                 self.update_data()
-            for _ in range(500): # interruptible sleep for 50 seconds
+            for _ in range(500):    # interruptible sleep for 50 seconds
                 time.sleep(0.1)
+                if not self._running:
+                    break
 
     def stop (self):
         self._running = False
+
 
 ###############################################################################
 # Flask stuff #################################################################
