@@ -28,16 +28,27 @@ url = "https://api.awattar.at/v1/marketdata"
 
 @repeat(every().hour.at(":01"))
 def update_data():
-    data_json = json.loads(urlopen(url).read())
-    for hour in range(3):
-        timestamp = datetime.fromtimestamp(int(data_json['data'][hour]['start_timestamp']/1000))
-        value = data_json['data'][hour]['marketprice'] / 10.0
-        print(f"Timestamp: {timestamp}; Value: {value:.2f}")
+    data = json.loads(urlopen(url).read())['data']
+    lowest_price = data[0]
+    for hour in data:
+        hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
+        hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
+        hour['marketprice'] /= 10.0
+        hour['unit'] = "ct/kWh"
+
+        if hour['marketprice'] < lowest_price['marketprice']:
+            lowest_price = hour
+
+    print(data)
+    print(f"lowest price: {lowest_price}")
+
 
 update_data()
+
+"""
 while True:
     run_pending()
     time.sleep(1)
-
+"""
 # eof #
 
