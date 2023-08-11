@@ -19,18 +19,23 @@ sudo pip3 install schedule
 from datetime import datetime
 import json
 from schedule import every, repeat, run_pending
+import sys
+import threading
 import time
 from urllib.request import urlopen
 
-
+sys.path.append("../libs/")
+from Logging import Log
+from Shutdown import Shutdown
 
 
 ###############################################################################
-###############################################################################
-class Awattar (object):
+## Awattar ####################################################################
+class Awattar (threading.Thread):
     url = "https://api.awattar.at/v1/marketdata"
 
     def __init__ (self):
+        threading.Thread.__init__(self)
         self.data = { 'hourly ratings': None,
                       'lowest price': None }
 
@@ -49,22 +54,42 @@ class Awattar (object):
 
         self.data['hourly ratings'] = data
         self.data['lowest price'] = lowest_price
+        Log(f"Updated data from {self.url}")
+
+    def run (self):
+        self._running = True
+        self.update_data()
+        while self._running:
+            run_pending()   # run self.update_data() every hour
+            for _ in range(10):
+                time.sleep(0.1)
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+## Shutdown stuff #############################################################
+def shutdown_application ():
+    """cleanup stuff"""
+    Log("Stopping application")
+    awattar.stop()
+    awattar.join()
+    Log("Application stopped")
+    sys.exit(0)
 
 
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
+    shutdown_application = Shutdown(shutdown_func=shutdown_application)
+
     awattar = Awattar()
-    awattar.update_data()
+    awattar.start()
 
-    import pprint
-    pprint.pprint(awattar.data)
 
-    """
     while True:
-        run_pending()
-        time.sleep(1)
-    """
+        pass
 
 # eof #
 
