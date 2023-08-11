@@ -17,7 +17,7 @@ sudo pip3 install schedule
 """
 
 from datetime import datetime
-from flask import Flask, request
+from flask import Flask, jsonify, request
 import json
 import sys
 import threading
@@ -77,8 +77,7 @@ class Awattar (threading.Thread):
 @app.route('/awattar')
 def API_Data ():
     Log("Data requested.")
-    return "OK\n"
-
+    return jsonify(awattar.data)
 
 
 ###############################################################################
@@ -100,7 +99,7 @@ if __name__ == "__main__":
     awattar = Awattar()
     awattar.start()
 
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=5001)
 
 # eof #
 
