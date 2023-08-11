@@ -56,6 +56,14 @@ cd ..
 
 
 echo
+echo "Starting Awattar"
+cd Awattar
+nohup ./Awattar.py 2>&1 > awattar.log &
+echo "Awattar started"
+cd ..
+
+
+echo
 echo "Starting Radio.py (after sleep)"
 cd Radio
 ( sleep 5 ;  nohup ./Radio.py & ) &
