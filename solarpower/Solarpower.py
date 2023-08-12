@@ -219,7 +219,7 @@ if __name__ == "__main__":
     if args.sensor:
         import minimalmodbus
         main_meter = Main_Meter('/dev/ttyUSB0', 1)   # TODO: ID instead of fixed number
-        solar_meter = Solar_Meter('/dev/ttyUSB1', 2)
+        solar_meter = Solar_Meter('/dev/ttyUSB2', 2)
 
         storedata = StoreData()
         storedata.start()
