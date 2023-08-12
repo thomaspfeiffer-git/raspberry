@@ -10,7 +10,7 @@ cd ..
 
 echo "Starting Sensors.py ..."
 cd Sensors/
-nohup ./Sensors.py &
+nohup ./Sensors.py 2>&1 > sensors.log
 echo "Sensors.py started."
 cd ..
 
