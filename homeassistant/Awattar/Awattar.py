@@ -26,6 +26,7 @@ from urllib.request import urlopen
 
 sys.path.append("../../libs/")
 from Logging import Log
+from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 
 app = Flask(__name__)
@@ -73,7 +74,34 @@ class Awattar (threading.Thread):
 
 
 ###############################################################################
-# Flask stuff #################################################################
+## Queue ######################################################################
+class Queue (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+
+        self.qv_price_act     = SensorValue("ID_AW_01", "AWPriceAct", SensorValue_Data.Types.Aw_PriceAct, "ct/kWh")
+        self.qv_price_next    = SensorValue("ID_AW_02", "AWPriceNext", SensorValue_Data.Types.Aw_PriceNext, "ct/kWh")
+        self.qv_price_lowest  = SensorValue("ID_AW_03", "AWPriceLowest", SensorValue_Data.Types.Aw_PriceLowest, "ct/kWh")
+
+        self.sq = SensorQueueClient_write("../../../configs/weatherqueue.ini")
+        self.sq.register(self.self.qv_price_act)
+        self.sq.register(self.qv_price_next)
+        self.sq.register(self.qv_price_lowest)
+
+    def run (self):
+        self._running = True
+        while self._running:
+            for _ in range(500):    # interruptible sleep for 50 seconds
+                time.sleep(0.1)
+                if not self._running:
+                    break
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+## Flask stuff ################################################################
 @app.route('/awattar')
 def API_Data ():
     Log("Data requested.")
