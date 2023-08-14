@@ -45,7 +45,7 @@ class Awattar (threading.Thread):
         for hour in data:
             hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
             hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
-            hour['marketprice'] /= 10.0
+            hour['marketprice'] /= hour['marketprice'] / 10.0 * 1.2
             hour['unit'] = "ct/kWh"
 
             if hour['marketprice'] < lowest_price['marketprice']:
