@@ -2,7 +2,7 @@
 ################################################################################
 # SensorValue.py                                                               #
 # Class providing various data of sensors                                      #
-# (c) https://github.com/thomaspfeiffer-git 2016, 2017, 2018                   #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017, 2018, 2023             #
 ################################################################################
 """provides classes for:
    SensorValue: measured values including a timestamp of all weather sensors
@@ -16,7 +16,7 @@ class SensorValue_Data (object):
     """contains various data of measured values"""
     class Types:
         """enum for sensor types"""
-        Temp, Humi, Pressure, Switch, Light, Wind, WindDir, Desc, IconUrl, AirQuality = range(10)
+        Temp, Humi, Pressure, Switch, Light, Wind, WindDir, Desc, IconUrl, AirQuality, Aw_PriceAct, Aw_PriceNext, Aw_PriceLowest = range(13)
 
     def __init__ (self, v_id, name, type_, unit):
         self.__v_id      = v_id
@@ -44,9 +44,11 @@ class SensorValue_Data (object):
     @value.setter
     def value (self, _value):
         """sets the value of measurement"""
-        if self.__type in (SensorValue_Data.Types.Temp, SensorValue_Data.Types.Humi, 
+        if self.__type in (SensorValue_Data.Types.Temp, SensorValue_Data.Types.Humi,
                            SensorValue_Data.Types.Pressure, SensorValue_Data.Types.Light,
-                           SensorValue_Data.Types.Wind, SensorValue_Data.Types.AirQuality):
+                           SensorValue_Data.Types.Wind, SensorValue_Data.Types.AirQuality,
+                           SensorValue_Data.Types.Aw_PriceAct, SensorValue_Data.Type.Aw_PriceNext,
+                           SensorValue_Data.Types.Aw_PriceLowest):
             """please note the decimal coma here"""
             _value = _value.replace('.', ',')
         self.__value     = _value
@@ -90,7 +92,7 @@ class SensorValue_Data (object):
 class SensorValue (object):
     """Provides a wrapper for SensorValue_Data for immediately sending
        data to the queue as soon as the value was changed.
-       Methods of other classes cannot be pickled, therefore we need to 
+       Methods of other classes cannot be pickled, therefore we need to
        use a dedicated class for SensorValues with the ability of immediate
        sending of data"""
     def __init__ (self, v_id, name, type_, unit):
