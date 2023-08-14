@@ -47,7 +47,7 @@ class SensorValue_Data (object):
         if self.__type in (SensorValue_Data.Types.Temp, SensorValue_Data.Types.Humi,
                            SensorValue_Data.Types.Pressure, SensorValue_Data.Types.Light,
                            SensorValue_Data.Types.Wind, SensorValue_Data.Types.AirQuality,
-                           SensorValue_Data.Types.Aw_PriceAct, SensorValue_Data.Type.Aw_PriceNext,
+                           SensorValue_Data.Types.Aw_PriceAct, SensorValue_Data.Types.Aw_PriceNext,
                            SensorValue_Data.Types.Aw_PriceLowest):
             """please note the decimal coma here"""
             _value = _value.replace('.', ',')

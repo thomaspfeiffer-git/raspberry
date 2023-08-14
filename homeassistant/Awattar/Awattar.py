@@ -26,6 +26,7 @@ from urllib.request import urlopen
 
 sys.path.append("../../libs/")
 from Logging import Log
+from SensorQueue2 import SensorQueueClient_write
 from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 
@@ -39,7 +40,8 @@ class Awattar (threading.Thread):
 
     def __init__ (self):
         threading.Thread.__init__(self)
-        self.data = { 'hourly ratings': None,
+        self.data = { 'valid': False,
+                      'hourly ratings': None,
                       'lowest price': None }
 
     def update_data (self):
@@ -56,6 +58,7 @@ class Awattar (threading.Thread):
 
         self.data['hourly ratings'] = data
         self.data['lowest price'] = lowest_price
+        self.data['valid'] = True
         Log(f"Updated data from {self.url}")
 
     def run (self):
@@ -79,19 +82,31 @@ class Queue (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
 
-        self.qv_price_act     = SensorValue("ID_AW_01", "AWPriceAct", SensorValue_Data.Types.Aw_PriceAct, "ct/kWh")
-        self.qv_price_next    = SensorValue("ID_AW_02", "AWPriceNext", SensorValue_Data.Types.Aw_PriceNext, "ct/kWh")
-        self.qv_price_lowest  = SensorValue("ID_AW_03", "AWPriceLowest", SensorValue_Data.Types.Aw_PriceLowest, "ct/kWh")
+        self.qv_price_act    = SensorValue("ID_AW_01", "AWPriceAct", SensorValue_Data.Types.Aw_PriceAct, "ct/kWh")
+        self.qv_price_next   = SensorValue("ID_AW_02", "AWPriceNext", SensorValue_Data.Types.Aw_PriceNext, "ct/kWh")
+        self.qv_price_lowest = SensorValue("ID_AW_03", "AWPriceLowest", SensorValue_Data.Types.Aw_PriceLowest, "ct/kWh")
 
         self.sq = SensorQueueClient_write("../../../configs/weatherqueue.ini")
-        self.sq.register(self.self.qv_price_act)
+        self.sq.register(self.qv_price_act)
         self.sq.register(self.qv_price_next)
         self.sq.register(self.qv_price_lowest)
 
     def run (self):
         self._running = True
+
         while self._running:
-            for _ in range(500):    # interruptible sleep for 50 seconds
+            if awattar.data['valid']:
+                price_act = f"{awattar.data['hourly ratings'][0]['marketprice']:.2f}"
+                price_next = f"{awattar.data['hourly ratings'][1]['marketprice']:.2f}"
+                price_lowest = f"{awattar.data['lowest price']['start_timestamp'].hour}:" + \
+                               f"{awattar.data['lowest price']['start_timestamp'].minute:02d}: " + \
+                               f"{awattar.data['lowest price']['marketprice']:.2f}"
+                # Log(f"price_act: {price_act}; price_next: {price_next}; price_lowest: {price_lowest}")
+                self.qv_price_act = price_act
+                self.qv_price_next = price_next
+                self.qv_price_lowest = price_lowest
+
+            for _ in range(600):    # interruptible sleep for 60 seconds
                 time.sleep(0.1)
                 if not self._running:
                     break
@@ -113,6 +128,8 @@ def API_Data ():
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
+    queue.stop()
+    queue.join()
     awattar.stop()
     awattar.join()
     Log("Application stopped")
@@ -126,6 +143,9 @@ if __name__ == "__main__":
 
     awattar = Awattar()
     awattar.start()
+
+    queue = Queue()
+    queue.start()
 
     app.run(host="0.0.0.0", port=5002)
 
