@@ -11,11 +11,6 @@ https://www.awattar.at/services/api/
 """
 
 
-"""
-sudo pip3 install schedule
-
-"""
-
 from datetime import datetime
 from flask import Flask, jsonify, request
 import json
