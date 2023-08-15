@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Weatherstation.py                                                           #
-# (c) https://github.com/thomaspfeiffer-git 2017                              #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2023                        #
 ###############################################################################
 """Weatherstation: collects various data from sensors in our flat and garden
    and displays them on a Touch Screen Display."""
@@ -72,7 +72,7 @@ class WeatherApp (tk.Frame):
     def init_fonts (self):
         family = CONFIG.FONTS.FAMILY
         self.font_item      = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
-        self.font_item_decorated = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL+5, 
+        self.font_item_decorated = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL+5,
                                         slant="italic", weight="bold")
         self.font_forecast  = Font(family=family, size=CONFIG.FONTS.SIZE_FORECAST)
         self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
@@ -87,10 +87,10 @@ class WeatherApp (tk.Frame):
         self.screens = OrderedDict()
         for screen in self.screennames:
             self.screens[screen] = tk.Frame(self)
-            self.screens[screen].config(bd=self.master.borderwidth, 
+            self.screens[screen].config(bd=self.master.borderwidth,
                                         bg=CONFIG.COLORS.BACKGROUND,
                                         width=self.master.width, height=410)
-            self.screens[screen].grid_propagate(0)    
+            self.screens[screen].grid_propagate(0)
             self.screens[screen].grid_columnconfigure(0, minsize=self.master.width - \
                                                          2*self.master.borderwidth)
             getattr(self, "create_screen_{}".format(screen))() # call create_screen_X()
@@ -100,11 +100,11 @@ class WeatherApp (tk.Frame):
 
     def create_dateframe (self, master):
         """creates a  date frame which is indepentant from the weather screens
-           created in WeatherApp.create_screens(). Thus it's possible to do 
+           created in WeatherApp.create_screens(). Thus it's possible to do
            pagination without a flickering date/time section."""
         self.dateframe = tk.Frame(master)
-        self.dateframe.config(bd=self.master.borderwidth, 
-                              bg=CONFIG.COLORS.BACKGROUND, 
+        self.dateframe.config(bd=self.master.borderwidth,
+                              bg=CONFIG.COLORS.BACKGROUND,
                               width=self.master.width, height=70)
         self.dateframe.grid_propagate(0)
         self.dateframe.grid_columnconfigure(0, minsize=self.master.width - \
@@ -114,32 +114,45 @@ class WeatherApp (tk.Frame):
         gridpos = 0
         gridpos = Separator(frame=self.dateframe, gridpos=gridpos).gridpos
         for d in [clock.date_date, clock.date_time]:
-            gridpos = DateItem(frame=self.dateframe, gridpos=gridpos, 
-                               stringvar=d, font=self.font_date, 
+            gridpos = DateItem(frame=self.dateframe, gridpos=gridpos,
+                               stringvar=d, font=self.font_date,
                                color=CONFIG.COLORS.DATE).gridpos
 
 
     def drawWeatherSection (self, frame, title, itemlist, color, gridpos, decorated=None):
-        gridpos = Separator(frame=frame, gridpos=gridpos, text=title, 
+        gridpos = Separator(frame=frame, gridpos=gridpos, text=title,
                             font=self.font_separator).gridpos
         for item in itemlist:
             font = self.font_item
             if decorated is not None:
                 font = self.font_item_decorated if item in decorated else font
-            gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
+            gridpos = WeatherItem(frame=frame, gridpos=gridpos,
+                                  stringvar=values.values[item].tk_StringVar,
+                                  font=font, color=color).gridpos
+        return gridpos
+
+
+    def drawAwattarSection (self, frame, title, itemlist, color, gridpos, decorated=None):
+        gridpos = Separator(frame=frame, gridpos=gridpos, text=title,
+                            font=self.font_separator).gridpos
+        for item in itemlist:
+            font = self.font_item
+            if decorated is not None:
+                font = self.font_item_decorated if item in decorated else font
+            gridpos = WeatherItem(frame=frame, gridpos=gridpos,
                                   stringvar=values.values[item].tk_StringVar,
                                   font=font, color=color).gridpos
         return gridpos
 
 
     def drawForecastSection (self, frame, vartitle, itemlist, gridpos):
-        gridpos = Separator(frame=frame, gridpos=gridpos, 
+        gridpos = Separator(frame=frame, gridpos=gridpos,
                             vartext=values.values[vartitle].tk_StringVar,
                             font=self.font_separator).gridpos
         for item in itemlist:
-            gridpos = WeatherItem(frame=frame, gridpos=gridpos, 
+            gridpos = WeatherItem(frame=frame, gridpos=gridpos,
                                   stringvar=values.values[item].tk_StringVar,
-                                  font=self.font_forecast, 
+                                  font=self.font_forecast,
                                   color=CONFIG.COLORS.FORECAST).gridpos
         return gridpos
 
@@ -149,15 +162,15 @@ class WeatherApp (tk.Frame):
         w, h = map(lambda x: int(x*zoom), picture.size)
         picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
 
-        # image needs to be stored garbage collector save, otherwise the 
+        # image needs to be stored garbage collector save, otherwise the
         # image would be deleted by the garbage collector and therefore
         # it would not be displayed.
-        attrname = "picture_{}".format(id_) 
+        attrname = "picture_{}".format(id_)
         setattr(self, attrname, PIL.ImageTk.PhotoImage(picture))
-        gridpos = Image(frame=frame, gridpos=gridpos, 
+        gridpos = Image(frame=frame, gridpos=gridpos,
                         image=getattr(self,attrname)).gridpos
         return gridpos
-        
+
 
     def create_screen_main (self):
         frame = self.screens['main']
@@ -179,6 +192,14 @@ class WeatherApp (tk.Frame):
                                           itemlist=['ID_44'],
                                           color=CONFIG.COLORS.AIRQUALITYKITCHEN,
                                           gridpos=gridpos)
+        gridpos = self.drawAwattarSection(frame=frame, title="Strompreise (ct/kWh):",
+                                          itemlist=['ID_AW_01'],
+                                          color=CONFIG.COLORS.AWATTAR,
+                                          gridpos=gridpos)
+        # gridpos = self.drawWeatherSection(frame=frame, title="Luftqualität Küche:",
+        #                                   itemlist=['ID_44'],
+        #                                   color=CONFIG.COLORS.AIRQUALITYKITCHEN,
+        #                                   gridpos=gridpos)
 
 
     def create_screen_owm (self):
@@ -270,9 +291,9 @@ class Weather (object):
         self.root.width  = CONFIG.COORDINATES.WIDTH
         self.root.height = CONFIG.COORDINATES.HEIGHT
         self.root.borderwidth = 10
-        self.root.geometry("{}x{}+{}+{}".format(self.root.width, 
+        self.root.geometry("{}x{}+{}+{}".format(self.root.width,
                                                 self.root.height,
-                                                CONFIG.COORDINATES.XPOS, 
+                                                CONFIG.COORDINATES.XPOS,
                                                 CONFIG.COORDINATES.YPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = WeatherApp(master=self.root)

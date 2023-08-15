@@ -77,11 +77,13 @@ class Queue (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
 
-        self.qv_price_act    = SensorValue("ID_AW_01", "AWPriceAct", SensorValue_Data.Types.Aw_PriceAct, "ct/kWh")
-        self.qv_price_next   = SensorValue("ID_AW_02", "AWPriceNext", SensorValue_Data.Types.Aw_PriceNext, "ct/kWh")
-        self.qv_price_lowest = SensorValue("ID_AW_03", "AWPriceLowest", SensorValue_Data.Types.Aw_PriceLowest, "ct/kWh")
+        self.qv_price = SensorValue("ID_AW_01", "AWPrice", SensorValue_Data.Types.Aw_Price, "")
+        self.qv_price_act = SensorValue("ID_AW_02", "AWPriceAct", SensorValue_Data.Types.Aw_Price, "ct/kWh")
+        self.qv_price_next = SensorValue("ID_AW_03", "AWPriceNext", SensorValue_Data.Types.Aw_Price, "ct/kWh")
+        self.qv_price_lowest = SensorValue("ID_AW_04", "AWPriceLowest", SensorValue_Data.Types.Aw_Price, "ct/kWh")
 
         self.sq = SensorQueueClient_write("../../../configs/weatherqueue.ini")
+        self.sq.register(self.qv_price)
         self.sq.register(self.qv_price_act)
         self.sq.register(self.qv_price_next)
         self.sq.register(self.qv_price_lowest)
@@ -96,7 +98,9 @@ class Queue (threading.Thread):
                 price_lowest = f"{awattar.data['lowest price']['start_timestamp'].hour}:" + \
                                f"{awattar.data['lowest price']['start_timestamp'].minute:02d}: " + \
                                f"{awattar.data['lowest price']['marketprice']:.2f}"
-                # Log(f"price_act: {price_act}; price_next: {price_next}; price_lowest: {price_lowest}")
+                price = f"{price_act} / {price_next} / {price_lowest}"
+                # Log(price)
+                self.qv_price = price
                 self.qv_price_act = price_act
                 self.qv_price_next = price_next
                 self.qv_price_lowest = price_lowest

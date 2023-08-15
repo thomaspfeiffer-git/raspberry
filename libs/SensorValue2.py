@@ -16,7 +16,7 @@ class SensorValue_Data (object):
     """contains various data of measured values"""
     class Types:
         """enum for sensor types"""
-        Temp, Humi, Pressure, Switch, Light, Wind, WindDir, Desc, IconUrl, AirQuality, Aw_PriceAct, Aw_PriceNext, Aw_PriceLowest = range(13)
+        Temp, Humi, Pressure, Switch, Light, Wind, WindDir, Desc, IconUrl, AirQuality, Aw_Price = range(11)
 
     def __init__ (self, v_id, name, type_, unit):
         self.__v_id      = v_id
@@ -47,8 +47,7 @@ class SensorValue_Data (object):
         if self.__type in (SensorValue_Data.Types.Temp, SensorValue_Data.Types.Humi,
                            SensorValue_Data.Types.Pressure, SensorValue_Data.Types.Light,
                            SensorValue_Data.Types.Wind, SensorValue_Data.Types.AirQuality,
-                           SensorValue_Data.Types.Aw_PriceAct, SensorValue_Data.Types.Aw_PriceNext,
-                           SensorValue_Data.Types.Aw_PriceLowest):
+                           SensorValue_Data.Types.Aw_Price):
             """please note the decimal coma here"""
             _value = _value.replace('.', ',')
         self.__value     = _value

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Config.py                                                                   #
-# (c) https://github.com/thomaspfeiffer-git 2016, 2017                        #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2017, 2023                  #
 ###############################################################################
 """lots of config stuff
    1) display properties
@@ -16,7 +16,7 @@ import configparser
 import os
 
 
-CONFIGFILE = "../config.ini"    
+CONFIGFILE = "../config.ini"
 cfg = configparser.ConfigParser()
 cfg.read(CONFIGFILE)
 
@@ -48,6 +48,7 @@ class CONFIG:
         WARDROBE   = "Gold"
         AIRQUALITYKITCHEN = "Green"
         KITCHEN    = "DarkOrange"
+        AWATTAR    = "MidnightBlue"
 
 
     class IMAGES:
