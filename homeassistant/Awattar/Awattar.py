@@ -98,12 +98,12 @@ class Queue (threading.Thread):
                 price_lowest = f"{awattar.data['lowest price']['start_timestamp'].hour}:" + \
                                f"{awattar.data['lowest price']['start_timestamp'].minute:02d}: " + \
                                f"{awattar.data['lowest price']['marketprice']:.2f}"
-                price = f"{price_act} / {price_next} / {price_lowest}"
+                price = f"{price_act} / {price_next}\n{price_lowest}"
                 # Log(f"price: {price}")
-                self.qv_price = price
-                self.qv_price_act = price_act
-                self.qv_price_next = price_next
-                self.qv_price_lowest = price_lowest
+                self.qv_price.value = price
+                self.qv_price_act.value = price_act
+                self.qv_price_next.value = price_next
+                self.qv_price_lowest.value = price_lowest
 
             for _ in range(600):    # interruptible sleep for 60 seconds
                 time.sleep(0.1)

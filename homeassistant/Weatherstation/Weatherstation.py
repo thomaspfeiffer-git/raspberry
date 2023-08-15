@@ -74,6 +74,7 @@ class WeatherApp (tk.Frame):
         self.font_item      = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
         self.font_item_decorated = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL+5,
                                         slant="italic", weight="bold")
+        self.font_awattar   = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
         self.font_forecast  = Font(family=family, size=CONFIG.FONTS.SIZE_FORECAST)
         self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
         self.font_date      = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL)
@@ -132,13 +133,11 @@ class WeatherApp (tk.Frame):
         return gridpos
 
 
-    def drawAwattarSection (self, frame, title, itemlist, color, gridpos, decorated=None):
+    def drawAwattarSection (self, frame, title, itemlist, color, gridpos):
         gridpos = Separator(frame=frame, gridpos=gridpos, text=title,
                             font=self.font_separator).gridpos
         for item in itemlist:
-            font = self.font_item
-            if decorated is not None:
-                font = self.font_item_decorated if item in decorated else font
+            font = self.font_awattar
             gridpos = WeatherItem(frame=frame, gridpos=gridpos,
                                   stringvar=values.values[item].tk_StringVar,
                                   font=font, color=color).gridpos
@@ -187,10 +186,6 @@ class WeatherApp (tk.Frame):
                                           # itemlist=['ID_03', 'ID_04', 'ID_05'],
                                           # decorated=['ID_03'],
                                           color=CONFIG.COLORS.OUTDOOR,
-                                          gridpos=gridpos)
-        gridpos = self.drawWeatherSection(frame=frame, title="Luftqualität Küche:",
-                                          itemlist=['ID_44'],
-                                          color=CONFIG.COLORS.AIRQUALITYKITCHEN,
                                           gridpos=gridpos)
         gridpos = self.drawAwattarSection(frame=frame, title="Strompreise (ct/kWh):",
                                           itemlist=['ID_AW_01'],

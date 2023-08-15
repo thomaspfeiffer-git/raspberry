@@ -114,6 +114,7 @@ class Values (threading.Thread):
         while self.__running:
             v = self.queue.read()
             if v is not None:
+                # Log(f"Value received: {v}")
                 try:
                     self.values[v.id].tk_StringVar.set(self.getvalue(v))
                     self.values[v.id].valid_until = time.time() + 180 # data is valid for 3 min

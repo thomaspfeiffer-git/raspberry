@@ -26,7 +26,7 @@ cd ..
 echo
 echo "Starting Weatherstation.py ..."
 cd Weatherstation/
-nohup ./Weatherstation.py &
+nohup ./Weatherstation.py 2>&1 > weatherstation.log &
 echo "Weatherstation.py started."
 cd ..
 
