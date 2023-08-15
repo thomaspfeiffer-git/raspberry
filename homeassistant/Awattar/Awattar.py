@@ -45,7 +45,7 @@ class Awattar (threading.Thread):
         for hour in data:
             hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
             hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
-            hour['marketprice'] /= hour['marketprice'] / 10.0 * 1.2
+            hour['marketprice'] = hour['marketprice'] / 10.0 * 1.2
             hour['unit'] = "ct/kWh"
 
             if hour['marketprice'] < lowest_price['marketprice']:
@@ -99,7 +99,7 @@ class Queue (threading.Thread):
                                f"{awattar.data['lowest price']['start_timestamp'].minute:02d}: " + \
                                f"{awattar.data['lowest price']['marketprice']:.2f}"
                 price = f"{price_act} / {price_next} / {price_lowest}"
-                # Log(price)
+                # Log(f"price: {price}")
                 self.qv_price = price
                 self.qv_price_act = price_act
                 self.qv_price_next = price_next
