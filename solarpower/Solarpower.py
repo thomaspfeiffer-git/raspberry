@@ -34,6 +34,7 @@ nohup ./Solarpower.py --receiver 2>&1 > solar.log &
 
 
 import argparse
+import csv
 from datetime import datetime
 import os
 import sys
@@ -181,11 +182,39 @@ class Receiver (object):
             except IndexError:
                 Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()))
             else:
+                ### TODO ###
+                # csv.write(rrd_template, rrd_data)
+                ### TODO ###
                 try:
                     import rrdtool
                     rrdtool.update(RRDFILE, "--template", rrd_template, rrd_data)
                 except rrdtool.OperationalError:
                     Log("Cannot update rrd database: {0[0]} {0[1]}".format(sys.exc_info()))
+
+
+###############################################################################
+# CSV #########################################################################
+class CSV (object):
+    pass
+
+"""
+    def __init__ (self):
+        self.fields = ...
+        self.new_file()
+
+    def new_file (self):
+        self.filename = f"solarpower_{datetime.now().strftime('%Y%m%d')}.csv"
+        with open(self.filename, 'w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=self.fields)
+            writer.writeheader()
+
+    def write (self, rrd_template, rrd_data):
+        timestamp = datetime.now().strftime("%Y%m%d %H:%M:%S")
+        values = ...
+        with open(self.file, 'a', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=self.fields)
+            writer.writerow({ "Timestamp": timestamp } | values)
+"""
 
 
 ###############################################################################
