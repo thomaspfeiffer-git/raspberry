@@ -188,7 +188,7 @@ class WeatherApp (tk.Frame):
                                           color=CONFIG.COLORS.OUTDOOR,
                                           gridpos=gridpos)
         gridpos = self.drawAwattarSection(frame=frame, title="Strompreise (ct/kWh):",
-                                          itemlist=['ID_AW_01'],
+                                          itemlist=['ID_AW_04', 'ID_AW_05'],
                                           color=CONFIG.COLORS.AWATTAR,
                                           gridpos=gridpos)
         # gridpos = self.drawWeatherSection(frame=frame, title="Luftqualität Küche:",

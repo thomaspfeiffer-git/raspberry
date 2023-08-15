@@ -80,12 +80,14 @@ class Queue (threading.Thread):
         self.qv_price = SensorValue("ID_AW_01", "AWPrice", SensorValue_Data.Types.Aw_Price, "")
         self.qv_price_act = SensorValue("ID_AW_02", "AWPriceAct", SensorValue_Data.Types.Aw_Price, "ct/kWh")
         self.qv_price_next = SensorValue("ID_AW_03", "AWPriceNext", SensorValue_Data.Types.Aw_Price, "ct/kWh")
-        self.qv_price_lowest = SensorValue("ID_AW_04", "AWPriceLowest", SensorValue_Data.Types.Aw_Price, "ct/kWh")
+        self.qv_price_actnext = SensorValue("ID_AW_04", "AWPriceActNext", SensorValue_Data.Types.Aw_Price, "ct/kWh")
+        self.qv_price_lowest = SensorValue("ID_AW_05", "AWPriceLowest", SensorValue_Data.Types.Aw_Price, "ct/kWh")
 
         self.sq = SensorQueueClient_write("../../../configs/weatherqueue.ini")
         self.sq.register(self.qv_price)
         self.sq.register(self.qv_price_act)
         self.sq.register(self.qv_price_next)
+        self.sq.register(self.qv_price_actnext)
         self.sq.register(self.qv_price_lowest)
 
     def run (self):
@@ -95,6 +97,7 @@ class Queue (threading.Thread):
             if awattar.data['valid']:
                 price_act = f"{awattar.data['hourly ratings'][0]['marketprice']:.2f}"
                 price_next = f"{awattar.data['hourly ratings'][1]['marketprice']:.2f}"
+                price_actnext = f"{price_act} / {price_next}"
                 price_lowest = f"{awattar.data['lowest price']['start_timestamp'].hour}:" + \
                                f"{awattar.data['lowest price']['start_timestamp'].minute:02d}: " + \
                                f"{awattar.data['lowest price']['marketprice']:.2f}"
@@ -103,6 +106,7 @@ class Queue (threading.Thread):
                 self.qv_price.value = price
                 self.qv_price_act.value = price_act
                 self.qv_price_next.value = price_next
+                self.qv_price_actnext.value = price_actnext
                 self.qv_price_lowest.value = price_lowest
 
             for _ in range(600):    # interruptible sleep for 60 seconds
