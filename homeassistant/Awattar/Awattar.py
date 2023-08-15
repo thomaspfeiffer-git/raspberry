@@ -80,8 +80,8 @@ class Queue (threading.Thread):
         self.qv_price = SensorValue("ID_AW_01", "AWPrice", SensorValue_Data.Types.Aw_Price, "")
         self.qv_price_act = SensorValue("ID_AW_02", "AWPriceAct", SensorValue_Data.Types.Aw_Price, "ct/kWh")
         self.qv_price_next = SensorValue("ID_AW_03", "AWPriceNext", SensorValue_Data.Types.Aw_Price, "ct/kWh")
-        self.qv_price_actnext = SensorValue("ID_AW_04", "AWPriceActNext", SensorValue_Data.Types.Aw_Price, "ct/kWh")
-        self.qv_price_lowest = SensorValue("ID_AW_05", "AWPriceLowest", SensorValue_Data.Types.Aw_Price, "ct/kWh")
+        self.qv_price_actnext = SensorValue("ID_AW_04", "AWPriceActNext", SensorValue_Data.Types.Aw_Price, "")
+        self.qv_price_lowest = SensorValue("ID_AW_05", "AWPriceLowest", SensorValue_Data.Types.Aw_Price, "")
 
         self.sq = SensorQueueClient_write("../../../configs/weatherqueue.ini")
         self.sq.register(self.qv_price)
