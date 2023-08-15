@@ -72,6 +72,7 @@ class Values (threading.Thread):
         self.values.update({ "ID_OWM_{:02d}".format(id+1): A_Value() for id in range(30) })
                                                 # some local calculated values
         self.values.update({ "ID_LC_{:02d}".format(id+1): A_Value() for id in range(30) })
+        self.values.update({ "ID_AW_{:02d}".format(id+1): A_Value() for id in range(10) })
         self.__running = False
 
     def init_values (self):
@@ -112,7 +113,7 @@ class Values (threading.Thread):
         newvalues = False
         while self.__running:
             v = self.queue.read()
-            if v is not None: 
+            if v is not None:
                 try:
                     self.values[v.id].tk_StringVar.set(self.getvalue(v))
                     self.values[v.id].valid_until = time.time() + 180 # data is valid for 3 min
