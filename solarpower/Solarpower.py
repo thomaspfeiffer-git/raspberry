@@ -51,6 +51,8 @@ CREDENTIALS = os.path.expanduser("~/credentials/solarpower.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/solar.rrd")
 UPDATE_INTERVAL = 10   # time delay between two measurements (seconds)
 
+BusID_MainMeter = 1
+BusID_SolarMeter = 2
 
 
 ###############################################################################
@@ -260,8 +262,8 @@ if __name__ == "__main__":
 
     if args.sensor:
         import minimalmodbus
-        main_meter = Main_Meter('/dev/ttyUSB1', 1)   # TODO: ID instead of fixed number
-        solar_meter = Solar_Meter('/dev/ttyUSB2', 2)
+        main_meter = Main_Meter('/dev/ttyUSB1', BusID_MainMeter)
+        solar_meter = Solar_Meter('/dev/ttyUSB2', BusID_SolarMeter)
 
         storedata = StoreData()
         storedata.start()
