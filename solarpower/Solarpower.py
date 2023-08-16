@@ -52,6 +52,7 @@ RRDFILE = os.path.expanduser("~/rrd/databases/solar.rrd")
 UPDATE_INTERVAL = 10   # time delay between two measurements (seconds)
 
 
+
 ###############################################################################
 # Meter #######################################################################
 class Meter (object):
@@ -86,7 +87,8 @@ class Meter (object):
                 result += f"{self.values[i]:.2f}:"
             return result[:-1]
         else:
-            pass ### TODO
+            Log(f"No valid data from sensor #{self.__id} yet.")
+            raise RuntimeError(f"No valid data from sensor #{self.__id} yet.")
 
     def rrd_template (self):
         result = ":"
@@ -160,8 +162,12 @@ class StoreData (threading.Thread):
                 time.sleep(0.1)
 
             if self._running:
-                payload = f"{self.rrd_template}:N:{main_meter.rrd()}:{solar_meter.rrd()}"
-                self.udp.send(payload)
+                try:
+                    payload = f"{self.rrd_template}:N:{main_meter.rrd()}:{solar_meter.rrd()}"
+                except RuntimeError:    # ignore empty data
+                    pass
+                else:
+                    self.udp.send(payload)
 
     def stop (self):
         self._running = False
