@@ -59,10 +59,9 @@ BusID_SolarMeter = 2
 ###############################################################################
 # Meter #######################################################################
 class Meter (object):
-    def __init__ (self, usb_id, bus_id):
+    def __init__ (self, bus_id):
         self.valid_data = False
 
-        self.__usb = usb_id
         self.__id = bus_id
         self.meter = self.find_meter()
 
@@ -278,8 +277,8 @@ if __name__ == "__main__":
 
     if args.sensor:
         import minimalmodbus
-        main_meter = Main_Meter('/dev/ttyUSB1', BusID_MainMeter)
-        solar_meter = Solar_Meter('/dev/ttyUSB2', BusID_SolarMeter)
+        main_meter = Main_Meter(BusID_MainMeter)
+        solar_meter = Solar_Meter(BusID_SolarMeter)
 
         storedata = StoreData()
         storedata.start()
