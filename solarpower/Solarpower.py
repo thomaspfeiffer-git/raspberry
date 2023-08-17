@@ -63,45 +63,40 @@ class Meter (object):
         self.valid_data = False
 
         self.__usb = usb_id
-        self.__id = bus_id   ### TODO: check ID
-        # self.meter = self.find_meter()
-        # sys.exit()
-        self.meter = minimalmodbus.Instrument(self.__usb, self.__id)
-        self.meter.serial.baudrate = 9600
+        self.__id = bus_id
+        self.meter = self.find_meter()
 
         self.values = {}
         for register in self.input_register:
             self.values[register] = 0
 
     def find_meter (self):
-        usb = "/dev/ttyUSB{}"
-        for i in range(4):
-            usb_ = usb.format(i)
-            Log(f"Searching meter with ID #{self.__id} on {usb_} ...")
+        for usb_node in [ f"/dev/ttyUSB{i}" for i in range(4) ]:
+            Log(f"Searching meter with ID #{self.__id} on {usb_node} ...")
             try:
-                meter = minimalmodbus.Instrument(usb_, self.__id)
+                meter = minimalmodbus.Instrument(usb_node, self.__id)
+                meter.serial.baudrate = 9600
                 meter.read_float(functioncode=4, registeraddress=0, number_of_registers=2)
             except (FileNotFoundError, serial.serialutil.SerialException, minimalmodbus.NoResponseError):
-                Log(f"Except: No meter with ID #{self.__id} found on {usb_}.")
+                Log(f"No meter with ID #{self.__id} found on {usb_node}.")
             else:
-                Log(f"Found meter with ID #{self.__id} on {usb_}.")
+                Log(f"Found meter with ID #{self.__id} on {usb_node}.")
                 return meter
-            # finally:
-            #    Log(f"Finally: No meter with ID #{self.__id} found on {usb_}.")
-        sys.exit()
 
+        Log(f"No meter with ID {self.__id} found.")
+        sys.exit(1)
 
     def read (self):
         for register in self.input_register:
-           try:
-               value = self.meter.read_float(functioncode=4,
-                                             registeraddress=self.input_register[register]["port"],
-                                             number_of_registers=self.input_register[register]["digits"])
-           except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError):
-               pass
-           else:
-               self.values[register] = value
-               self.valid_data = True
+            try:
+                value = self.meter.read_float(functioncode=4,
+                                              registeraddress=self.input_register[register]["port"],
+                                              number_of_registers=self.input_register[register]["digits"])
+            except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError):
+                pass
+            else:
+                self.values[register] = value
+                self.valid_data = True
 
     def rrd (self):
         if self.valid_data:
