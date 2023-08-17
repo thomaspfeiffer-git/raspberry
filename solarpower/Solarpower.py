@@ -37,6 +37,7 @@ import argparse
 import csv
 from datetime import datetime
 import os
+import serial
 import sys
 import threading
 import time
@@ -63,12 +64,32 @@ class Meter (object):
 
         self.__usb = usb_id
         self.__id = bus_id   ### TODO: check ID
+        # self.meter = self.find_meter()
+        # sys.exit()
         self.meter = minimalmodbus.Instrument(self.__usb, self.__id)
         self.meter.serial.baudrate = 9600
 
         self.values = {}
         for register in self.input_register:
             self.values[register] = 0
+
+    def find_meter (self):
+        usb = "/dev/ttyUSB{}"
+        for i in range(4):
+            usb_ = usb.format(i)
+            Log(f"Searching meter with ID #{self.__id} on {usb_} ...")
+            try:
+                meter = minimalmodbus.Instrument(usb_, self.__id)
+                meter.read_float(functioncode=4, registeraddress=0, number_of_registers=2)
+            except (FileNotFoundError, serial.serialutil.SerialException, minimalmodbus.NoResponseError):
+                Log(f"Except: No meter with ID #{self.__id} found on {usb_}.")
+            else:
+                Log(f"Found meter with ID #{self.__id} on {usb_}.")
+                return meter
+            # finally:
+            #    Log(f"Finally: No meter with ID #{self.__id} found on {usb_}.")
+        sys.exit()
+
 
     def read (self):
         for register in self.input_register:
