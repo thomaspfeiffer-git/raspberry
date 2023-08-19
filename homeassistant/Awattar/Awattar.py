@@ -31,8 +31,7 @@ app = Flask(__name__)
 ###############################################################################
 ## Awattar ####################################################################
 class Awattar (threading.Thread):
-    # url = "https://api.awattar.at/v1/marketdata"
-    url = "https://api.awattar.at/v1/marketdate"
+    url = "https://api.awattar.at/v1/marketdata"
 
     def __init__ (self):
         threading.Thread.__init__(self)
@@ -44,7 +43,7 @@ class Awattar (threading.Thread):
         def empty_data ():
             return { 'start_timestamp': datetime.now(),
                      'end_timestamp': datetime.now(),
-                     'marketprice': "n//a",
+                     'marketprice': -99.99,
                      'unit': "ct/kWh" }
 
         try:
