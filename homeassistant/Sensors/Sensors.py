@@ -65,10 +65,9 @@ class Sensors (threading.Thread, metaclass=Singleton):
         self.sq.register(self.qv_airquality)
 
         self.cpu     = CPU()
-# temporarily inactivated BME680
-#        self.bme680  = BME680(i2c_addr=BME_680_BASEADDR, \
-#                              qv_temp=self.qv_temp, qv_humi=self.qv_humi, \
-#                              qv_pressure=self.qv_pressure, qv_airquality=self.qv_airquality)
+        self.bme680  = BME680(i2c_addr=BME_680_BASEADDR, \
+                              qv_temp=self.qv_temp, qv_humi=self.qv_humi, \
+                              qv_pressure=self.qv_pressure, qv_airquality=self.qv_airquality)
         self.tsl2561 = TSL2561(qvalue=self.qv_light)
 
         self.udp = UDP.Sender(CREDENTIALS)
@@ -78,17 +77,12 @@ class Sensors (threading.Thread, metaclass=Singleton):
         while self._running:
             self.values['tempcpu']     = self.cpu.read_temperature()
             self.values['lightness']   = self.tsl2561.lux()
-            # temporarily inactivated BME680
-            self.values['temp']        = 20.0
-            self.values['humi']        = 50.0
-            self.values['airpressure'] = 999.0
-            self.values['airquality']  = 50.0
-            # self.bme680.get_sensor_data()
-            # self.values['temp']        = self.bme680.data.temperature
-            # self.values['humi']        = self.bme680.data.humidity
-            # self.values['airpressure'] = self.bme680.data.pressure
-            # self.values['airquality']  = self.bme680.data.air_quality_score \
-            #                              if self.bme680.data.air_quality_score != None else 0
+            self.bme680.get_sensor_data()
+            self.values['temp']        = self.bme680.data.temperature
+            self.values['humi']        = self.bme680.data.humidity
+            self.values['airpressure'] = self.bme680.data.pressure
+            self.values['airquality']  = self.bme680.data.air_quality_score \
+                                         if self.bme680.data.air_quality_score != None else 0
 
             rrd_data = "N:{:.2f}".format(self.values['temp'])        + \
                         ":{:.2f}".format(self.values['tempcpu'])     + \
