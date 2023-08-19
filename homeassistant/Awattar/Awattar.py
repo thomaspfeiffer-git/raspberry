@@ -39,13 +39,13 @@ class Awattar (threading.Thread):
                       'hourly ratings': None,
                       'lowest price': None }
 
-    def update_data (self):
+    def update_data (self):   ### TODO: exception handling
         data = json.loads(urlopen(self.url).read())['data']
         lowest_price = data[0]
         for hour in data:
             hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
             hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
-            hour['marketprice'] = ((hour['marketprice'] / 10.0 * 1.03) + 1.50)  * 1.2
+            hour['marketprice'] = ((hour['marketprice'] / 10.0 * 1.03) + 1.50) * 1.2
             hour['unit'] = "ct/kWh"
 
             if hour['marketprice'] < lowest_price['marketprice']:
@@ -60,7 +60,7 @@ class Awattar (threading.Thread):
         self._running = True
         self.update_data()
         while self._running:
-            if datetime.now().minute == 1:
+            if datetime.now().minute == 1:  # get new data once per hour
                 self.update_data()
             for _ in range(500):    # interruptible sleep for 50 seconds
                 time.sleep(0.1)
