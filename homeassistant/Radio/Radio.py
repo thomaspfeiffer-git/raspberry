@@ -8,7 +8,7 @@
 """
 
 ### usage ###
-# ./Radio.py 2>&1 > radio.log &
+# nohup ./Radio.py 2>&1 > radio.log &
 
 
 import tkinter as tk
