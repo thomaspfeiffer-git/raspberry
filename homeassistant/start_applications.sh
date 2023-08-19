@@ -66,7 +66,7 @@ cd ..
 echo
 echo "Starting Radio.py (after sleep)"
 cd Radio
-( sleep 5 ;  nohup ./Radio.py & ) &
+( sleep 5 ; nohup ./Radio.py 2>&1 > radio.log & ) &
 echo "Radio.py started"
 cd ..
 
