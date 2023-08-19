@@ -31,7 +31,8 @@ app = Flask(__name__)
 ###############################################################################
 ## Awattar ####################################################################
 class Awattar (threading.Thread):
-    url = "https://api.awattar.at/v1/marketdata"
+    # url = "https://api.awattar.at/v1/marketdata"
+    url = "https://api.awattar.at/v1/marketdate"
 
     def __init__ (self):
         threading.Thread.__init__(self)
@@ -39,17 +40,29 @@ class Awattar (threading.Thread):
                       'hourly ratings': None,
                       'lowest price': None }
 
-    def update_data (self):   ### TODO: exception handling
-        data = json.loads(urlopen(self.url).read())['data']
-        lowest_price = data[0]
-        for hour in data:
-            hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
-            hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
-            hour['marketprice'] = ((hour['marketprice'] / 10.0 * 1.03) + 1.50) * 1.2
-            hour['unit'] = "ct/kWh"
+    def update_data (self):
+        def empty_data ():
+            return { 'start_timestamp': datetime.now(),
+                     'end_timestamp': datetime.now(),
+                     'marketprice': "n//a",
+                     'unit': "ct/kWh" }
 
-            if hour['marketprice'] < lowest_price['marketprice']:
-                lowest_price = hour
+        try:
+            data = json.loads(urlopen(self.url).read())['data']
+        except Exception as err:
+            Log(f"Error while reading from {self.url}: {err}")
+            data = [ empty_data() for _ in range(24) ]
+            lowest_price = empty_data()
+        else:
+            lowest_price = data[0]
+            for hour in data:
+                hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
+                hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
+                hour['marketprice'] = ((hour['marketprice'] / 10.0 * 1.03) + 1.50) * 1.2
+                hour['unit'] = "ct/kWh"
+
+                if hour['marketprice'] < lowest_price['marketprice']:
+                    lowest_price = hour
 
         self.data['hourly ratings'] = data
         self.data['lowest price'] = lowest_price
