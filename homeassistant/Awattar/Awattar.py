@@ -25,6 +25,8 @@ from SensorQueue2 import SensorQueueClient_write
 from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 
+from config import CONFIG
+
 app = Flask(__name__)
 
 
@@ -162,7 +164,7 @@ if __name__ == "__main__":
     queue = Queue()
     queue.start()
 
-    app.run(host="0.0.0.0", port=5003)
+    app.run(host="0.0.0.0", port=CONFIG.APPLICATION.PORT)
 
 # eof #
 
