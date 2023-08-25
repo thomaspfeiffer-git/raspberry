@@ -33,6 +33,7 @@ else
         sleep 5
         systemctl restart NetworkManager
     else            # Raspberry
+        # https://forums.raspberrypi.com/viewtopic.php?t=324155
         /etc/init.d/networking restart
         sudo wpa_cli -i wlan0 reconfigure
     fi
