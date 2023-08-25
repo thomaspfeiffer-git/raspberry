@@ -34,6 +34,7 @@ else
         systemctl restart NetworkManager
     else            # Raspberry
         /etc/init.d/networking restart
+        sudo wpa_cli -i wlan0 reconfigure
     fi
 fi
 
