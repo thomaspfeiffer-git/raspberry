@@ -36,6 +36,8 @@ else
         # https://forums.raspberrypi.com/viewtopic.php?t=324155
         /etc/init.d/networking restart
         sudo wpa_cli -i wlan0 reconfigure
+        sudo systemctl restart wpa_supplicant.service
+        sudo systemctl restart dhcpcd.service
     fi
 fi
 
