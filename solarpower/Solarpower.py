@@ -139,8 +139,8 @@ class Main_Meter (Meter):
         field_P:    { "port":  52, "digits": 2, "unit": "W" }
     }
 
-    def __init__ (self, usb_id, bus_id):
-        super().__init__(usb_id, bus_id)
+    def __init__ (self, bus_id):
+        super().__init__(bus_id)
 
 
 ###############################################################################
@@ -157,8 +157,8 @@ class Solar_Meter (Meter):
         field_P: { "port": 12, "digits": 2, "unit": "W" }
     }
 
-    def __init__ (self, usb_id, bus_id):
-        super().__init__(usb_id, bus_id)
+    def __init__ (self, bus_id):
+        super().__init__(bus_id)
 
 
 ###############################################################################
