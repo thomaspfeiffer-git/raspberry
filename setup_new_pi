@@ -1,6 +1,16 @@
 
 
 
+
+Copy image to sd card
+=====================
+
+diskutil list
+diskutil umountDisk /dev/diskX
+sudo dd if=...img of=/dev/diskX bs=10m
+
+
+
 SSH (Headless):
 ===============
 
