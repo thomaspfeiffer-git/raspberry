@@ -34,10 +34,13 @@ else
         systemctl restart NetworkManager
     else            # Raspberry
         # https://forums.raspberrypi.com/viewtopic.php?t=324155
-        /etc/init.d/networking restart
+        sudo service networking restar
         sudo wpa_cli -i wlan0 reconfigure
         sudo systemctl restart wpa_supplicant.service
         sudo systemctl restart dhcpcd.service
+        sudo ifdown --force wlan0
+        sleep 5
+        sudo ifup wlan0
     fi
 fi
 
