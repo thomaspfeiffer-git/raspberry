@@ -26,6 +26,11 @@ else
     echo -n "`date` - "
     echo "Restarting network ..."
 
+
+    # todo
+    # echo $(tr -d '\0' < /sys/firmware/devicetree/base/model)
+    # avoids warning of null byte in string
+
     if [ $( echo $( cat /sys/firmware/devicetree/base/model )  | grep Rasp | wc -l) == "1" ] ; then
         # https://forums.raspberrypi.com/viewtopic.php?t=324155
         sudo service networking restart
