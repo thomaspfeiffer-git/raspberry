@@ -41,8 +41,7 @@ else
         /etc/init.d/networking restart
         sleep 5
         systemctl restart NetworkManager
-
-
+    fi
 fi
 
 # eof #
