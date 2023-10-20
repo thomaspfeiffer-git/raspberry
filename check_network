@@ -26,22 +26,23 @@ else
     echo -n "`date` - "
     echo "Restarting network ..."
 
-    if [ $(uname -a | grep armv7l | wc -l) == "1" ] ; then  # NanoPi
-        systemctl restart NetworkManager
-        sleep 5
-        /etc/init.d/networking restart
-        sleep 5
-        systemctl restart NetworkManager
-    else            # Raspberry
+    if [ $( echo $( cat /sys/firmware/devicetree/base/model )  | grep Rasp | wc -l) == "1" ] ; then
         # https://forums.raspberrypi.com/viewtopic.php?t=324155
-        sudo service networking restar
+        sudo service networking restart
         sudo wpa_cli -i wlan0 reconfigure
         sudo systemctl restart wpa_supplicant.service
         sudo systemctl restart dhcpcd.service
         sudo ifdown --force wlan0
         sleep 5
         sudo ifup wlan0
-    fi
+    else
+        systemctl restart NetworkManager
+        sleep 5
+        /etc/init.d/networking restart
+        sleep 5
+        systemctl restart NetworkManager
+
+
 fi
 
 # eof #
