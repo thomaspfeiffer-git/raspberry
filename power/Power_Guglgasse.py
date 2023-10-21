@@ -1,7 +1,7 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# Power_Guglasse.py                                                           #
+# Power_Guglgasse.py                                                          #
 # (c) https://github.com/thomaspfeiffer-git 2023                              #
 ###############################################################################
 
@@ -26,10 +26,10 @@ sudo pip3 install -U minimalmodbus
 """
 ###### Usage ######
 ### Sensor
-nohup ./Power_Guglasse.py --sensor 2>&1 > solar.log &
+nohup ./Power_Guglgasse.py --sensor 2>&1 > solar.log &
 
 ### Receiver
-nohup ./Power_Guglasse.py --receiver 2>&1 > solar.log &
+nohup ./Power_Guglgasse.py --receiver 2>&1 > solar.log &
 """
 
 
@@ -49,16 +49,18 @@ import UDP
 from Meters import SDM630
 
 
-CREDENTIALS = os.path.expanduser("~/credentials/power_guglasse.cred")
-RRDFILE = os.path.expanduser("~/rrd/databases/power_guglasse.rrd")
-UPDATE_INTERVAL = 1   # time delay between two measurements (seconds)
+CREDENTIALS = os.path.expanduser("~/credentials/power_guglgasse.cred")
+RRDFILE = os.path.expanduser("~/rrd/databases/power_guglgasse.rrd")
+UPDATE_INTERVAL_READ_DATA       = 1   # time delay between two measurements (seconds)
+UPDATE_INTERVAL_SEND_DATA_UDP   = 10  # interval for sending data to external server
+UPDATE_INTERVAL_SEND_DATA_LOCAL = 1   # interval for sending data to internal server
 
 BusID_Meter = 1
 
 
 ###############################################################################
-# StoreData ###################################################################
-class StoreData (threading.Thread):
+# StoreData_UDP ###############################################################
+class StoreData_UDP (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
 
@@ -68,7 +70,7 @@ class StoreData (threading.Thread):
     def run (self):
         self._running = True
         while self._running:
-            for _ in range(UPDATE_INTERVAL*10):
+            for _ in range(UPDATE_INTERVAL_SEND_DATA_UDP*10):
                 if not self._running:
                     break
                 time.sleep(0.1)
@@ -80,6 +82,33 @@ class StoreData (threading.Thread):
                     pass
                 else:
                     self.udp.send(payload)
+
+    def stop (self):
+        self._running = False
+
+
+###############################################################################
+# StoreData_Local #############################################################
+class StoreData_Local (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+
+    def run (self):
+        self._running = True
+        while self._running:
+            for _ in range(UPDATE_INTERVAL_SEND_DATA_LOCAL*10):
+                if not self._running:
+                    break
+                time.sleep(0.1)
+
+            if self._running:
+                try:
+                    payload = f"{self.rrd_template}:N:{meter.rrd()}"
+                except RuntimeError:    # ignore empty data
+                    pass
+                else:
+                    pass
+                    # TODO send data to local home automation project (pih)
 
     def stop (self):
         self._running = False
@@ -110,7 +139,6 @@ class Receiver (object):
 
 ###############################################################################
 # CSV #########################################################################
-"""
 class CSV (object):
     def __init__ (self):
         self.fieldnames = ["Timestamp", Main_Meter.field_P, Solar_Meter.field_P]
@@ -140,7 +168,7 @@ class CSV (object):
         with open(self.filename, 'a', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=self.fieldnames)
             writer.writerow(csv_data)
-"""
+
 
 ###############################################################################
 # Shutdown stuff ##############################################################
@@ -148,8 +176,10 @@ def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
     if args.sensor:
-        storedata.stop()
-        storedata.join()
+        storedata_local.stop()
+        storedata_local.join()
+        storedata_udp.stop()
+        storedata_udp.join()
 
     Log("Application stopped")
     sys.exit(0)
@@ -174,13 +204,15 @@ if __name__ == "__main__":
     if args.sensor:
         meter = SDM630(BusID_Meter)
 
-        storedata = StoreData()
-        storedata.start()
+        storedata_udp = StoreData_UDP()
+        storedata_udp.start()
+        storedata_local = StoreData_Local()
+        storedata_local.start()
 
         while True:
             meter.read()
 
-            for _ in range(UPDATE_INTERVAL*10):  # interruptible sleep
+            for _ in range(UPDATE_INTERVAL_READ_DATA*10):  # interruptible sleep
                 time.sleep(0.1)
 
 # eof #
