@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
-# Power.py                                                                    #
+# Meters.py                                                                   #
 # (c) https://github.com/thomaspfeiffer-git 2023                              #
 ###############################################################################
 
@@ -86,8 +86,8 @@ class Meter (object):
 
 
 ###############################################################################
-# Main_Meter ##################################################################
-class Main_Meter (Meter):    # TODO: Rename for real name of meter "SDM630 something"
+# SDM630 ######################################################################
+class SDM630 (Meter):
     field_V_L1 = "Main_U_L1"
     field_V_L2 = "Main_U_L2"
     field_V_L3 = "Main_U_L3"
@@ -117,8 +117,8 @@ class Main_Meter (Meter):    # TODO: Rename for real name of meter "SDM630 somet
 
 
 ###############################################################################
-# Solar_Meter #################################################################
-class Solar_Meter (Meter):   # TODO: Rename for real name of meter "SDM230 something"
+# SDM230 ######################################################################
+class SDM230 (Meter):
     field_V = "Solar_U"
     field_I = "Solar_I"
     field_P = "Solar_P"
