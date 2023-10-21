@@ -22,6 +22,7 @@ sudo pip3 install -U minimalmodbus
 """
 
 
+import minimalmodbus
 import serial
 import sys
 
