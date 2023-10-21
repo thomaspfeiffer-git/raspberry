@@ -24,7 +24,7 @@ sudo nohup ./Circulation.py --production 2>&1 > circulation.log &
 cd ..
 
 
-cd solarpower/
+cd power/
 echo "Starting 'Solarpower.py' ..."
 nohup ./Solarpower.py --sensor  2>solarpower.log >/dev/null &
 cd ..
