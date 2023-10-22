@@ -1,0 +1,21 @@
+#!/bin/bash
+#############################################################################
+# Starts apps on nano01                                                     #
+# (c) https://github.com/thomaspfeiffer-git 2023                            #
+#############################################################################
+
+if [ $HOSTNAME != "nano01" ] ; then
+    echo "Wrong host! This script runs on nano02 only!"
+    exit 1
+fi
+
+cd /home/pi/raspberry/
+
+
+cd power/
+echo "Starting 'Power_Guglgasse.py --sensor' ..."
+nohup ./Power_Guglgasse.py --sensor 2>&1 > power_guglgasse.log &
+cd ..
+
+# eof #
+
