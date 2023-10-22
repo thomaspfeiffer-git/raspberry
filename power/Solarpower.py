@@ -113,7 +113,10 @@ class Receiver (object):
 # CSV #########################################################################
 class CSV (object):
     def __init__ (self):
-        self.fieldnames = ["Timestamp", SDM630.field_P, SDM230.field_P]
+        self.fields = [SDM630.field_P, SDM230.field_P]
+        self.filename_prefix = "solarpower"
+
+        self.fieldnames = ["Timestamp"] + self.fields
         self.today = 0
         self.csv_directory = "csv/"
 
@@ -125,7 +128,7 @@ class CSV (object):
     def new_file (self):
         if self.today != datetime.now().day:   # new day? --> start with new file
             self.today = datetime.now().day
-            self.filename = f"{self.csv_directory}solarpower_{datetime.now().strftime('%Y%m%d')}.csv"
+            self.filename = f"{self.csv_directory}/{self.filename_prefix}_{datetime.now().strftime('%Y%m%d')}.csv"
 
             if not os.path.isfile(self.filename):
                 with open(self.filename, 'w', newline='') as file:
@@ -139,8 +142,8 @@ class CSV (object):
     def write (self, rrd_template, rrd_data):
         self.new_file()
         csv_data = { "Timestamp": datetime.now().strftime("%Y%m%d %H:%M:%S") }
-        csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, SDM630.field_P))
-        csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, SDM230.field_P))
+        for field in self.fields:
+            csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, field))
 
         with open(self.filename, 'a', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=self.fieldnames)
