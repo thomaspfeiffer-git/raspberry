@@ -5,17 +5,13 @@
 ###############################################################################
 
 """
-TODO
+Library for a csv class used by the power meter programs.
 """
 
 
 import csv
 from datetime import datetime
 import os
-import sys
-
-sys.path.append("../libs/")
-from Logging import Log
 
 
 ###############################################################################
