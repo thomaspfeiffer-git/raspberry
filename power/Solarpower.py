@@ -113,7 +113,7 @@ class Receiver (object):
 # CSV #########################################################################
 class CSV (object):
     def __init__ (self):
-        self.fieldnames = ["Timestamp", Main_Meter.field_P, Solar_Meter.field_P]
+        self.fieldnames = ["Timestamp", SDM630.field_P, SDM230.field_P]
         self.today = 0
         self.csv_directory = "csv/"
 
@@ -139,8 +139,8 @@ class CSV (object):
     def write (self, rrd_template, rrd_data):
         self.new_file()
         csv_data = { "Timestamp": datetime.now().strftime("%Y%m%d %H:%M:%S") }
-        csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, Main_Meter.field_P))
-        csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, Solar_Meter.field_P))
+        csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, SDM630.field_P))
+        csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, SDM230.field_P))
 
         with open(self.filename, 'a', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=self.fieldnames)
@@ -177,7 +177,6 @@ if __name__ == "__main__":
         r.start()
 
     if args.sensor:
-        import minimalmodbus
         main_meter = SDM630(BusID_MainMeter)
         solar_meter = SDM230(BusID_SolarMeter)
 
