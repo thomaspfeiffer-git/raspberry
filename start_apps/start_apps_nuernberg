@@ -62,7 +62,7 @@ cd ../..
 
 cd power/
 echo "Starting 'Solarpower.py --receiver ..."
-nohup ./Solarpower.py --receiver 2>&1 >solarpower_udp.log &
+nohup ./Solarpower.py --receiver 2>solarpower_udp.log >/dev/null &
 cd ..
 
 # eof #
