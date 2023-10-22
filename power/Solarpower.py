@@ -112,9 +112,9 @@ class Receiver (object):
 ###############################################################################
 # CSV #########################################################################
 class CSV (object):
-    def __init__ (self):
-        self.fields = [SDM630.field_P, SDM230.field_P]
-        self.filename_prefix = "solarpower"
+    def __init__ (self, fn_prefix, fields):
+        self.filename_prefix = fn_prefix
+        self.fields = fields
 
         self.fieldnames = ["Timestamp"] + self.fields
         self.today = 0
@@ -175,7 +175,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.receiver:
-        my_csv = CSV()
+        my_csv = CSV("solarpower", [SDM630.field_P, SDM230.field_P])
         r = Receiver()
         r.start()
 
