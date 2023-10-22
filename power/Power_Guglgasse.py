@@ -141,14 +141,20 @@ class Receiver (object):
 # CSV #########################################################################
 class CSV (object):
     def __init__ (self):
-        self.fieldnames = ["Timestamp", Main_Meter.field_P, Solar_Meter.field_P]
+        self.fieldnames = ["Timestamp", SDM630.field_P]
         self.today = 0
+
+        self.csv_directory = "csv/"
+
+        if not os.path.isdir(self.csv_directory):
+            os.makedirs(self.csv_directory)
+
         self.new_file()
 
     def new_file (self):
         if self.today != datetime.now().day:   # new day? --> start with new file
             self.today = datetime.now().day
-            self.filename = f"csv/solarpower_{datetime.now().strftime('%Y%m%d')}.csv"
+            self.filename = f"{self.csv_directory}power_guglgasse_{datetime.now().strftime('%Y%m%d')}.csv"
 
             if not os.path.isfile(self.filename):
                 with open(self.filename, 'w', newline='') as file:
@@ -162,8 +168,7 @@ class CSV (object):
     def write (self, rrd_template, rrd_data):
         self.new_file()
         csv_data = { "Timestamp": datetime.now().strftime("%Y%m%d %H:%M:%S") }
-        csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, Main_Meter.field_P))
-        csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, Solar_Meter.field_P))
+        csv_data.update(self.get_item_from_rrd(rrd_template, rrd_data, SDM630.field_P))
 
         with open(self.filename, 'a', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=self.fieldnames)
