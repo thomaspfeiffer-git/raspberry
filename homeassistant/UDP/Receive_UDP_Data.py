@@ -28,6 +28,29 @@ import UDP
 CREDENTIALS = os.path.expanduser("~/credentials/homeautomation.cred")
 
 
+"""
+    from SensorQueue2 import SensorQueueClient_write
+    from SensorValue2 import SensorValue, SensorValue_Data
+
+    qv_temp_wardrobe  = SensorValue("ID_31", "TempWardrobe",  SensorValue_Data.Types.Temp, "°C")
+    qv_humi_wardrobe  = SensorValue("ID_32", "HumiWardrobe",  SensorValue_Data.Types.Humi, "% rF")
+    qv_light_wardrobe = SensorValue("ID_33", "LightWardrobe", SensorValue_Data.Types.Light, "lux")
+
+    sq = SensorQueueClient_write("../../configs/weatherqueue.ini")
+    sq.register(qv_temp_wardrobe)
+    sq.register(qv_humi_wardrobe)
+    sq.register(qv_light_wardrobe)
+
+    lightness = Lightness(qv=qv_light_wardrobe)
+    htu21df = HTU21DF(qvalue_temp=qv_temp_wardrobe, qvalue_humi=qv_humi_wardrobe)
+
+
+    if self.__qvalue_temp is not None:
+        self.__qvalue_temp.value = "%.1f" % (t)
+"""
+
+
+
 ###############################################################################
 # Receiver ####################################################################
 class Receiver (object):
