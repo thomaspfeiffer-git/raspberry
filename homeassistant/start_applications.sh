@@ -1,6 +1,14 @@
 #!/bin/bash
 # starts all home automation applications
 
+
+echo "Starting Receive_UDP_Data.py ..."
+cd UDP/
+nohup ./Receive_UDP_Data.py 2>1 > receive_udp_data.log &
+echo "Receive_UDP_Data.py started."
+cd ..
+
+
 echo "Starting QueueServer.py ..."
 cd Queueserver/
 nohup ./QueueServer.py &
