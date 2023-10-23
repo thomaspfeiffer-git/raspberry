@@ -71,10 +71,10 @@ class Lightness (threading.Thread):
     """read lightness value from sensor"""
     """provide lightness value in getter method"""
 
-    def __init__ (self, qv=None):
+    def __init__ (self):
         threading.Thread.__init__(self)
         self.__lock    = threading.Lock()
-        self.__tsl2561 = TSL2561(qvalue=qv)
+        self.__tsl2561 = TSL2561()
         self.__value   = 0
         self.__running = True
 
