@@ -26,9 +26,6 @@ from sensors.CPU import CPU
 from sensors.HTU21DF import HTU21DF
 from sensors.TSL2561 import TSL2561
 
-from SensorQueue2 import SensorQueueClient_write
-from SensorValue2 import SensorValue, SensorValue_Data
-
 from Logging import Log
 from Shutdown import Shutdown
 
@@ -318,7 +315,7 @@ class Control_Button (Control):
 # Main ########################################################################
 def main ():
     cpu     = CPU()
-    htu21df = HTU21DF(qvalue_temp=qv_temp_wardrobe, qvalue_humi=qv_humi_wardrobe)
+    htu21df = HTU21DF()
     udp = UDP_Sender()
 
     lightness.start()
@@ -367,16 +364,7 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    qv_temp_wardrobe  = SensorValue("ID_31", "TempWardrobe",  SensorValue_Data.Types.Temp, "°C")
-    qv_humi_wardrobe  = SensorValue("ID_32", "HumiWardrobe",  SensorValue_Data.Types.Humi, "% rF")
-    qv_light_wardrobe = SensorValue("ID_33", "LightWardrobe", SensorValue_Data.Types.Light, "lux")
-
-    sq = SensorQueueClient_write("../../configs/weatherqueue.ini")
-    sq.register(qv_temp_wardrobe)
-    sq.register(qv_humi_wardrobe)
-    sq.register(qv_light_wardrobe)
-
-    lightness = Lightness(qv=qv_light_wardrobe)
+    lightness = Lightness()
     forecast  = Forecast(central_i2c_lock)
     controls  = {
                  'doors':  Control(Sensor1_Pin, Actuator1_ID),
