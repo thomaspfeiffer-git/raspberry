@@ -8,7 +8,7 @@ SensorQueue.py
 Provides classes for working with a shared queue.
 
 SensorQueueServer: Starts a server for working with the queue.
-SensorQueueClient: Provides a client for the queue with methods 
+SensorQueueClient: Provides a client for the queue with methods
                    for read from and write to the queue.
 """
 
@@ -60,7 +60,7 @@ class SensorQueueConfig (object):
 
 
 ##############################################################################
-class QueueManager(BaseManager): 
+class QueueManager(BaseManager):
     pass
 
 
@@ -122,9 +122,12 @@ class SensorQueueClient (object):
             except:
                 Log("Cannot connect to manager: {0}: {1[0]} {1[1]}".
                     format(self.__class__.__name__, sys.exc_info()))
-                
+
+                ### TODO: In case of outage of receiver, this ends up
+                ### in an endless loop.
                 for _ in range(self.cfg.RETRYDELAY):
                     time.sleep(1.0)
+
 
 
 ##############################################################################
@@ -162,9 +165,11 @@ class SensorQueueClient_write (SensorQueueClient):
                 Log("Queue full")
             except:
                 Log("Cannot write to queue: {0[0]} {0[1]}".format(sys.exc_info()))
+                ### TODO: In case of outage of receiver, this ends up
+                ### in an endless loop.
                 self.connect()
         else:
-            raise NotConnectedError("write() called without connection to queue") 
+            raise NotConnectedError("write() called without connection to queue")
 
 
 ##############################################################################
@@ -186,7 +191,7 @@ class SensorQueueClient_read (SensorQueueClient):
                 Log("Cannot read from queue: {0[0]} {0[1]}".format(sys.exc_info()))
                 self.connect()
         else:
-            raise NotConnectedError("read() called without connection to queue") 
+            raise NotConnectedError("read() called without connection to queue")
 
 # eof #
 
