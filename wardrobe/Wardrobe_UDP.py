@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Wardrobe_UDP.py                                                             #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020             #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020, 2023       #
 ###############################################################################
 
 """
@@ -23,15 +23,16 @@ sys.path.append("../libs/")
 from Logging import Log
 import UDP
 
-CREDENTIALS = os.path.expanduser("~/credentials/wardrobe.cred")
+CREDENTIALS_UDP_RRD = os.path.expanduser("~/credentials/wardrobe.cred")
+CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/wardrobe_homeautomation.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/wardrobe.rrd")
 
 
 ###############################################################################
 # UDP_Sender ##################################################################
 class UDP_Sender (object):
-    def __init__ (self):
-        self.udp = UDP.Sender(CREDENTIALS)
+    def __init__ (self, credentials):
+        self.udp = UDP.Sender(credentials)
 
     def send (self, data):
         self.udp.send(data)
@@ -59,8 +60,8 @@ class UDP_Receiver (object):
                    DS_OPEN3     + ":" + \
                    DS_OPEN4
 
-    def __init__ (self):
-        self.udp = UDP.Receiver(CREDENTIALS)
+    def __init__ (self, credentials):
+        self.udp = UDP.Receiver(credentials)
 
     def receive (self):
         import rrdtool
@@ -88,7 +89,7 @@ if __name__ == "__main__":
     from Shutdown import Shutdown
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
-    udp = UDP_Receiver()
+    udp = UDP_Receiver(CREDENTIALS_UDP_RRD)
     udp.receive()
 
 # eof #

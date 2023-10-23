@@ -30,7 +30,7 @@ from Logging import Log
 from Shutdown import Shutdown
 
 from Forecast import Forecast
-from Wardrobe_UDP import UDP_Sender
+from Wardrobe_UDP import UDP_Sender, CREDENTIALS_UDP_RRD, CREDENTIALS_UDP_HOMEAUTOMATION
 
 
 # sensor id | gpio-in | usage |
@@ -316,7 +316,7 @@ class Control_Button (Control):
 def main ():
     cpu     = CPU()
     htu21df = HTU21DF()
-    udp = UDP_Sender()
+    udp_rrd = UDP_Sender(CREDENTIALS_UDP_RRD)
 
     lightness.start()
     forecast.start()
@@ -338,7 +338,7 @@ def main ():
                     ":{}".format(controls['drawer'].switchvalue_stretched()) + \
                     ":{}".format(0)
 
-        udp.send(rrd_data)
+        udp_rrd.send(rrd_data)
         sleep(50)
 
 
