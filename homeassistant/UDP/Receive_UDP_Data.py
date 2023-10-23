@@ -25,7 +25,7 @@ from Shutdown import Shutdown
 import UDP
 
 
-CREDENTIALS = os.path.expanduser("~/credentials/wardrobe_homeautomation.cred")
+CREDENTIALS = os.path.expanduser("~/credentials/homeautomation.cred")
 
 
 ###############################################################################
