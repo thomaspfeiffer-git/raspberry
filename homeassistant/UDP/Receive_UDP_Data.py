@@ -25,30 +25,11 @@ from Shutdown import Shutdown
 import UDP
 
 
+### TODO: move to local directory ./
+from SensorQueue2 import SensorQueueClient_write
+from SensorValue2 import SensorValue, SensorValue_Data
+
 CREDENTIALS = os.path.expanduser("~/credentials/homeautomation.cred")
-
-
-"""
-    from SensorQueue2 import SensorQueueClient_write
-    from SensorValue2 import SensorValue, SensorValue_Data
-
-    qv_temp_wardrobe  = SensorValue("ID_31", "TempWardrobe",  SensorValue_Data.Types.Temp, "°C")
-    qv_humi_wardrobe  = SensorValue("ID_32", "HumiWardrobe",  SensorValue_Data.Types.Humi, "% rF")
-    qv_light_wardrobe = SensorValue("ID_33", "LightWardrobe", SensorValue_Data.Types.Light, "lux")
-
-    sq = SensorQueueClient_write("../../configs/weatherqueue.ini")
-    sq.register(qv_temp_wardrobe)
-    sq.register(qv_humi_wardrobe)
-    sq.register(qv_light_wardrobe)
-
-    lightness = Lightness(qv=qv_light_wardrobe)
-    htu21df = HTU21DF(qvalue_temp=qv_temp_wardrobe, qvalue_humi=qv_humi_wardrobe)
-
-
-    if self.__qvalue_temp is not None:
-        self.__qvalue_temp.value = "%.1f" % (t)
-"""
-
 
 
 ###############################################################################
@@ -70,6 +51,43 @@ class Receiver (object):
 
 
 ###############################################################################
+# Wardrobe ####################################################################
+class Wardrobe (object):
+    def __init__ (self):
+        self.qv_temp  = SensorValue("XID_31", "TempWardrobe",  SensorValue_Data.Types.Temp, "°C")
+        self.qv_humi  = SensorValue("XID_32", "HumiWardrobe",  SensorValue_Data.Types.Humi, "% rF")
+        self.qv_light = SensorValue("XID_33", "LightWardrobe", SensorValue_Data.Types.Light, "lux")
+
+        ### TODO change path ###
+        self.sq = SensorQueueClient_write("../../../configs_2_delete/weatherqueue.ini")
+        self.sq.register(self.qv_temp)
+        self.sq.register(self.qv_humi)
+        self.sq.register(self.qv_light)
+
+    def update (self, temp, humi, light):
+        self.qv_temp.value = f"{temp:.1f}"
+        self.qv_humi.value = f"{humi:.1f}"
+        self.qv_light.value = f"{light:.1f}"
+
+
+###############################################################################
+# Serverroom ##################################################################
+class Serverroom (object):
+    def __init__ (self):
+        self.qv_temp  = SensorValue("XID_98", "TempServerroom",  SensorValue_Data.Types.Temp, "°C")
+        self.qv_humi  = SensorValue("XID_99", "HumiServerroom",  SensorValue_Data.Types.Humi, "% rF")
+
+        ### TODO change path ###
+        self.sq = SensorQueueClient_write("../../../configs_2_delete/weatherqueue.ini")
+        self.sq.register(self.qv_temp)
+        self.sq.register(self.qv_humi)
+
+    def update (self, temp, humi):
+        self.qv_temp.value = f"{temp:.1f}"
+        self.qv_humi.value = f"{humi:.1f}"
+
+
+###############################################################################
 # Shutdown stuff ##############################################################
 def shutdown_application ():
     """cleanup stuff"""
@@ -81,6 +99,9 @@ def shutdown_application ():
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
+    wardrobe = Wardrobe()
+    serverroom = Serverroom()
+
     r = Receiver()
     r.start()
 
