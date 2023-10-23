@@ -47,7 +47,9 @@ class Receiver (object):
             except IndexError:
                 Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()))
             else:
-                Log(f"Source: {source}; Data: {data}")
+                cls = globals()[source.lower()]
+                cls.update(data)
+
 
 
 ###############################################################################
@@ -64,7 +66,15 @@ class Wardrobe (object):
         self.sq.register(self.qv_humi)
         self.sq.register(self.qv_light)
 
-    def update (self, temp, humi, light):
+    def update (self, rrd):
+        ### TODO validate data
+        items = rrd.split(":")
+        temp = float(items[1])
+        humi = float(items[2])
+        light = float(items[4])
+        self.set_values(temp, humi, light)
+
+    def set_values (self, temp, humi, light):
         self.qv_temp.value = f"{temp:.1f}"
         self.qv_humi.value = f"{humi:.1f}"
         self.qv_light.value = f"{light:.1f}"
@@ -82,7 +92,14 @@ class Serverroom (object):
         self.sq.register(self.qv_temp)
         self.sq.register(self.qv_humi)
 
-    def update (self, temp, humi):
+    def update (self, rrd):
+        ### TODO validate data
+        items = rrd.split(":")
+        temp = float(items[1])
+        humi = float(items[2])
+        self.set_values(temp, humi)
+
+    def set_values (self, temp, humi):
         self.qv_temp.value = f"{temp:.1f}"
         self.qv_humi.value = f"{humi:.1f}"
 
