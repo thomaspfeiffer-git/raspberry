@@ -317,6 +317,7 @@ def main ():
     cpu     = CPU()
     htu21df = HTU21DF()
     udp_rrd = UDP_Sender(CREDENTIALS_UDP_RRD)
+    udp_homeautomation = UDP_Sender(CREDENTIALS_UDP_HOMEAUTOMATION)
 
     lightness.start()
     forecast.start()
@@ -339,6 +340,7 @@ def main ():
                     ":{}".format(0)
 
         udp_rrd.send(rrd_data)
+        udp_homeautomation.send(f"Wardrobe - {rrd_data}")
         sleep(50)
 
 
