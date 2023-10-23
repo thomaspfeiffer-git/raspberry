@@ -3,7 +3,7 @@
 ###############################################################################
 # Serverroom.py                                                               #
 # Monitors temperature and humidity in our server room                        #
-# (c) https://github.com/thomaspfeiffer-git 2020                              #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2023                        #
 ###############################################################################
 """ Collect temperature and humidity in our server room (mainly with HTU21DF). """
 
@@ -33,8 +33,10 @@ import UDP
 
 
 # Misc for rrdtool
-CREDENTIALS = os.path.expanduser("~/credentials/serverroom.cred")
+CREDENTIALS_UDP_RRD = os.path.expanduser("~/credentials/serverroom.cred")
+CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/homeautomation.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/serverroom.rrd")
+
 DS_TEMP       = "temp"
 DS_HUMI       = "humi"
 DS_TEMPCPU    = "tempcpu"
@@ -46,7 +48,8 @@ def Sensor ():
     """reads data from sensor"""
     htu21df = HTU21DF()
     cpu = CPU()
-    udp = UDP.Sender(CREDENTIALS)
+    udp_rrd = UDP.Sender(CREDENTIALS_UDP_RRD)
+    udp_homeautomation = UDP.Sender(CREDENTIALS_UDP_HOMEAUTOMATION)
 
     while True:
         temperature = htu21df.read_temperature()
@@ -57,7 +60,8 @@ def Sensor ():
                    ":".join(f"{d:.2f}" for d in [temperature, \
                                                  humidity,   \
                                                  cpu_temp])
-        udp.send(rrd_data)
+        udp_rrd.send(rrd_data)
+        udp_homeautomation.send(f"Serverroom - {rrd_data}")
         time.sleep(50)
 
 
@@ -67,7 +71,7 @@ def Receiver ():
     rrd_template = DS_TEMP + ":" + \
                    DS_HUMI + ":" + \
                    DS_TEMPCPU
-    udp = UDP.Receiver(CREDENTIALS)
+    udp = UDP.Receiver(CREDENTIALS_UDP_RRD)
 
     while True:
         data = udp.receive()
