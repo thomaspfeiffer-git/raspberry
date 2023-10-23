@@ -24,7 +24,7 @@ from Logging import Log
 import UDP
 
 CREDENTIALS_UDP_RRD = os.path.expanduser("~/credentials/wardrobe.cred")
-CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/wardrobe_homeautomation.cred")
+CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/homeautomation.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/wardrobe.rrd")
 
 
