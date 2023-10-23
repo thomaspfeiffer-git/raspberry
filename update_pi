@@ -1,7 +1,7 @@
-#!/usr/bin/bash
-# update/upgrade script
-# (c) https://github.com/thomaspfeiffer-git 2023
-################################################
+##################################################
+# update/upgrade script                          #
+# (c) https://github.com/thomaspfeiffer-git 2023 #
+##################################################
 
 sudo apt-get update -y --fix-missing
 sudo apt-get upgrade -y --fix-missing
