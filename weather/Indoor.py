@@ -3,7 +3,7 @@
 ###############################################################################
 # Indoor.py                                                                   #
 # Monitors temperature, humidity, and air pressure in our living room.        #
-# (c) https://github.com/thomaspfeiffer-git 2019, 2020, 2022                  #
+# (c) https://github.com/thomaspfeiffer-git 2019, 2020, 2022, 2023            #
 ###############################################################################
 """ Collect weather and some other data indoor (mainly with BME680). """
 
@@ -35,7 +35,9 @@ from Shutdown import Shutdown
 import UDP
 
 
-CREDENTIALS = os.path.expanduser("~/credentials/weather_indoor.cred")
+CREDENTIALS_UDP_RRD = os.path.expanduser("~/credentials/weather_indoor.cred")
+CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/homeautomation.cred")
+
 
 RRDFILE      = os.path.expanduser("~/rrd/databases/weather_indoor.rrd")
 DS_TEMP       = "temp"
@@ -63,7 +65,8 @@ def Sensor ():
                     qv_temp=qv_temp, qv_humi=qv_humi, \
                     qv_pressure=qv_pressure, qv_airquality=qv_airquality)
     cpu = CPU()
-    udp = UDP.Sender(CREDENTIALS)
+    udp_rrd = UDP.Sender(CREDENTIALS_UDP_RRD)
+    udp_homeautomation = UDP.Sender(CREDENTIALS_UDP_HOMEAUTOMATION)
 
     while True:
         bme680.get_sensor_data()
@@ -81,7 +84,8 @@ def Sensor ():
                                                  airquality, \
                                                  cpu_temp])
 
-        udp.send(rrd_data)
+        udp_rrd.send(rrd_data)
+        udp_homeautomation.send(f"Weather_Indoor - {rrd_data}")
         time.sleep(50)
 
 
@@ -93,7 +97,7 @@ def Receiver ():
                    DS_PRESSURE   + ":" + \
                    DS_AIRQUALITY + ":" + \
                    DS_TEMPCPU
-    udp = UDP.Receiver(CREDENTIALS)
+    udp = UDP.Receiver(CREDENTIALS_UDP_RRD)
 
     while True:
         try:
