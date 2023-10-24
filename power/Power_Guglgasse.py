@@ -51,9 +51,10 @@ from Meters import SDM630
 CREDENTIALS_RRD = os.path.expanduser("~/credentials/power_guglgasse.cred")
 CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/homeautomation.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/power_guglgasse.rrd")
-UPDATE_INTERVAL_READ_DATA       = 1   # time delay between two measurements (seconds)
-UPDATE_INTERVAL_SEND_DATA_UDP   = 10  # interval for sending data to external server
-UPDATE_INTERVAL_SEND_DATA_HOMEAUTOMATION = 1   # interval for sending data to homeautomation server
+
+UPDATE_INTERVAL_READ_DATA = 1                 # time delay between two measurements (seconds)
+UPDATE_INTERVAL_SEND_DATA_UDP = 10            # interval for sending data to external server
+UPDATE_INTERVAL_SEND_DATA_HOMEAUTOMATION = 1  # interval for sending data to homeautomation server
 
 BusID_Meter = 1
 
@@ -110,7 +111,7 @@ class Fake_SDM630 (object):
 
 
 ###############################################################################
-# StoreData_UDP ###############################################################
+# StoreData_RRD ###############################################################
 class StoreData_RRD (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
@@ -139,10 +140,13 @@ class StoreData_RRD (threading.Thread):
 
 
 ###############################################################################
-# StoreData_Local #############################################################
+# StoreData_Homeautomation ####################################################
 class StoreData_Homeautomation (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
+
+        self.udp = UDP.Sender(CREDENTIALS_UDP_HOMEAUTOMATION)
+        self.rrd_template = f"{meter.rrd_template()}"
 
     def run (self):
         self._running = True
@@ -154,12 +158,11 @@ class StoreData_Homeautomation (threading.Thread):
 
             if self._running:
                 try:
-                    payload = f"{meter.rrd_template}:N:{meter.rrd()}"
+                    payload = f"Power - {self.rrd_template}:N:{meter.rrd()}"
                 except RuntimeError:    # ignore empty data
                     pass
                 else:
-                    pass
-                    # TODO send data to homeautomation home automation project (pih)
+                    self.udp.send(payload)
 
     def stop (self):
         self._running = False
