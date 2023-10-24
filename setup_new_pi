@@ -19,6 +19,13 @@ sudo mount /dev/sda1 raspi
 cd raspi
 sudo touch ssh
 
+At the root of your SD card, create a file named userconf.txt.
+This file should contain a single line of text, consisting of <username>:<password>
+
+openssl passwd -6
+
+
+
 
 WIFI (Headless):
 ================
