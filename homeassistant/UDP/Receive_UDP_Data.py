@@ -56,8 +56,8 @@ class Receiver (object):
 # Wardrobe ####################################################################
 class Wardrobe (object):
     def __init__ (self):
-        self.qv_temp  = SensorValue("XID_31", "TempWardrobe",  SensorValue_Data.Types.Temp, "°C")
-        self.qv_humi  = SensorValue("XID_32", "HumiWardrobe",  SensorValue_Data.Types.Humi, "% rF")
+        self.qv_temp  = SensorValue("XID_31", "TempWardrobe", SensorValue_Data.Types.Temp, "°C")
+        self.qv_humi  = SensorValue("XID_32", "HumiWardrobe", SensorValue_Data.Types.Humi, "% rF")
         self.qv_light = SensorValue("XID_33", "LightWardrobe", SensorValue_Data.Types.Light, "lux")
 
         ### TODO change path ###
@@ -84,8 +84,8 @@ class Wardrobe (object):
 # Serverroom ##################################################################
 class Serverroom (object):
     def __init__ (self):
-        self.qv_temp  = SensorValue("XID_98", "TempServerroom",  SensorValue_Data.Types.Temp, "°C")
-        self.qv_humi  = SensorValue("XID_99", "HumiServerroom",  SensorValue_Data.Types.Humi, "% rF")
+        self.qv_temp  = SensorValue("XID_98", "TempServerroom", SensorValue_Data.Types.Temp, "°C")
+        self.qv_humi  = SensorValue("XID_99", "HumiServerroom", SensorValue_Data.Types.Humi, "% rF")
 
         ### TODO change path ###
         self.sq = SensorQueueClient_write("../../../configs_2_delete/weatherqueue.ini")
@@ -105,6 +105,24 @@ class Serverroom (object):
 
 
 ###############################################################################
+# Power #######################################################################
+class Power (object):
+    def __init__ (self):
+        self.qv_power  = SensorValue("P_ID_01", "MainPower", SensorValue_Data.Types.Power, "W")
+        self.sq = SensorQueueClient_write("../../../configs_2_delete/weatherqueue.ini")
+        self.sq.register(self.qv_power)
+
+    def update (self, rrd):
+        ### TODO validate data
+        items = rrd.split(":")
+        power = float(items[18])
+        self.set_values(power)
+
+    def set_values (self, power):
+        self.qv_power.value = f"{power:.1f}"
+
+
+###############################################################################
 # Shutdown stuff ##############################################################
 def shutdown_application ():
     """cleanup stuff"""
@@ -118,6 +136,7 @@ def shutdown_application ():
 if __name__ == "__main__":
     wardrobe = Wardrobe()
     serverroom = Serverroom()
+    power = Power()
 
     r = Receiver()
     r.start()
