@@ -52,7 +52,7 @@ CREDENTIALS = os.path.expanduser("~/credentials/power_guglgasse.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/power_guglgasse.rrd")
 UPDATE_INTERVAL_READ_DATA       = 1   # time delay between two measurements (seconds)
 UPDATE_INTERVAL_SEND_DATA_UDP   = 10  # interval for sending data to external server
-UPDATE_INTERVAL_SEND_DATA_LOCAL = 1   # interval for sending data to internal server
+UPDATE_INTERVAL_SEND_DATA_HOMEAUTOMATION = 1   # interval for sending data to homeautomation server
 
 BusID_Meter = 1
 
@@ -88,14 +88,14 @@ class StoreData_UDP (threading.Thread):
 
 ###############################################################################
 # StoreData_Local #############################################################
-class StoreData_Local (threading.Thread):
+class StoreData_Homeautomation (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
 
     def run (self):
         self._running = True
         while self._running:
-            for _ in range(UPDATE_INTERVAL_SEND_DATA_LOCAL*10):
+            for _ in range(UPDATE_INTERVAL_SEND_DATA_HOMEAUTOMATION*10):
                 if not self._running:
                     break
                 time.sleep(0.1)
@@ -107,7 +107,7 @@ class StoreData_Local (threading.Thread):
                     pass
                 else:
                     pass
-                    # TODO send data to local home automation project (pih)
+                    # TODO send data to homeautomation home automation project (pih)
 
     def stop (self):
         self._running = False
@@ -142,8 +142,8 @@ def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
     if args.sensor:
-        storedata_local.stop()
-        storedata_local.join()
+        storedata_homeautomation.stop()
+        storedata_homeautomation.join()
         storedata_udp.stop()
         storedata_udp.join()
 
@@ -172,8 +172,8 @@ if __name__ == "__main__":
 
         storedata_udp = StoreData_UDP()
         storedata_udp.start()
-        storedata_local = StoreData_Local()
-        storedata_local.start()
+        storedata_homeautomation = StoreData_Homeautomation()
+        storedata_homeautomation.start()
 
         while True:
             meter.read()
