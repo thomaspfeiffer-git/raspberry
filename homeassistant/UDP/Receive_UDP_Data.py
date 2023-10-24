@@ -42,8 +42,7 @@ CREDENTIALS = os.path.expanduser("~/credentials/homeautomation.cred")
 # SQ ##########################################################################
 class SQ (SensorQueueClient_write):
     def __init__ (self):
-        ### TODO change path ###
-        super().__init__("../../../configs_2_delete/weatherqueue.ini")
+        super().__init__("../config.ini")
 
 
 ###############################################################################
@@ -136,7 +135,7 @@ class Power (object):
 
 ###############################################################################
 # Outdoor #####################################################################
-class Outdoor (object):
+class Weather_Outdoor (object):
     def __init__ (self):
         self.qv_temp        = SensorValue("ID_03", "TempOutdoor", SensorValue_Data.Types.Temp, "°C")
         self.qv_temp_garden = SensorValue("ID_12", "TempOutdoorGarden", SensorValue_Data.Types.Temp, "°C")
@@ -144,12 +143,22 @@ class Outdoor (object):
         self.qv_lightness   = SensorValue("ID_15", "LightnessOutdoor", SensorValue_Data.Types.Light, "lux")
 
         self.sq = SQ()
-        ### TODO
+        self.sq.register(self.qv_temp)
+        self.sq.register(self.qv_temp_garden)
+        self.sq.register(self.qv_humi)
+        self.sq.register(self.qv_lightness)
+
+    def update (self, rrd):
+        items = rrd.split(":")
+        self.qv_temp.value = items[1]
+        self.qv_temp_garden.value = items[2]
+        self.qv_humi.value = items[3]
+        self.qv_lightness.value = items[5]
 
 
 ###############################################################################
 # Indoor######################################################################
-class Indoor (object):
+class Weather_Indoor (object):
     def __init__ (self):
         self.qv_temp       = SensorValue("ID_01", "TempWohnzimmerIndoor", SensorValue_Data.Types.Temp, "°C")
         self.qv_humi       = SensorValue("ID_02", "HumiWohnzimmerIndoor", SensorValue_Data.Types.Humi, "% rF")
@@ -157,7 +166,17 @@ class Indoor (object):
         self.qv_airquality = SensorValue("ID_14", "AirQualityWohnzimmer", SensorValue_Data.Types.AirQuality, "%")
 
         self.sq = SQ()
-        ### TODO
+        self.sq.register(self.qv_temp)
+        self.sq.register(self.qv_humi)
+        self.sq.register(self.qv_pressure)
+        self.sq.register(self.qv_airquality)
+
+    def update (self, rrd):
+        items = rrd.split(":")
+        self.qv_temp.value = items[1]
+        self.qv_humi.value = items[2]
+        self.qv_pressure.value = items[3]
+        self.qv_airquality.value = items[4]
 
 
 ###############################################################################
@@ -175,6 +194,8 @@ if __name__ == "__main__":
     wardrobe = Wardrobe()
     serverroom = Serverroom()
     power = Power()
+    weather_outdoor = Weather_Outdoor()
+    weather_indoor = Weather_Indoor()
 
     r = Receiver()
     r.start()
