@@ -14,7 +14,7 @@ cd /home/pi/raspberry/
 
 cd power/
 echo "Starting 'Power_Guglgasse.py --sensor' ..."
-nohup ./Power_Guglgasse.py --sensor 2>&1 > power_guglgasse.log &
+nohup ./Power_Guglgasse.py --sensor 2 > power_guglgasse.log > /dev/null &
 cd ..
 
 # eof #
