@@ -155,6 +155,9 @@ class Weather_Outdoor (object):
         self.qv_humi.value = items[3]
         self.qv_lightness.value = items[5]
 
+    def set_values (self):
+        pass ######### TODO; check if needed
+
 
 ###############################################################################
 # Indoor######################################################################
@@ -177,6 +180,9 @@ class Weather_Indoor (object):
         self.qv_humi.value = items[2]
         self.qv_pressure.value = items[3]
         self.qv_airquality.value = items[4]
+
+    def set_values (self):
+        pass ######### TODO; check if needed
 
 
 ###############################################################################
