@@ -68,14 +68,15 @@ Fast setup of most important modules/libraries:
 ===============================================
 
 
-sudo apt-get install nfs-common debian-goodies screen vim python3-pip i2c-tools git -y
+sudo apt-get install nfs-common debian-goodies screen vim python3-pip i2c-tools dnsutils git -y
+
+sudo service dphys-swapfile stop
+sudo apt-get purge dphys-swapfile
+
 
 sudo apt-get install libjpeg8-dev libopenjp2-7 libtiff5 -y
 sudo pip3 install Pillow
 sudo pip3 install Jinja2 ; sudo pip3 install Werkzeug ; sudo pip3 install Flask
-
-sudo service dphys-swapfile stop
-sudo apt-get purge dphys-swapfile
 
 
 
