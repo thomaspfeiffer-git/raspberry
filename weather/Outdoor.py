@@ -3,7 +3,7 @@
 ###############################################################################
 # Outdoor.py                                                                  #
 # Monitors temperature, humidity, and air pressure outside                    #
-# (c) https://github.com/thomaspfeiffer-git 2019, 2020                        #
+# (c) https://github.com/thomaspfeiffer-git 2019, 2020, 2023                  #
 ###############################################################################
 """ Collect weather and some other data outdoor. """
 
@@ -35,7 +35,9 @@ from Logging import Log
 from Shutdown import Shutdown
 import UDP
 
-CREDENTIALS = os.path.expanduser("~/credentials/weather_outdoor.cred")
+CREDENTIALS_UDP_RRD = os.path.expanduser("~/credentials/weather_outdoor.cred")
+CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/homeautomation.cred")
+
 
 RRDFILE       = os.path.expanduser("~/rrd/databases/weather_outdoor.rrd")
 DS_TEMP        = "temp"
@@ -67,7 +69,8 @@ def Sensor ():
     ds1820 = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave", qv_temp_garden)
     tsl2561 = TSL2561(qvalue=qv_lightness)
     cpu = CPU()
-    udp = UDP.Sender(CREDENTIALS)
+    udp_rrd = UDP.Sender(CREDENTIALS_UDP_RRD)
+    udp_homeautomation = UDP.Sender(CREDENTIALS_UDP_HOMEAUTOMATION)
 
     while True:
         temp        = bme280.read_temperature()
@@ -84,7 +87,8 @@ def Sensor ():
                                                  pressure,    \
                                                  lightness,   \
                                                  cpu_temp])
-        udp.send(rrd_data)
+        udp_rrd.send(rrd_data)
+        udp_homeautomation.send(f"Weather_Outdoor - {rrd_data}")
         time.sleep(50)
 
 
@@ -97,7 +101,7 @@ def Receiver ():
                    DS_PRESSURE    + ":" + \
                    DS_LIGHTNESS   + ":" + \
                    DS_TEMPCPU
-    udp = UDP.Receiver(CREDENTIALS)
+    udp = UDP.Receiver(CREDENTIALS_UDP_RRD)
 
     while True:
         data = udp.receive()
