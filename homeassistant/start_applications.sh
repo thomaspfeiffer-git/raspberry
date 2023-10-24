@@ -4,7 +4,7 @@
 
 echo "Starting Receive_UDP_Data.py ..."
 cd UDP/
-nohup ./Receive_UDP_Data.py 2>&1 > receive_udp_data.log &
+nohup ./Receive_UDP_Data.py 2>receive_udp_data.log 1>/dev/null &
 echo "Receive_UDP_Data.py started."
 cd ..
 
