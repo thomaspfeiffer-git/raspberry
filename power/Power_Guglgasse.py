@@ -48,7 +48,8 @@ from CSV import CSV
 from Meters import SDM630
 
 
-CREDENTIALS = os.path.expanduser("~/credentials/power_guglgasse.cred")
+CREDENTIALS_RRD = os.path.expanduser("~/credentials/power_guglgasse.cred")
+CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/homeautomation.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/power_guglgasse.rrd")
 UPDATE_INTERVAL_READ_DATA       = 1   # time delay between two measurements (seconds)
 UPDATE_INTERVAL_SEND_DATA_UDP   = 10  # interval for sending data to external server
@@ -59,11 +60,11 @@ BusID_Meter = 1
 
 ###############################################################################
 # StoreData_UDP ###############################################################
-class StoreData_UDP (threading.Thread):
+class StoreData_RRD (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
 
-        self.udp = UDP.Sender(CREDENTIALS)
+        self.udp = UDP.Sender(CREDENTIALS_RRD)
         self.rrd_template = f"{meter.rrd_template()}"
 
     def run (self):
@@ -117,7 +118,7 @@ class StoreData_Homeautomation (threading.Thread):
 # Receiver ####################################################################
 class Receiver (object):
     def __init__ (self):
-        self.udp = UDP.Receiver(CREDENTIALS)
+        self.udp = UDP.Receiver(CREDENTIALS_RRD)
 
     def start (self):
         while True:
@@ -144,8 +145,8 @@ def shutdown_application ():
     if args.sensor:
         storedata_homeautomation.stop()
         storedata_homeautomation.join()
-        storedata_udp.stop()
-        storedata_udp.join()
+        storedata_rrd.stop()
+        storedata_rrd.join()
 
     Log("Application stopped")
     sys.exit(0)
@@ -170,8 +171,8 @@ if __name__ == "__main__":
     if args.sensor:
         meter = SDM630(BusID_Meter)
 
-        storedata_udp = StoreData_UDP()
-        storedata_udp.start()
+        storedata_rrd = StoreData_RRD()
+        storedata_rrd.start()
         storedata_homeautomation = StoreData_Homeautomation()
         storedata_homeautomation.start()
 
