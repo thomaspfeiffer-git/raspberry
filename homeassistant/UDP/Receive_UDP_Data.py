@@ -68,9 +68,9 @@ class Receiver (object):
 # Wardrobe ####################################################################
 class Wardrobe (object):
     def __init__ (self):
-        self.qv_temp  = SensorValue("XID_31", "TempWardrobe", SensorValue_Data.Types.Temp, "°C")
-        self.qv_humi  = SensorValue("XID_32", "HumiWardrobe", SensorValue_Data.Types.Humi, "% rF")
-        self.qv_light = SensorValue("XID_33", "LightWardrobe", SensorValue_Data.Types.Light, "lux")
+        self.qv_temp  = SensorValue("ID_31", "TempWardrobe", SensorValue_Data.Types.Temp, "°C")
+        self.qv_humi  = SensorValue("ID_32", "HumiWardrobe", SensorValue_Data.Types.Humi, "% rF")
+        self.qv_light = SensorValue("ID_33", "LightWardrobe", SensorValue_Data.Types.Light, "lux")
 
         self.sq = SQ()
         self.sq.register(self.qv_temp)
