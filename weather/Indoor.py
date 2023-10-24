@@ -27,9 +27,6 @@ sys.path.append('../libs')
 from sensors.BME680 import BME680, BME_680_BASEADDR
 from sensors.CPU import CPU
 
-from SensorQueue2 import SensorQueueClient_write
-from SensorValue2 import SensorValue, SensorValue_Data
-
 from Logging import Log
 from Shutdown import Shutdown
 import UDP
@@ -38,8 +35,7 @@ import UDP
 CREDENTIALS_UDP_RRD = os.path.expanduser("~/credentials/weather_indoor.cred")
 CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/homeautomation.cred")
 
-
-RRDFILE      = os.path.expanduser("~/rrd/databases/weather_indoor.rrd")
+RRDFILE       = os.path.expanduser("~/rrd/databases/weather_indoor.rrd")
 DS_TEMP       = "temp"
 DS_HUMI       = "humi"
 DS_PRESSURE   = "pressure"
@@ -50,20 +46,7 @@ DS_TEMPCPU    = "temp_cpu"
 ###############################################################################
 # Sensor ######################################################################
 def Sensor ():
-    """reads data from sensor"""
-    qv_temp       = SensorValue("ID_01", "TempWohnzimmerIndoor", SensorValue_Data.Types.Temp, "°C")
-    qv_humi       = SensorValue("ID_02", "HumiWohnzimmerIndoor", SensorValue_Data.Types.Humi, "% rF")
-    qv_pressure   = SensorValue("ID_05", "Luftdruck", SensorValue_Data.Types.Pressure, "hPa")
-    qv_airquality = SensorValue("ID_14", "AirQualityWohnzimmer", SensorValue_Data.Types.AirQuality, "%")
-
-    sq.register(qv_temp)
-    sq.register(qv_humi)
-    sq.register(qv_pressure)
-    sq.register(qv_airquality)
-
-    bme680 = BME680(i2c_addr=BME_680_BASEADDR, \
-                    qv_temp=qv_temp, qv_humi=qv_humi, \
-                    qv_pressure=qv_pressure, qv_airquality=qv_airquality)
+    bme680 = BME680(i2c_addr=BME_680_BASEADDR)
     cpu = CPU()
     udp_rrd = UDP.Sender(CREDENTIALS_UDP_RRD)
     udp_homeautomation = UDP.Sender(CREDENTIALS_UDP_HOMEAUTOMATION)
@@ -131,7 +114,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.sensor:
-        sq = SensorQueueClient_write(os.path.expanduser("~/configs/weatherqueue.ini"))
         Sensor()
 
     if args.receiver:
