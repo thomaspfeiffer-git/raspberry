@@ -33,6 +33,14 @@ CREDENTIALS = os.path.expanduser("~/credentials/homeautomation.cred")
 
 
 ###############################################################################
+# SQ ##########################################################################
+class SQ (SensorQueueClient_write):
+    def __init__ (self):
+        ### TODO change path ###
+        super().__init__("../../../configs_2_delete/weatherqueue.ini")
+
+
+###############################################################################
 # Receiver ####################################################################
 class Receiver (object):
     def __init__ (self):
@@ -51,7 +59,6 @@ class Receiver (object):
                 cls.update(data)
 
 
-
 ###############################################################################
 # Wardrobe ####################################################################
 class Wardrobe (object):
@@ -60,8 +67,7 @@ class Wardrobe (object):
         self.qv_humi  = SensorValue("XID_32", "HumiWardrobe", SensorValue_Data.Types.Humi, "% rF")
         self.qv_light = SensorValue("XID_33", "LightWardrobe", SensorValue_Data.Types.Light, "lux")
 
-        ### TODO change path ###
-        self.sq = SensorQueueClient_write("../../../configs_2_delete/weatherqueue.ini")
+        self.sq = SQ()
         self.sq.register(self.qv_temp)
         self.sq.register(self.qv_humi)
         self.sq.register(self.qv_light)
@@ -87,8 +93,7 @@ class Serverroom (object):
         self.qv_temp  = SensorValue("XID_98", "TempServerroom", SensorValue_Data.Types.Temp, "°C")
         self.qv_humi  = SensorValue("XID_99", "HumiServerroom", SensorValue_Data.Types.Humi, "% rF")
 
-        ### TODO change path ###
-        self.sq = SensorQueueClient_write("../../../configs_2_delete/weatherqueue.ini")
+        self.sq = SQ()
         self.sq.register(self.qv_temp)
         self.sq.register(self.qv_humi)
 
@@ -109,7 +114,8 @@ class Serverroom (object):
 class Power (object):
     def __init__ (self):
         self.qv_power  = SensorValue("P_ID_01", "MainPower", SensorValue_Data.Types.Power, "W")
-        self.sq = SensorQueueClient_write("../../../configs_2_delete/weatherqueue.ini")
+
+        self.sq = SQ()
         self.sq.register(self.qv_power)
 
     def update (self, rrd):
