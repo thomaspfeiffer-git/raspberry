@@ -90,7 +90,7 @@ class WeatherApp (tk.Frame):
             self.screens[screen] = tk.Frame(self)
             self.screens[screen].config(bd=self.master.borderwidth,
                                         bg=CONFIG.COLORS.BACKGROUND,
-                                        width=self.master.width, height=410)
+                                        width=self.master.width, height=450)  #### old value: 410
             self.screens[screen].grid_propagate(0)
             self.screens[screen].grid_columnconfigure(0, minsize=self.master.width - \
                                                          2*self.master.borderwidth)
@@ -103,6 +103,7 @@ class WeatherApp (tk.Frame):
         """creates a  date frame which is indepentant from the weather screens
            created in WeatherApp.create_screens(). Thus it's possible to do
            pagination without a flickering date/time section."""
+        return ######################### TODO #############################
         self.dateframe = tk.Frame(master)
         self.dateframe.config(bd=self.master.borderwidth,
                               bg=CONFIG.COLORS.BACKGROUND,
@@ -188,7 +189,7 @@ class WeatherApp (tk.Frame):
                                           color=CONFIG.COLORS.OUTDOOR,
                                           gridpos=gridpos)
         gridpos = self.drawAwattarSection(frame=frame, title="Strompreise (ct/kWh):",
-                                          itemlist=['ID_AW_04', 'ID_AW_05'],
+                                          itemlist=['ID_AW_04', 'ID_AW_05', 'ID_50'],
                                           color=CONFIG.COLORS.AWATTAR,
                                           gridpos=gridpos)
         # gridpos = self.drawWeatherSection(frame=frame, title="Luftqualität Küche:",
