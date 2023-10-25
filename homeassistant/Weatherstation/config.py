@@ -28,7 +28,7 @@ class CONFIG:
         """definitions of fonts and font sizes"""
         FAMILY = "Arial"
 
-        SIZE_NORMAL   = int(30)
+        SIZE_NORMAL   = int(29)
         SIZE_FORECAST = int(SIZE_NORMAL / 2.0)
         SIZE_SMALL    = int(SIZE_NORMAL / 2.4)
         SIZE_TINY     = int(SIZE_NORMAL / 3.4)
