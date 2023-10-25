@@ -70,7 +70,7 @@ class Values (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
         self.queue = SensorQueueClient_read("../config.ini")
-        self.values = { "ID_{:02d}".format(id+1): A_Value() for id in range(50) }
+        self.values = { "ID_{:02d}".format(id+1): A_Value() for id in range(60) }
         self.values.update({ "ID_OWM_{:02d}".format(id+1): A_Value() for id in range(30) })
                                                 # some local calculated values
         self.values.update({ "ID_LC_{:02d}".format(id+1): A_Value() for id in range(30) })
