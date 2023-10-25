@@ -18,7 +18,9 @@ import tkinter as tk
 
 sys.path.append('../../libs')
 from Logging import Log
-from SensorQueue2 import SensorQueueClient_read
+
+sys.path.append("../Queueserver/")
+from SensorQueue import SensorQueueClient_read
 
 from config import CONFIG
 from constants import CONSTANTS
