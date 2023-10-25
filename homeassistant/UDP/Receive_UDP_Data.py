@@ -185,6 +185,67 @@ class Weather_Indoor (object):
         pass ######### TODO; check if needed
 
 
+"""
+Kollerberg stuff
+
+
+### receive data via udp and send to homeautomation server
+nohup ./Weather_Kollerberg.py --receiver_homeautomation 2>&1 >weather_kollerberg_homeautomation.log &
+
+
+class Receiver_Homeautomation (object):
+    def __init__ (self):
+        self.udp = UDP.Receiver(CREDENTIALS_HA)
+        self.data = { p: None for p in PIs }
+
+        self.sq = SensorQueueClient_write(QUEUE_INI)
+        self.qv_kb_i_t = SensorValue("ID_21", "Temp KB indoor", SensorValue_Data.Types.Temp, "°C")
+        self.qv_kb_i_h = SensorValue("ID_22", "Humi KB indoor", SensorValue_Data.Types.Humi, "% rF")
+        self.qv_kb_p   = SensorValue("ID_23", "Pressure KB",    SensorValue_Data.Types.Pressure, "hPa")
+
+        self.qv_kb_a_t = SensorValue("ID_24", "Temp KB outdoor", SensorValue_Data.Types.Temp, "°C")
+        self.qv_kb_a_h = SensorValue("ID_25", "Humi KB outdoor", SensorValue_Data.Types.Humi, "% rF")
+
+        self.qv_kb_k_t = SensorValue("ID_26", "Temp KB basement", SensorValue_Data.Types.Temp, "°C")
+        self.qv_kb_k_h = SensorValue("ID_27", "Humi KB basement", SensorValue_Data.Types.Humi, "% rF")
+
+        self.sq.register(self.qv_kb_i_t)
+        self.sq.register(self.qv_kb_i_h)
+        self.sq.register(self.qv_kb_p)
+        self.sq.register(self.qv_kb_a_t)
+        self.sq.register(self.qv_kb_a_h)
+        self.sq.register(self.qv_kb_k_t)
+        self.sq.register(self.qv_kb_k_h)
+
+
+    def process (self):
+        if self.data[pik_i] is not None:
+            self.qv_kb_i_t.value = "{:.1f}".format(float(self.data[pik_i].split(':')[1]))
+            self.qv_kb_i_h.value = "{:.1f}".format(float(self.data[pik_i].split(':')[4]))
+            self.qv_kb_p.value   = "{:.1f}".format(float(self.data[pik_i].split(':')[5]))
+        if self.data[pik_a] is not None:
+            self.qv_kb_a_t.value = "{:.1f}".format(float(self.data[pik_a].split(':')[1]))
+            self.qv_kb_a_h.value = "{:.1f}".format(float(self.data[pik_a].split(':')[4]))
+        if self.data[pik_k] is not None:
+            self.qv_kb_k_t.value = "{:.1f}".format(float(self.data[pik_k].split(':')[1]))
+            self.qv_kb_k_h.value = "{:.1f}".format(float(self.data[pik_k].split(':')[4]))
+
+    def run (self):
+        while True:
+            payload = self.udp.receive()
+            Log(f"Data received: {payload}")
+            (source, values) = payload.split(',')
+            self.data[source] = values
+            self.process()
+
+
+"""
+
+
+
+
+
+
 ###############################################################################
 # Shutdown stuff ##############################################################
 def shutdown_application ():

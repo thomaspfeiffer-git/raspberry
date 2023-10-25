@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #############################################################################
 # Weather_Kollerberg.py                                                     #
-# (c) https://github.com/thomaspfeiffer-git 2020                            #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2023                      #
 #############################################################################
 """Weather station at our summer cottage"""
 
@@ -13,9 +13,6 @@ nohup ./Weather_Kollerberg.py --sensor 2>&1 >weather_kollerberg.log &
 
 ### receive data via udp and store in rrd database
 nohup ./Weather_Kollerberg.py --receiver_rrd 2>&1 >weather_kollerberg_rrd.log &
-
-### receive data via udp and send to homeautomation server
-nohup ./Weather_Kollerberg.py --receiver_homeautomation 2>&1 >weather_kollerberg_homeautomation.log &
 """
 
 import argparse
@@ -31,8 +28,6 @@ from sensors.HTU21DF import HTU21DF
 from sensors.DS1820 import DS1820
 
 from Logging import Log
-from SensorQueue2 import SensorQueueClient_write
-from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 import UDP
 
@@ -56,7 +51,7 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
 # Misc for rrdtool and other config stuff
 QUEUE_INI = os.path.expanduser("~/configs/weatherqueue.ini")
 CREDENTIALS_RRD = os.path.expanduser("~/credentials/weather_kollerberg_rrd.cred")
-CREDENTIALS_HA = os.path.expanduser("~/credentials/weather_kollerberg_ha.cred")
+CREDENTIALS_HA = os.path.expanduser("~/credentials/homeautomation.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/weather_kollerberg.rrd")
 DS_TEMP1 = "DS_TEMP1"
 DS_TEMP2 = "DS_TEMP2"
@@ -112,7 +107,7 @@ def Sensor ():
                     ":{:.2f}".format(airquality)
 
         udp_rrd.send(f"{this_PI},{rrd_data}")
-        udp_ha.send(f"{this_PI},{rrd_data}")
+        udp_ha.send(f"Weather_Kollerberg - {this_PI},{rrd_data}")
         time.sleep(45)
 
 
@@ -182,53 +177,6 @@ class Receiver_RRD (object):
 
 
 ###############################################################################
-# Receiver_Homeautomation #####################################################
-class Receiver_Homeautomation (object):
-    def __init__ (self):
-        self.udp = UDP.Receiver(CREDENTIALS_HA)
-        self.data = { p: None for p in PIs }
-
-        self.sq = SensorQueueClient_write(QUEUE_INI)
-        self.qv_kb_i_t = SensorValue("ID_21", "Temp KB indoor", SensorValue_Data.Types.Temp, "°C")
-        self.qv_kb_i_h = SensorValue("ID_22", "Humi KB indoor", SensorValue_Data.Types.Humi, "% rF")
-        self.qv_kb_p   = SensorValue("ID_23", "Pressure KB",    SensorValue_Data.Types.Pressure, "hPa")
-
-        self.qv_kb_a_t = SensorValue("ID_24", "Temp KB outdoor", SensorValue_Data.Types.Temp, "°C")
-        self.qv_kb_a_h = SensorValue("ID_25", "Humi KB outdoor", SensorValue_Data.Types.Humi, "% rF")
-
-        self.qv_kb_k_t = SensorValue("ID_26", "Temp KB basement", SensorValue_Data.Types.Temp, "°C")
-        self.qv_kb_k_h = SensorValue("ID_27", "Humi KB basement", SensorValue_Data.Types.Humi, "% rF")
-
-        self.sq.register(self.qv_kb_i_t)
-        self.sq.register(self.qv_kb_i_h)
-        self.sq.register(self.qv_kb_p)
-        self.sq.register(self.qv_kb_a_t)
-        self.sq.register(self.qv_kb_a_h)
-        self.sq.register(self.qv_kb_k_t)
-        self.sq.register(self.qv_kb_k_h)
-
-    def process (self):
-        if self.data[pik_i] is not None:
-            self.qv_kb_i_t.value = "{:.1f}".format(float(self.data[pik_i].split(':')[1]))
-            self.qv_kb_i_h.value = "{:.1f}".format(float(self.data[pik_i].split(':')[4]))
-            self.qv_kb_p.value   = "{:.1f}".format(float(self.data[pik_i].split(':')[5]))
-        if self.data[pik_a] is not None:
-            self.qv_kb_a_t.value = "{:.1f}".format(float(self.data[pik_a].split(':')[1]))
-            self.qv_kb_a_h.value = "{:.1f}".format(float(self.data[pik_a].split(':')[4]))
-        if self.data[pik_k] is not None:
-            self.qv_kb_k_t.value = "{:.1f}".format(float(self.data[pik_k].split(':')[1]))
-            self.qv_kb_k_h.value = "{:.1f}".format(float(self.data[pik_k].split(':')[4]))
-
-    def run (self):
-        while True:
-            payload = self.udp.receive()
-            Log(f"Data received: {payload}")
-            (source, values) = payload.split(',')
-            self.data[source] = values
-            self.process()
-
-
-###############################################################################
 # Exit ########################################################################
 def shutdown_application ():
     """cleanup stuff"""
@@ -246,16 +194,12 @@ if __name__ == '__main__':
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--sensor", help="read data from sensor and send to udp server", action="store_true")
     group.add_argument("--receiver_rrd", help="receive data via udp and store in rrd database", action="store_true")
-    group.add_argument("--receiver_homeautomation", help="receive data via udp and send to homeautomation server", action="store_true")
     args = parser.parse_args()
 
     if args.sensor:
         Sensor()
     if args.receiver_rrd:
         r = Receiver_RRD()
-        r.run()
-    if args.receiver_homeautomation:
-        r = Receiver_Homeautomation()
         r.run()
 
 # eof #
