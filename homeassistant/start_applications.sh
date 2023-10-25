@@ -3,7 +3,7 @@
 
 
 echo "Starting Openweather.py ..."
-cd Openweather
+cd Openweather/
 nohup ./Openweather.py  2>&1 >openweather.py &
 echo "Openweather.py started."
 cd ..
