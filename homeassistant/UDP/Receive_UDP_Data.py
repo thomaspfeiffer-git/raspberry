@@ -18,7 +18,6 @@ nohup ./Receive_UDP_Data.py 2>1 > receive_udp_data.log &
 
 ###############################################################################
 ### TODO ######################################################################
-# Weather_Kollerberg.py --> Receiver_Homeautomation (in progress)
 # openweathermap
 
 
@@ -31,10 +30,9 @@ from Logging import Log
 from Shutdown import Shutdown
 import UDP
 
-
-### TODO: move to local directory ./
-from SensorQueue2 import SensorQueueClient_write
-from SensorValue2 import SensorValue, SensorValue_Data
+sys.path.append("../Queueserver/")
+from SensorQueue import SensorQueueClient_write
+from SensorValue import SensorValue, SensorValue_Data
 
 CREDENTIALS = os.path.expanduser("~/credentials/homeautomation.cred")
 
