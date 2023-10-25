@@ -1,7 +1,7 @@
 #!/bin/bash
 #############################################################################
 # Starts apps on nano02                                                     #
-# (c) https://github.com/thomaspfeiffer-git 2020                            #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2023                      #
 #############################################################################
 
 if [ $HOSTNAME != "nano02" ] ; then
@@ -19,11 +19,6 @@ cd ..
 cd openweathermap/
 echo "Starting 'openweather.py' ..."
 nohup ./openweather.py > openweather.log 2>&1 &
-cd ..
-
-cd kollerberg/
-echo "Starting 'Weather_Kollerberg.py --receiver_homeautomation' ..."
-nohup ./Weather_Kollerberg.py --receiver_homeautomation 2>&1 >weather_kollerberg_homeautomation.log &
 cd ..
 
 # eof #
