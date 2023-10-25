@@ -18,7 +18,8 @@ nohup ./Receive_UDP_Data.py 2>1 > receive_udp_data.log &
 
 ###############################################################################
 ### TODO ######################################################################
-# Weather_Kollerberg.py --> Receiver_Homeautomation
+# Weather_Kollerberg.py --> Receiver_Homeautomation (in progress)
+# openweathermap
 
 
 
