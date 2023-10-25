@@ -81,21 +81,15 @@ class Wardrobe (object):
     def update (self, rrd):
         ### TODO validate data
         items = rrd.split(":")
-        temp = float(items[1])
-        humi = float(items[2])
-        light = float(items[4])
-        self.set_values(temp, humi, light)
-
-    def set_values (self, temp, humi, light):
-        self.qv_temp.value = f"{temp:.1f}"
-        self.qv_humi.value = f"{humi:.1f}"
-        self.qv_light.value = f"{light:.1f}"
+        self.qv_temp.value = f"{float(items[1]):.1f}"
+        self.qv_humi.value = f"{float(items[2]):.1f}"
+        self.qv_light.value = f"{float(items[4]):.1f}"
 
 
 ###############################################################################
 # Serverroom ##################################################################
 class Serverroom (object):
-    def __init__ (self):
+    def __init__ (self):  ### TODO: Check IDs
         self.qv_temp  = SensorValue("XID_98", "TempServerroom", SensorValue_Data.Types.Temp, "°C")
         self.qv_humi  = SensorValue("XID_99", "HumiServerroom", SensorValue_Data.Types.Humi, "% rF")
 
@@ -106,13 +100,8 @@ class Serverroom (object):
     def update (self, rrd):
         ### TODO validate data
         items = rrd.split(":")
-        temp = float(items[1])
-        humi = float(items[2])
-        self.set_values(temp, humi)
-
-    def set_values (self, temp, humi):
-        self.qv_temp.value = f"{temp:.1f}"
-        self.qv_humi.value = f"{humi:.1f}"
+        self.qv_temp.value = f"{float(items[1]):.1f}"
+        self.qv_humi.value = f"{float(items[2]):.1f}"
 
 
 ###############################################################################
@@ -127,11 +116,7 @@ class Power (object):
     def update (self, rrd):
         ### TODO validate data
         items = rrd.split(":")
-        power = float(items[18])
-        self.set_values(power)
-
-    def set_values (self, power):
-        self.qv_power.value = f"{power:.1f}"
+        self.qv_power.value = f"{float(items[18]):.1f}"
 
 
 ###############################################################################
@@ -174,14 +159,12 @@ class Weather_Indoor (object):
         self.sq.register(self.qv_airquality)
 
     def update (self, rrd):
+        ### TODO validate data
         items = rrd.split(":")
-        self.qv_temp.value = items[1]
-        self.qv_humi.value = items[2]
-        self.qv_pressure.value = items[3]
-        self.qv_airquality.value = items[4]
-
-    def set_values (self):
-        pass ######### TODO; check if needed
+        self.qv_temp.value = f"{float(items[1]):.1f}"
+        self.qv_humi.value = f"{float(items[2]):.1f}"
+        self.qv_pressure.value = f"{float(items[3]):.1f}"
+        self.qv_airquality.value = f"{float(items[4]):.1f}"
 
 
 """
