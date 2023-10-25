@@ -191,16 +191,18 @@ class Weather_Kollerberg (object):
         self.sq.register(self.qv_kb_k_h)
 
     def update (self, rrd):
-        if self.data[pik_i] is not None:    ### TODO: use f-notation
-            self.qv_kb_i_t.value = "{:.1f}".format(float(self.data[pik_i].split(':')[1]))
-            self.qv_kb_i_h.value = "{:.1f}".format(float(self.data[pik_i].split(':')[4]))
-            self.qv_kb_p.value   = "{:.1f}".format(float(self.data[pik_i].split(':')[5]))
-        if self.data[pik_a] is not None:
-            self.qv_kb_a_t.value = "{:.1f}".format(float(self.data[pik_a].split(':')[1]))
-            self.qv_kb_a_h.value = "{:.1f}".format(float(self.data[pik_a].split(':')[4]))
-        if self.data[pik_k] is not None:
-            self.qv_kb_k_t.value = "{:.1f}".format(float(self.data[pik_k].split(':')[1]))
-            self.qv_kb_k_h.value = "{:.1f}".format(float(self.data[pik_k].split(':')[4]))
+        # example data in rrd: pik-a,N:14.50:14.93:34.70:-7.51:1013.25:0.00
+        (source, values) = rrd.split(',')
+        if source == "pik-i":                 ### TODO: use f-notation
+            self.qv_kb_i_t.value = "{:.1f}".format(float(values.split(':')[1]))
+            self.qv_kb_i_h.value = "{:.1f}".format(float(values.split(':')[4]))
+            self.qv_kb_p.value   = "{:.1f}".format(float(values.split(':')[5]))
+        if source == "pik-a":
+            self.qv_kb_a_t.value = "{:.1f}".format(float(values.split(':')[1]))
+            self.qv_kb_a_h.value = "{:.1f}".format(float(values.split(':')[4]))
+        if source == "pik-k":
+            self.qv_kb_k_t.value = "{:.1f}".format(float(values.split(':')[1]))
+            self.qv_kb_k_h.value = "{:.1f}".format(float(values.split(':')[4]))
 
 
 ###############################################################################
