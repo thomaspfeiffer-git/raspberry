@@ -150,14 +150,12 @@ class Weather_Outdoor (object):
         self.sq.register(self.qv_lightness)
 
     def update (self, rrd):
+        ### TODO validate data
         items = rrd.split(":")
-        self.qv_temp.value = items[1]
-        self.qv_temp_garden.value = items[2]
-        self.qv_humi.value = items[3]
-        self.qv_lightness.value = items[5]
-
-    def set_values (self):
-        pass ######### TODO; check if needed
+        self.qv_temp.value = f"{float(items[1]):.1f}"
+        self.qv_temp_garden.value = f"{float(items[2]):.1f}"
+        self.qv_humi.value = f"{float(items[3]):.1f}"
+        self.qv_lightness.value = f"{float(items[5]):.1f}"
 
 
 ###############################################################################
