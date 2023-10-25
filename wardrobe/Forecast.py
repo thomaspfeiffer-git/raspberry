@@ -15,7 +15,7 @@ import socket
 import sys
 import threading
 import time
-from urllib.error import HTTPError, URLError 
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 from PIL import Image
@@ -35,7 +35,7 @@ class FC_Config (object):
     #   config = configparser.ConfigParser()
     #   config.read(configfilename)
 
-    OWM_URL = "http://nano02:5000"
+    OWM_URL = "http://pih:5007"
 
 
 ###############################################################################
@@ -73,7 +73,7 @@ class Display (SSD1306):
         self.central_i2c_lock = central_i2c_lock
         self.begin()
         self.clear()
-        with self.central_i2c_lock: 
+        with self.central_i2c_lock:
             self.display()
 
         self.xpos = 4
@@ -89,7 +89,7 @@ class Display (SSD1306):
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
 
     def text (self, text, offset=0):
-        self.draw.text((self.xpos, self.y), text) 
+        self.draw.text((self.xpos, self.y), text)
         self.y += self.textheight + offset
 
     def show (self):
@@ -123,7 +123,7 @@ class Forecast (threading.Thread):
             self.display.text("{}".format(data.time_text))
             self.display.show()
 
-            for _ in range(100):  # interruptible sleep 
+            for _ in range(100):  # interruptible sleep
                 time.sleep(0.1)
 
     def stop (self):

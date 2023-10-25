@@ -16,10 +16,5 @@ echo "Starting 'Indoor.py --sensor' ..."
 nohup ./Indoor.py --sensor 2>&1 > indoor.log &
 cd ..
 
-cd openweathermap/
-echo "Starting 'openweather.py' ..."
-nohup ./openweather.py > openweather.log 2>&1 &
-cd ..
-
 # eof #
 

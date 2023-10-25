@@ -2,6 +2,13 @@
 # starts all home automation applications
 
 
+echo "Starting Openweather.py ..."
+cd Openweather
+nohup ./Openweather.py  2>&1 >openweather.py &
+echo "Openweather.py started."
+cd ..
+
+
 echo "Starting Receive_UDP_Data.py ..."
 cd UDP/
 nohup ./Receive_UDP_Data.py 2>receive_udp_data.log 1>/dev/null &

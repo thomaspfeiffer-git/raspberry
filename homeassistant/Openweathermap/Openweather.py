@@ -1,7 +1,7 @@
 #!/usr/bin/python3 -u
 # -*- coding: utf-8 -*-
 ###############################################################################
-# openweather.py                                                              #
+# Openweather.py                                                              #
 # (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
 ###############################################################################
 """provides data from openweathermap:
@@ -10,7 +10,7 @@
 """
 
 ### usage ###
-# nohup ./openweather.py > openweather.log 2>openweather.err &
+# nohup ./Openweather.py  2>&1 >openweather.py &
 
 
 ### setup ###
@@ -41,12 +41,13 @@ import time
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
-sys.path.append("../libs/")
+sys.path.append("../../libs/")
 from Logging import Log
-from SensorQueue2 import SensorQueueClient_write
-from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 
+sys.path.append("../Queueserver/")
+from SensorQueue import SensorQueueClient_write
+from SensorValue import SensorValue, SensorValue_Data
 
 
 from flask import Flask
@@ -72,7 +73,7 @@ class OpenWeatherMap_Config (object):
     """
     def read_api_key ():
         with open(expanduser('~') + "/keys/openweathermap.key", "r") as key_file:
-            return key_file.read().rstrip() 
+            return key_file.read().rstrip()
 
     _base_url = "http://api.openweathermap.org/data/2.5/"
     _api_key  = read_api_key()
@@ -83,7 +84,7 @@ class OpenWeatherMap_Config (object):
     _path_to_icons = "http://openweathermap.org/img/w/"
     _extension     = "png"
 
-    _url = "{}{{}}?q={}&APPID={}&units={}&lang={}".format(                      
+    _url = "{}{{}}?q={}&APPID={}&units={}&lang={}".format(
             _base_url, _location, _api_key, _units, _lang)
     url_forecast = _url.format("forecast")
     url_actual   = _url.format("weather")
@@ -100,7 +101,7 @@ class OpenWeatherMap_Config (object):
 
         directions = "nord nord-ost ost süd-ost süd süd-west west nord-west nord".split()
         return(directions[int((float(degrees)+22.5)/45.0)])
-   
+
 
 ###############################################################################
 # OpenWeatherMap_Data #########################################################
@@ -112,7 +113,7 @@ class OpenWeatherMap_Data (threading.Thread):
     OWMC = OpenWeatherMap_Config
 
     def __init__ (self, sv_queue):
-        """sv_queue: method to be called for sending all weather 
+        """sv_queue: method to be called for sending all weather
            data to my SensorValueQueue
         """
         threading.Thread.__init__(self)
@@ -155,8 +156,8 @@ class OpenWeatherMap_Data (threading.Thread):
 
         # get data from 12:00 am only
         noon = lambda t: "12:00:00" in t
-        forecast = [ data.list[i] 
-                     for i in range(len(data.list)) 
+        forecast = [ data.list[i]
+                     for i in range(len(data.list))
                      if noon(data.list[i].dt_txt) ]
 
         return [ self.convert(forecast[i]) for i in range(len(forecast)) ]
@@ -184,7 +185,7 @@ class OpenWeatherMap_Data (threading.Thread):
         except ValueError:
             pass
         else:  # update only if there was no error when reading data from owm.
-            with self.__lock: 
+            with self.__lock:
                 self.__weather = w
 
     def send_sensor_values (self):
@@ -257,13 +258,13 @@ def shutdown_application ():
 if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
-    sq = SensorQueueClient_write("../../configs/weatherqueue.ini")
+    sq = SensorQueueClient_write("../config.ini")
     owm_sv = OWM_Sensorvalues()
 
     owm_data = OpenWeatherMap_Data(owm_sv.senddatatoqueue)
     owm_data.start()
 
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=5007)
 
 # eof #
 
