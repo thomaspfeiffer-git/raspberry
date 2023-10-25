@@ -89,8 +89,8 @@ class WeatherApp (tk.Frame):
         for screen in self.screennames:
             self.screens[screen] = tk.Frame(self)
             self.screens[screen].config(bd=self.master.borderwidth,
-                                        bg=CONFIG.COLORS.BACKGROUND,
-                                        width=self.master.width, height=450)  #### old value: 410
+                                        bg=CONFIG.COLORS.BACKGROUND,    #### TODO config
+                                        width=self.master.width, height=480)  #### old value: 410
             self.screens[screen].grid_propagate(0)
             self.screens[screen].grid_columnconfigure(0, minsize=self.master.width - \
                                                          2*self.master.borderwidth)
