@@ -6,8 +6,8 @@ import sys
 import time
 
 sys.path.append("../../libs/")
-from SensorQueue2 import SensorQueueClient_write
-from SensorValue2 import SensorValue, SensorValue_Data
+from SensorQueue import SensorQueueClient_write
+from SensorValue import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
 
 

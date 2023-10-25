@@ -21,9 +21,11 @@ from urllib.request import urlopen
 
 sys.path.append("../../libs/")
 from Logging import Log
-from SensorQueue2 import SensorQueueClient_write
-from SensorValue2 import SensorValue, SensorValue_Data
 from Shutdown import Shutdown
+
+sys.path.append("../Queueserver/")
+from SensorQueue import SensorQueueClient_write
+from SensorValue import SensorValue, SensorValue_Data
 
 from config import CONFIG
 
