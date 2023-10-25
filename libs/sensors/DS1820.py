@@ -2,7 +2,7 @@
 ##############################################################################
 # DS1820.py                                                                  #
 # Communication with DS1820                                                  #
-# (c) https://github.com/thomaspfeiffer-git May 2015, 2016, 2017             #
+# (c) https://github.com/thomaspfeiffer-git May 2015, 2016, 2017, 2023       #
 ##############################################################################
 
 import re
@@ -14,8 +14,8 @@ import threading
 class Consume_CPU (threading.Thread):
     """cause of some timing issues of the kernel implementation
        of the 1-wire bus, we need some cpu consuming tasks. For
-       more details refer to 
-       http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=393 """ 
+       more details refer to
+       http://www.friendlyarm.com/Forum/viewtopic.php?f=47&t=393 """
 
     def __init__ (self):
         threading.Thread.__init__(self)
@@ -35,11 +35,10 @@ class Consume_CPU (threading.Thread):
 
 
 class DS1820:
-   def __init__ (self, id, qvalue=None):
+   def __init__ (self, id):
        self.__id          = id
-       self.__qvalue      = qvalue
        self.__lastvalue   = 0
-   
+
    def __read_sensor (self):
        try:
            with open(self.__id, "r") as f:
@@ -71,13 +70,7 @@ class DS1820:
 
 
    def read_temperature (self):
-       value = self.__read_sensor()
-
-       if value is not None:
-           if self.__qvalue is not None:
-               qvalue = "%.1f" % (value)
-               self.__qvalue.value = qvalue
-       return value
+       return self.__read_sensor()
 
 ### eof ###
 

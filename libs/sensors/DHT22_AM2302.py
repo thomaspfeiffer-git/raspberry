@@ -2,7 +2,7 @@
 ###############################################################################################
 # DHT22_AM2302.py                                                                             #
 # Communication with DHT22_AM2302.py                                                          #
-# (c) https://github.com/thomaspfeiffer-git May 2015, 2016                                    #
+# (c) https://github.com/thomaspfeiffer-git May 2015, 2016, 2023                              #
 ###############################################################################################
 
 import Adafruit_DHT
@@ -12,13 +12,11 @@ import numpy as np
 class DHT22_AM2302:
    ERROR = -999.99
 
-   def __init__ (self, pin, qvalue_temp=None, qvalue_humi=None):
+   def __init__ (self, pin):
       self.__pin = pin
-      self.__qvalue_temp = qvalue_temp
-      self.__qvalue_humi = qvalue_humi
 
    def __read_sensor (self):
-      i = 1 
+      i = 1
       while (i <= 5):
          try:
             h, t = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, self.__pin) # BCM/GPIO
@@ -48,13 +46,6 @@ class DHT22_AM2302:
 
       t_avg = np.mean(t[int(len(t)/3):int(len(t)/3)*2])
       h_avg = np.mean(h[int(len(h)/3):int(len(h)/3)*2])
-
-      if self.__qvalue_temp is not None:
-          value = "%.1f" % t_avg
-          self.__qvalue_temp.value = value
-      if self.__qvalue_humi is not None:
-          value = "%.1f" % h_avg
-          self.__qvalue_humi.value = value
 
       return [t_avg, h_avg]
 

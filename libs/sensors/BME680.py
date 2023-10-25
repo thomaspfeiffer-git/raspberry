@@ -3,9 +3,9 @@
 # BME680.py                                                                  #
 # Constants for BME680                                                       #
 # taken from https://github.com/pimoroni/bme680                              #
-# (c) https://github.com/thomaspfeiffer-git 2017, 2018                       #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2018, 2023                 #
 ##############################################################################
-"""Python library for the BME680 
+"""Python library for the BME680
    gas, temperature, humidity and pressure sensor.
 """
 
@@ -35,18 +35,12 @@ class BME680(BME680Data, I2C):
     :param i2c_device: Optional smbus or compatible instance for facilitating i2c communications.
 
     """
-    def __init__(self, i2c_addr=BME_680_BASEADDR, gas_measurement=True, qv_temp=None, \
-                 qv_humi=None, qv_pressure=None, qv_airquality=None, lock=None):
+    def __init__(self, i2c_addr=BME_680_BASEADDR, gas_measurement=True, lock=None):
         BME680Data.__init__(self)
         I2C.__init__(self, lock)
 
         self.i2c_addr = i2c_addr
         self.gas_measurement = gas_measurement
-
-        self.__qv_temp       = qv_temp
-        self.__qv_humi       = qv_humi
-        self.__qv_pressure   = qv_pressure
-        self.__qv_airquality = qv_airquality
 
         self.chip_id = self._get_regs(CHIP_ID_ADDR, 1)
         if self.chip_id != CHIP_ID:
@@ -92,8 +86,8 @@ class BME680(BME680Data, I2C):
 
             self.data.gas_baseline = sum(burn_in_data[-50:]) / 50.0
             Log("BME680: Gas baseline calculated: {}".format(self.data.gas_baseline))
-          
-        self.baselinethread = threading.Thread(target=calculate_baseline)  
+
+        self.baselinethread = threading.Thread(target=calculate_baseline)
         self.baselinethread.start()
 
 
@@ -146,12 +140,12 @@ class BME680(BME680Data, I2C):
 
     def soft_reset(self):
         """Initiate a soft reset"""
-        self._set_regs(SOFT_RESET_ADDR, SOFT_RESET_CMD) 
+        self._set_regs(SOFT_RESET_ADDR, SOFT_RESET_CMD)
         time.sleep(RESET_PERIOD / 1000.0)
 
     def set_humidity_oversample(self, value):
         """Set humidity oversampling
-        
+
         A higher oversampling value means more stable sensor readings,
         with less noise and jitter.
 
@@ -170,7 +164,7 @@ class BME680(BME680Data, I2C):
 
     def set_pressure_oversample(self, value):
         """Set temperature oversampling
-        
+
         A higher oversampling value means more stable sensor readings,
         with less noise and jitter.
 
@@ -178,7 +172,7 @@ class BME680(BME680Data, I2C):
         causing a slower response time to fast transients.
 
         :param value: Oversampling value, one of: OS_NONE, OS_1X, OS_2X, OS_4X, OS_8X, OS_16X
-        
+
         """
         self.tph_settings.os_pres = value
         self._set_bits(CONF_T_P_MODE_ADDR, OSP_MSK, OSP_POS, value)
@@ -189,7 +183,7 @@ class BME680(BME680Data, I2C):
 
     def set_temperature_oversample(self, value):
         """Set pressure oversampling
-        
+
         A higher oversampling value means more stable sensor readings,
         with less noise and jitter.
 
@@ -197,7 +191,7 @@ class BME680(BME680Data, I2C):
         causing a slower response time to fast transients.
 
         :param value: Oversampling value, one of: OS_NONE, OS_1X, OS_2X, OS_4X, OS_8X, OS_16X
-        
+
         """
         self.tph_settings.os_temp = value
         self._set_bits(CONF_T_P_MODE_ADDR, OST_MSK, OST_POS, value)
@@ -208,7 +202,7 @@ class BME680(BME680Data, I2C):
 
     def set_filter(self, value):
         """Set IIR filter size
-        
+
         Optionally remove short term fluctuations from the temperature and pressure readings,
         increasing their resolution but reducing their bandwidth.
 
@@ -228,9 +222,9 @@ class BME680(BME680Data, I2C):
 
     def select_gas_heater_profile(self, value):
         """Set current gas sensor conversion profile: 0 to 9
-        
+
         Select one of the 10 configured heating durations/set points.
-        
+
         """
         if value > NBCONV_MAX or value < NBCONV_MIN:
             raise ValueError("Profile '{}' should be between {} and {}".format(value, NBCONV_MIN, NBCONV_MAX))
@@ -253,7 +247,7 @@ class BME680(BME680Data, I2C):
 
     def set_gas_heater_profile(self, temperature, duration, nb_profile=0):
         """Set temperature and duration of gas sensor heater
-        
+
         :param temperature: Target temperature in degrees celsius, between 200 and 400
         :param durarion: Target duration in milliseconds, between 1 and 4032
         :param nb_profile: Target profile, between 0 and 9
@@ -266,7 +260,7 @@ class BME680(BME680Data, I2C):
         """Set gas sensor heater temperature
 
         :param value: Target temperature in degrees celsius, between 200 and 400
-        
+
         When setting an nb_profile other than 0,
         make sure to select it with select_gas_heater_profile.
 
@@ -288,7 +282,7 @@ class BME680(BME680Data, I2C):
 
         When setting an nb_profile other than 0,
         make sure to select it with select_gas_heater_profile.
-        
+
         """
         if nb_profile > NBCONV_MAX or value < NBCONV_MIN:
             raise ValueError("Profile '{}' should be between {} and {}".format(nb_profile, NBCONV_MIN, NBCONV_MAX))
@@ -316,7 +310,7 @@ class BME680(BME680Data, I2C):
 
     def get_sensor_data(self):
         """Get sensor data.
-        
+
         Stores data in .data and returns True upon success.
 
         """
@@ -331,7 +325,7 @@ class BME680(BME680Data, I2C):
                     continue
 
                 regs = self._get_regs(FIELD0_ADDR, FIELD_LENGTH)
-    
+
                 self.data.status = regs[0] & NEW_DATA_MSK
                 # Contains the nb_profile used to obtain the current measurement
                 self.data.gas_index = regs[0] & GAS_INDEX_MSK
@@ -356,21 +350,6 @@ class BME680(BME680Data, I2C):
                 self.data.humidity = self._calc_humidity(adc_hum) / 1000.0
                 self.data.gas_resistance = self._calc_gas_resistance(adc_gas_res, gas_range)
                 self.data.air_quality_score = self._calculate_air_quality()
-
-                if self.__qv_temp is not None:
-                    self.__qv_temp.value = "%.1f" % (self.data.temperature)
-
-                if self.__qv_humi is not None:
-                    self.__qv_humi.value = "%.1f" % (self.data.humidity)
-
-                if self.__qv_pressure is not None:
-                    self.__qv_pressure.value = "%.1f" % (self.data.pressure)
-
-                if self.__qv_airquality is not None:
-                    try:
-                        self.__qv_airquality.value = "%.1f" % (self.data.air_quality_score)
-                    except TypeError:
-                        self.__qv_airquality.value = "-99,99"
 
                 return True
 
@@ -398,7 +377,7 @@ class BME680(BME680Data, I2C):
                 return I2C._bus.read_byte_data(self.i2c_addr, register)
             else:
                 return I2C._bus.read_i2c_block_data(self.i2c_addr, register, length)
-        
+
     def _calc_temperature(self, temperature_adc):
         var1 = (temperature_adc >> 3) - (self.calibration_data.par_t1 << 1)
         var2 = (var1 * self.calibration_data.par_t2) >> 11

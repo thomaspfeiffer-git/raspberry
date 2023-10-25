@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ################################################################################
 # MCP9808.py                                                                   #
-# (c) https://github.com/thomaspfeiffer-git 2016                               #
+# (c) https://github.com/thomaspfeiffer-git 2016, 2023                         #
 ################################################################################
 """control temperature sensor MCP9808."""
 
@@ -25,14 +25,13 @@ MCP9808_REG_DEVICE_ID  = 0x07
 
 
 class MCP9808 (I2C):
-    def __init__ (self, address=MCP9808_BASE_ADDR, qvalue=None, lock=None):
+    def __init__ (self, address=MCP9808_BASE_ADDR, lock=None):
         if sys.version_info >= (3,0):
             super().__init__(lock)
         else:
             super(MCP9808, self).__init__(lock)
 
         self._address    = address
-        self.__qvalue    = qvalue
         self.__lastvalue = 0
 
         self.set_resolution(0x03) # Set resolution to 0.0625. #
@@ -54,10 +53,6 @@ class MCP9808 (I2C):
                 print(localtime()[3:6], "error reading/writing i2c bus in MCP9808.read_temperature")
 
             finally:
-                if self.__qvalue is not None:
-                    value = "%.1f" % (self.__lastvalue)
-                    self.__qvalue.value = value
-
                 return self.__lastvalue
 
 

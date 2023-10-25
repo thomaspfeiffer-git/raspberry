@@ -106,17 +106,16 @@ TSL2561_GAIN_16X = 0x10   # 16x gain
 
 
 class TSL2561(I2C):
-    def __init__ (self, qvalue=None, lock=None):
+    def __init__ (self, lock=None):
         if sys.version_info >= (3,0):
             super().__init__(lock)
         else:
             super(TSL2561, self).__init__(lock)
 
-        self.__qvalue = qvalue
         self.__lastvalue = 0
 
         self.address = TSL2561_ADDR_FLOAT
-    
+
         self.integration_time = TSL2561_DELAY_INTTIME_402MS
         self.gain = TSL2561_GAIN_1X
         self.autogain = False
@@ -144,7 +143,7 @@ class TSL2561(I2C):
 
     def enable(self):
         '''Enable the device by setting the control bit to 0x03'''
-        I2C._bus.write_byte_data(self.address, 
+        I2C._bus.write_byte_data(self.address,
                                  TSL2561_COMMAND_BIT | TSL2561_REGISTER_CONTROL,
                                  TSL2561_CONTROL_POWERON)
 
@@ -378,10 +377,8 @@ class TSL2561(I2C):
         try:
             v = self._calculate_lux(broadband, ir)
             self.__lastvalue = v
-            if self.__qvalue is not None:
-                self.__qvalue.value = "%.1f" % (v)
         except:
-            print(strftime("%Y%m%d %X:"), "error getting lux in TSL2561.lux()") 
+            print(strftime("%Y%m%d %X:"), "error getting lux in TSL2561.lux()")
         finally:
             return self.__lastvalue
 
