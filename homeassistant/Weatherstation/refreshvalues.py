@@ -53,7 +53,7 @@ class Clock (threading.Thread):
             now = datetime.now()
             self.date_date.set(self.datestr(now))
             self.date_time.set(self.timestr(now))
-            time.sleep(0.3)
+            time.sleep(0.2)
 
     def stop (self):
         self.__running = False
