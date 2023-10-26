@@ -38,7 +38,7 @@ from Logging import Log
 
 from config import CONFIG
 from constants import CONSTANTS
-from displaybasics import WeatherItem, DateItem, Separator, Image
+from displaybasics import WeatherItem, Separator, Image
 from pagination import Pagination
 from refreshvalues import Clock, Values, OutOfService
 
@@ -59,7 +59,6 @@ class WeatherApp (tk.Frame):
 
         self.grid()
         self.create_screens()
-        self.create_dateframe(self.master)
 
         self.pagination = Pagination(self.master, self.screens, self.screennames)
         self.master.bind("<Button-1>", self.pagination.next_screen)
@@ -77,8 +76,6 @@ class WeatherApp (tk.Frame):
         self.font_awattar   = Font(family=family, size=CONFIG.FONTS.SIZE_NORMAL)
         self.font_forecast  = Font(family=family, size=CONFIG.FONTS.SIZE_FORECAST)
         self.font_separator = Font(family=family, size=CONFIG.FONTS.SIZE_TINY)
-        self.font_date      = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL)
-        self.font_date_bold = Font(family=family, size=CONFIG.FONTS.SIZE_SMALL, weight="bold")
 
 
     def create_screens (self):
@@ -97,28 +94,6 @@ class WeatherApp (tk.Frame):
             getattr(self, "create_screen_{}".format(screen))() # call create_screen_X()
 
         self.screens['main'].grid()
-
-
-    def create_dateframe (self, master):
-        """creates a  date frame which is indepentant from the weather screens
-           created in WeatherApp.create_screens(). Thus it's possible to do
-           pagination without a flickering date/time section."""
-        return ######################### TODO #############################
-        self.dateframe = tk.Frame(master)
-        self.dateframe.config(bd=self.master.borderwidth,
-                              bg=CONFIG.COLORS.BACKGROUND,
-                              width=self.master.width, height=70)
-        self.dateframe.grid_propagate(0)
-        self.dateframe.grid_columnconfigure(0, minsize=self.master.width - \
-                                                       2*self.master.borderwidth)
-        self.dateframe.grid()
-
-        gridpos = 0
-        gridpos = Separator(frame=self.dateframe, gridpos=gridpos).gridpos
-        for d in [clock.date_date, clock.date_time]:
-            gridpos = DateItem(frame=self.dateframe, gridpos=gridpos,
-                               stringvar=d, font=self.font_date,
-                               color=CONFIG.COLORS.DATE).gridpos
 
 
     def drawWeatherSection (self, frame, title, itemlist, color, gridpos, decorated=None):
