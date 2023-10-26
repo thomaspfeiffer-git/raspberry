@@ -49,7 +49,6 @@ AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w
 
 
 # Misc for rrdtool and other config stuff
-QUEUE_INI = os.path.expanduser("~/configs/weatherqueue.ini")
 CREDENTIALS_RRD = os.path.expanduser("~/credentials/weather_kollerberg_rrd.cred")
 CREDENTIALS_HA = os.path.expanduser("~/credentials/homeautomation.cred")
 RRDFILE = os.path.expanduser("~/rrd/databases/weather_kollerberg.rrd")
