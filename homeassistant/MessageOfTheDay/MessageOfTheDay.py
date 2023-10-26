@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # MessageOfTheDay.py                                                          #
-# (c) https://github.com/thomaspfeiffer-git 2017                              #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2023                        #
 ###############################################################################
 """
 """
@@ -31,6 +31,11 @@ from Logging import Log
 sys.path.append('../libraries')
 from touchevent import Touchevent
 
+sys.path.append('../Weatherstation')
+from refreshvalues import Clock
+from displaybasics import DateItem
+
+
 from config import CONFIG
 
 
@@ -45,15 +50,17 @@ class MotDApp (tk.Frame):
         super().__init__(master)
 
         self.master = master
+        clock.init_values()
+
         self.frame  = tk.Frame(self.master, bg=CONFIG.COLORS.BACKGROUND,
-                               width=CONFIG.COORDINATES.WIDTH, 
+                               width=CONFIG.COORDINATES.WIDTH,
                                height=CONFIG.COORDINATES.HEIGHT)
         self.frame.pack_propagate(0)
         self.frame.pack()
 
         # brightness control:
         # brightness control runs in a dedicated application (see ../Brightness/).
-        # each touch event is first sent to the brightness control 
+        # each touch event is first sent to the brightness control
         # (Touchevent.event()):
         # - brightness is low:  set brightness to max and return False
         # - brightness is high: return True
@@ -62,16 +69,18 @@ class MotDApp (tk.Frame):
         self.font = Font(family=CONFIG.FONTS.FAMILY, size=CONFIG.FONTS.SIZE_NORMAL)
 
         if message_of_the_day is not None:
-            self.text = tk.Label(self.frame, text=message_of_the_day, 
+            self.text = tk.Label(self.frame, text=message_of_the_day,
                                  font=self.font,
-                                 foreground=CONFIG.COLORS.FONT, 
+                                 foreground=CONFIG.COLORS.FONT,
                                  background=CONFIG.COLORS.BACKGROUND)
             self.text.pack()
 
         # self.drawPicture(self.frame, "ei01.jpg", 0.55)
         # self.drawPicture(self.frame, "calimero.png", 0.55)
-        self.drawPicture(self.frame, "timon_kapitaen.jpg", 0.15)
+        self.drawPicture(self.frame, "timon_kapitaen.jpg", 0.12)
+        self.datetime(self.frame)
 
+        clock.start()
 
     def drawPicture (self, frame, picture, zoom):
         picture = PIL.Image.open(picture)
@@ -81,6 +90,14 @@ class MotDApp (tk.Frame):
 
         self.pic = tk.Label(frame, image=self.image)
         self.pic.pack()
+
+    def datetime (self, frame):
+        self.date_text = tk.Label(frame, textvariable=clock.date_date, font=self.font,
+                                  foreground=CONFIG.COLORS.FONT, background=CONFIG.COLORS.BACKGROUND)
+        self.time_text = tk.Label(frame, textvariable=clock.date_time, font=self.font,
+                                  foreground=CONFIG.COLORS.FONT, background=CONFIG.COLORS.BACKGROUND)
+        self.date_text.pack()
+        self.time_text.pack()
 
 
 ###############################################################################
@@ -95,13 +112,13 @@ class MotD (object):
         self.root.width  = CONFIG.COORDINATES.WIDTH
         self.root.height = CONFIG.COORDINATES.HEIGHT
         self.root.borderwidth = 10
-        self.root.geometry("{}x{}+{}+{}".format(self.root.width, 
+        self.root.geometry("{}x{}+{}+{}".format(self.root.width,
                                                 self.root.height,
-                                                CONFIG.COORDINATES.XPOS, 
+                                                CONFIG.COORDINATES.XPOS,
                                                 CONFIG.COORDINATES.YPOS))
         self.root.config(bg=CONFIG.COLORS.BACKGROUND)
         self.app = MotDApp(master=self.root)
-        
+
     def poll (self):
         """polling needed for ctrl-c"""
         self.root.pollid = self.root.after(50, self.poll)
@@ -123,7 +140,8 @@ class MotD (object):
 def shutdown_application ():
     """called on shutdown; stops all threads"""
     Log("shutdown_application()")
-
+    clock.stop()
+    clock.join()
     motd.stop()
     sys.exit(0)
 
@@ -138,6 +156,8 @@ if __name__ == '__main__':
         os.environ["DISPLAY"] = ":0.0"
 
     shutdown = Shutdown(shutdown_func=shutdown_application)
+
+    clock  = Clock()
 
     motd = MotD()
     motd.run()
