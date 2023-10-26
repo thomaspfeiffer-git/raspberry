@@ -16,7 +16,7 @@ import configparser
 import os
 
 
-CONFIGFILE = "../config.ini"    
+CONFIGFILE = "../config.ini"
 cfg = configparser.ConfigParser()
 cfg.read(CONFIGFILE)
 
@@ -33,6 +33,7 @@ class CONFIG:
         """definitions of colors"""
         # BACKGROUND = "LightSkyBlue"
         BACKGROUND = "White"
+        BACKGROUND_DATE = "Moccasin"
         FONT = "Black"
 
     class COORDINATES:

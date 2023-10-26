@@ -33,7 +33,6 @@ from touchevent import Touchevent
 
 sys.path.append('../Weatherstation')
 from refreshvalues import Clock
-from displaybasics import DateItem
 
 
 from config import CONFIG
@@ -92,10 +91,16 @@ class MotDApp (tk.Frame):
         self.pic.pack()
 
     def datetime (self, frame):
-        self.date_text = tk.Label(frame, textvariable=clock.date_date, font=self.font,
-                                  foreground=CONFIG.COLORS.FONT, background=CONFIG.COLORS.BACKGROUND)
-        self.time_text = tk.Label(frame, textvariable=clock.date_time, font=self.font,
-                                  foreground=CONFIG.COLORS.FONT, background=CONFIG.COLORS.BACKGROUND)
+        self.datetimeframe = tk.Frame(frame, bg=CONFIG.COLORS.BACKGROUND_DATE, pady=12,
+                             width=CONFIG.COORDINATES.WIDTH,
+                             height=CONFIG.COORDINATES.HEIGHT)
+        self.datetimeframe.pack_propagate(0)
+        self.datetimeframe.pack()
+
+        self.date_text = tk.Label(self.datetimeframe, textvariable=clock.date_date, font=self.font,
+                                  foreground=CONFIG.COLORS.FONT, background=CONFIG.COLORS.BACKGROUND_DATE)
+        self.time_text = tk.Label(self.datetimeframe, textvariable=clock.date_time, font=self.font,
+                                  foreground=CONFIG.COLORS.FONT, background=CONFIG.COLORS.BACKGROUND_DATE)
         self.date_text.pack()
         self.time_text.pack()
 
@@ -158,7 +163,6 @@ if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     clock  = Clock()
-
     motd = MotD()
     motd.run()
 
