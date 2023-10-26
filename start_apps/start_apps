@@ -1,12 +1,15 @@
 #!/bin/bash
 #############################################################################
 # Starts apps on various hosts.                                             #
-# (c) https://github.com/thomaspfeiffer-git 2020, 2021                      #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2021, 2023                #
 #############################################################################
 
 case "$HOSTNAME" in
     pid)
         ./start_apps_pid
+        ;;
+    nano01)
+        ./start_apps_nano01
         ;;
     nano02)
         ./start_apps_nano02
