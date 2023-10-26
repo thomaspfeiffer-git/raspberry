@@ -43,12 +43,16 @@ class Clock (threading.Thread):
         return "{}, {}. {} {}".format(CONSTANTS.DAYOFWEEK[now.weekday()], now.day,
                                       CONSTANTS.MONTHNAMES[now.month], now.year)
 
+    @staticmethod
+    def timestr (now):
+        return f"{now.hour}:{now.minute:02d}:{now.second:02d}"
+
     def run (self):
         self.__running = True
         while self.__running:
             now = datetime.now()
             self.date_date.set(self.datestr(now))
-            self.date_time.set(now.strftime("%X"))
+            self.date_time.set(self.timestr(now))
             time.sleep(0.3)
 
     def stop (self):
