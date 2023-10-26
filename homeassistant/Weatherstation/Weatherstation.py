@@ -89,8 +89,8 @@ class WeatherApp (tk.Frame):
         for screen in self.screennames:
             self.screens[screen] = tk.Frame(self)
             self.screens[screen].config(bd=self.master.borderwidth,
-                                        bg=CONFIG.COLORS.BACKGROUND,    #### TODO config
-                                        width=self.master.width, height=480)  #### old value: 410
+                                        bg=CONFIG.COLORS.BACKGROUND,
+                                        width=self.master.width, height=self.master.height)
             self.screens[screen].grid_propagate(0)
             self.screens[screen].grid_columnconfigure(0, minsize=self.master.width - \
                                                          2*self.master.borderwidth)
@@ -184,11 +184,9 @@ class WeatherApp (tk.Frame):
         gridpos = self.drawWeatherSection(frame=frame, title="Draußen:",
                                           itemlist=['ID_12', 'ID_04', 'ID_05'],
                                           decorated=['ID_12'],
-                                          # itemlist=['ID_03', 'ID_04', 'ID_05'],
-                                          # decorated=['ID_03'],
                                           color=CONFIG.COLORS.OUTDOOR,
                                           gridpos=gridpos)
-        gridpos = self.drawAwattarSection(frame=frame, title="Strompreise (ct/kWh):",
+        gridpos = self.drawAwattarSection(frame=frame, title="Strompreise (ct/kWh), aktuelle Leistung:",
                                           itemlist=['ID_AW_04', 'ID_AW_05', 'ID_50'],
                                           color=CONFIG.COLORS.AWATTAR,
                                           gridpos=gridpos)
