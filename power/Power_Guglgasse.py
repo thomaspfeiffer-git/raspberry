@@ -92,7 +92,7 @@ class Fake_SDM630 (object):
         self.values[self.field_I_L3] = 3.0
         self.values[self.field_I_N]  = 4.0
         self.values[self.field_I]    = 9.0
-        self.values[self.field_P]    = datetime.datetime.now().hour * 10 + datetime.datetime.now().minute
+        self.values[self.field_P]    = datetime.datetime.now().hour * 200 + datetime.datetime.now().minute
         self.valid_data = True
 
     def rrd (self):
