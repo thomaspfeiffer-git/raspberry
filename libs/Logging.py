@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 ############################################################################
 # Logging.py                                                               ä
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2023          #
 ############################################################################
 """
+improved log output
 """
 
 import sys
 from datetime import datetime
 
-def Log (logstr, flush=False):
-    """improved log output"""
-    print("{}: {}".format(datetime.now().strftime("%Y%m%d %H:%M:%S"), logstr))
-    if flush:
-        sys.stdout.flush()
+def Log (logstr, stream=sys.stdout):
+    print(f"{datetime.now().strftime('%Y%m%d %H:%M:%S')}: {logstr}"), stream)
 
 # eof #
 
