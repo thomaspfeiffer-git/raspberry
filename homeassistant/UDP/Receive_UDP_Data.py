@@ -51,10 +51,14 @@ class Receiver (object):
                 source = payload.split(" - ")[0]
                 data = payload.split(" - ")[1]
             except IndexError:
-                Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()))
+                Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()), sys.stderr)
             else:
-                cls = globals()[source.lower()]
-                cls.update(data)
+                try:
+                    cls = globals()[source.lower()]
+                except KeyError:
+                    Log(f"No class/object '{source.lower()}' instantiated.", sys.stderr)
+                else:
+                    cls.update(data)
 
 
 ###############################################################################
@@ -198,6 +202,33 @@ class Weather_Kollerberg (object):
 
 
 ###############################################################################
+# Homeautomation ##############################################################
+class Homeautomation (object):
+    def __init__ (self):
+        self.qv_temp       = SensorValue("ID_40", "TempKueche", SensorValue_Data.Types.Temp, "°C")
+        self.qv_humi       = SensorValue("ID_41", "HumiKueche", SensorValue_Data.Types.Humi, "% rF")
+        self.qv_pressure   = SensorValue("ID_42", "PressureKueche", SensorValue_Data.Types.Pressure, "hPa")
+        self.qv_light      = SensorValue("ID_43", "LightKueche", SensorValue_Data.Types.Light, "lux")
+        self.qv_airquality = SensorValue("ID_44", "AirQualityKueche", SensorValue_Data.Types.AirQuality, "%")
+
+        self.sq = SQ()
+        self.sq.register(self.qv_temp)
+        self.sq.register(self.qv_humi)
+        self.sq.register(self.qv_pressure)
+        self.sq.register(self.qv_light)
+        self.sq.register(self.qv_airquality)
+
+    def update (self, rrd):
+        ### TODO validate data
+        items = rrd.split(":")
+        self.qv_temp.value = f"{float(items[1]):.1f}"
+        self.qv_humi.value = f"{float(items[3]):.1f}"
+        self.qv_pressure.value = f"{float(items[4]):.1f}"
+        self.qv_light.value = f"{float(items[5]):.1f}"
+        self.qv_airquality.value = f"{float(items[6]):.1f}"
+
+
+###############################################################################
 # Shutdown stuff ##############################################################
 def shutdown_application ():
     """cleanup stuff"""
@@ -215,6 +246,7 @@ if __name__ == "__main__":
     weather_outdoor = Weather_Outdoor()
     weather_indoor = Weather_Indoor()
     weather_kollerberg = Weather_Kollerberg()
+    homeautomation = Homeautomation()
 
     r = Receiver()
     r.start()

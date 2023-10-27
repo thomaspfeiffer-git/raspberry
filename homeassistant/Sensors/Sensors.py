@@ -30,12 +30,9 @@ from Logging import Log
 from Shutdown import Shutdown
 import UDP
 
-sys.path.append("../Queueserver/")
-from SensorQueue import SensorQueueClient_write
-from SensorValue import SensorValue, SensorValue_Data
 
-
-CREDENTIALS = os.path.expanduser("~/credentials/kitchen.cred")
+CREDENTIALS_UDP_RRD = os.path.expanduser("~/credentials/kitchen.cred")
+CREDENTIALS_UDP_HOMEAUTOMATION = os.path.expanduser("~/credentials/homeautomation.cred")
 
 
 ##############################################################################
@@ -55,7 +52,8 @@ class Sensors (threading.Thread, metaclass=Singleton):
         self.bme680  = BME680(i2c_addr=BME_680_BASEADDR)
         self.tsl2561 = TSL2561()
 
-        self.udp = UDP.Sender(CREDENTIALS)
+        self.udp_rrd = UDP.Sender(CREDENTIALS_UDP_RRD)
+        self.udp_homeautomation = UDP.Sender(CREDENTIALS_UDP_HOMEAUTOMATION)
 
     def run (self):
         self._running = True
@@ -79,7 +77,8 @@ class Sensors (threading.Thread, metaclass=Singleton):
                         ":{}".format(0)                              + \
                         ":{}".format(0)                              + \
                         ":{}".format(0)
-            self.udp.send(rrd_data)
+            self.udp_rrd.send(rrd_data)
+            self.udp_homeautomation.send(f"Homeautomation - {rrd_data}")
 
             for _ in range(50): # interruptible sleep
                 if self._running:
