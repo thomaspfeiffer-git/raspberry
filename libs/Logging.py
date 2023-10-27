@@ -11,7 +11,7 @@ import sys
 from datetime import datetime
 
 def Log (logstr, stream=sys.stdout):
-    print(f"{datetime.now().strftime('%Y%m%d %H:%M:%S')}: {logstr}"), stream)
+    print(f"{datetime.now().strftime('%Y%m%d %H:%M:%S')}: {logstr}", stream)
 
 # eof #
 
