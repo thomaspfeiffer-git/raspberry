@@ -10,8 +10,8 @@ improved log output
 import sys
 from datetime import datetime
 
-def Log (logstr, stream=sys.stdout):
-    print(f"{datetime.now().strftime('%Y%m%d %H:%M:%S')}: {logstr}", stream)
+def Log (logstr, file=sys.stdout):
+    print(f"{datetime.now().strftime('%Y%m%d %H:%M:%S')}: {logstr}", file=file)
 
 # eof #
 
