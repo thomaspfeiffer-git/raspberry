@@ -86,8 +86,8 @@ class Wardrobe (object):
 # Serverroom ##################################################################
 class Serverroom (object):
     def __init__ (self):  ### TODO: Check IDs
-        self.qv_temp  = SensorValue("ID_41", "TempServerroom", SensorValue_Data.Types.Temp, "°C")
-        self.qv_humi  = SensorValue("ID_42", "HumiServerroom", SensorValue_Data.Types.Humi, "% rF")
+        self.qv_temp  = SensorValue("ID_48", "TempServerroom", SensorValue_Data.Types.Temp, "°C")
+        self.qv_humi  = SensorValue("ID_49", "HumiServerroom", SensorValue_Data.Types.Humi, "% rF")
 
         self.sq = SQ()
         self.sq.register(self.qv_temp)
