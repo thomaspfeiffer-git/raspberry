@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ############################################################################
 # scheduling.py                                                            #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2023          #
 ############################################################################
 """implements classes for scheduling:
    - Time: provides a class with hour and minute only
@@ -25,7 +25,7 @@ DEFAULT_DEACTIVATE_TIME = "23:30"
 # Time #####################################################################
 class Time (object):
     """represents time with hours and minutes only"""
-    def __init__ (self, timestring): 
+    def __init__ (self, timestring):
         """format of timestring: "HH:MM"""
         (self.hour, self.minute) = map(int, timestring.split(':'))
 
@@ -40,7 +40,7 @@ class Time (object):
     @hour.setter
     def hour (self, hour):
         if 0 <= hour <= 23:
-            self.__hour = hour  
+            self.__hour = hour
         else:
             raise ValueError("hour has to be in 0 .. 23")
 
@@ -149,7 +149,7 @@ class Scheduling (threading.Thread):
                 nonlocal i
                 i += 1
                 if i > log_interval:
-                    Log(self._logging_method(), True)
+                    Log(self._logging_method())
                     i = 0
 
             return print_log
