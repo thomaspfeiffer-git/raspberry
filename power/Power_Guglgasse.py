@@ -59,57 +59,6 @@ UPDATE_INTERVAL_SEND_DATA_HOMEAUTOMATION = 1  # interval for sending data to hom
 BusID_Meter = 1
 
 
-
-###############################################################################
-###############################################################################
-class Fake_SDM630 (object):
-    field_V_L1 = "Main_U_L1"
-    field_V_L2 = "Main_U_L2"
-    field_V_L3 = "Main_U_L3"
-    field_I_L1 = "Main_I_L1"
-    field_I_L2 = "Main_I_L2"
-    field_I_L3 = "Main_I_L3"
-    field_I_N  = "Main_I_N"
-    field_I    = "Main_I_tot"
-    field_P    = "Main_P"
-    fields = [field_V_L1, field_V_L2, field_V_L3,
-              field_I_L1, field_I_L2, field_I_L3, field_I_N, field_I, field_P]
-
-    def __init__ (self):
-        self.valid_data = False
-        self.values = {}
-        for register in self.fields:
-            self.values[register] = 0
-
-    def read (self):
-        import random
-        import datetime
-        self.values[self.field_V_L1] = 200.0 + random.randint(0,50)
-        self.values[self.field_V_L2] = 300.0 + random.randint(0,50)
-        self.values[self.field_V_L3] = 400.0 + random.randint(0,50)
-        self.values[self.field_I_L1] = 1.0
-        self.values[self.field_I_L2] = 2.0
-        self.values[self.field_I_L3] = 3.0
-        self.values[self.field_I_N]  = 4.0
-        self.values[self.field_I]    = 9.0
-        self.values[self.field_P]    = datetime.datetime.now().hour * 200 + datetime.datetime.now().minute
-        self.valid_data = True
-
-    def rrd (self):
-        if self.valid_data:
-            result = ""
-            for i in self.fields:
-                result += f"{self.values[i]:.2f}:"
-            return result[:-1]
-        else:
-            Log(f"No valid data from sensor #{self.__id} yet.")
-            raise RuntimeError(f"No valid data from sensor #{self.__id} yet.")
-
-    def rrd_template (self):
-        result = ":"
-        return (result.join(self.fields))
-
-
 ###############################################################################
 # StoreData_RRD ###############################################################
 class StoreData_RRD (threading.Thread):
@@ -223,8 +172,7 @@ if __name__ == "__main__":
         r.start()
 
     if args.sensor:
-        # meter = SDM630(BusID_Meter)
-        meter = Fake_SDM630()
+        meter = SDM630(BusID_Meter)
 
         storedata_rrd = StoreData_RRD()
         storedata_rrd.start()
