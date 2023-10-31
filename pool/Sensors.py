@@ -157,6 +157,7 @@ class Sensors (threading.Thread):
             # self.__data.airout_humidity = self.sht31_airout.read_humidity()
             self.__data.airout_temp = self.__data.airin_temp
             self.__data.airout_humidity = 98.88
+            ###
             self.__data.engine_circulation = self.pcf8591.read(channel=0)
             self.__data.engine_countercurrent = self.pcf8591.read(channel=1)
             self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
@@ -167,6 +168,7 @@ class Sensors (threading.Thread):
             self.__data.airout_abs_humidity = abs_humidity(self.__data.airout_humidity, self.__data.airout_temp)
             self.__data.valid = True
             # Log("\n{}".format(self.__data))
+            ### TODO temporarily deactivated
             # self.update_display()
 
             for _ in range(600):      # interruptible sleep
