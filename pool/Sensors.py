@@ -135,11 +135,10 @@ class Sensors (threading.Thread):
         self.ds1820_outdoor = DS1820("/sys/bus/w1/devices/28-0000085607ec/w1_slave")
         self.ds1820_room = DS1820("/sys/bus/w1/devices/28-000008561957/w1_slave")
         self.ds1820_water = DS1820("/sys/bus/w1/devices/28-030c979462a8/w1_slave")
-        ### new DS1820
-        # self.ds1820_water = DS1820("/sys/bus/w1/devices/28-030c979407ac/w1_slave")
         self.bme280_box = BME280()
         self.sht31_airin = SHT31(addr=SHT31_BASEADDR)
-        self.sht31_airout = HTU21DF()
+        ### TODO temporarily deactivated
+        # self.sht31_airout = HTU21DF()
         self.pcf8591 = PCF8591()
 
         self.__data = data
@@ -153,10 +152,11 @@ class Sensors (threading.Thread):
             self.__data.box_humidity = self.bme280_box.read_humidity()
             self.__data.airin_temp = self.sht31_airin.read_temperature()
             self.__data.airin_humidity = self.sht31_airin.read_humidity()
-            self.__data.airout_temp = self.sht31_airout.read_temperature()
-            self.__data.airout_humidity = self.sht31_airout.read_humidity()
-            # self.__data.airout_temp = self.__data.airin_temp
-            # self.__data.airout_humidity = 98.88
+            ### TODO temporarily deactivated
+            # self.__data.airout_temp = self.sht31_airout.read_temperature()
+            # self.__data.airout_humidity = self.sht31_airout.read_humidity()
+            self.__data.airout_temp = self.__data.airin_temp
+            self.__data.airout_humidity = 98.88
             self.__data.engine_circulation = self.pcf8591.read(channel=0)
             self.__data.engine_countercurrent = self.pcf8591.read(channel=1)
             self.__data.outdoor_temp = self.ds1820_outdoor.read_temperature()
@@ -167,7 +167,7 @@ class Sensors (threading.Thread):
             self.__data.airout_abs_humidity = abs_humidity(self.__data.airout_humidity, self.__data.airout_temp)
             self.__data.valid = True
             # Log("\n{}".format(self.__data))
-            self.update_display()
+            # self.update_display()
 
             for _ in range(600):      # interruptible sleep
                 if not self._running:
