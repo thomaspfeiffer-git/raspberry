@@ -145,12 +145,15 @@ if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
     data = Sensordata()
 
-    display = Display(data)
+    ### TODO temporarily deactivated
+    # display = Display(data)
 
     udp_sender = UDP_Sender(data)
     udp_sender.start()
 
-    sensors = Sensors(data,update_display=display.print)
+    ### TODO temporarily deactivated
+    # sensors = Sensors(data,update_display=display.print)
+    sensors = Sensors(data,update_display=None)
     sensors.start()
 
     scheduler = Scheduler(data)
