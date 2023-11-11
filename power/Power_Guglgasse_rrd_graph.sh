@@ -48,7 +48,8 @@ printPowerGuglgasse()
     GPRINT:Main_P:LAST:"\t\tAktuell\: %5.2lf W"                \
     GPRINT:Main_P:AVERAGE:"Mittelwert\: %5.2lf W"              \
     GPRINT:Main_P:MAX:"Max\: %5.2lf W"                         \
-    GPRINT:Main_P:MIN:"Min\: %5.2lf W\n"
+    GPRINT:Main_P:MIN:"Min\: %5.2lf W\n"                       \
+    HRULE:0#0000FF
 }
 
 #######################################################################
