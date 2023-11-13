@@ -33,6 +33,7 @@ else
 
     if [ $( echo $( cat /sys/firmware/devicetree/base/model )  | grep Rasp | wc -l) == "1" ] ; then
         # https://forums.raspberrypi.com/viewtopic.php?t=324155
+        echo "Restarting network Raspi"
         sudo service networking restart
         sudo wpa_cli -i wlan0 reconfigure
         sudo systemctl restart wpa_supplicant.service
