@@ -15,6 +15,8 @@
 
 ### setup ###
 # sudo pip3 install flask-restful
+# sudo apt-get install python3-flask-restful
+#
 # sudo pip3 install attrdict
 
 
