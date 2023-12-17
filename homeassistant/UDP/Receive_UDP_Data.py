@@ -46,19 +46,23 @@ class Receiver (object):
 
     def start (self):
         while True:
-            payload = self.udp.receive()
             try:
-                source = payload.split(" - ")[0]
-                data = payload.split(" - ")[1]
-            except IndexError:
-                Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()), sys.stderr)
+                payload = self.udp.receive()
+            except UDP.DatagramError as d:
+                Log(f"Received corrupted data: '{d.datagram}'", sys.stderr)
             else:
                 try:
-                    cls = globals()[source.lower()]
-                except KeyError:
-                    Log(f"No class/object '{source.lower()}' instantiated.", sys.stderr)
+                    source = payload.split(" - ")[0]
+                    data = payload.split(" - ")[1]
+                except IndexError:
+                    Log("Wrong data format: {0[0]} {0[1]}".format(sys.exc_info()), sys.stderr)
                 else:
-                    cls.update(data)
+                    try:
+                        cls = globals()[source.lower()]
+                    except KeyError:
+                        Log(f"No class/object '{source.lower()}' instantiated.", sys.stderr)
+                    else:
+                        cls.update(data)
 
 
 ###############################################################################
