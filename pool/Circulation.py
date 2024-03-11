@@ -151,6 +151,18 @@ def HTTP_Control ():
         on_until = "ausgeschaltet"
     return render_template('control_circulation.html', on_until=on_until)
 
+@app.route('/on')
+def API_On ():
+    Log("On requested.")
+    timer.on(60)
+    return "OK.\n"
+
+@app.route('/off')
+def API_Off ():
+    Log("Off requested.")
+    timer.off()
+    return "OK.\n"
+
 
 ###############################################################################
 # Shutdown stuff ##############################################################
