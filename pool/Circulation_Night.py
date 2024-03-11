@@ -91,6 +91,8 @@ class Awattar (threading.Thread):
 ###############################################################################
 # Control #####################################################################
 class Control (threading.Thread):
+    url = "http://localhost/on"
+
     def __init__ (self):
         threading.Thread.__init__(self)
         self.pump_on = False
@@ -99,6 +101,7 @@ class Control (threading.Thread):
     def on (self):
         if not self.pump_on:
             Log("Pump on")
+            urlopen(self.url).read()
             self.pump_on = True
 
     def off (self):
