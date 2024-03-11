@@ -34,7 +34,7 @@ class Awattar (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
         self.data = { 'valid': False,
-                      'lowest price': None }
+                      'lowest_price': None }
         self._running = False
 
     def update_data (self):
@@ -56,15 +56,21 @@ class Awattar (threading.Thread):
                 hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
                 hour['marketprice'] = hour['marketprice']
 
-                Log(f"hour['start_timestamp'].hour: {hour['start_timestamp'].hour}")
-                if hour['start_timestamp'].hour >= 10 and hour['start_timestamp'].hour <= 15:
+                if hour['start_timestamp'].hour >= 0 and hour['start_timestamp'].hour <= 5:
                     if hour['marketprice'] < lowest_price['marketprice']:
                         lowest_price = hour
 
-        Log(f"lowest_price: {lowest_price}")
-        self.data['lowest price'] = lowest_price
+        self.data['lowest_price'] = lowest_price
         self.data['valid'] = True
         Log(f"Updated data from {self.url}")
+        Log(f"Lowest price at {self.cheapest_hour}:00 am")
+
+    @property
+    def cheapest_hour (self):
+        if self.data['valid']:
+            return self.data['lowest_price']['start_timestamp'].hour
+        else:
+            return None
 
     def run (self):
         self._running = True
@@ -86,12 +92,35 @@ class Awattar (threading.Thread):
 class Control (threading.Thread):
     def __init__ (self):
         threading.Thread.__init__(self)
+        self.pump_on = False
         self._running = False
+
+    def on (self):
+        if not self.pump_on:
+            Log("Pump on")
+            self.pump_on = True
+
+    def off (self):
+        if self.pump_on:
+            Log("Pump off")
+            self.pump_on = False
 
     def run (self):
         self._running = True
         while self._running:
-            time.sleep(0.1)
+            if awattar.data['valid']:
+                Log(f"lowest price in control: {awattar.cheapest_hour}")
+                if datetime.now().hour == awattar.cheapest_hour:
+                    self.on()
+                else:
+                    self.off()
+
+            for _ in range(100):    # interruptible sleep for 50 seconds ### TODO
+                time.sleep(0.1)
+                if not self._running:
+                    break
+
+            self.off()
 
     def stop (self):
         self._running = False
