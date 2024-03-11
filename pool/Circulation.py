@@ -154,7 +154,10 @@ def HTTP_Control ():
 @app.route('/on')
 def API_On ():
     Log("On requested.")
-    timer.on(60)
+    #++++++++++++++++++++++++++++++++++++++
+    # TODO: switch on in summer
+    #timer.on(60)
+    #++++++++++++++++++++++++++++++++++++++
     return "OK.\n"
 
 @app.route('/off')
