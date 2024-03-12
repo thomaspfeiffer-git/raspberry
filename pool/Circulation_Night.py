@@ -83,7 +83,8 @@ class Awattar (object):
 ###############################################################################
 # Control #####################################################################
 class Control (threading.Thread):
-    url = "http://localhost/on"
+    url_on = "http://localhost/on"
+    url_off = "http://localhost/off"
 
     def __init__ (self):
         threading.Thread.__init__(self)
@@ -94,9 +95,9 @@ class Control (threading.Thread):
         if not self.pump_on:
             Log("Pump on")
             try:
-                urlopen(self.url).read()
+                urlopen(self.url_on).read()
             except Exception as err:
-                Log(f"Error opening url {self.url}: {err}")
+                Log(f"Error opening url {self.url_on}: {err}")
                 Log("Pump on failed.")
             else:
                 self.pump_on = True
@@ -104,7 +105,13 @@ class Control (threading.Thread):
     def off (self):
         if self.pump_on:
             Log("Pump off")
-            self.pump_on = False
+            try:
+                urlopen(self.url_off).read()
+            except Exception as err:
+                Log(f"Error opening url {self.url_off}: {err}")
+                Log("Pump off failed.")
+            else:
+                self.pump_on = False
 
     def run (self):
         self._running = True
