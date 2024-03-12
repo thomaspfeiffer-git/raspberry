@@ -54,13 +54,13 @@ class Awattar (object):
             Log(f"Error while reading from {self.url}: {err}")
             data = [ self.empty_data() for _ in range(24) ]
         else:
-            lowest_price = self.empty_data()
             for hour in data:
                 hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
                 hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
                 hour['marketprice'] = hour['marketprice'] / 10.0
 
-                if hour['start_timestamp'].hour >= 0 and hour['start_timestamp'].hour <= 5:
+                # Activate pump only for some hours after midnight.
+                if 0 <= hour['start_timestamp'].hour <= 5:
                     if hour['marketprice'] < lowest_price['marketprice']:
                         lowest_price = hour
 
