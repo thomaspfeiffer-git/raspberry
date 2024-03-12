@@ -89,8 +89,13 @@ class Control (threading.Thread):
     def on (self):
         if not self.pump_on:
             Log("Pump on")
-            urlopen(self.url).read()
-            self.pump_on = True
+            try:
+                urlopen(self.url).read()
+            except:
+                Log("Cannot open url '{0}'. Error: {1[0]} {1[1]}".format(self.url,sys.exc_info()))
+                Log("Pump on failed.")
+            else:
+                self.pump_on = True
 
     def off (self):
         if self.pump_on:
@@ -101,6 +106,8 @@ class Control (threading.Thread):
         self._running = True
         while self._running:
             if awattar.data['valid']:
+                # Log(f"cheapest hour: {awattar.cheapest_hour}")
+                # if 23 == awattar.cheapest_hour:
                 if datetime.now().hour == awattar.cheapest_hour:
                     self.on()
                 else:
