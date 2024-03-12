@@ -22,7 +22,6 @@ from datetime import datetime
 import json
 import schedule
 import sys
-import threading
 import time
 from urllib.request import urlopen
 
