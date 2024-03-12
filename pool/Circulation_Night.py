@@ -11,7 +11,7 @@ Saving energy according to https://api.awattar.at/v1/marketdata
 """
 
 ### Usage ###
-# TODO
+# ./Circulation_Night.py 2>&1 > circulation_night.log
 
 
 ### Packages you might need to install ###
@@ -39,6 +39,7 @@ class Awattar (object):
     def __init__ (self):
         self.data = { 'valid': False,
                       'lowest_price': self.empty_data() }
+        self.update_data()
 
     @staticmethod
     def empty_data ():
@@ -151,7 +152,6 @@ if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
     awattar = Awattar()
-    awattar.update_data()
     control = Control()
     control.start()
 
