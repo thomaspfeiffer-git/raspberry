@@ -82,14 +82,12 @@ class Awattar (object):
 
 ###############################################################################
 # Control #####################################################################
-class Control (threading.Thread):
+class Control (object):
     url_on = "http://localhost/on"
     url_off = "http://localhost/off"
 
     def __init__ (self):
-        threading.Thread.__init__(self)
         self.pump_on = False
-        self._running = False
 
     def on (self):
         if not self.pump_on:
@@ -102,6 +100,8 @@ class Control (threading.Thread):
             else:
                 self.pump_on = True
 
+        return schedule.CancelJob
+
     def off (self):
         if self.pump_on:
             Log("Pump off")
@@ -113,26 +113,9 @@ class Control (threading.Thread):
             else:
                 self.pump_on = False
 
-    def run (self):
-        self._running = True
-        while self._running:
-            if awattar.data['valid']:
-                # Log(f"cheapest hour: {awattar.cheapest_hour}")
-                # if 23 == awattar.cheapest_hour:
-                if datetime.now().hour == awattar.cheapest_hour:
-                    self.on()
-                else:
-                    self.off()
-
-            for _ in range(500):   # interruptible sleep for 50 seconds
-                time.sleep(0.1)
-                if not self._running:
-                    break
-
-        self.off()   # Cleanup
-
-    def stop (self):
-        self._running = False
+    def schedule (self):
+        schedule.every().day.at(f"{awattar.cheapest_hour:02d}:00").do(self.on)
+        Log(f"Scheduled pump on for {awattar.cheapest_hour:02d}:00.")
 
 
 ###############################################################################
@@ -140,8 +123,7 @@ class Control (threading.Thread):
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
-    control.stop()
-    control.join()
+    control.off()
     Log("Application stopped")
     sys.exit(0)
 
@@ -153,10 +135,10 @@ if __name__ == "__main__":
 
     awattar = Awattar()
     control = Control()
-    control.start()
 
-    schedule.every().day.at("23:15").do(awattar.update_data)
     schedule.every().day.at("14:15").do(awattar.update_data)
+    schedule.every().day.at("23:15").do(awattar.update_data)
+    schedule.every().day.at("23:30").do(control.schedule)
 
     while True:
         schedule.run_pending()
