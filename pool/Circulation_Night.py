@@ -44,7 +44,7 @@ class Awattar (object):
     def empty_data ():
         return { 'start_timestamp': None,
                  'end_timestamp': None,
-                 'marketprice': -999.99 }
+                 'marketprice': 999.99 }
 
     def update_data (self):
         lowest_price = self.empty_data()

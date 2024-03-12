@@ -23,7 +23,7 @@ echo "Staring 'Circulation.py' ..."
 sudo nohup ./Circulation.py --production 2>&1 > circulation.log &
 
 echo "Staring 'Circulation_Night.py' ..."
-sudo ./Circulation_Night.py 2>&1 > circulation_night.log &
+nohup ./Circulation_Night.py 2>&1 > circulation_night.log &
 cd ..
 
 cd power/
