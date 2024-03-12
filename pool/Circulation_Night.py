@@ -44,7 +44,7 @@ class Awattar (object):
     def empty_data ():
         return { 'start_timestamp': None,
                  'end_timestamp': None,
-                 'marketprice': -99.99 }
+                 'marketprice': -999.99 }
 
     def update_data (self):
         lowest_price = self.empty_data()
@@ -54,19 +54,23 @@ class Awattar (object):
             Log(f"Error while reading from {self.url}: {err}")
             data = [ self.empty_data() for _ in range(24) ]
         else:
-            lowest_price = data[0]
+            lowest_price = self.empty_data()
             for hour in data:
                 hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
                 hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
-                hour['marketprice'] = hour['marketprice']
+                hour['marketprice'] = hour['marketprice'] / 10.0
 
-                if hour['marketprice'] < lowest_price['marketprice']:
-                    lowest_price = hour
+                if hour['start_timestamp'].hour >= 0 and hour['start_timestamp'].hour <= 5:
+                    if hour['marketprice'] < lowest_price['marketprice']:
+                        lowest_price = hour
 
-        self.data['lowest_price'] = lowest_price
-        self.data['valid'] = True
         Log(f"Updated data from {self.url}.")
-        Log(f"Lowest price at {self.cheapest_hour}:00 am.")
+        if lowest_price['start_timestamp']:
+            self.data['lowest_price'] = lowest_price
+            self.data['valid'] = True
+            Log(f"Lowest price at {self.cheapest_hour}:00: {self.data['lowest_price']['marketprice']:.2f} ct/kWh.")
+        else:
+            Log("Data not available yet.")
 
     @property
     def cheapest_hour (self):
@@ -91,8 +95,8 @@ class Control (threading.Thread):
             Log("Pump on")
             try:
                 urlopen(self.url).read()
-            except:
-                Log("Cannot open url '{0}'. Error: {1[0]} {1[1]}".format(self.url,sys.exc_info()))
+            except Exception as err:
+                Log(f"Error opening url {self.url}: {err}")
                 Log("Pump on failed.")
             else:
                 self.pump_on = True
@@ -146,6 +150,7 @@ if __name__ == "__main__":
     control.start()
 
     schedule.every().day.at("23:15").do(awattar.update_data)
+    schedule.every().day.at("14:15").do(awattar.update_data)
 
     while True:
         schedule.run_pending()
