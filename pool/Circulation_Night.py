@@ -52,7 +52,6 @@ class Awattar (object):
             data = json.loads(urlopen(self.url).read())['data']
         except Exception as err:
             Log(f"Error while reading from {self.url}: {err}")
-            data = [ self.empty_data() for _ in range(24) ]
         else:
             for hour in data:
                 hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
