@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Circulation.py                                                              #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2020                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2020, 2024             #
 ###############################################################################
 
 """
@@ -154,10 +154,7 @@ def HTTP_Control ():
 @app.route('/on')
 def API_On ():
     Log("On requested.")
-    #++++++++++++++++++++++++++++++++++++++
-    # TODO: switch on in summer
-    #timer.on(60)
-    #++++++++++++++++++++++++++++++++++++++
+    timer.on(60)
     return "OK.\n"
 
 @app.route('/off')
