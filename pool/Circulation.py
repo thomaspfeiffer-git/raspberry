@@ -154,7 +154,7 @@ def HTTP_Control ():
 @app.route('/on')
 def API_On ():
     Log("On requested.")
-    timer.on(60)
+    timer.on(55)
     return "OK.\n"
 
 @app.route('/off')

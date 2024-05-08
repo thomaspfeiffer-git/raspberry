@@ -115,9 +115,9 @@ class Control (object):
                 self.pump_on = False
 
     def schedule (self):
-        schedule.every().day.at(f"{awattar.cheapest_hour:02d}:00").do(self.on)
-        schedule.every().day.at(f"{awattar.cheapest_hour+1:02d}:00").do(self.off)
-        Log(f"Scheduled pump on for {awattar.cheapest_hour:02d}:00.")
+        schedule.every().day.at(f"{awattar.cheapest_hour:02d}:02").do(self.on)
+        schedule.every().day.at(f"{awattar.cheapest_hour:02d}:58").do(self.off)
+        Log(f"Scheduled pump on for {awattar.cheapest_hour:02d}:02.")
 
 
 ###############################################################################
