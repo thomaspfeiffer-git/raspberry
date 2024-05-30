@@ -11,6 +11,7 @@ Sends pings to various Raspberrys to keep them awake (or reboot).
 
 import argparse
 import datetime
+import os
 import socket
 import sys
 import threading
@@ -23,7 +24,8 @@ from Logging import Log
 from Shutdown import Shutdown
 
 
-TIMEOUT = 10  # time until reboot if not watchdog pings are received
+TIMEOUT = 10  # time until reboot if no watchdog pings are received
+# TIMEOUT = 2 * 3600  # time (seconds) until reboot if no watchdog pings are received
 
 
 ###############################################################################
@@ -73,7 +75,10 @@ class Receiver (threading.Thread):
 def Watchdog ():
     while True:
         if receiver.timestamp + TIMEOUT < time.time():
-            Log("No ping received. Rebooting ...")
+            Log("No ping received. Rebooting in 5 seconds ...")
+            time.sleep(5)
+            os.system("reboot")
+
         time.sleep(0.1)
 
 
