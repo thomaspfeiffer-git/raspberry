@@ -45,7 +45,7 @@ def Sender ():
         # read config file
         # send udp paket to hosts
         # udp.ping("10.14.1.77")
-        udp.ping("pih2")
+        udp.ping("pih")
         for _ in range(600):
             time.sleep(0.01)
             # time.sleep(0.1)
