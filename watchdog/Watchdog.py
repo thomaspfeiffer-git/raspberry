@@ -9,6 +9,7 @@
 Sends pings to various Raspberrys to keep them awake (or reboot).
 """
 
+import argparse
 import datetime
 import socket
 import sys
@@ -80,9 +81,17 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--server", help="server: pings the clients as watchdog", action="store_true")
+    group.add_argument("--receiver", help="receives watchdog pings", action="store_true")
+    args = parser.parse_args()
 
-    # Sender()
-    Receiver()
+    if args.server:
+        Sender()
+
+    if args.receiver:
+        Receiver()
 
 # eof #
 
