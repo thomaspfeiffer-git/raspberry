@@ -16,6 +16,7 @@ import time
 
 
 sys.path.append("../libs/")
+from Commons import MyIP
 from Logging import Log
 from Shutdown import Shutdown
 
@@ -24,8 +25,10 @@ from Shutdown import Shutdown
 # UDP #########################################################################
 class UDP (object):
     def __init__ (self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.UDP_PORT = 6666
+        self.MAX_PACKET_SIZE = 128
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.bind((MyIP(), self.UDP_PORT))
 
     def ping (self, destination):
         datagram = datetime.datetime.now().strftime('%Y%m%d %H:%M:%S').encode('utf-8')
@@ -35,6 +38,18 @@ class UDP (object):
         except:
             Log("Cannot send data: {0[0]} {0[1]} (Data: {1})".format(sys.exc_info(), datagram))
 
+    def receive (self):
+        datagram = self.socket.recv(self.MAX_PACKET_SIZE).decode('utf-8')
+        Log(f"Data received: {datagram}")
+        return datagram
+
+
+###############################################################################
+###############################################################################
+def Receiver ():
+    udp = UDP()
+    while True:
+        data = udp.receive()
 
 
 ###############################################################################
@@ -43,7 +58,7 @@ def Sender ():
     udp = UDP()
     while True:
         # read config file
-        # send udp paket to hosts
+        # send udp packet to hosts
         # udp.ping("10.14.1.77")
         udp.ping("pih")
         for _ in range(600):
@@ -66,7 +81,8 @@ if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
 
-    Sender()
+    # Sender()
+    Receiver()
 
 # eof #
 
