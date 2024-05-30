@@ -13,6 +13,7 @@ import argparse
 import datetime
 import socket
 import sys
+import threading
 import time
 
 
@@ -20,6 +21,9 @@ sys.path.append("../libs/")
 from Commons import MyIP
 from Logging import Log
 from Shutdown import Shutdown
+
+
+TIMEOUT = 10  # time until reboot if not watchdog pings are received
 
 
 ###############################################################################
@@ -41,20 +45,40 @@ class UDP (object):
 
     def receive (self):
         datagram = self.socket.recv(self.MAX_PACKET_SIZE).decode('utf-8')
-        Log(f"Data received: {datagram}")
+        # Log(f"Data received: {datagram}")
         return datagram
 
 
 ###############################################################################
+# Receiver ####################################################################
+class Receiver (threading.Thread):
+    def __init__ (self):
+        threading.Thread.__init__(self)
+        self.udp = UDP()
+        self.timestamp = time.time()
+
+    def run (self):
+        self._running = True
+        while self._running:
+             data = self.udp.receive()
+             Log(f"Data received: {data}")
+             self.timestamp = time.time()
+
+    def stop (self):
+        self._running = False
+
+
 ###############################################################################
-def Receiver ():
-    udp = UDP()
+# Watchdog ####################################################################
+def Watchdog ():
     while True:
-        data = udp.receive()
+        if receiver.timestamp + TIMEOUT < time.time():
+            Log("No ping received. Rebooting ...")
+        time.sleep(0.1)
 
 
 ###############################################################################
-###############################################################################
+# Sender ######################################################################
 def Sender ():
     udp = UDP()
     while True:
@@ -72,6 +96,9 @@ def Sender ():
 def shutdown_application ():
     """cleanup stuff"""
     Log("Stopping application")
+    if args.receiver:
+        receiver.stop()
+        receiver.join()
     Log("Application stopped")
     sys.exit(0)
 
@@ -91,7 +118,9 @@ if __name__ == "__main__":
         Sender()
 
     if args.receiver:
-        Receiver()
+        receiver = Receiver()
+        receiver.start()
+        Watchdog()
 
 # eof #
 
