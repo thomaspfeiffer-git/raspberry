@@ -27,6 +27,8 @@ from Shutdown import Shutdown
 TIMEOUT = 10  # time until reboot if no watchdog pings are received
 # TIMEOUT = 2 * 3600  # time (seconds) until reboot if no watchdog pings are received
 
+HOSTS_TO_PING = ["pih", "nano01"]
+
 
 ###############################################################################
 # UDP #########################################################################
@@ -38,7 +40,7 @@ class UDP (object):
         self.socket.bind((MyIP(), self.UDP_PORT))
 
     def ping (self, destination):
-        datagram = datetime.datetime.now().strftime('%Y%m%d %H:%M:%S').encode('utf-8')
+        datagram = f"{destination}: {datetime.datetime.now().strftime('%Y%m%d %H:%M:%S').encode('utf-8')}"
         try:
             sent = self.socket.sendto(datagram, (destination, self.UDP_PORT))
             Log(f"Sent bytes: {sent}; data: {datagram}")
@@ -77,7 +79,7 @@ def Watchdog ():
         if receiver.timestamp + TIMEOUT < time.time():
             Log("No ping received. Rebooting in 5 seconds ...")
             time.sleep(5)
-            os.system("reboot")
+            # os.system("reboot")
 
         time.sleep(0.1)
 
@@ -88,9 +90,9 @@ def Sender ():
     udp = UDP()
     while True:
         # read config file
-        # send udp packet to hosts
-        # udp.ping("10.14.1.77")
-        udp.ping("pih")
+        for host in HOSTS_TO_PING:
+            udp.ping(host)
+
         for _ in range(600):
             time.sleep(0.01)
             # time.sleep(0.1)
