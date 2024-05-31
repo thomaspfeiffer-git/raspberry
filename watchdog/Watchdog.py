@@ -40,7 +40,7 @@ class UDP (object):
         self.socket.bind((MyIP(), self.UDP_PORT))
 
     def ping (self, destination):
-        datagram = f"{destination}: {datetime.datetime.now().strftime('%Y%m%d %H:%M:%S').encode('utf-8')}"
+        datagram = f"{destination}: {datetime.datetime.now().strftime('%Y%m%d %H:%M:%S')}".encode('utf-8')
         try:
             sent = self.socket.sendto(datagram, (destination, self.UDP_PORT))
             Log(f"Sent bytes: {sent}; data: {datagram}")
