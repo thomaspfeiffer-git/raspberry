@@ -23,11 +23,12 @@ from Commons import MyIP
 from Logging import Log
 from Shutdown import Shutdown
 
-
-TIMEOUT = 10  # time until reboot if no watchdog pings are received
-# TIMEOUT = 2 * 3600  # time (seconds) until reboot if no watchdog pings are received
-
 HOSTS_TO_PING = ["pih", "nano01"]
+
+PING_INTERVALL = 600  # intervall between pings (seconds)
+TIMEOUT = 2 * 3600  # time (seconds) until reboot if no watchdog pings are received
+# TIMEOUT = 10  # time until reboot if no watchdog pings are received
+
 
 
 ###############################################################################
@@ -89,13 +90,11 @@ def Watchdog ():
 def Sender ():
     udp = UDP()
     while True:
-        # read config file
         for host in HOSTS_TO_PING:
             udp.ping(host)
 
-        for _ in range(600):
-            time.sleep(0.01)
-            # time.sleep(0.1)
+        for _ in range(PING_INTERVALL*10):
+            time.sleep(0.1)
 
 
 ###############################################################################
