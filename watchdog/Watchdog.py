@@ -80,7 +80,7 @@ def Watchdog ():
         if receiver.timestamp + TIMEOUT < time.time():
             Log("No ping received. Rebooting in 5 seconds ...")
             time.sleep(5)
-            # os.system("reboot")
+            os.system("reboot")
 
         time.sleep(0.1)
 
