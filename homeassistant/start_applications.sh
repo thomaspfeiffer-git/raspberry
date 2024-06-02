@@ -2,6 +2,15 @@
 # starts all home automation applications
 
 
+
+(
+echo "Starting Watchdog.py ..."
+cd ../watchdog/
+./Watchdog.py --receiver  2>&1 > watchdog.log &
+echo "Watchdog.py started."
+)
+
+
 echo "Starting Openweather.py ..."
 cd Openweather/
 nohup ./Openweather.py  2>&1 >openweather.log &
