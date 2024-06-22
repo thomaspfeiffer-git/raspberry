@@ -6,7 +6,7 @@
 (
 echo "Starting Watchdog.py ..."
 cd ../watchdog/
-sudo ./Watchdog.py --receiver  2>&1 > watchdog.log &
+sudo ./Watchdog.py --receiver  2>&1 >> watchdog.log &
 echo "Watchdog.py started."
 )
 
