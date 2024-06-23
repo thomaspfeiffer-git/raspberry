@@ -2,7 +2,6 @@
 # starts all home automation applications
 
 
-
 (
 echo "Starting Watchdog.py ..."
 cd ../watchdog/
@@ -10,6 +9,7 @@ sudo ./Watchdog.py --receiver  2>&1 >> watchdog.log &
 echo "Watchdog.py started."
 )
 
+sleep 60
 
 echo "Starting Openweather.py ..."
 cd Openweather/
@@ -58,7 +58,7 @@ cd ..
 echo
 echo "Starting Timer.py ..."
 cd Timer/
-nohup ./Timer.py &
+( sleep 60 ; nohup ./Timer.py & ) &
 echo "Timer.py started."
 cd ..
 
@@ -90,7 +90,7 @@ cd ..
 echo
 echo "Starting Radio.py (after sleep)"
 cd Radio
-( sleep 5 ; nohup ./Radio.py 2>&1 > radio.log & ) &
+( sleep 60 ; nohup ./Radio.py 2>&1 > radio.log & ) &
 echo "Radio.py started"
 cd ..
 
