@@ -10,8 +10,8 @@ Switches the boiler for warm water on and off.
 """
 
 ### Usage ###
-# nohup ./Boiler --duration 118 &
-# nohup ./Boiler --start 14 --duration 118 &
+# nohup ./Boiler.py --duration 118 &
+# nohup ./Boiler.py --start 14 --duration 118 &
 
 ### Packages you might need to install ###
 # sudo apt install python3-gpiozero
@@ -23,7 +23,6 @@ from gpiozero import Button, LED
 import schedule
 import sys
 import time
-
 
 sys.path.append("../libs/")
 from Shutdown import Shutdown
