@@ -9,7 +9,7 @@
 """
 
 ### Usage ###
-
+### TODO
 
 ### Packages you might need to install ###
 # sudo apt install python3-gpiozero
@@ -30,9 +30,22 @@ from Shutdown import Shutdown
 ###############################################################################
 # CONFIG ######################################################################
 class CONFIG:
-    class Relais:
-        pump = "BOARD18"
+    class Boiler:
+        pin = "BOARD18"
 
+
+
+###############################################################################
+# Relais ######################################################################
+class Relais (object):
+    def __init__ (self, pin):
+        self.__relais = LED(pin)
+
+    def on (self):
+        self.__relais.on()
+
+    def off (self):
+        self.__relais.off()
 
 
 ###############################################################################
@@ -48,6 +61,11 @@ def shutdown_application ():
 ## main #######################################################################
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
+
+    boiler = Relais(CONFIG.Boiler.pin)
+    boiler.on()
+    time.sleep(5)
+    boiler.off()
 
 
 # eof #
