@@ -1,0 +1,54 @@
+#!/usr/bin/python3 -u
+# -*- coding: utf-8 -*-
+###############################################################################
+# Boiler.py                                                                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2024                   #
+###############################################################################
+
+"""
+"""
+
+### Usage ###
+
+
+### Packages you might need to install ###
+# sudo apt install python3-gpiozero
+
+
+import argparse
+from datetime import datetime, timedelta
+from gpiozero import Button, LED
+import sys
+import time
+
+
+sys.path.append("../libs/")
+from Logging import Log
+from Shutdown import Shutdown
+
+
+###############################################################################
+# CONFIG ######################################################################
+class CONFIG:
+    class Relais:
+        pump = "BOARD18"
+
+
+
+###############################################################################
+# Shutdown stuff ##############################################################
+def shutdown_application ():
+    """cleanup stuff"""
+    Log("Stopping application")
+    Log("Application stopped")
+    sys.exit(0)
+
+
+###############################################################################
+## main #######################################################################
+if __name__ == "__main__":
+    shutdown_application = Shutdown(shutdown_func=shutdown_application)
+
+
+# eof #
+
