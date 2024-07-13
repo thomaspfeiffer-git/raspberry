@@ -9,8 +9,8 @@
 """
 
 ### Usage ###
-nohup ./Boiler --duration 2 &
-nohup ./Boiler --start 14 --duration 2 &
+# nohup ./Boiler --duration 2 &
+# nohup ./Boiler --start 14 --duration 2 &
 
 ### Packages you might need to install ###
 # sudo apt install python3-gpiozero
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--duration", "-d", nargs=1, default=2)
+    parser.add_argument("--duration", "-d", nargs=1, type=int, default=[2])
     args = parser.parse_args()
     print(args)
 
