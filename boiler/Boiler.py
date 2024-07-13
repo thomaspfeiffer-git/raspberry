@@ -6,6 +6,7 @@
 ###############################################################################
 
 """
+Switches the boiler for warm water on and off.
 """
 
 ### Usage ###
@@ -40,7 +41,6 @@ class CONFIG:
 ###############################################################################
 # MyLogging ###################################################################
 class MyLogging (object):
-
     def __init__ (self):
         pass
 
@@ -56,8 +56,8 @@ class MyLogging (object):
 
 
 ###############################################################################
-# Relais ######################################################################
-class Relais (object):
+# Boiler ######################################################################
+class Boiler (object):
     def __init__ (self, pin):
         self.__relais = LED(pin)
 
@@ -85,7 +85,7 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
     Log = MyLogging()
-    boiler = Relais(CONFIG.Boiler.pin)
+    boiler = Boiler(CONFIG.Boiler.pin)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--start", "-s", nargs=1, type=int,
