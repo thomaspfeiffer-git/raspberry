@@ -9,7 +9,8 @@
 """
 
 ### Usage ###
-### TODO
+nohup ./Boiler --duration 3 &
+nohup ./Boiler --start 14 --duration 3 &
 
 ### Packages you might need to install ###
 # sudo apt install python3-gpiozero
@@ -25,6 +26,11 @@ import time
 sys.path.append("../libs/")
 from Logging import Log
 from Shutdown import Shutdown
+
+
+
+### TODO: Log to permant file
+
 
 
 ###############################################################################
