@@ -104,11 +104,11 @@ if __name__ == "__main__":
     stop_time = start_time + timedelta(minutes=args.duration[0])
     exit_time = stop_time + timedelta(minutes=1)
 
-    start_time = f"{start_time.hour}:{start_time.minute:02d}"
+    start_time = f"{start_time.hour:02d}:{start_time.minute:02d}"
     Log(f"Set start time to {start_time}.")
-    stop_time = f"{stop_time.hour}:{stop_time.minute:02d}"
+    stop_time = f"{stop_time.hour:02d}:{stop_time.minute:02d}"
     Log(f"Set stop time to {stop_time}.")
-    exit_time = f"{exit_time.hour}:{exit_time.minute:02d}"
+    exit_time = f"{exit_time.hour:02d}:{exit_time.minute:02d}"
     Log(f"Set exit time to {exit_time}.")
 
     schedule.every().day.at(start_time).do(boiler.on)
