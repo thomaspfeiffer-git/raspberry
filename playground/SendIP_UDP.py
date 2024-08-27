@@ -19,7 +19,7 @@ nohup ./SendIP_UDP.py --receiver 2>&1 > sendip_udp.log &
 
 
 import argparse
-import os
+import subprocess
 import sys
 import time
 
@@ -29,10 +29,18 @@ from Shutdown import Shutdown
 import UDP
 
 
-CREDENTIALS = os.path.expanduser("SendIP_UDP.cred")
+CREDENTIALS = "SendIP_UDP.cred"
 
-UPDATE_INTERVAL_SEND_DATA_UDP = 10            # interval for sending data to external server
 
+###############################################################################
+# IP ##########################################################################
+class IP (object):
+    def __init__ (self):
+        self.udp = UDP.Sender(CREDENTIALS)
+
+    def run (self):
+        my_ip = subprocess.run(['dig', '+short', 'txt', 'ch', 'whoami.cloudflare', '@1.0.0.1'], capture_output=True, text=True).stdout[:-1]
+        self.udp.send(my_ip)
 
 
 ###############################################################################
@@ -41,7 +49,7 @@ class Receiver (object):
     def __init__ (self):
         self.udp = UDP.Receiver(CREDENTIALS)
 
-    def start (self):
+    def run (self):
         while True:
             payload = self.udp.receive()
             Log(f"{payload}")
@@ -68,10 +76,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.receiver:
-        pass
+        r = Receiver()
+        r.run()
 
     if args.sender:
-        pass
+        ip = IP()
+        ip.run()
 
 # eof #
 
