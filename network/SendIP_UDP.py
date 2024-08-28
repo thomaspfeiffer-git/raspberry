@@ -36,11 +36,12 @@ CREDENTIALS = os.path.expanduser("~/credentials/sendip_udp.cred")
 ###############################################################################
 # IP ##########################################################################
 class IP (object):
+    dig = ['dig', '+short', 'txt', 'ch', 'whoami.cloudflare', '@1.0.0.1']
     def __init__ (self):
         self.udp = UDP.Sender(CREDENTIALS)
 
     def run (self):
-        my_ip = subprocess.run(['dig', '+short', 'txt', 'ch', 'whoami.cloudflare', '@1.0.0.1'], capture_output=True, text=True).stdout[:-1]
+        my_ip = subprocess.run(IP.dig, capture_output=True, text=True).stdout[:-1].replace('"', '')
         self.udp.send(my_ip)
 
 
