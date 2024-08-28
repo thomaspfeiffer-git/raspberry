@@ -19,6 +19,7 @@ nohup ./SendIP_UDP.py --receiver 2>&1 > sendip_udp.log &
 
 
 import argparse
+import os
 import subprocess
 import sys
 import time
@@ -29,7 +30,7 @@ from Shutdown import Shutdown
 import UDP
 
 
-CREDENTIALS = "SendIP_UDP.cred"
+CREDENTIALS = os.path.expanduser("~/credentials/sendip_udp.cred")
 
 
 ###############################################################################
