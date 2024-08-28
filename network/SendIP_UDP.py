@@ -20,6 +20,7 @@ nohup ./SendIP_UDP.py --receiver 2>&1 > sendip_udp.log &
 
 import argparse
 import os
+import socket
 import subprocess
 import sys
 import time
@@ -41,8 +42,9 @@ class IP (object):
         self.udp = UDP.Sender(CREDENTIALS)
 
     def run (self):
+        host = socket.gethostname()
         my_ip = subprocess.run(IP.dig, capture_output=True, text=True).stdout[:-1].replace('"', '')
-        self.udp.send(my_ip)
+        self.udp.send(f"{host}:{my_ip}")
 
 
 ###############################################################################
