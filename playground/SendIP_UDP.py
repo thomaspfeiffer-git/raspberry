@@ -52,7 +52,6 @@ class Receiver (object):
     def run (self):
         while True:
             payload = self.udp.receive()
-            Log(f"{payload}")
 
 
 ###############################################################################
