@@ -14,7 +14,7 @@ if [ $(ps aux | grep "rrdtool" | wc -l) -gt 1 ] ; then
 fi
 
 
-RRDPATH=/home/thomas/rrd/
+RRDPATH=$HOME/rrd/
 RRD_IN=$RRDPATH/databases/weather_indoor.rrd
 RRD_OUT=$RRDPATH/databases/weather_outdoor.rrd
 RRD_K=$RRDPATH/databases/kidsroom.rrd

@@ -13,7 +13,7 @@ if [ $(ps aux | grep "rrdtool" | wc -l) -gt 1 ] ; then
 fi
 
 
-RRDPATH=/home/thomas/rrd/
+RRDPATH=$HOME/rrd/
 RRD=$RRDPATH/databases/seti.rrd
 PICS=$RRDPATH/temp/
 PICS_STORE=$RRDPATH/graphs/

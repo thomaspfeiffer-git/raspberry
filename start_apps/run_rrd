@@ -9,7 +9,7 @@ $HOME/raspberry/seti/Seti_rrd_graph.sh
 $HOME/raspberry/pool/Ventilation_rrd_graph.sh
 $HOME/raspberry/airparticulates/Airparticulates_rrd_graph.sh
 $HOME/raspberry/weather/Weather_rrd_graph.sh
-$HOME/raspberry/power/Solarpower_rrd_graph.ssh
+$HOME/raspberry/power/Solarpower_rrd_graph.sh
 $HOME/raspberry/power/Power_Guglgasse_rrd_graph.sh
 
 # eof #
