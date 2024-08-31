@@ -9,7 +9,7 @@ sudo ./Watchdog.py --receiver  2>&1 >> watchdog.log &
 echo "Watchdog.py started."
 )
 
-sleep 60
+sleep 10
 
 echo "Starting Openweather.py ..."
 cd Openweather/
@@ -58,7 +58,7 @@ cd ..
 echo
 echo "Starting Timer.py ..."
 cd Timer/
-( sleep 60 ; nohup ./Timer.py & ) &
+nohup ./Timer.py 2>&1 >> timer.log &
 echo "Timer.py started."
 cd ..
 
@@ -88,14 +88,11 @@ cd ..
 
 
 echo
-echo "Starting Radio.py (after sleep)"
+echo "Starting Radio.py"
 cd Radio
-( sleep 60 ; nohup ./Radio.py 2>&1 > radio.log & ) &
+nohup ./Radio.py 2>&1 > radio.log &
 echo "Radio.py started"
 cd ..
-
-
-
 
 
 # eof #
