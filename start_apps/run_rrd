@@ -1,11 +1,16 @@
 #!/usr/bin/bash
+#############################################################################
+# run_rrd.sh                                                                #
+# runs all rrd scripts                                                      #
+# (c) https://github.com/thomaspfeiffer-git 2024                            #
+#############################################################################
 
-/home/thomas/raspberry/seti/Seti_rrd_graph.sh
-/home/thomas/raspberry/pool/Ventilation_rrd_graph.sh
-/home/thomas/raspberry/airparticulates/Airparticulates_rrd_graph.sh
-/home/thomas/raspberry/weather/Weather_rrd_graph.sh
-/home/thomas/raspberry/power/Solarpower_rrd_graph.ssh
-/home/thomas/raspberry/power/Power_Guglgasse_rrd_graph.sh
+$HOME/raspberry/seti/Seti_rrd_graph.sh
+$HOME/raspberry/pool/Ventilation_rrd_graph.sh
+$HOME/raspberry/airparticulates/Airparticulates_rrd_graph.sh
+$HOME/raspberry/weather/Weather_rrd_graph.sh
+$HOME/raspberry/power/Solarpower_rrd_graph.ssh
+$HOME/raspberry/power/Power_Guglgasse_rrd_graph.sh
 
 # eof #
 
