@@ -101,10 +101,10 @@ class Control (threading.Thread):
         if Touchevent.event():   # brightness control
             Sound.play(CONFIG.CLICK_SOUND)
 
-            Log(f"Playing {station_url}")
             if self.radio_process is not None:
                 self.stop_play()
 
+            Log(f"Playing {station_url}")
             self.radio_process = subprocess.Popen(["/usr/bin/cvlc", station_url])
 
     @triggered
