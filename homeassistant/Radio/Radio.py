@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Radio.py                                                                    #
-# (c) https://github.com/thomaspfeiffer-git 2021, 2022, 2023                  #
+# (c) https://github.com/thomaspfeiffer-git 2021, 2022, 2023, 2024            #
 ###############################################################################
 """
 """
@@ -105,7 +105,7 @@ class Control (threading.Thread):
             if self.radio_process is not None:
                 self.stop_play()
 
-            self.radio_process = subprocess.Popen(["cvlc", station_url])
+            self.radio_process = subprocess.Popen(["/usr/bin/cvlc", station_url])
 
     @triggered
     def stop_play (self, nosound=False):
