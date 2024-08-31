@@ -90,7 +90,7 @@ cd ..
 echo
 echo "Starting Radio.py"
 cd Radio
-nohup ./Radio.py 2>&1 > radio.log &
+( sleep 60 ; nohup ./Radio.py 2>&1 > radio.log & ) &
 echo "Radio.py started"
 cd ..
 
