@@ -43,8 +43,9 @@ class IP (object):
 
     def run (self):
         host = socket.gethostname()
-        my_ip = subprocess.run(IP.dig, capture_output=True, text=True).stdout[:-1].replace('"', '')
-        self.udp.send(f"{host}:{my_ip}")
+        ip = subprocess.run(IP.dig, capture_output=True, text=True).stdout[:-1].replace('"', '')
+        local_ip = subprocess.run(["hostname", "-I"], capture_output=True, text=True).stdout.replace('\n', '').replace(' ', '')
+        self.udp.send(f"{host}: {ip} (local: {local_ip})")
 
 
 ###############################################################################
