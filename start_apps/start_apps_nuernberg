@@ -13,7 +13,7 @@ cd /home/thomas/raspberry/
 
 cd seti/
 echo "Starting 'seti_receiver.py' ..."
-nohup ./Seti_UDP.py 2>&1 > seti_udp.log &
+nohup ./Seti_UDP.py 2>seti_udp.log &
 cd ..
 
 cd pool/
@@ -38,7 +38,7 @@ cd ..
 
 cd anteroom/
 echo "Starting 'Anteroom_UDP.py' ..."
-nohup ./Anteroom_UDP.py 2>&1 > anteroom_udp.log &
+nohup ./Anteroom_UDP.py 2>anteroom_udp.log &
 cd ..
 
 cd weather/
@@ -52,12 +52,12 @@ cd ..
 
 cd kollerberg/
 echo "Starting 'Weather_Kollerberg.py --receiver_rrd' ..."
-nohup ./Weather_Kollerberg.py --receiver_rrd 2>&1 >weather_kollerberg_udp.log &
+nohup ./Weather_Kollerberg.py --receiver_rrd 2>weather_kollerberg_udp.log &
 cd ..
 
 cd homeassistant/Sensors/
 echo "Starting 'Kitchen Sensors_UDP.py' ..."
-nohup ./Sensors_UDP.py 2>&1 >sensors_udp.log &
+nohup ./Sensors_UDP.py 2>sensors_udp.log &
 cd ../..
 
 cd power/
