@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<schedules>
+    <min_on_time>5</min_on_time>
+    <min_off_time>25</min_off_time>
+
+    <schedule>
+        <start>0:25</start>
+        <stop>0:35</stop>
+    </schedule>
+
+    <schedule>
+        <start>1:00</start>
+        <stop>23:00</stop>
+        <conditions>
+            <humidity direction="in">
+                <value>98.0</value>
+                <operator>&lt;=</operator>
+            </humidity>
+            <temperature location="outside">
+                <value>2.0</value>
+                <operator>&gt;=</operator>
+            </temperature>
+            <!-- <abs_humidity_difference>
+                <value>0.75</value>
+            </abs_humidity_difference>
+            -->
+        </conditions>
+    </schedule>
+</schedules>
+

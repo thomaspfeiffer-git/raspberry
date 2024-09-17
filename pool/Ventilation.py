@@ -133,8 +133,8 @@ def shutdown_application ():
     scheduler.join()
     udp_sender.stop()
     udp_sender.join()
-    sensors.stop()
-    sensors.join()
+#    sensors.stop()
+#    sensors.join()
     Log("Application stopped")
     sys.exit(0)
 
@@ -153,8 +153,8 @@ if __name__ == "__main__":
 
     ### TODO temporarily deactivated
     # sensors = Sensors(data,update_display=display.print)
-    sensors = Sensors(data,update_display=None)
-    sensors.start()
+#    sensors = Sensors(data,update_display=None)
+#    sensors.start()
 
     scheduler = Scheduler(data)
     scheduler.start()
