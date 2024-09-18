@@ -11,7 +11,7 @@
 """
 ###### Usage ######
 ### Sensor
-nohup ./SendIP_UDP.py --sensor 2>&1 > sendip_udp.log &
+nohup ./SendIP_UDP.py --sender 2>&1 > sendip_udp.log &
 
 ### Receiver
 nohup ./SendIP_UDP.py --receiver 2>&1 > sendip_udp.log &
