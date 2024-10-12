@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ############################################################################
 # sound.py                                                                 #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2023          #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2023, 2024    #
 ############################################################################
 
 import subprocess
@@ -16,7 +16,7 @@ class Sound (object):
 
     @staticmethod
     def play (mp3, runs=1):
-        command = ["mpg321", "-g 100", "-q"] + [mp3] * runs
+        command = ["/usr/bin/mpg321", "-g 100", "-q"] + [mp3] * runs
         process = subprocess.Popen(command)
         process.wait()
         process.communicate()
@@ -30,7 +30,7 @@ class Sound (object):
             raise ValueError(f"volume is {volume}, must be in 0..100")
 
         Sound.volume = volume
-        command = ["amixer", "-D", "pulse", "sset", "Master", f"{volume}%"]
+        command = ["/usr/bin/amixer", "-D", "pulse", "sset", "Master", f"{volume}%"]
         process = subprocess.Popen(command)
         process.wait()
         process.communicate()
