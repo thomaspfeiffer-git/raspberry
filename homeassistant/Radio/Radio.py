@@ -113,7 +113,7 @@ class Control (threading.Thread):
             self.radio_process = subprocess.Popen(["/usr/bin/cvlc", station_url])
             # self.radio_process = subprocess.Popen(["/usr/bin/cvlc", station_url], stdout=subprocess.PIPE)
             # Log(f"cvlc stdout: {self.radio_process.stdout.read1().decode('utf-8')}")
-            # Log(f"cvlc stderr: {self.radio_process.stderr.read().decode('utf-8')}")
+            # see https://realpython.com/python-subprocess/#using-popen
 
     @triggered
     def stop_play (self, nosound=False):
