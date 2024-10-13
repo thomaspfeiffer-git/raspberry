@@ -105,7 +105,15 @@ class Control (threading.Thread):
                 self.stop_play()
 
             Log(f"Playing {station_url}")
+            p = subprocess.Popen(["touch", "/home/pi/emil.touch"])
+            time.sleep(5)
+            p.terminate()
+            p.communicate()
+
             self.radio_process = subprocess.Popen(["/usr/bin/cvlc", station_url])
+            # self.radio_process = subprocess.Popen(["/usr/bin/cvlc", station_url], stdout=subprocess.PIPE)
+            # Log(f"cvlc stdout: {self.radio_process.stdout.read1().decode('utf-8')}")
+            # Log(f"cvlc stderr: {self.radio_process.stderr.read().decode('utf-8')}")
 
     @triggered
     def stop_play (self, nosound=False):
