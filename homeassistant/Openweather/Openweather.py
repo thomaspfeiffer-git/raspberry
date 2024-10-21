@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Openweather.py                                                              #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2024             #
 ###############################################################################
 """provides data from openweathermap:
    - to my SensorValueQueue for my weather station
@@ -14,10 +14,10 @@
 
 
 ### setup ###
-# sudo pip3 install flask-restful
-# sudo apt-get install python3-flask-restful
+# sudo apt install python3-flask-restful
 #
-# sudo pip3 install attrdict
+# sudo pip3 install --break-system-packages attrdict
+# https://stackoverflow.com/questions/72361026/how-can-i-get-attrdict-module-working-in-python
 
 
 ### additional resources and documentation ###
