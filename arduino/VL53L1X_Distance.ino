@@ -29,8 +29,9 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 #include <WiFi.h>
 #include <WiFiUdp.h>
 
-const char* ssid = "smtp-mesh";
-const char* password = "Ich installiere dieses Mesh-Netzwerk am 3. November 2023.";
+const char* ssid = "";
+const char* password = "";
+bool Wifi = false;
 
 WiFiUDP udp;
 const char* udpAddress = "rrd.smtp.at";
@@ -40,8 +41,13 @@ const int udpPort = 22000;
 /** setup() *****************************************************************/
 void setup() {
   Serial.begin(115200);
-  delay(10);
+  delay(1000);
   Serial.println();
+  for (int i=0; i<10; i++)
+   {
+    Serial.println("Starting program ...");
+    delay(100);
+   }
 
   Wire.begin();
 
@@ -74,10 +80,13 @@ void loop() {
   data.toCharArray(datagram, data.length()+1);
   Serial.println(datagram);
 
-  udp.begin(udpPort);
-  udp.beginPacket(udpAddress, udpPort);
-  udp.write((uint8_t*)datagram, strlen(datagram));
-  udp.endPacket();
+  if (Wifi)
+   {
+    udp.begin(udpPort);
+    udp.beginPacket(udpAddress, udpPort);
+    udp.write((uint8_t*)datagram, strlen(datagram));
+    udp.endPacket();
+   }
 
   delay(500);
 }
@@ -95,14 +104,13 @@ void setup_vl53l1x()
   Serial.print(F("Sensor ID: 0x"));
   Serial.println(vl53.sensorID(), HEX);
 
-  if (! vl53.startRanging()) {
+  if (!vl53.startRanging()) {
     Serial.print(F("Couldn't start ranging: "));
     Serial.println(vl53.vl_status);
     while (1)       delay(10);
   }
   Serial.println(F("Ranging started"));
 
-  // Valid timing budgets: 15, 20, 33, 50, 100, 200 and 500ms!
   vl53.setTimingBudget(50);
   Serial.print(F("Timing budget (ms): "));
   Serial.println(vl53.getTimingBudget());
@@ -113,23 +121,29 @@ void setup_vl53l1x()
 /** setup_wifi() ************************************************************/
 void setup_wifi()
  {
-  WiFi.mode(WIFI_STA);
   Serial.println();
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  Serial.print("Connecting to "); Serial.print(ssid); Serial.println(".");
 
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+  for (int i=0; i<10; i++)
+   {
+    if (WiFi.status() == WL_CONNECTED)
+     {
+       Wifi = true;
+       Serial.println("WiFi connected");
+       Serial.println(WiFi.localIP());
+       break;
+    }
+    delay(1000);
     Serial.print(".");
   }
-  Serial.println("");
-  Serial.println("WiFi connected");
 
-  // Print the IP address
-  Serial.println(WiFi.localIP());
+  if (!Wifi)
+   {
+     Serial.println("Wifi not connected.");
+  }
 }
 
 
