@@ -6,7 +6,7 @@
 ###############################################################################
 """provides data from openweathermap:
    - to my SensorValueQueue for my weather station
-   - as an api: http://<host>:5000
+   - as an api: http://<host>:<port>
 """
 
 ### usage ###
@@ -16,8 +16,7 @@
 ### setup ###
 # sudo apt install python3-flask-restful
 #
-# sudo pip3 install --break-system-packages attrdict
-# https://stackoverflow.com/questions/72361026/how-can-i-get-attrdict-module-working-in-python
+# sudo pip3 install --break-system-packages attridict
 
 
 ### additional resources and documentation ###
@@ -31,7 +30,7 @@
 # http://flask-restful.readthedocs.io/en/latest/quickstart.html#a-minimal-api
 
 
-from attrdict import AttrDict
+import attridict
 import copy
 from datetime import datetime
 import json
@@ -148,7 +147,7 @@ class OpenWeatherMap_Data (threading.Thread):
         """reads forecast weather data from openweathermap"""
         try:
             with urlopen(self.OWMC.url_forecast) as response:
-                data = AttrDict(json.loads(response.read().decode("utf-8")))
+                data = attridict(json.loads(response.read().decode("utf-8")))
         except (HTTPError, URLError, ConnectionResetError):
             Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
             raise ValueError
@@ -168,7 +167,7 @@ class OpenWeatherMap_Data (threading.Thread):
         """reads current weather data from openweathermap"""
         try:
             with urlopen(self.OWMC.url_actual) as response:
-                data = AttrDict(json.loads(response.read().decode("utf-8")))
+                data = attridict(json.loads(response.read().decode("utf-8")))
         except (HTTPError, URLError, ConnectionResetError):
             Log("Error: {0[0]} {0[1]}".format(sys.exc_info()))
             raise ValueError
