@@ -42,14 +42,16 @@ def get_default_bus():
     """
     plat = Platform.platform_detect()
     if plat == Platform.RASPBERRY_PI:
-        if Platform.pi_revision() == 1:
-            # Revision 1 Pi uses I2C bus 0.
-            return 0
-        else:
-            # Revision 2 Pi uses I2C bus 1.
-            return 1
+        # removed 23rd October 2024; TODO delete after Jan 2025
+        # if Platform.pi_revision() == 1:
+        #     # Revision 1 Pi uses I2C bus 0.
+        #     return 0
+        # else:
+        #     # Revision 2 Pi uses I2C bus 1.
+        #     return 1
+        return 1
     elif plat == Platform.NANOPI:
-        return 0 
+        return 0
     else:
         raise RuntimeError('Could not determine default I2C bus for platform.')
 
