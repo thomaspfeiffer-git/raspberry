@@ -7,9 +7,6 @@ sys.path.append('../libs')
 
 from sensors.CPU import CPU
 
-
-print(platform.platform())
-
 cpu = CPU()
 print(cpu.read_temperature())
 
