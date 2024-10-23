@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 # Brightness.py                                                              #
-# (c) https://github.com/thomaspfeiffer-git 2017                             #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2024                       #
 ##############################################################################
 """controls brightness of a raspberry pi display based on the
    luminosity measured by a TSL2561 in prozess Sensors/Sensors.py"""
@@ -14,9 +14,10 @@
 
 ### setup ###
 # sudo pip3 install flask-restful
+# sudo pip3 install --break-system-packages attridict
 
 
-from attrdict import AttrDict
+import attridict
 from datetime import datetime, timedelta
 import json
 import socket
@@ -92,7 +93,7 @@ class Sensor (threading.Thread):
         lightness = self.__lux
         try:
             with urlopen(self.url, timeout=15) as response:
-                lightness = int(AttrDict(json.loads(response.read().decode("utf-8")))['lightness'])
+                lightness = int(attridict(json.loads(response.read().decode("utf-8")))['lightness'])
         except (HTTPError, URLError):
             Log("HTTPError, URLError: {0[0]} {0[1]}".format(sys.exc_info()))
         except socket.timeout:
