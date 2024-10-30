@@ -60,7 +60,7 @@ class OWM (object):
             self.last_changed = datetime.now().timestamp()
 
     def __call__ (self):
-        if self.last_changed + 60 < datetime.now().timestamp():
+        if self.last_changed is None or self.last_changed + 60 < datetime.now().timestamp():
             self._read()
         return self.data
 
