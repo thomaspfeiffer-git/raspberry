@@ -1,16 +1,25 @@
-##################################################
-# update/upgrade script                          #
-# (c) https://github.com/thomaspfeiffer-git 2023 #
-##################################################
+########################################################
+# update/upgrade script                                #
+# (c) https://github.com/thomaspfeiffer-git 2023, 2024 #
+########################################################
 
-sudo apt-get update -y --fix-missing
-sudo apt-get upgrade -y --fix-missing
 
-sudo apt-get clean -y
+echo "Running in screen? [yes]"
+read ANSWER
 
-sudo apt-get autoremove -y
+if [ $ANSWER != "yes" ] ; then
+    exit
+else
+   sudo apt-get update -y --fix-missing
+   sudo apt-get upgrade -y --fix-missing
 
-sudo checkrestart
+   sudo apt-get clean -y
+
+   sudo apt-get autoremove -y
+
+   sudo checkrestart
+
+fi
 
 # eof #
 
