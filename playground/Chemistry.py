@@ -14,6 +14,7 @@ molecule = "2 Na2Cl2OH3"
 
 items = re.findall(r'\d*|[A-Z][a-z]?', molecule)
 print(items)
+# ['2', '', '', 'Na', '2', '', 'Cl', '2', '', 'O', '', 'H', '3', '']
 
 elements = {}
 quantifier = None
@@ -35,6 +36,7 @@ for i, item in enumerate(items):
         elements[element] = quantifier * count
 
 print(elements)
+# {'Na': 4, 'Cl': 4, 'O': 2, 'H': 6}
 
 
 # eof #
