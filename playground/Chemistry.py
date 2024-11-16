@@ -10,14 +10,14 @@
 import re
 
 
-elements = {}
-
 molecule = "2 Na2Cl2OH"
-items = re.findall(r'\d*|[A-Z][a-z]?', molecule)
 
+items = re.findall(r'\d*|[A-Z][a-z]?', molecule)
 print(items)
 
+elements = {}
 quantifier = None
+
 for i, item in enumerate(items):
     if item == '':
         continue
@@ -30,7 +30,7 @@ for i, item in enumerate(items):
     if re.fullmatch(r'[A-Z][a-z]?', item):
         element = item
         count = 1
-        if re.fullmatch(r'\d+', items[i+100]):
+        if re.fullmatch(r'\d+', items[i+1]):
             count = int(items[i+1])
         elements[element] = quantifier * count
 
