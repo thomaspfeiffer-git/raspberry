@@ -4,11 +4,8 @@
 # Chemistry.py                                                                #
 # (c) https://github.com/thomaspfeiffer-git 2024                              #
 ###############################################################################
-"""
-"""
 
 import re
-
 
 molecule = "2 Na2Cl2OH3"
 
@@ -37,7 +34,6 @@ for i, item in enumerate(items):
 
 print(elements)
 # {'Na': 4, 'Cl': 4, 'O': 2, 'H': 6}
-
 
 # eof #
 
