@@ -2,14 +2,14 @@
 # starts all home automation applications
 
 
-(
-echo "Starting Watchdog.py ..."
-cd ../watchdog/
-sudo ./Watchdog.py --receiver  2>&1 >> watchdog.log &
-echo "Watchdog.py started."
-)
+# (
+# echo "Starting Watchdog.py ..."
+# cd ../watchdog/
+# sudo ./Watchdog.py --receiver  2>&1 >> watchdog.log &
+# echo "Watchdog.py started."
+# )
 
-sleep 10
+# sleep 10
 
 echo "Starting Openweather.py ..."
 cd Openweather/
@@ -58,7 +58,7 @@ cd ..
 echo
 echo "Starting Timer.py ..."
 cd Timer/
-# nohup ./Timer.py 2>&1 >> timer.log &
+nohup ./Timer.py 2>&1 >> timer.log &
 echo "Timer.py started."
 cd ..
 
