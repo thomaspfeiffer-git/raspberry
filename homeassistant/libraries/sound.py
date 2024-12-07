@@ -16,7 +16,8 @@ class Sound (object):
 
     @staticmethod
     def play (mp3, runs=1):
-        command = ["/usr/bin/mpg321", "-g 100", "-q"] + [mp3] * runs
+        # command = ["/usr/bin/mpg321", "-g 100", "-q"] + [mp3] * runs
+        command = ["/usr/bin/cvlc", "--play-and-exit"] + [mp3] * runs
         process = subprocess.Popen(command)
         process.wait()
         process.communicate()
