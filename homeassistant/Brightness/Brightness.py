@@ -47,7 +47,7 @@ api = Api(app)
 ###############################################################################
 # CONFIG ######################################################################
 class CONFIG (object):
-    URL_API_LIGHTNESS = "http://pih:5001"
+    URL_API_LIGHTNESS = "http://pih2:5001"
     CONTROLBRIGHTNESS = '/sys/class/backlight/10-0045/brightness'
     # if necessary:
     #   config = configparser.ConfigParser()
