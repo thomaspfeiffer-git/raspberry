@@ -31,7 +31,13 @@ WIFI (Headless):
 ================
 
 sudo mount /dev/sda2 raspi
+
+option 1:
 raspi/etc/wpa_supplicant/wpa_supplicant.conf
+
+option 2:
+raspi/etc/NetworkManager/system-connections/
+
 
 /etc/rc.local:
 sudo iw wlan0 set power_save off
