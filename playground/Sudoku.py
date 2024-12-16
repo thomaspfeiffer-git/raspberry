@@ -21,6 +21,7 @@ board = [0, 0, 0,  0, 0, 0,  0, 0, 8,   #  0 ..  8
          8, 0, 0,  0, 0, 0,  0, 0, 0,   # 63 .. 71
          1, 0, 0,  2, 7, 0,  0, 4, 0]   # 72 .. 80
 
+from collections import Counter
 import sys
 sys.path.append("../libs/")
 from Logging import Log
@@ -58,17 +59,29 @@ def allowedDigitsCol (index):
 
 def allowedDigitsBox (index):
     allowed = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    box_x = getCol(i) // 3 * 3    # left upper corner in box
+    box_y = getRow(i) // 3 * 3
+
+    for y in range(box_y, box_y+3):
+        for x in range(y*9 + box_x, y*9 + box_x+3):
+            if board[x] in allowed:
+                allowed.remove(board[x])
+    return allowed
 
 def allowedDigits (index):
-    pass
+    allowed = []
+    for digit, count in dict(Counter(allowedDigitsRow(i) + allowedDigitsCol(i) + allowedDigitsBox(i))).items():
+        if count == 3:
+            allowed.append(digit)
 
+    return allowed
 
 
 ###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
     i = 0
-    Log(allowedDigitsCol(i))
+    Log(allowedDigits(i))
 
 # eof #
 
