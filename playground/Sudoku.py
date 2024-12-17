@@ -95,6 +95,7 @@ def solve (index):
 
 
     for i in allowedDigits(index):
+        pass
 
 
 
