@@ -78,10 +78,30 @@ def allowedDigits (index):
 
 
 ###############################################################################
+# solve #######################################################################
+def solve (index):
+    if index >= 81:
+        return true
+
+    allowed = allowedDigits(index)
+    if len(allowed) == 0:
+        pass
+        # Zeile/Spalte/Box fertig?
+        # oder fehler?
+
+    if len(allowed) == 1:
+        pass
+        # match
+
+
+    for i in allowedDigits(index):
+
+
+
+###############################################################################
 ## main #######################################################################
 if __name__ == "__main__":
-    i = 0
-    Log(allowedDigits(i))
+    solve(0)
 
 # eof #
 
