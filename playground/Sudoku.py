@@ -82,6 +82,14 @@ def allowedDigitsBox (index):
 
 def allowedDigits (index):
     allowed = []
+
+#    Log(f"allowedDigitsRow: {allowedDigitsRow(index)}")
+#    Log(f"allowedDigitsCol: {allowedDigitsCol(index)}")
+#    Log(f"allowedDigitsBox: {allowedDigitsBox(index)}")
+#    Log(dict(Counter(allowedDigitsRow(index) +
+#                     allowedDigitsCol(index) +
+#                     allowedDigitsBox(index))).items())
+
     for digit, count in dict(Counter(allowedDigitsRow(index) +
                                      allowedDigitsCol(index) +
                                      allowedDigitsBox(index))).items():
