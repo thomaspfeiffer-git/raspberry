@@ -23,7 +23,7 @@ from Commons import MyIP
 from Logging import Log
 from Shutdown import Shutdown
 
-HOSTS_TO_PING = ["pih", "nano01"]
+HOSTS_TO_PING = ["nano01"]
 
 PING_INTERVALL = 600  # intervall between pings (seconds)
 TIMEOUT = 2 * 3600  # time (seconds) until reboot if no watchdog pings are received
