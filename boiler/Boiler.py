@@ -98,8 +98,8 @@ if __name__ == "__main__":
         start_time = now + timedelta(minutes=1)
     else:
         start_time = now.replace(hour=args.start[0], minute=1)
-    if start_time < now:
-        raise ValueError("Start time must be in the future.")
+#    if start_time < now:
+#        raise ValueError("Start time must be in the future.")
 
     stop_time = start_time + timedelta(minutes=args.duration[0])
     exit_time = stop_time + timedelta(minutes=1)
