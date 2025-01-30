@@ -32,12 +32,12 @@ else
     # avoids warning of null byte in string
 
     if [ $( echo $( cat /sys/firmware/devicetree/base/model )  | grep Rasp | wc -l) == "1" ] ; then
-        echo "Restarting DHCPD"
-        sudo service dhcpcd restart
+        # echo "Restarting DHCPD"
+        # sudo service dhcpcd restart
 
         # https://forums.raspberrypi.com/viewtopic.php?t=324155
-        # echo "Restarting network Raspi"
-        # sudo service networking restart
+        echo "Restarting network Raspi"
+        sudo service networking restart
         # sudo wpa_cli -i wlan0 reconfigure
         # sudo systemctl restart wpa_supplicant.service
         # sudo systemctl restart dhcpcd.service
