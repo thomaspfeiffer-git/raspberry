@@ -135,7 +135,7 @@ class WeatherApp (tk.Frame):
     def drawPicture (self, frame, picture, id_, zoom, gridpos):
         picture = PIL.Image.open(picture)
         w, h = map(lambda x: int(x*zoom), picture.size)
-        picture = picture.resize((w, h), PIL.Image.ANTIALIAS)
+        picture = picture.resize((w, h), PIL.Image.Resampling.LANCZOS)
 
         # image needs to be stored garbage collector save, otherwise the
         # image would be deleted by the garbage collector and therefore
