@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Solarpower.py                                                               #
-# (c) https://github.com/thomaspfeiffer-git 2023                              #
+# (c) https://github.com/thomaspfeiffer-git 2023, 2025                        #
 ###############################################################################
 
 """
@@ -13,7 +13,7 @@ Measuring local photovoltaics.
 """
 ### Libraries you might need to install:
 # https://minimalmodbus.readthedocs.io/en/stable/usage.html
-sudo pip3 install -U minimalmodbus
+sudo pip3 install --break-system-packages -U minimalmodbus
 
 
 ### Useful documentation:

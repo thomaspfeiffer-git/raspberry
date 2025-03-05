@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Circulation.py                                                              #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2020, 2024             #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2020, 2024, 2025       #
 ###############################################################################
 
 """
@@ -14,7 +14,7 @@ Controls the circulation pump by an html interface.
 
 
 ### Packages you might need to install ###
-# sudo pip3 install Flask
+# sudo apt install python3-flask
 # sudo apt install python3-gpiozero
 
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Ventilation.py                                                              #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020             #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2020, 2025       #
 ###############################################################################
 
 """
@@ -15,7 +15,7 @@ Controls ventilation of the control room of our swimming pool.
 
 ### Packages you might need to install ###
 # sudo pip3 install Pillow
-# sudo pip3 install Flask
+# sudo apt install python3-flask
 # sudo pip3 install xmltodict
 
 

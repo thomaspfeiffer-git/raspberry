@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Circulation_Night.py                                                        #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2024                   #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2024, 2025             #
 ###############################################################################
 
 """
@@ -15,7 +15,7 @@ Saving energy according to https://api.awattar.at/v1/marketdata
 
 
 ### Packages you might need to install ###
-# sudo pip3 install schedule
+# sudo apt install python3-schedule
 
 
 from datetime import datetime
