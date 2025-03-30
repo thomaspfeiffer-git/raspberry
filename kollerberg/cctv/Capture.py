@@ -46,6 +46,7 @@ SCP_TIMEOUT = 120
 SCP_BANDWIDTHFILE = "./scp_bandwidth"
 TEMPDIR = "/ramdisk/"
 DESTHOST = "pik-i"
+DESTHOST2 = "pik-i2"
 DESTDIR = "/ramdisk/"
 
 
@@ -170,6 +171,7 @@ class Deliver(threading.Thread):
         threading.Thread.__init__(self)
         self.queue = queue
         self.scp = f"timeout -k 10 -v {SCP_TIMEOUT} scp -l {{}} -q {{}} {DESTHOST}:{DESTDIR}"
+        self.scp2 = f"timeout -k 10 -v {SCP_TIMEOUT} scp -l {{}} -q {{}} {DESTHOST2}:{DESTDIR}"
 
     def run(self):
         self._running = True
@@ -182,6 +184,7 @@ class Deliver(threading.Thread):
                 self._running = False
             else:
                 run_command(self.scp.format(bandwidth(), filename))
+                run_command(self.scp2.format(bandwidth(), filename))
                 run_command(f"rm -f {filename}")
                 Log(f"{filename} delivered")
 
