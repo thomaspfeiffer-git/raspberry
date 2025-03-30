@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #############################################################################
 # Weather_Kollerberg.py                                                     #
-# (c) https://github.com/thomaspfeiffer-git 2020, 2023                      #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2023, 2025                #
 #############################################################################
 """Weather station at our summer cottage"""
 
@@ -39,8 +39,11 @@ pik_k = "pik-k"
 PIs = [pik_i, pik_a, pik_k]
 this_PI = socket.gethostname()
 
+if this_PI == "pik-i2":
+    this_PI = "pik-i"
+
 if this_PI == pik_i:   # BME680 installed only at pik_i
-    from sensors.BME680 import BME680, BME_680_SECONDARYADDR
+    from sensors.BME680 import BME680, BME_680_BASEADDR
 
 
 AddressesDS1820 = { pik_i: "/sys/bus/w1/devices/w1_bus_master1/28-000006de80e2/w1_slave",
@@ -73,7 +76,7 @@ def Sensor ():
     tempds  = DS1820(AddressesDS1820[this_PI])
     tempcpu = CPU()
     if this_PI == pik_i:
-        bme680 = BME680(i2c_addr=BME_680_SECONDARYADDR)
+        bme680 = BME680(i2c_addr=BME_680_BASEADDR)
     else:
         htu21df = HTU21DF()
 
@@ -84,17 +87,18 @@ def Sensor ():
     airquality = 0
 
     while True:
-        temp_ds  = tempds.read_temperature()
         temp_cpu = tempcpu.read_temperature()
 
         if this_PI == pik_i:
             bme680.get_sensor_data()
             temp = bme680.data.temperature
+            temp_ds = temp
             humi = bme680.data.humidity
             pressure = bme680.data.pressure
             airquality = bme680.data.air_quality_score \
                          if bme680.data.air_quality_score != None else 0
         else:
+            temp_ds  = tempds.read_temperature()
             temp = htu21df.read_temperature()
             humi = htu21df.read_humidity()
 
