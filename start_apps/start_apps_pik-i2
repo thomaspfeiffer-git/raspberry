@@ -1,11 +1,11 @@
 #!/bin/bash
 #############################################################################
-# Starts apps on pik-i                                                      #
-# (c) https://github.com/thomaspfeiffer-git 2020                            #
+# Starts apps on pik-i2                                                     #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2025                      #
 #############################################################################
 
-if [ $HOSTNAME != "pik-i" ] ; then
-    echo "Wrong host! This script runs on pik-i only!"
+if [ $HOSTNAME != "pik-i2" ] ; then
+    echo "Wrong host! This script runs on pik-i2 only!"
     exit 1
 fi
 
