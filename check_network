@@ -36,6 +36,12 @@ else
         echo "Restarting network Raspi"
         sudo service NetworkManager restart
 
+        # next try:
+        # sudo nmcli radio wifi off
+        # sleep 5
+        # sudo nmcli radio wifi on
+
+        # old:
         # sudo service networking restart
         # sudo wpa_cli -i wlan0 reconfigure
         # sudo systemctl restart wpa_supplicant.service
