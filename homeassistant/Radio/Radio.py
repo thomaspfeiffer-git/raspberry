@@ -45,10 +45,9 @@ Stations.update({ 's1': { station_name: "88.6", station_url: "https://edge07.str
 Stations.update({ 's2': { station_name: "Ö3", station_url: "https://orf-live.ors-shoutcast.at/oe3-q2a" } })
 Stations.update({ 's3': { station_name: "Radio Wien", station_url: "https://orf-live.ors-shoutcast.at/wie-q2a" } })
 Stations.update({ 's4': { station_name: "Lounge FM", station_url: "https://s35.derstream.net/ukwwien.mp3" } })
-Stations.update({ 's5': { station_name: "The Sound of New York City", station_url: "http://ic2377.c900.fast-serv.com/tsonyc.mp3" } })
-Stations.update({ 's6': { station_name: "BBC Radio 2", station_url: "https://stream.live.vc.bbcmedia.co.uk/bbc_radio_two" } })
-Stations.update({ 's7': { station_name: "Technikum One", station_url: "https://stream.radiotechnikum.at/TECHONE" } })
-Stations.update({ 's8': { station_name: "CITY23", station_url: "https://live.stream.maxfive.com/max5-city23" } })
+Stations.update({ 's5': { station_name: "Technikum One", station_url: "https://stream.radiotechnikum.at/TECHONE" } })
+Stations.update({ 's6': { station_name: "CITY23", station_url: "https://live.stream.maxfive.com/max5-city23" } })
+Stations.update({ 's7': { station_name: "Radio GÖD", station_url: "https://radiogoed.securestream.kapper.net/stream" } })
 
 # ORF1: https://orf1.mdn.ors.at/out/u/orf1/q6a/manifest.m3u8
 # ORF2: https://orf2.mdn.ors.at/out/u/orf2/q6a/manifest.m3u8
