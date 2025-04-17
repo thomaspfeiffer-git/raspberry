@@ -1,19 +1,8 @@
 #!/usr/bin/bash
 
-if [ -e /ramdisk/done ] ; then
-    rm "/ramdisk/done"
-
-    sleep 240
-
-    TODAY=`date "+%Y%m%d"`
-    mkdir /storage/$TODAY
-    cd /storage/$TODAY
-
-    mv /storage_emmc/pictures/* .
-
-    VIDEO=kollerberg_${TODAY}.mp4
-    cat *.jpg | ffmpeg -f image2pipe -thread_queue_size 5000 -framerate 30 -i - -c:v libx264 -acodec copy -s 1296x972 $VIDEO
-fi
+TODAY=`date "+%Y%m%d"`
+VIDEO=kollerberg_${TODAY}.mp4
+cat *.jpg | ffmpeg -f image2pipe -thread_queue_size 5000 -framerate 30 -i - -c:v libx264 -acodec copy -s 1296x972 $VIDEO
 
 # eof #
 
