@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # awattar.py                                                                  #
-# (c) https://github.com/thomaspfeiffer-git 2024                              #
+# (c) https://github.com/thomaspfeiffer-git 2024, 2025                        #
 ###############################################################################
 
 """
@@ -29,7 +29,8 @@ else:
         hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
         hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
         hour['marketprice'] = hour['marketprice'] / 10.0
-        hour['awattar price'] = ((hour['marketprice'] * 1.03) + 1.50) * 1.2
+        awattar_net = ((hour['marketprice'] + abs(hour['marketprice']) * 0.03) + 1.50)
+        hour['awattar price'] = awattar_net if awattar_net < 0.0 else awattar_net * 1.20
         hour['unit'] = "ct/kWh"
 
         print(f"{hour['start_timestamp']}: {hour['marketprice']:6.2f} {hour['unit']} (Awattar: {hour['awattar price']:6.2f} {hour['unit']})")
