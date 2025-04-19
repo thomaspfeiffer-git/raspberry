@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # awattar.py                                                                  #
-# (c) https://github.com/thomaspfeiffer-git 2023                              #
+# (c) https://github.com/thomaspfeiffer-git 2023, 2025                        #
 ###############################################################################
 
 """
@@ -61,7 +61,9 @@ class Awattar (threading.Thread):
             for hour in data:
                 hour['start_timestamp'] = datetime.fromtimestamp(int(hour['start_timestamp']/1000))
                 hour['end_timestamp'] = datetime.fromtimestamp(int(hour['end_timestamp']/1000))
-                hour['marketprice'] = ((hour['marketprice'] / 10.0 * 1.03) + 1.50) * 1.2
+                hour['marketprice'] = hour['marketprice'] / 10.0
+                awattar_net = ((hour['marketprice'] + abs(hour['marketprice']) * 0.03) + 1.50)
+                hour['marketprice'] = awattar_net if awattar_net < 0.0 else awattar_net * 1.20
                 hour['unit'] = "ct/kWh"
 
                 if hour['marketprice'] < lowest_price['marketprice']:
