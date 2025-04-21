@@ -1,32 +1,15 @@
 
+##### List of files (use every 4th file)
+for i in {0..4080..4}; do ls *0$i.jpg ; done | sort -u > ../files.lst
+
+##### copy files
+for i in `cat files.lst` ; do cp ../20250420/$i . ; done
 
 
-crontab @ seti-05:
-------------------
+##### crontab pik-i2
+30 1 * * *  mkdir /mnt/ssd/$(date '+\%Y\%m\%d')
 
-0 1 * * *   bash -c "mkdir /mnt/ssd/$(date '+\%Y\%m\%d')"
-* 3-23 * * *   bash -c "find /ramdisk/ -name '*jpg' -mmin +3 -exec mv {} /mnt/ssd/$(date '+\%Y\%m\%d')/ \;"
-
-
-/etc/fstab @ seti-05:
----------------------
-
-/dev/mmcblk2p1                                  /storage_emmc   btrfs    auto,nofail,sync,users,rw   0   0
-ramdisk /ramdisk tmpfs nodev,nosuid,size=256M 0 0
-/dev/sda1	/mnt/ssd	ext4
+# * 3-23 * * *   bash -c "find /ramdisk/ -name '*jpg' -mmin +4 -exec rm -f {} \;"
+* 3-23 * * *   bash -c "find /ramdisk/ -name '*jpg' -mmin +2 -exec mv {} /mnt/ssd/$(date '+\%Y\%m\%d')/ \; 2>/dev/null"
 
 
-
-Install @ seti-05:
-------------------
-
-sudo apt-get install ffmpeg
-
-
-
-/etc/fstab @ pik-a:
--------------------
-
-tmpfs /ramdisk tmpfs nodev,nosuid,size=16M 0 0
-
-# eof #
