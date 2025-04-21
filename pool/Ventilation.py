@@ -19,6 +19,7 @@ Controls ventilation of the control room of our swimming pool.
 # sudo pip3 install xmltodict
 
 
+import argparse
 from enum import Enum
 from flask import Flask, request
 import sys
@@ -143,6 +144,11 @@ def shutdown_application ():
 ## main #######################################################################
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--sensors', action='store_true')
+    args = parser.parse_args()
+
     data = Sensordata()
 
     ### TODO temporarily deactivated
@@ -153,8 +159,13 @@ if __name__ == "__main__":
 
     ### TODO temporarily deactivated
     # sensors = Sensors(data,update_display=display.print)
-#    sensors = Sensors(data,update_display=None)
-#    sensors.start()
+    if args.sensors:
+        Log("sensors in argument!")
+        sys.exit(0)
+        sensors = Sensors(data,update_display=None)
+        sensors.start()
+
+    sys.exit(0)
 
     scheduler = Scheduler(data)
     scheduler.start()
