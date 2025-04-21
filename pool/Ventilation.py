@@ -149,13 +149,16 @@ if __name__ == "__main__":
     parser.add_argument('-s', '--sensors', action='store_true')
     args = parser.parse_args()
 
+    Log("Line 1")
     data = Sensordata()
+    Log("Line 2")
 
     ### TODO temporarily deactivated
     # display = Display(data)
 
     udp_sender = UDP_Sender(data)
     udp_sender.start()
+    Log("Line 3")
 
     ### TODO temporarily deactivated
     # sensors = Sensors(data,update_display=display.print)
