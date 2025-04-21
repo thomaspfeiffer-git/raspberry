@@ -163,6 +163,7 @@ if __name__ == "__main__":
     ### TODO temporarily deactivated
     # sensors = Sensors(data,update_display=display.print)
     if args.sensors:
+        Log("Running with sensors.")
         sensors = Sensors(data,update_display=None)
         sensors.start()
 
