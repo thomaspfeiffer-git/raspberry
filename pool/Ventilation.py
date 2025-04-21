@@ -127,6 +127,8 @@ def API_Schedule ():
 # Shutdown stuff ##############################################################
 def shutdown_application ():
     """cleanup stuff"""
+    global args
+
     Log("Stopping application")
     control.stop()
     control.join()
@@ -134,8 +136,9 @@ def shutdown_application ():
     scheduler.join()
     udp_sender.stop()
     udp_sender.join()
-#    sensors.stop()
-#    sensors.join()
+    if args.sensors:
+        sensors.stop()
+        sensors.join()
     Log("Application stopped")
     sys.exit(0)
 
