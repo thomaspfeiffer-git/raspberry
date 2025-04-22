@@ -127,8 +127,6 @@ def API_Schedule ():
 # Shutdown stuff ##############################################################
 def shutdown_application ():
     """cleanup stuff"""
-    global args
-
     Log("Stopping application")
     control.stop()
     control.join()
@@ -148,6 +146,9 @@ def shutdown_application ():
 if __name__ == "__main__":
     shutdown_application = Shutdown(shutdown_func=shutdown_application)
 
+    # The i2c bus stops working every now and then. This can only be fixed
+    # by removing the power supply. To keep the program working, using the
+    # sensor can be switch on/off by a command line parameter.
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--sensors', action='store_true')
     args = parser.parse_args()
