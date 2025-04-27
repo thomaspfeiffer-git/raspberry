@@ -92,7 +92,7 @@ def Sensor ():
         if this_PI == pik_i:
             bme680.get_sensor_data()
             temp = bme680.data.temperature
-            temp_ds = temp
+            temp_ds  = tempds.read_temperature()
             humi = bme680.data.humidity
             pressure = bme680.data.pressure
             airquality = bme680.data.air_quality_score \
