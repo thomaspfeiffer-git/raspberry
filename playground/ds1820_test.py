@@ -9,12 +9,13 @@ sys.path.append('../libs/sensors')
 from Logging import Log
 from DS1820 import DS1820
 
-ds1820_1 = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
-# ds1820_2 = DS1820("/sys/bus/w1/devices/28-000008386a83/w1_slave")
+ID = "28-030297946b71"
+
+ds1820 = DS1820(f"/sys/bus/w1/devices/{ID}/w1_slave")
 
 while True:
-    Log("1: {}".format(ds1820_1.read_temperature()))
-    # Log("2: {}".format(ds1820_2.read_temperature()))
+    Log(f"{ds1820.read_temperature()} °C")
     time.sleep(1)
 
+# eof #
 
