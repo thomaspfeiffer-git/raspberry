@@ -1,7 +1,7 @@
 #!/bin/bash
 #############################################################################
 # check_network                                                             #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019                 #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2019, 2025           #
 #############################################################################
 
 # useful links
@@ -17,7 +17,7 @@
 # - Raspberry Pi 3 Model B Rev 1.2
 # - FriendlyARM NanoPi NEO Air
 
-/sbin/ifconfig wlan0 | grep "inet " 2>&1 >/dev/null
+/sbin/ifconfig wlan0 | grep "broadcast" 2>&1 >/dev/null
 
 if [ $? -eq 0 ] ; then
     echo -n "`date` - "
