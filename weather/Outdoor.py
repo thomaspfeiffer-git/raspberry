@@ -57,7 +57,7 @@ def Sensor ():
 
     while True:
         temp        = bme280.read_temperature()
-        temp_garden = temp
+        temp_garden = temp - 2.0
         # temp_garden = ds1820.read_temperature()
         humi        = bme280.read_humidity()
         pressure    = bme280.read_pressure()/100.0
