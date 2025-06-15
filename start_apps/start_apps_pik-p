@@ -14,7 +14,8 @@ cd /home/pi/raspberry/
 cd pool/
 
 echo "Starting 'Ventilation.py' ..."
-nohup sudo ./Ventilation.py --sensors 2>&1 >ventilation.log &
+# nohup sudo ./Ventilation.py --sensors 2>&1 >ventilation.log &
+nohup sudo ./Ventilation.py  2>&1 >ventilation.log &
 
 echo "Starting 'Button.py' ..."
 nohup sudo ./Button.py 2>&1 >button.log &
