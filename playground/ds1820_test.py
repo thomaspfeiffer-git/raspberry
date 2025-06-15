@@ -31,7 +31,7 @@ Log(f"Reading temperature from sensor {ID}.")
 ds1820 = DS1820(f"/sys/bus/w1/devices/{ID}/w1_slave")
 
 while True:
-    Log(f"{ds1820.read_temperature()} °C")
+    Log(f"{ds1820.read_temperature()} C")
     for _ in range(100):  # interruptible sleep
         time.sleep(0.01)
 
