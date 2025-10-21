@@ -48,7 +48,7 @@ Stations.update({ 's4': { station_name: "Lounge FM", station_url: "https://s35.d
 Stations.update({ 's5': { station_name: "Technikum One", station_url: "https://stream.radiotechnikum.at/TECHONE" } })
 Stations.update({ 's6': { station_name: "CITY23", station_url: "https://live.stream.maxfive.com/max5-city23" } })
 Stations.update({ 's7': { station_name: "Radio GÖD", station_url: "https://radiogoed.securestream.kapper.net/stream" } })
-Stations.update({ 's8': { station_name: "Radio Kiss Kiss Italia", station_url: "https://kisskiss.fluidstream.eu/KKItalia.mp3" } })
+Stations.update({ 's8': { station_name: "Ö1", station_url: "https://orf-live.ors-shoutcast.at/oe1-q2a" } })
 
 # Stream URLs: https://fmstream.org/index.php?c=FT
 
