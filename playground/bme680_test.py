@@ -3,7 +3,7 @@
 ##############################################################################
 # tests BME680                                                               #
 # taken from https://github.com/pimoroni/bme680                              #
-# (c) https://github.com/thomaspfeiffer-git 2017, 2018, 2019                 #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2018, 2019, 2025           #
 ##############################################################################
 
 import sys
@@ -16,7 +16,7 @@ from sensors.BME680 import BME680, BME_680_SECONDARYADDR, BME_680_BASEADDR
 
 print("""Estimate indoor air quality
 
-Runs the sensor for a burn-in period, then uses a 
+Runs the sensor for a burn-in period, then uses a
 combination of relative humidity and gas resistance
 to estimate indoor air quality as a percentage.
 
@@ -24,9 +24,10 @@ Press Ctrl+C to exit
 
 """)
 
-sensor = BME680(i2c_addr=BME_680_BASEADDR)
+# sensor = BME680(i2c_addr=BME_680_BASEADDR)
+sensor = BME680(i2c_addr=BME_680_SECONDARYADDR)
 
-# start_time and curr_time ensure that the 
+# start_time and curr_time ensure that the
 # burn_in_time (in seconds) is kept track of.
 
 try:
