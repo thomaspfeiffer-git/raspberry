@@ -39,9 +39,8 @@ option 2:
 raspi/etc/NetworkManager/system-connections/
 
 
-/etc/rc.local:
-sudo iw wlan0 set power_save off
-
+crontab of user root:
+@reboot iw wlan0 set power_save off
 
 
 ######################
