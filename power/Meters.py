@@ -67,7 +67,7 @@ class Meter (object):
                                               number_of_registers=self.input_register[register]["digits"])
             # except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError, serial.serialutil.SerialException):
             except Exception as e:
-                Log(e)
+                Log(e, sys.stderr)
             else:
                 self.values[register] = value
                 self.valid_data = True
