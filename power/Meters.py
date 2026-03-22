@@ -65,8 +65,9 @@ class Meter (object):
                 value = self.meter.read_float(functioncode=4,
                                               registeraddress=self.input_register[register]["port"],
                                               number_of_registers=self.input_register[register]["digits"])
-            except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError, serial.serialutil.SerialException):
-                pass
+            # except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError, serial.serialutil.SerialException):
+            except Exception as e:
+                Log(e)
             else:
                 self.values[register] = value
                 self.valid_data = True
