@@ -36,6 +36,7 @@ nohup ./Power_Guglgasse.py --receiver 2>&1 > solar.log &
 import argparse
 import os
 import sys
+import termios
 import threading
 import time
 
