@@ -25,6 +25,7 @@ sudo pip3 install -U minimalmodbus
 import minimalmodbus
 import serial
 import sys
+import termios
 
 sys.path.append("../libs/")
 from Logging import Log
