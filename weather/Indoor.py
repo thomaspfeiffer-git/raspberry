@@ -3,7 +3,7 @@
 ###############################################################################
 # Indoor.py                                                                   #
 # Monitors temperature, humidity, and air pressure in our living room.        #
-# (c) https://github.com/thomaspfeiffer-git 2019, 2020, 2022, 2023            #
+# (c) https://github.com/thomaspfeiffer-git 2019, 2020, 2022, 2023, 2026      #
 ###############################################################################
 """ Collect weather and some other data indoor (mainly with BME680). """
 
@@ -85,7 +85,7 @@ def Receiver ():
     while True:
         try:
             data = udp.receive()
-        except DatagramError:
+        except UDP.DatagramError:
             Log("Datagram error")
         else:
             Log(f"RRD Data received: {data}")
