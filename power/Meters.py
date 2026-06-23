@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Meters.py                                                                   #
-# (c) https://github.com/thomaspfeiffer-git 2023                              #
+# (c) https://github.com/thomaspfeiffer-git 2023, 2026                        #
 ###############################################################################
 
 """
@@ -25,6 +25,7 @@ sudo pip3 install -U minimalmodbus
 import minimalmodbus
 import serial
 import sys
+import termios
 
 sys.path.append("../libs/")
 from Logging import Log
@@ -65,7 +66,7 @@ class Meter (object):
                 value = self.meter.read_float(functioncode=4,
                                               registeraddress=self.input_register[register]["port"],
                                               number_of_registers=self.input_register[register]["digits"])
-            except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError):
+            except (minimalmodbus.InvalidResponseError, minimalmodbus.NoResponseError, serial.serialutil.SerialException, termios.error):
                 pass
             else:
                 self.values[register] = value

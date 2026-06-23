@@ -19,7 +19,7 @@ import time
 
 
 sys.path.append("../libs/")
-from Commons import MyIP
+# from Commons import MyIP
 from Logging import Log
 from Shutdown import Shutdown
 
@@ -29,6 +29,21 @@ PING_INTERVALL = 600  # intervall between pings (seconds)
 TIMEOUT = 2 * 3600  # time (seconds) until reboot if no watchdog pings are received
 # TIMEOUT = 10  # time until reboot if no watchdog pings are received
 
+
+
+############################################################################
+def MyIP ():
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except:
+        IP = 'x.x.x.x'
+    finally:
+        s.close()
+    return IP
 
 
 ###############################################################################
