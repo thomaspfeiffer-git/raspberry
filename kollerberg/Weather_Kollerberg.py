@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #############################################################################
 # Weather_Kollerberg.py                                                     #
-# (c) https://github.com/thomaspfeiffer-git 2020, 2023, 2025                #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2023, 2025, 2026          #
 #############################################################################
 """Weather station at our summer cottage"""
 
@@ -79,8 +79,7 @@ def Sensor ():
         # bme680 = BME680(i2c_addr=BME_680_BASEADDR)
         bme680 = BME680(i2c_addr=BME_680_SECONDARYADDR)
     else:
-        if this_PI != pik_k:   ## HTU temporarily unavailble  ##
-            htu21df = HTU21DF()
+        htu21df = HTU21DF()
 
     udp_rrd = UDP.Sender(CREDENTIALS_RRD)  # Server for all rrd stuff
     udp_ha = UDP.Sender(CREDENTIALS_HA)    # Display at home ("Homeautomation")
@@ -101,13 +100,8 @@ def Sensor ():
                          if bme680.data.air_quality_score != None else 0
         else:
             temp_ds  = tempds.read_temperature()
-            if this_PI != pik_k:   ## HTU temporarily unavailble  ##
-                temp = htu21df.read_temperature()
-                humi = htu21df.read_humidity()
-            else:
-                temp = temp_ds
-                humi = 0.0
-
+            temp = htu21df.read_temperature()
+            humi = htu21df.read_humidity()
 
         rrd_data = "N:{:.2f}".format(temp_ds)     + \
                     ":{:.2f}".format(temp)    + \
