@@ -1,7 +1,7 @@
 #!/bin/bash
 #############################################################################
 # Starts apps on pik-k                                                      #
-# (c) https://github.com/thomaspfeiffer-git 2020, 2023, 2024                #
+# (c) https://github.com/thomaspfeiffer-git 2020, 2023, 2024, 2026          #
 #############################################################################
 
 if [ $HOSTNAME != "pik-k" ] ; then
@@ -28,7 +28,7 @@ cd ..
 
 cd power/
 echo "Starting 'Solarpower.py' ..."
-nohup ./Solarpower.py --sensor  2>solarpower.log >/dev/null &
+( sleep 60 ; nohup ./Solarpower.py --sensor  2>solarpower.log >/dev/null & ) &
 cd ..
 
 
