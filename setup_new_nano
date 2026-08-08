@@ -20,9 +20,15 @@ screen /dev/ttyUSB0 115200
 http://armbian.hosthatch.com/archive/nanopiair/archive/
 Armbian_21.08.1_Nanopiair_bullseye_current_5.10.60.img
 
+# password unknown at 8th August 2026
 https://download.friendlyelec.com/nanopineoair
 --> https://drive.google.com/drive/folders/1PV6NnJrgtbiNEX72R9hcKlulFshvwpNV
 h3-sd-debian-trixie-core-4.14-armhf-20260330.img.gz
+
+
+# dietpi
+https://dietpi.com/#downloadinfo
+https://dietpi.com/docs/install/
 
 
 
