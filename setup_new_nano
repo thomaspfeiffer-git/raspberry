@@ -16,8 +16,10 @@ screen /dev/ttyUSB0 115200
 
 
 #--- Image ---
+# still working on 8th August 2026
 http://armbian.hosthatch.com/archive/nanopiair/archive/
 Armbian_21.08.1_Nanopiair_bullseye_current_5.10.60.img
+
 
 # password unknown at 8th August 2026
 https://download.friendlyelec.com/nanopineoair
@@ -28,7 +30,7 @@ h3-sd-debian-trixie-core-4.14-armhf-20260330.img.gz
 # dietpi - i2c not working (8th August 2026)
 https://dietpi.com/#downloadinfo
 https://dietpi.com/docs/install/
-
+--> i2c not working, no 1w
 
 
 #--- make ssh working ---
