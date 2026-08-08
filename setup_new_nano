@@ -16,8 +16,14 @@ screen /dev/ttyUSB0 115200
 
 
 #--- Image ---
+# outdated
 http://armbian.hosthatch.com/archive/nanopiair/archive/
 Armbian_21.08.1_Nanopiair_bullseye_current_5.10.60.img
+
+https://download.friendlyelec.com/nanopineoair
+--> https://drive.google.com/drive/folders/1PV6NnJrgtbiNEX72R9hcKlulFshvwpNV
+h3-sd-debian-trixie-core-4.14-armhf-20260330.img.gz
+
 
 
 #--- make ssh working ---
