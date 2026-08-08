@@ -16,7 +16,6 @@ screen /dev/ttyUSB0 115200
 
 
 #--- Image ---
-# outdated
 http://armbian.hosthatch.com/archive/nanopiair/archive/
 Armbian_21.08.1_Nanopiair_bullseye_current_5.10.60.img
 
@@ -26,7 +25,7 @@ https://download.friendlyelec.com/nanopineoair
 h3-sd-debian-trixie-core-4.14-armhf-20260330.img.gz
 
 
-# dietpi
+# dietpi - i2c not working (8th August 2026)
 https://dietpi.com/#downloadinfo
 https://dietpi.com/docs/install/
 
