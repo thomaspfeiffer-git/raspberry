@@ -3,7 +3,7 @@
 ###############################################################################
 # Outdoor.py                                                                  #
 # Monitors temperature, humidity, and air pressure outside                    #
-# (c) https://github.com/thomaspfeiffer-git 2019, 2020, 2023                  #
+# (c) https://github.com/thomaspfeiffer-git 2019, 2020, 2023, 2026            #
 ###############################################################################
 """ Collect weather and some other data outdoor. """
 
@@ -49,7 +49,7 @@ DS_TEMPCPU     = "temp_cpu"
 def Sensor ():
     """ reads data from sensor(s). """
     bme280 = BME280()
-    ds1820 = DS1820("/sys/bus/w1/devices/28-000006d62eb1/w1_slave")
+    ds1820 = DS1820("/sys/bus/w1/devices/28-030297946b71/w1_slave")
     tsl2561 = TSL2561()
     cpu = CPU()
     udp_rrd = UDP.Sender(CREDENTIALS_UDP_RRD)
@@ -57,9 +57,9 @@ def Sensor ():
 
     while True:
         temp        = bme280.read_temperature()
-        temp_garden = temp
+        # temp_garden = temp
         # temp_garden = temp - 2.0
-        # temp_garden = ds1820.read_temperature()
+        temp_garden = ds1820.read_temperature()
         humi        = bme280.read_humidity()
         pressure    = bme280.read_pressure()/100.0
         lightness   = tsl2561.lux()
