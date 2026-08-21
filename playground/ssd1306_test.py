@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #############################################################################
 # ssd1306_test.py                                                           #
-# (c) https://github.com/thomaspfeiffer-git 2017                            #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2026                      #
 #############################################################################
 """demo programm for display SSD1306"""
 
@@ -10,7 +10,7 @@ import sys
 import time
 
 # Packages you might install
-# sudo pip3 install Pillow
+# sudo apt install python3-pil
 
 
 from PIL import Image

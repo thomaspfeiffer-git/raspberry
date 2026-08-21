@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #############################################################################
 # ssd1306_ip.py                                                             #
-# (c) https://github.com/thomaspfeiffer-git 2017                            #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2026                      #
 #############################################################################
 """display IP address on SSD1306. pretty useful right after startup."""
 
@@ -11,7 +11,7 @@ import sys
 import time
 
 # Packages you might install
-# sudo pip3 install Pillow
+# sudo apt install python3-pil
 
 
 from PIL import Image

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #############################################################################
 # ssd1306_weater.py                                                         #
-# (c) https://github.com/thomaspfeiffer-git 2017                            #
+# (c) https://github.com/thomaspfeiffer-git 2017, 2026                      #
 #############################################################################
 """demo programm for displaying weather data on an SSD1306"""
 
@@ -12,7 +12,7 @@
 
 
 # Packages you might install
-# sudo pip3 install Pillow
+# sudo apt install python3-pil
 
 
 from attrdict import AttrDict
@@ -20,7 +20,7 @@ from datetime import datetime
 import json
 import sys
 import time
-from urllib.error import HTTPError, URLError 
+from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
 
 from PIL import Image
@@ -77,7 +77,7 @@ class Display (SSD1306):
         self.draw.rectangle((0,0,self.width,self.height), outline=0, fill=255)
 
     def text (self, text, offset=0):
-        self.draw.text((self.xpos, self.y), text) 
+        self.draw.text((self.xpos, self.y), text)
         self.y += self.textheight + offset
 
     def show (self):
