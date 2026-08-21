@@ -7,7 +7,7 @@ Copy image to sd card
 
 diskutil list
 diskutil umountDisk /dev/diskX
-sudo dd if=...img of=/dev/diskX bs=10m
+sudo dd if=...img of=/dev/sdb bs=10m status=progress
 
 
 
@@ -43,40 +43,12 @@ crontab of user root:
 @reboot iw wlan0 set power_save off
 
 
-######################
-# change SSID and PASSWORD!
-network={
-    ssid="SSID"
-    psk="PASSWORD"
-}
-
-
-#######################
-# in case of not working wifi
-# "nl80211: Driver does not support authentication/association or connect commands"
-# For TP-Link TL-WN725N
-# Realtek Semiconductor Corp. RTL8188EUS 802.11n Wireless Network Adapter
-# change /etc/dhcpcd.conf:
-
-interface wlan0
-env ifwireless=1
-env wpa_supplicant_driver=nl80211,wext
-# taken from https://www.rigacci.org/wiki/doku.php/doc/appunti/hardware/raspberrypi_wpa_supplicant_problem
-
-
-# alternative:
-wpa_supplicant -B -i wlan0 -D wext -c /etc/wpa_supplicant/wpa_supplicant.conf
-
-
 
 Fast setup of most important modules/libraries:
 ===============================================
 
-
 sudo apt-get install debian-goodies screen vim python3-pip i2c-tools dnsutils git -y
 
-sudo service dphys-swapfile stop
-sudo apt-get purge dphys-swapfile
 
 
 sudo apt-get install libjpeg8-dev libopenjp2-7 libtiff5 -y
@@ -85,110 +57,27 @@ sudo pip3 install Jinja2 ; sudo pip3 install Werkzeug ; sudo pip3 install Flask
 
 
 
-WIFI:
-=====
+GIT
+===
 
-/etc/network/interfaces
-/etc/wpa.conf
+https://help.github.com/articles/generating-ssh-keys/#platform-linux
 
-WIFI-Scan:
-   https://rasspberrypi.wordpress.com/2012/09/09/wifi-tools-for-raspberry-pi/
+sudo apt-get install git -y
+git clone https://github.com/thomaspfeiffer-git/raspberry
 
+create file "ci" (shell script for checkin)
 
+copy .git/config
 
-/etc/modprobe.d/8192cu.conf
-    options 8192cu rtw_power_mgnt=0 rtw_enusbss=0
-sudo chown root.root 8192cu.conf
-sudo chmod 644 8192cu.conf
+    git config --global user.email "thomas.pfeiffer@smtp.at"
+    git config --global user.name "thomaspfeiffer-git"
+    git remote set-url origin git@github.com:thomaspfeiffer-git/raspberry
+    git remote -v
 
-
-
-
-NFS:
-====
-
-local:
-  /etc/fstab
-
-  jessie:
-      sudo update-rc.d rpcbind enable
-
-server:
-  /etc/exports
-  exportfs -r
+    https://help.github.com/articles/changing-a-remote-s-url/
 
 
-NFS-Server running on a Pi:
----------------------------
-
-http://www.htpcguides.com/configure-nfs-server-and-nfs-client-raspberry-pi/
-
-sudo apt-get install nfs-common nfs-server -y
-mkdir /share
-chmod 0777 /share
-
-add /share to /etc/exports
-
-# seems to be necessary at pik_i after reboot
-sudo /etc/init.d/nfs-kernel-server restart
-sudo exportfs -rav
-
-
-
-Misc
-====
-
-sudo apt-get install debian-goodies
-sudo apt-get install screen
-
-sudo apt-get install vim
-
-# ~/.vimrc
-syntax on
-set number
-set expandtab
-set modeline
-set tabstop=8
-set expandtab
-set shiftwidth=4
-set softtabstop=4
-
-http://www.vim.org/scripts/script.php?script_id=790
-http://www.vim.org/scripts/script.php?script_id=850
-
-# vim python mode
-
-# https://vi.stackexchange.com/questions/11526/how-to-enable-python-feature-in-vim
-sudo apt install vim-gtk
-
-# https://github.com/python-mode/python-mode#manually
-git clone --recurse-submodules https://github.com/python-mode/python-mode.git
-cd python-mode
-cp -R * ~/.vim
-# Then rebuild helptags in vim:
-:helptags ~/.vim/doc/
-
-
-
-
-
-
-# python installer
-sudo apt-get install python3-pip
-
-
-# python3 imaging
-sudo apt-get install libjpeg8-dev
-sudo pip3 install Pillow
-
-
-# AttrDict
-sudo pip3 install attrdict
-
-
-# cachetools
-sudo pip3 install cachetools
-
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
 
 
@@ -220,12 +109,6 @@ Test:
 sudo i2cdetect -y 1
 
 
-1-wire (DS1820)
----------------
-
-sudo raspi-config
---> Advanced
-
 
 Kamera:
 -------
@@ -233,29 +116,6 @@ https://github.com/jacksonliam/mjpg-streamer
 sudo aptitude install cmake libx11-dev libjpeg62-dev
 http://www.forum-raspberrypi.de/Thread-tutorial-rasperry-pi-als-hd-mjpeg-netzwerkkamera-zoneminder
 
-
-
-GIT
-===
-
-https://help.github.com/articles/generating-ssh-keys/#platform-linux
-
-sudo apt-get install git
-git clone https://github.com/thomaspfeiffer-git/raspberry
-
-create file "ci" (shell script for checkin)
-
-copy .git/config
-
-    git config --global user.email "thomas.pfeiffer@smtp.at"
-    git config --global user.name "thomaspfeiffer-git"
-    git remote set-url origin git@github.com:thomaspfeiffer-git/raspberry
-    git remote -v
-
-    https://help.github.com/articles/changing-a-remote-s-url/
-
-
-ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
 
 
