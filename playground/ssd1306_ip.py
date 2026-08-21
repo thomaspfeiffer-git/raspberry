@@ -53,7 +53,9 @@ height = disp.height
 image = Image.new('1', (width, height))
 draw = ImageDraw.Draw(image)
 font = ImageFont.load_default()
-_, textheight = draw.textsize("Text", font=font)
+
+left, top, right, bottom = font.getbbox("Text")
+textheight = int(bottom - top) * 1.2
 
 while True:
     draw.rectangle((0,0,width,height), outline=0, fill=255)

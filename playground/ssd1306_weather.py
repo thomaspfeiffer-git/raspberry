@@ -15,7 +15,6 @@
 # sudo apt install python3-pil
 
 
-from attrdict import AttrDict
 from datetime import datetime
 import json
 import sys
@@ -37,7 +36,7 @@ from Logging import Log
 class OWM (object):
     def __init__ (self):
         self.data = None
-        self.last_changed = None
+        self.last_changed = 0
         self._read()
 
     def _read (self):
@@ -70,7 +69,8 @@ class Display (SSD1306):
         self.img  = Image.new('1', (self.width, self.height))
         self.draw = ImageDraw.Draw(self.img)
         self.font = ImageFont.load_default()
-        _, self.textheight = self.draw.textsize("Text", font=self.font)
+        left, top, right, bottom = self.font.getbbox("Text")
+        self.textheight = int(bottom - top) * 1.2
 
     def reset (self):
         self.y = self.ypos
