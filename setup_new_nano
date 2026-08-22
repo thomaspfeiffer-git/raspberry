@@ -35,7 +35,7 @@ systemctl --force --force reboot
 
 
 Login via ssh seems to work.
-
+After upgrade to latest version everything seems to work normal.
 
 
 
