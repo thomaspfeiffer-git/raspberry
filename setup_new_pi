@@ -80,45 +80,6 @@ copy .git/config
 ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
 
-
-
-Libs:
-=====
-
-RPi.GPIO
---------
-https://sourceforge.net/p/raspberry-gpio-python/wiki/BasicUsage/
-https://sourceforge.net/p/raspberry-gpio-python/wiki/install/
-
-sudo apt-get install python3-rpi.gpio
-
-i2c smb
--------
-
-sudo apt-get install python-smbus
-sudo apt-get install python3-smbus
-sudo apt-get install i2c-tools
-
-sudo raspi-config
-  --> Advanced Options
-      --> Enable SPI
-      --> Enable I2C
-
-
-Test:
-sudo i2cdetect -y 1
-
-
-
-Kamera:
--------
-https://github.com/jacksonliam/mjpg-streamer
-sudo aptitude install cmake libx11-dev libjpeg62-dev
-http://www.forum-raspberrypi.de/Thread-tutorial-rasperry-pi-als-hd-mjpeg-netzwerkkamera-zoneminder
-
-
-
-
 RRDTool
 =======
 
