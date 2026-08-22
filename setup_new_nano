@@ -19,8 +19,25 @@ screen /dev/ttyUSB0 115200
 https://armbian.de/boards/nanopiair
 Armbian_community_26.11.0-trunk.19_Nanopiair_trixie_current_6.18.45_minimal.img
 
+
+Issue #1
 --> blocks sometimes at state "Reached target graphical.target - Graphical Interface."
 --> after logout, no login prompt is shown
+
+Issue #2
+pi@nanopiair:~$ sudo reboot
+Call to Reboot failed: Connection timed out
+
+Workaround:
+systemctl --force --force reboot
+
+
+
+
+Login via ssh seems to work.
+
+
+
 
 
 
