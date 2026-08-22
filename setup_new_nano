@@ -58,6 +58,28 @@ https://dietpi.com/docs/install/
 --> i2c not working, no 1w
 
 
+
+############################################################################
+# I2C, 1-Wire
+############################################################################
+
+
+sudo vi /boot/armbianEnv.txt
+overlays=i2c0 usbhost2 usbhost3 w1-gpio
+param_w1_pin=PG11
+
+sudo apt-get install i2c-tools -y
+sudo usermod -aG i2c pi
+
+
+
+
+
+
+
+
+
+
 #--- make ssh working ---
 /etc/ssh/sshd_config
 
@@ -128,32 +150,12 @@ sudo armbian-config
 param_w1_pin=PG11
 
 
-### not needed in Armbian 25.2.3 bullseye Kernel 6.18.35
-## Device Tree
-cd /boot/dtb/overlay/
-cp sun8i-h3-w1-gpio.dtbo ~/sun8i-h3-w1-gpio.dtbo.orig
-dtc -I dtb -O dts sun8i-h3-w1-gpio.dtbo > sun8i-h3-w1-gpio.dts
-# sun8i-h3-w1-gpio.dts:
-w1_pins {
-          pins = "PG11";
-
-dtc -O dtb -o sun8i-h3-w1-gpio.dtbo sun8i-h3-w1-gpio.dts
-cp sun8i-h3-w1-gpio.dts ~/sun8i-h3-w1-gpio.dts.1wire_203
-
-# Additional information
-https://forum.armbian.com/topic/7912-default-w1-pin-on-nano-pi-neo/
-https://stackoverflow.com/questions/21670967/how-to-compile-dts-linux-device-tree-source-files-to-dtb
-
 
 #------- RRDTool ----------#
 sudo apt-get install python3-dev librrd-dev rrdtool -y
 sudo pip3 install rrdtool
 
 
-#------- I2C --------------#
-# enable in armbian-config
-sudo apt-get install i2c-tools -y
-sudo usermod -aG i2c pi
 
 
 
