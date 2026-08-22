@@ -11,11 +11,19 @@ screen /dev/ttyUSB0 115200
 
 
 ############################################################################
-# Armbian Bullseye
+# Images
 ############################################################################
 
 
-#--- Image ---
+# Armbian Debian 13
+https://armbian.de/boards/nanopiair
+Armbian_community_26.11.0-trunk.19_Nanopiair_trixie_current_6.18.45_minimal.img
+
+--> blocks sometimes at state "Reached target graphical.target - Graphical Interface."
+--> after logout, no login prompt is shown
+
+
+
 # still working on 8th August 2026
 http://armbian.hosthatch.com/archive/nanopiair/archive/
 Armbian_21.08.1_Nanopiair_bullseye_current_5.10.60.img
