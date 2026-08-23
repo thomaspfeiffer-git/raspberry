@@ -34,7 +34,7 @@ try:
     while True:
         sensor.get_sensor_data()
         Log("{:.2f} °C; {:.2f} hPa; {:.2f} % rF; gas resistance: {}; air quality: {}".format(sensor.data.temperature, sensor.data.pressure, sensor.data.humidity, sensor.data.gas_resistance, sensor.data.air_quality_score))
-        for _ in range(600)
+        for _ in range(600):
             time.sleep(1)
 
 except KeyboardInterrupt:
