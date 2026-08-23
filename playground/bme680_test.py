@@ -24,8 +24,8 @@ Press Ctrl+C to exit
 
 """)
 
-# sensor = BME680(i2c_addr=BME_680_BASEADDR)
-sensor = BME680(i2c_addr=BME_680_SECONDARYADDR)
+sensor = BME680(i2c_addr=BME_680_BASEADDR)
+# sensor = BME680(i2c_addr=BME_680_SECONDARYADDR)
 
 # start_time and curr_time ensure that the
 # burn_in_time (in seconds) is kept track of.
@@ -34,7 +34,8 @@ try:
     while True:
         sensor.get_sensor_data()
         Log("{:.2f} °C; {:.2f} hPa; {:.2f} % rF; gas resistance: {}; air quality: {}".format(sensor.data.temperature, sensor.data.pressure, sensor.data.humidity, sensor.data.gas_resistance, sensor.data.air_quality_score))
-        time.sleep(60)
+        for _ in range(600)
+            time.sleep(1)
 
 except KeyboardInterrupt:
     pass
