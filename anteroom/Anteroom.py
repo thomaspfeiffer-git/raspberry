@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # Anteroom.py                                                                 #
-# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2019, 2020       #
+# (c) https://github.com/thomaspfeiffer-git/raspberry, 2017, 2019, 2020, 2026 #
 ###############################################################################
 """control lighting of our anteroom"""
 
@@ -227,7 +227,7 @@ class Statistics (threading.Thread):
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)                             + \
                         ":{}".format(0.0)
-            Log(rrd_data, True)
+            Log(rrd_data)
             self.udp.send(rrd_data)
 
             for _ in range(500): # interruptible sleep
@@ -245,7 +245,7 @@ class Statistics (threading.Thread):
 @app.route('/relais')
 def API_Relais ():
     relais_ = request.args.get('status', 'off')
-    Log("Request: relais={}".format(relais_), True)
+    Log("Request: relais={}".format(relais_))
     # TODO: validate param
 
     save_energy.reset()
