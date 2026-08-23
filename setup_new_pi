@@ -50,6 +50,8 @@ Fast setup of most important modules/libraries:
 sudo apt-get install debian-goodies screen vim python3-pip i2c-tools dnsutils git -y
 
 
+sudo apt install python3-pil
+
 
 sudo apt-get install libjpeg8-dev libopenjp2-7 libtiff5 -y
 sudo pip3 install Pillow
