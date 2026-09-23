@@ -29,7 +29,9 @@ from sensors.TSL2561 import TSL2561
 from Logging import Log
 from Shutdown import Shutdown
 
-from Forecast import Forecast
+# Forecast removed due to hardware issue that needs to be fixed later.
+# To activate again, search for all appaerances of "forecast".
+# from Forecast import Forecast
 from Wardrobe_UDP import UDP_Sender, CREDENTIALS_UDP_RRD, CREDENTIALS_UDP_HOMEAUTOMATION
 
 
@@ -320,7 +322,7 @@ def main ():
     udp_homeautomation = UDP_Sender(CREDENTIALS_UDP_HOMEAUTOMATION)
 
     lightness.start()
-    forecast.start()
+    # forecast.start()
     for c in controls.values():
         c.start()
 
@@ -353,8 +355,8 @@ def shutdown_application ():
         c.stop()
         c.join()
 
-    forecast.stop()
-    forecast.join()
+    # forecast.stop()
+    # forecast.join()
     lightness.stop()
     lightness.join()
     Log("Application stopped")
@@ -367,7 +369,7 @@ if __name__ == '__main__':
     shutdown = Shutdown(shutdown_func=shutdown_application)
 
     lightness = Lightness()
-    forecast  = Forecast(central_i2c_lock)
+    # forecast  = Forecast(central_i2c_lock)
     controls  = {
                  'doors':  Control(Sensor1_Pin, Actuator1_ID),
                  'drawer': Control(Sensor2_Pin, Actuator2_ID),
