@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 # awattar.py                                                                  #
-# (c) https://github.com/thomaspfeiffer-git 2023, 2025                        #
+# (c) https://github.com/thomaspfeiffer-git 2023, 2025, 2026                  #
 ###############################################################################
 
 """
@@ -113,18 +113,21 @@ class Queue (threading.Thread):
 
         while self._running:
             if awattar.data['valid']:
-                price_act = f"{awattar.data['hourly ratings'][0]['marketprice']:.2f}"
-                price_next = f"{awattar.data['hourly ratings'][1]['marketprice']:.2f}"
-                price_actnext = f"{price_act} / {price_next}"
+                # moved to fixed price contract on 1st October 2026.
+                # price_act = f"{awattar.data['hourly ratings'][0]['marketprice']:.2f}"
+                # price_next = f"{awattar.data['hourly ratings'][1]['marketprice']:.2f}"
+                price_act_fixed = f"{9.9*1.2:.2f}"
+                price_act_float = f"{awattar.data['hourly ratings'][0]['marketprice']:.2f}"
+                price_act = f"{price_act_fixed} ({price_act_float})"
                 price_lowest = f"{awattar.data['lowest price']['start_timestamp'].hour}:" + \
                                f"{awattar.data['lowest price']['start_timestamp'].minute:02d}: " + \
                                f"{awattar.data['lowest price']['marketprice']:.2f}"
-                price = f"{price_act} / {price_next}\n{price_lowest}"
+                price = f"{price_act}\n{price_lowest}"
                 # Log(f"price: {price}")
                 self.qv_price.value = price
-                self.qv_price_act.value = price_act
-                self.qv_price_next.value = price_next
-                self.qv_price_actnext.value = price_actnext
+                self.qv_price_act.value = price_act_fixed
+                self.qv_price_next.value = price_act_float
+                self.qv_price_actnext.value = price_act
                 self.qv_price_lowest.value = price_lowest
 
             for _ in range(600):    # interruptible sleep for 60 seconds
